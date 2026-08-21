@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0-alpha] - 2026-08-21
+
+### Added
+- Upgraded homepage Hero Section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php) with a premium Figma-level Bootstrap 5 UI:
+  - Custom purple gradient background (`#6C4CF1` → `#8B5CF6`).
+  - Large bilingual headline: *"বাংলার সেরা Graphic Marketplace"*.
+  - Subtitle: *"AI-powered marketplace for templates, UI kits, vectors and digital assets."*
+  - Large rounded-pill search bar with search icon and action button.
+  - Dual CTA buttons: *"Explore Templates"* and *"Become Seller"* (routed to seller registration).
+  - Right-side modern glassmorphism UI canvas mockup (pure CSS/HTML glass backdrop, Figma/PSD/AI/SVG badges, verified indicators, ratings, and floating overlays).
+  - Bottom statistics grid displaying `10K+ Templates`, `2K+ Creators`, `50K+ Downloads`.
+
+---
+
 ## [0.5.0-alpha] - 2026-08-21
 
 ### Added
@@ -70,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Planned Milestones]
 
-### Phase 6: Dashboards & Creator Hub
+### Phase 7: Dashboards & Creator Hub
 - Build Creator asset upload interface and revenue analytics.
 - Build Customer purchase history and download center.
 - Build Administrator moderation portal.
