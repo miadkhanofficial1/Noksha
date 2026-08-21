@@ -7,19 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0-alpha] - 2026-08-21
+
+### Added
+- Redesigned **Featured Templates (জনপ্রিয় টেমপ্লেট)** section into a premium Figma-level Marketplace UI in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php):
+  - Updated responsive column layout: Desktop 3 cols (`col-lg-4`), Tablet 2 cols (`col-md-6`), Mobile 1 col (`col-12`).
+  - Added top purple gradient accent connector line (`linear-gradient(90deg, #6C4CF1, #8B5CF6, #9F7AEA)`) for smooth visual flow from Hero Section.
+  - Cards feature 24px border radius (`1.5rem`), soft purple borders (`rgba(108, 76, 241, 0.12)`), floating white category badges, SVG gradient previews, star rating badges, download counters, and price tags (`Free`, `৳199`, `৳299`, `৳499`).
+  - Smooth 0.3s CSS hover animations (`translateY(-8px)` with soft purple shadow glow).
+  - Purple CTA button (*"View Details"*) styled with `#6C4CF1`.
+
+---
+
 ## [0.8.0-alpha] - 2026-08-21
 
 ### Added
-- Refined UI finish of [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php) to a premium Figma-level standard:
-  - Enhanced Hero background with a 3-stop smooth gradient (`#6C4CF1` → `#8B5CF6` → `#9F7AEA`) and multi-layer radial glow overlays.
-  - Added pure CSS `@keyframes fadeInUp` entrance animation and floating keyframe animation (`@keyframes floatSlow`) for glassmorphism cards.
-  - Upgraded Hero Search Bar with glassmorphism styling (`backdrop-filter: blur(16px)`), white translucent container, and focus ring expansion.
-  - Upgraded CTA buttons with white/purple gradient fill, subtle depth shadows, and lift transitions.
-  - Glassmorphism studio illustration card updated with enhanced backdrop blur (`24px`), border highlights, and floating badge layering.
-  - Upgraded Featured Template Cards:
-    - Increased preview container height to `210px` with SVG scaling hover effects.
-    - 24px border radius (`1.5rem`) and soft purple shadow glow on hover (`translateY(-10px)`).
-    - Cleaner price tags and warning-badge rating layouts.
+- Refined UI finish of [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php) to a premium Figma-level standard.
 
 ---
 
@@ -74,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Planned Milestones]
 
-### Phase 9: Dashboards & Creator Hub
+### Phase 10: Dashboards & Creator Hub
 - Build Creator asset upload interface and revenue analytics.
 - Build Customer purchase history and download center.
 - Build Administrator moderation portal.

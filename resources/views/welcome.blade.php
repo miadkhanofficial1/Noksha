@@ -102,49 +102,64 @@
         box-shadow: 0 35px 70px -10px rgba(15, 23, 42, 0.4);
     }
 
-    /* Featured Template Cards */
+    /* Featured Template Section & Cards */
+    .featured-templates-section {
+        background-color: #F8F7FF;
+        position: relative;
+    }
+
+    .featured-templates-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
+    }
+
     .template-card-figma {
-        border-radius: 1.5rem !important; /* 24px */
-        border: 1px solid rgba(108, 76, 241, 0.1) !important;
+        border-radius: 1.5rem !important; /* 24px Radius */
+        border: 1px solid rgba(108, 76, 241, 0.12) !important;
         box-shadow: 0 10px 30px -10px rgba(108, 76, 241, 0.08) !important;
-        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
         overflow: hidden;
         background: #ffffff;
     }
 
     .template-card-figma:hover {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
         box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
-        border-color: rgba(108, 76, 241, 0.3) !important;
+        border-color: rgba(108, 76, 241, 0.35) !important;
     }
 
     .template-preview-area {
-        height: 210px;
+        height: 200px;
         position: relative;
         overflow: hidden;
-        transition: transform 0.5s ease;
+    }
+
+    .template-preview-area svg {
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .template-card-figma:hover .template-preview-area svg {
         transform: scale(1.08) rotate(-1deg);
     }
 
-    .template-preview-area svg {
-        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-noksha-action {
+    .btn-purple-cta {
         background-color: #6C4CF1;
         color: #ffffff !important;
         border: none;
         font-weight: 600;
-        transition: all 0.25s ease;
+        transition: all 0.3s ease;
     }
 
-    .btn-noksha-action:hover {
+    .btn-purple-cta:hover {
         background-color: #5A3DE0;
         transform: translateY(-1px);
         box-shadow: 0 8px 18px -4px rgba(108, 76, 241, 0.4);
+        color: #ffffff !important;
     }
 
     /* Gradient Presets for Card Previews */
@@ -309,13 +324,13 @@
 </section>
 
 
-<!-- FEATURED TEMPLATES SECTION (IMMEDIATELY BELOW HERO) -->
-<section id="templates" class="py-5 py-lg-6" style="background-color: #F8F7FF;">
+<!-- FEATURED TEMPLATES SECTION (REDESIGNED FIGMA-LEVEL MARKETPLACE UI) -->
+<section id="templates" class="py-5 py-lg-6 featured-templates-section">
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="noksha-badge mb-2 px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold" style="background: rgba(108, 76, 241, 0.1); color: #6C4CF1;">
-                <i class="bi bi-star-fill me-1"></i> Featured Showcase
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
+                <i class="bi bi-stars me-1"></i> Featured Showcase
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
                 Featured Templates <span class="text-primary">(জনপ্রিয় টেমপ্লেট)</span>
@@ -325,48 +340,48 @@
             </p>
         </div>
 
-        <!-- 6 Modern Cards Grid (Desktop: 3 cols, Tablet: 2 cols, Mobile: 2 cols) -->
-        <div class="row g-3 g-md-4">
+        <!-- 6 Modern Cards Grid (Desktop: 3 cols col-lg-4, Tablet: 2 cols col-md-6, Mobile: 1 col col-12) -->
+        <div class="row g-4">
             
             <!-- Card 1 -->
-            <div class="col-6 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Larger Image Gradient Placeholder -->
+                    <!-- Gradient Preview Area -->
                     <div class="template-preview-area card-grad-1 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                             <line x1="8" y1="21" x2="16" y2="21"></line>
                             <line x1="12" y1="17" x2="12" y2="21"></line>
                         </svg>
-                        <!-- Badge Overlay -->
+                        <!-- Floating Category Badge -->
                         <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
                             UI Kit
                         </span>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="card-body p-3 p-md-4 d-flex flex-column">
+                    <!-- Card Content -->
+                    <div class="card-body p-4 d-flex flex-column">
                         <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.9 (128)
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.4k</span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.4k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2 text-truncate" title="Fintech Mobile App UI Kit">
+                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Fintech Mobile App UI Kit">
                             Fintech Mobile App UI Kit
                         </h5>
-                        <p class="card-text text-secondary small mb-3 flex-grow-1 line-clamp-2">
+                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             50+ iOS & Android screens with dark and light mode vector components.
                         </p>
 
-                        <!-- Price & Action Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
                                 <span class="fw-extrabold text-dark fs-5">৳499</span>
                             </div>
-                            <a href="#templates" class="btn btn-noksha-action rounded-pill px-3.5 py-2 btn-sm">
+                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
@@ -375,44 +390,44 @@
             </div>
 
             <!-- Card 2 -->
-            <div class="col-6 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Larger Image Gradient Placeholder -->
+                    <!-- Gradient Preview Area -->
                     <div class="template-preview-area card-grad-2 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                             <polyline points="2 17 12 22 22 17"></polyline>
                             <polyline points="2 12 12 17 22 12"></polyline>
                         </svg>
-                        <!-- Badge Overlay -->
+                        <!-- Floating Category Badge -->
                         <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
                             Vector
                         </span>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="card-body p-3 p-md-4 d-flex flex-column">
+                    <!-- Card Content -->
+                    <div class="card-body p-4 d-flex flex-column">
                         <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.8 (94)
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>2.8k</span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>2.8k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2 text-truncate" title="Corporate Business Flyer">
+                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Corporate Business Flyer">
                             Corporate Business Flyer
                         </h5>
-                        <p class="card-text text-secondary small mb-3 flex-grow-1 line-clamp-2">
+                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             Print-ready A4 vector layout for corporate brand presentations.
                         </p>
 
-                        <!-- Price & Action Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
                                 <span class="fw-extrabold text-success fs-5">Free</span>
                             </div>
-                            <a href="#templates" class="btn btn-noksha-action rounded-pill px-3.5 py-2 btn-sm">
+                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
@@ -421,44 +436,44 @@
             </div>
 
             <!-- Card 3 -->
-            <div class="col-6 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Larger Image Gradient Placeholder -->
+                    <!-- Gradient Preview Area -->
                     <div class="template-preview-area card-grad-3 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                         </svg>
-                        <!-- Badge Overlay -->
+                        <!-- Floating Category Badge -->
                         <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
                             Social Media
                         </span>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="card-body p-3 p-md-4 d-flex flex-column">
+                    <!-- Card Content -->
+                    <div class="card-body p-4 d-flex flex-column">
                         <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>5.0 (210)
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>3.1k</span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>3.1k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2 text-truncate" title="Instagram Post & Story Bundle">
+                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Instagram Post & Story Bundle">
                             Instagram Post & Story Bundle
                         </h5>
-                        <p class="card-text text-secondary small mb-3 flex-grow-1 line-clamp-2">
+                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             30 minimalist social media layouts for agency marketing.
                         </p>
 
-                        <!-- Price & Action Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
                                 <span class="fw-extrabold text-dark fs-5">৳299</span>
                             </div>
-                            <a href="#templates" class="btn btn-noksha-action rounded-pill px-3.5 py-2 btn-sm">
+                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
@@ -467,44 +482,44 @@
             </div>
 
             <!-- Card 4 -->
-            <div class="col-6 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Larger Image Gradient Placeholder -->
+                    <!-- Gradient Preview Area -->
                     <div class="template-preview-area card-grad-4 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <!-- Badge Overlay -->
+                        <!-- Floating Category Badge -->
                         <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
                             3D Mockup
                         </span>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="card-body p-3 p-md-4 d-flex flex-column">
+                    <!-- Card Content -->
+                    <div class="card-body p-4 d-flex flex-column">
                         <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.9 (67)
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>950</span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>950 downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2 text-truncate" title="3D Isometric Tech Icons">
+                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="3D Isometric Tech Icons">
                             3D Isometric Tech Icons
                         </h5>
-                        <p class="card-text text-secondary small mb-3 flex-grow-1 line-clamp-2">
+                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             High-res transparent PNG & Blender 3D source files included.
                         </p>
 
-                        <!-- Price & Action Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-dark fs-5">৳399</span>
+                                <span class="fw-extrabold text-dark fs-5">৳199</span>
                             </div>
-                            <a href="#templates" class="btn btn-noksha-action rounded-pill px-3.5 py-2 btn-sm">
+                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
@@ -513,42 +528,42 @@
             </div>
 
             <!-- Card 5 -->
-            <div class="col-6 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Larger Image Gradient Placeholder -->
+                    <!-- Gradient Preview Area -->
                     <div class="template-preview-area card-grad-5 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                         </svg>
-                        <!-- Badge Overlay -->
+                        <!-- Floating Category Badge -->
                         <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
                             Branding
                         </span>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="card-body p-3 p-md-4 d-flex flex-column">
+                    <!-- Card Content -->
+                    <div class="card-body p-4 d-flex flex-column">
                         <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.7 (112)
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.9k</span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.9k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2 text-truncate" title="Minimalist Agency Logo Kit">
+                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Minimalist Agency Logo Kit">
                             Minimalist Agency Logo Kit
                         </h5>
-                        <p class="card-text text-secondary small mb-3 flex-grow-1 line-clamp-2">
+                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             Fully editable vector logotypes with font pairing guidelines.
                         </p>
 
-                        <!-- Price & Action Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
                                 <span class="fw-extrabold text-success fs-5">Free</span>
                             </div>
-                            <a href="#templates" class="btn btn-noksha-action rounded-pill px-3.5 py-2 btn-sm">
+                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
@@ -557,44 +572,44 @@
             </div>
 
             <!-- Card 6 -->
-            <div class="col-6 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Larger Image Gradient Placeholder -->
+                    <!-- Gradient Preview Area -->
                     <div class="template-preview-area card-grad-6 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="3" y1="9" x2="21" y2="9"></line>
                             <line x1="9" y1="21" x2="9" y2="9"></line>
                         </svg>
-                        <!-- Badge Overlay -->
+                        <!-- Floating Category Badge -->
                         <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
                             SaaS System
                         </span>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="card-body p-3 p-md-4 d-flex flex-column">
+                    <!-- Card Content -->
+                    <div class="card-body p-4 d-flex flex-column">
                         <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.9 (88)
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>820</span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>820 downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-2 text-truncate" title="SaaS Web Admin System">
+                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="SaaS Web Admin System">
                             SaaS Web Admin System
                         </h5>
-                        <p class="card-text text-secondary small mb-3 flex-grow-1 line-clamp-2">
+                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             Complete admin dashboard UI component library with charts.
                         </p>
 
-                        <!-- Price & Action Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-dark fs-5">৳699</span>
+                                <span class="fw-extrabold text-dark fs-5">৳299</span>
                             </div>
-                            <a href="#templates" class="btn btn-noksha-action rounded-pill px-3.5 py-2 btn-sm">
+                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
