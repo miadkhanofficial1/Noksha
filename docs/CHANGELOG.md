@@ -7,15 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.10.0-alpha] - 2026-08-21
+
+### Added
+- Added new **Professional Categories Section (ক্যাটাগরি ব্রাউজ করুন)** immediately below the Featured Templates section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php):
+  - Light lavender section background (`#F8F5FF`).
+  - Small purple pill badge (*"Categories"*), bilingual header (*Explore Categories / ক্যাটাগরি ব্রাউজ করুন*), and subtitle (*"Find templates by design type."*).
+  - 8 premium category cards in responsive Bootstrap 5 layout (Desktop: 4 cols `col-lg-3`, Tablet: 2 cols `col-md-6`, Mobile: 2 cols `col-6`):
+    1. **UI Kits** — 1.2k Templates (`bi-grid`, `#6366F1 → #8B5CF6`)
+    2. **Logos** — 850 Templates (`bi-vector-pen`, `#EC4899 → #8B5CF6`)
+    3. **Social Media** — 3.1k Templates (`bi-instagram`, `#10B981 → #059669`)
+    4. **Posters** — 740 Templates (`bi-image`, `#F59E0B → #EF4444`)
+    5. **Branding** — 620 Templates (`bi-palette`, `#3B82F6 → #06B6D4`)
+    6. **Web Design** — 980 Templates (`bi-window`, `#8B5CF6 → #6366F1`)
+    7. **3D Mockups** — 430 Templates (`bi-box`, `#7C3AED → #A855F7`)
+    8. **Icons** — 2.4k Templates (`bi-stars`, `#14B8A6 → #0EA5E9`)
+  - Modern 24px border radius (`1.5rem`), soft purple shadows, and smooth 0.3s hover lift animation (`translateY(-8px)`).
+  - Centered bottom purple CTA button (*"View All Categories"*).
+
+---
+
 ## [0.9.0-alpha] - 2026-08-21
 
 ### Added
-- Redesigned **Featured Templates (জনপ্রিয় টেমপ্লেট)** section into a premium Figma-level Marketplace UI in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php):
-  - Updated responsive column layout: Desktop 3 cols (`col-lg-4`), Tablet 2 cols (`col-md-6`), Mobile 1 col (`col-12`).
-  - Added top purple gradient accent connector line (`linear-gradient(90deg, #6C4CF1, #8B5CF6, #9F7AEA)`) for smooth visual flow from Hero Section.
-  - Cards feature 24px border radius (`1.5rem`), soft purple borders (`rgba(108, 76, 241, 0.12)`), floating white category badges, SVG gradient previews, star rating badges, download counters, and price tags (`Free`, `৳199`, `৳299`, `৳499`).
-  - Smooth 0.3s CSS hover animations (`translateY(-8px)` with soft purple shadow glow).
-  - Purple CTA button (*"View Details"*) styled with `#6C4CF1`.
+- Redesigned **Featured Templates (জনপ্রিয় টেমপ্লেট)** section into a premium Figma-level Marketplace UI in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
 
 ---
 
@@ -77,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Planned Milestones]
 
-### Phase 10: Dashboards & Creator Hub
+### Phase 11: Dashboards & Creator Hub
 - Build Creator asset upload interface and revenue analytics.
 - Build Customer purchase history and download center.
 - Build Administrator moderation portal.

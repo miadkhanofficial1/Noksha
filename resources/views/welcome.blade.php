@@ -162,13 +162,47 @@
         color: #ffffff !important;
     }
 
-    /* Gradient Presets for Card Previews */
+    /* Professional Categories Card Styling */
+    .cat-card-figma {
+        border-radius: 1.5rem !important; /* 24px Radius */
+        border: 1px solid rgba(108, 76, 241, 0.12) !important;
+        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.06) !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .cat-card-figma:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -10px rgba(108, 76, 241, 0.2) !important;
+        border-color: rgba(108, 76, 241, 0.35) !important;
+    }
+
+    .cat-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 1.75rem;
+        transition: transform 0.3s ease;
+    }
+
+    .cat-card-figma:hover .cat-icon-wrapper {
+        transform: scale(1.1) rotate(-3deg);
+    }
+
+    /* Gradient Presets for Card Previews & Categories */
     .card-grad-1 { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
     .card-grad-2 { background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); }
     .card-grad-3 { background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%); }
     .card-grad-4 { background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%); }
     .card-grad-5 { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
     .card-grad-6 { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%); }
+    .cat-grad-7  { background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%); }
+    .cat-grad-8  { background: linear-gradient(135deg, #14B8A6 0%, #0EA5E9 100%); }
 </style>
 
 
@@ -622,81 +656,120 @@
 </section>
 
 
-<!-- CATEGORIES SECTION -->
-<section id="categories" class="py-5 bg-white border-bottom">
-    <div class="container py-4">
+<!-- PROFESSIONAL CATEGORIES SECTION (IMMEDIATELY BELOW FEATURED TEMPLATES) -->
+<section id="categories" class="py-5 py-lg-6" style="background-color: #F8F5FF;">
+    <div class="container py-3">
+        <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="noksha-badge mb-2">Curated Categories</span>
-            <h2 class="fw-bold text-dark mb-2">Explore Graphics & Digital Media</h2>
-            <p class="text-muted">Browse thousands of professional templates crafted for creative projects.</p>
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
+                <i class="bi bi-grid-fill me-1"></i> Categories
+            </span>
+            <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
+                Explore Categories <span class="text-primary">(ক্যাটাগরি ব্রাউজ করুন)</span>
+            </h2>
+            <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
+                Find templates by design type.
+            </p>
         </div>
 
-        <div class="row g-4">
-            <!-- Category Card 1 -->
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="noksha-card p-4 text-center h-100">
-                    <div class="fs-1 text-primary mb-2">
+        <!-- 8 Category Cards Grid (Desktop: 4 cols col-lg-3, Tablet: 2 cols col-md-6, Mobile: 2 cols col-6) -->
+        <div class="row g-3 g-md-4 mb-5">
+            
+            <!-- Category Card 1: UI Kits -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper card-grad-1 mb-3 shadow-sm">
+                        <i class="bi bi-grid"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">UI Kits</h5>
+                    <span class="small text-secondary font-monospace">1.2k Templates</span>
+                </div>
+            </div>
+
+            <!-- Category Card 2: Logos -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper card-grad-3 mb-3 shadow-sm">
+                        <i class="bi bi-vector-pen"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Logos</h5>
+                    <span class="small text-secondary font-monospace">850 Templates</span>
+                </div>
+            </div>
+
+            <!-- Category Card 3: Social Media -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper card-grad-5 mb-3 shadow-sm">
+                        <i class="bi bi-instagram"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Social Media</h5>
+                    <span class="small text-secondary font-monospace">3.1k Templates</span>
+                </div>
+            </div>
+
+            <!-- Category Card 4: Posters -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper card-grad-4 mb-3 shadow-sm">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Posters</h5>
+                    <span class="small text-secondary font-monospace">740 Templates</span>
+                </div>
+            </div>
+
+            <!-- Category Card 5: Branding -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper card-grad-2 mb-3 shadow-sm">
                         <i class="bi bi-palette"></i>
                     </div>
-                    <h6 class="fw-bold mb-1">Vector Graphics</h6>
-                    <span class="small text-muted">1,240 Assets</span>
+                    <h5 class="fw-bold text-dark mb-1">Branding</h5>
+                    <span class="small text-secondary font-monospace">620 Templates</span>
                 </div>
             </div>
 
-            <!-- Category Card 2 -->
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="noksha-card p-4 text-center h-100">
-                    <div class="fs-1 text-secondary mb-2">
-                        <i class="bi bi-aspect-ratio"></i>
+            <!-- Category Card 6: Web Design -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper card-grad-6 mb-3 shadow-sm">
+                        <i class="bi bi-window"></i>
                     </div>
-                    <h6 class="fw-bold mb-1">UI Wireframes</h6>
-                    <span class="small text-muted">890 Kits</span>
+                    <h5 class="fw-bold text-dark mb-1">Web Design</h5>
+                    <span class="small text-secondary font-monospace">980 Templates</span>
                 </div>
             </div>
 
-            <!-- Category Card 3 -->
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="noksha-card p-4 text-center h-100">
-                    <div class="fs-1 text-info mb-2">
-                        <i class="bi bi-bounding-box-circles"></i>
-                    </div>
-                    <h6 class="fw-bold mb-1">Social Media</h6>
-                    <span class="small text-muted">2,150 Packs</span>
-                </div>
-            </div>
-
-            <!-- Category Card 4 -->
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="noksha-card p-4 text-center h-100">
-                    <div class="fs-1 text-warning mb-2">
+            <!-- Category Card 7: 3D Mockups -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper cat-grad-7 mb-3 shadow-sm">
                         <i class="bi bi-box"></i>
                     </div>
-                    <h6 class="fw-bold mb-1">3D Mockups</h6>
-                    <span class="small text-muted">640 Models</span>
+                    <h5 class="fw-bold text-dark mb-1">3D Mockups</h5>
+                    <span class="small text-secondary font-monospace">430 Templates</span>
                 </div>
             </div>
 
-            <!-- Category Card 5 -->
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="noksha-card p-4 text-center h-100">
-                    <div class="fs-1 text-success mb-2">
-                        <i class="bi bi-type-bold"></i>
+            <!-- Category Card 8: Icons -->
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                    <div class="cat-icon-wrapper cat-grad-8 mb-3 shadow-sm">
+                        <i class="bi bi-stars"></i>
                     </div>
-                    <h6 class="fw-bold mb-1">Logos & Fonts</h6>
-                    <span class="small text-muted">1,500 Items</span>
+                    <h5 class="fw-bold text-dark mb-1">Icons</h5>
+                    <span class="small text-secondary font-monospace">2.4k Templates</span>
                 </div>
             </div>
 
-            <!-- Category Card 6 -->
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="noksha-card p-4 text-center h-100">
-                    <div class="fs-1 text-danger mb-2">
-                        <i class="bi bi-robot"></i>
-                    </div>
-                    <h6 class="fw-bold mb-1">AI Presets</h6>
-                    <span class="small text-muted">420 Prompts</span>
-                </div>
-            </div>
+        </div>
+
+        <!-- Centered Bottom CTA Button -->
+        <div class="text-center">
+            <a href="#categories" class="btn btn-purple-cta rounded-pill px-5 py-3 fs-6 fw-bold shadow-sm">
+                View All Categories <i class="bi bi-arrow-right ms-2"></i>
+            </a>
         </div>
     </div>
 </section>
