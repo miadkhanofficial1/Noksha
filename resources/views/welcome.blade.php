@@ -194,6 +194,39 @@
         transform: scale(1.1) rotate(-3deg);
     }
 
+    /* Trending Resources & AI Section Styling */
+    .trending-card-figma {
+        border-radius: 1.5rem !important; /* 24px Radius */
+        border: 1px solid rgba(108, 76, 241, 0.12) !important;
+        box-shadow: 0 10px 30px -10px rgba(108, 76, 241, 0.08) !important;
+        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .trending-card-figma:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
+        border-color: rgba(108, 76, 241, 0.35) !important;
+    }
+
+    .glass-trending-badge {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .ai-strip-box {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(108, 76, 241, 0.2) !important;
+        border-radius: 1.5rem;
+        box-shadow: 0 15px 35px -10px rgba(108, 76, 241, 0.12);
+    }
+
     /* Gradient Presets for Card Previews & Categories */
     .card-grad-1 { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
     .card-grad-2 { background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); }
@@ -771,6 +804,169 @@
                 View All Categories <i class="bi bi-arrow-right ms-2"></i>
             </a>
         </div>
+    </div>
+</section>
+
+
+<!-- TRENDING RESOURCES + AI RECOMMENDATION SECTION (IMMEDIATELY BELOW CATEGORIES) -->
+<section id="trending" class="py-5 py-lg-6" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8F5FF 100%);">
+    <div class="container py-3">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
+                <i class="bi bi-fire me-1 text-danger"></i> Trending
+            </span>
+            <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
+                Trending Resources <span class="text-primary">(আজকের জনপ্রিয় ডিজাইন)</span>
+            </h2>
+            <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
+                AI-selected high-performing assets loved by creators.
+            </p>
+        </div>
+
+        <!-- Cards Layout: Left 7 Cols, Right 5 Cols -->
+        <div class="row g-4 mb-5">
+            
+            <!-- Left Column: Featured Large Card (7 Columns) -->
+            <div class="col-12 col-lg-7">
+                <div class="card h-100 trending-card-figma">
+                    <!-- Gradient Preview Area -->
+                    <div class="position-relative card-grad-1 p-4 d-flex align-items-center justify-content-center text-white" style="height: 280px;">
+                        <svg width="88" height="88" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+
+                        <!-- Editor's Pick Badge -->
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3.5 py-2 fw-bold small">
+                            <i class="bi bi-award-fill text-primary me-1"></i> Editor's Pick
+                        </span>
+
+                        <!-- Floating Glass Badge: Trending -->
+                        <div class="position-absolute bottom-0 end-0 m-3 px-3 py-1.5 rounded-pill glass-trending-badge text-dark fw-bold small d-flex align-items-center gap-1.5 animate-float">
+                            <span>🔥 Trending</span>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-3 py-1.5 rounded-pill fw-bold">
+                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (240 reviews)
+                            </span>
+                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>5.2k downloads</span>
+                        </div>
+
+                        <h4 class="card-title fw-extrabold text-dark mb-2">
+                            Fintech Mobile App UI Kit
+                        </h4>
+                        <p class="card-text text-secondary mb-4 flex-grow-1">
+                            Complete financial management mobile UI solution with 50+ vector screens, dark/light mode, and design system components for Figma.
+                        </p>
+
+                        <!-- Price & Purple CTA Button -->
+                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
+                            <div>
+                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
+                                <span class="fw-extrabold text-success fs-4">Free</span>
+                            </div>
+                            <a href="#trending" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                                View Details <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Two Stacked AI Recommendation Cards (5 Columns) -->
+            <div class="col-12 col-lg-5 d-flex flex-column gap-4">
+                
+                <!-- Right Card 1 -->
+                <div class="card h-100 trending-card-figma">
+                    <div class="row g-0 align-items-center h-100">
+                        <div class="col-5 card-grad-3 p-4 d-flex align-items-center justify-content-center text-white h-100 position-relative" style="min-height: 180px;">
+                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                <polyline points="2 17 12 22 22 17"></polyline>
+                                <polyline points="2 12 12 17 22 12"></polyline>
+                            </svg>
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm">
+                                <i class="bi bi-stars text-primary me-1"></i> AI Recommended
+                            </span>
+                        </div>
+                        <div class="col-7 p-3.5 d-flex flex-column justify-content-between">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1.5 text-truncate" title="Corporate Business Flyer">
+                                    Corporate Business Flyer
+                                </h6>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="small text-warning fw-bold"><i class="bi bi-star-fill me-1"></i>4.8</span>
+                                    <span class="small text-muted font-monospace"><i class="bi bi-download me-1"></i>2.1k</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                                <span class="fw-extrabold text-dark">৳299</span>
+                                <a href="#trending" class="btn btn-purple-cta rounded-pill px-3 py-1.5 btn-sm">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Card 2 -->
+                <div class="card h-100 trending-card-figma">
+                    <div class="row g-0 align-items-center h-100">
+                        <div class="col-5 card-grad-5 p-4 d-flex align-items-center justify-content-center text-white h-100 position-relative" style="min-height: 180px;">
+                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm">
+                                <i class="bi bi-graph-up-arrow text-success me-1"></i> Fast Growing
+                            </span>
+                        </div>
+                        <div class="col-7 p-3.5 d-flex flex-column justify-content-between">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1.5 text-truncate" title="Instagram Story Bundle">
+                                    Instagram Story Bundle
+                                </h6>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="small text-warning fw-bold"><i class="bi bi-star-fill me-1"></i>5.0</span>
+                                    <span class="small text-muted font-monospace"><i class="bi bi-download me-1"></i>3.4k</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                                <span class="fw-extrabold text-dark">৳199</span>
+                                <a href="#trending" class="btn btn-purple-cta rounded-pill px-3 py-1.5 btn-sm">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom AI Recommendation Strip -->
+        <div class="p-4 ai-strip-box d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3 text-center text-md-start">
+                <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
+                    <i class="bi bi-robot fs-3 text-primary"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-1">Smart Recommendation Engine</h5>
+                    <p class="text-secondary small mb-0">Personalized suggestions based on creator trends.</p>
+                </div>
+            </div>
+            <a href="#trending" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold shadow-sm text-nowrap">
+                <i class="bi bi-stars me-1 text-warning"></i> Explore AI Picks
+            </a>
+        </div>
+
     </div>
 </section>
 
