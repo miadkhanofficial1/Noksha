@@ -1,0 +1,132 @@
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap');
+
+// Bootstrap Custom Variables
+$primary: #4F46E5;
+$secondary: #7C3AED;
+$dark: #0F172A;
+$light: #F8FAFC;
+$font-family-sans-serif: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
+
+// Import Bootstrap 5 SASS
+@import "bootstrap/scss/bootstrap";
+
+// Noksha Custom Brand Styles
+:root {
+    --noksha-primary: #4F46E5;
+    --noksha-secondary: #7C3AED;
+    --noksha-accent: #06B6D4;
+    --noksha-dark: #0F172A;
+    --noksha-surface: #1E293B;
+    --noksha-light: #F8FAFC;
+}
+
+body {
+    font-family: var(--font-family-sans-serif);
+    background-color: var(--noksha-light);
+    color: var(--noksha-dark);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+// Brand Hero Gradients
+.bg-noksha-gradient {
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #311042 100%);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.15), transparent 60%);
+        pointer-events: none;
+    }
+}
+
+.text-noksha-gradient {
+    background: linear-gradient(135deg, #818CF8 0%, #C084FC 50%, #22D3EE 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+// Buttons
+.btn-noksha {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: #ffffff !important;
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 1.75rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        background: linear-gradient(135deg, #4338CA 0%, #6D28D9 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.4);
+    }
+}
+
+.btn-noksha-outline {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    padding: 0.75rem 1.75rem;
+    border-radius: 0.75rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.4);
+        transform: translateY(-2px);
+    }
+}
+
+// Noksha Cards & Badges
+.noksha-card {
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 1.25rem;
+    background: #ffffff;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+}
+
+.noksha-badge {
+    background: rgba(124, 58, 237, 0.12);
+    color: #7C3AED;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    font-weight: 600;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+}
+
+// Logo Badge
+.noksha-logo-badge {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.25rem;
+    border-radius: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
