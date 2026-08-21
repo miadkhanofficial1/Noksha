@@ -4,7 +4,7 @@
 
 @section('content')
 
-<!-- CUSTOM FIGMA-LEVEL CSS ANIMATIONS & UTILITIES -->
+<!-- CUSTOM FIGMA/DRIBBBLE LEVEL CSS ANIMATIONS & UTILITIES -->
 <style>
     /* Smooth Keyframes & Transitions */
     @keyframes fadeInUp {
@@ -23,6 +23,11 @@
         50% { transform: translateY(-8px) rotate(1deg); }
     }
 
+    @keyframes badgeFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+    }
+
     .animate-fade-in-up {
         animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -31,7 +36,24 @@
         animation: floatSlow 6s ease-in-out infinite;
     }
 
-    /* Hero Gradient & Glow */
+    .animate-badge-float {
+        animation: badgeFloat 4s ease-in-out infinite;
+    }
+
+    /* Scroll Reveal Animation */
+    .reveal-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
+    }
+
+    .reveal-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Hero Gradient & Animated Background Orbs */
     .hero-bg-gradient {
         background: linear-gradient(135deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
         position: relative;
@@ -39,9 +61,59 @@
 
     .hero-radial-glow {
         background: 
-            radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.2) 0%, transparent 45%),
-            radial-gradient(circle at 82% 75%, rgba(255, 255, 255, 0.15) 0%, transparent 45%),
-            radial-gradient(circle at 50% 50%, rgba(159, 122, 234, 0.3) 0%, transparent 60%);
+            radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.22) 0%, transparent 45%),
+            radial-gradient(circle at 82% 75%, rgba(255, 255, 255, 0.18) 0%, transparent 45%),
+            radial-gradient(circle at 50% 50%, rgba(159, 122, 234, 0.35) 0%, transparent 60%);
+    }
+
+    /* Animated Floating Background Orbs */
+    .hero-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.28;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hero-orb-1 {
+        width: 380px;
+        height: 380px;
+        background: radial-gradient(circle, #EC4899 0%, #8B5CF6 100%);
+        top: -60px;
+        left: -80px;
+        animation: orbFloat1 12s ease-in-out infinite alternate;
+    }
+
+    .hero-orb-2 {
+        width: 440px;
+        height: 440px;
+        background: radial-gradient(circle, #3B82F6 0%, #6C4CF1 100%);
+        bottom: -100px;
+        right: -60px;
+        animation: orbFloat2 14s ease-in-out infinite alternate;
+    }
+
+    .hero-orb-3 {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, #F59E0B 0%, #9F7AEA 100%);
+        top: 40%;
+        left: 45%;
+        animation: orbFloat3 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes orbFloat1 {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(50px, 40px) rotate(15deg); }
+    }
+    @keyframes orbFloat2 {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(-60px, -50px) scale(1.1); }
+    }
+    @keyframes orbFloat3 {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(40px, -30px); }
     }
 
     /* Glassmorphism Search Bar */
@@ -54,8 +126,14 @@
     }
 
     .hero-search-box:focus-within {
-        box-shadow: 0 15px 35px -5px rgba(108, 76, 241, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.35) !important;
-        transform: translateY(-2px);
+        box-shadow: 0 18px 40px -5px rgba(108, 76, 241, 0.35), 0 0 0 4px rgba(108, 76, 241, 0.25) !important;
+        transform: translateY(-3px);
+    }
+
+    .hero-search-box:focus-within .bi-search {
+        transform: scale(1.2) rotate(10deg);
+        color: #6C4CF1 !important;
+        transition: transform 0.3s ease;
     }
 
     /* Premium CTA Buttons */
@@ -64,11 +142,13 @@
         color: #6C4CF1 !important;
         border: none;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
     }
 
     .btn-cta-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.2);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.25), 0 0 15px rgba(255, 255, 255, 0.4);
         color: #5A3DE0 !important;
     }
 
@@ -83,7 +163,23 @@
     .btn-cta-secondary:hover {
         background: rgba(255, 255, 255, 0.25);
         border-color: rgba(255, 255, 255, 0.6) !important;
-        transform: translateY(-3px);
+        transform: translateY(-3px) scale(1.02);
+        color: #ffffff !important;
+    }
+
+    .btn-purple-cta {
+        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
+        color: #ffffff !important;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 6px 16px -4px rgba(108, 76, 241, 0.35);
+    }
+
+    .btn-purple-cta:hover {
+        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 25px -4px rgba(108, 76, 241, 0.45);
         color: #ffffff !important;
     }
 
@@ -118,23 +214,89 @@
         background: linear-gradient(90deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
     }
 
-    .template-card-figma {
-        border-radius: 1.5rem !important; /* 24px Radius */
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 30px -10px rgba(108, 76, 241, 0.08) !important;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-        overflow: hidden;
-        background: #ffffff;
+    /* Floating Glassmorphism Filter Bar */
+    .filter-bar-glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(108, 76, 241, 0.2) !important;
+        box-shadow: 0 20px 40px -15px rgba(108, 76, 241, 0.12) !important;
     }
 
-    .template-card-figma:hover {
+    /* Figma/Dribbble Category Chips */
+    .cat-chip-pill {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 999px !important;
+        border: 1px solid rgba(108, 76, 241, 0.2) !important;
+        color: #4B5563;
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.5rem 1.25rem;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .cat-chip-pill:hover {
+        border-color: rgba(108, 76, 241, 0.4) !important;
+        box-shadow: 0 0 15px rgba(108, 76, 241, 0.3);
+        color: #6C4CF1;
+        transform: translateY(-1px);
+    }
+
+    .cat-chip-pill.active {
+        background: #6C4CF1 !important;
+        color: #ffffff !important;
+        border-color: #6C4CF1 !important;
+        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.4) !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* Improved Template Cards with Shimmer Sweep & 24px Radius */
+    .template-card-figma, .cat-card-figma, .trending-card-figma {
+        border-radius: 1.5rem !important; /* 24px Radius */
+        border: 1px solid rgba(108, 76, 241, 0.12) !important;
+        box-shadow: 0 12px 35px -10px rgba(108, 76, 241, 0.1) !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+        overflow: hidden;
+        background: #ffffff;
+        position: relative;
+    }
+
+    .template-card-figma::after, .cat-card-figma::after, .trending-card-figma::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 40%;
+        height: 200%;
+        background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.25) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        transform: rotate(30deg);
+        transition: all 0.75s ease;
+        pointer-events: none;
+        opacity: 0;
+    }
+
+    .template-card-figma:hover::after, .cat-card-figma:hover::after, .trending-card-figma:hover::after {
+        left: 130%;
+        opacity: 1;
+    }
+
+    .template-card-figma:hover, .cat-card-figma:hover, .trending-card-figma:hover {
         transform: translateY(-8px);
         box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
         border-color: rgba(108, 76, 241, 0.35) !important;
     }
 
     .template-preview-area {
-        height: 200px;
+        height: 230px; /* Bigger Gradient Preview */
         position: relative;
         overflow: hidden;
     }
@@ -147,37 +309,7 @@
         transform: scale(1.08) rotate(-1deg);
     }
 
-    .btn-purple-cta {
-        background-color: #6C4CF1;
-        color: #ffffff !important;
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .btn-purple-cta:hover {
-        background-color: #5A3DE0;
-        transform: translateY(-1px);
-        box-shadow: 0 8px 18px -4px rgba(108, 76, 241, 0.4);
-        color: #ffffff !important;
-    }
-
     /* Professional Categories Card Styling */
-    .cat-card-figma {
-        border-radius: 1.5rem !important; /* 24px Radius */
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.06) !important;
-        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        overflow: hidden;
-        background: #ffffff;
-    }
-
-    .cat-card-figma:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px -10px rgba(108, 76, 241, 0.2) !important;
-        border-color: rgba(108, 76, 241, 0.35) !important;
-    }
-
     .cat-icon-wrapper {
         width: 64px;
         height: 64px;
@@ -187,27 +319,11 @@
         justify-content: center;
         color: #ffffff;
         font-size: 1.75rem;
-        transition: transform 0.3s ease;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .cat-card-figma:hover .cat-icon-wrapper {
-        transform: scale(1.1) rotate(-3deg);
-    }
-
-    /* Trending Resources & AI Section Styling */
-    .trending-card-figma {
-        border-radius: 1.5rem !important; /* 24px Radius */
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 30px -10px rgba(108, 76, 241, 0.08) !important;
-        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-        overflow: hidden;
-        background: #ffffff;
-    }
-
-    .trending-card-figma:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
-        border-color: rgba(108, 76, 241, 0.35) !important;
+        transform: scale(1.12) rotate(-6deg);
     }
 
     .glass-trending-badge {
@@ -236,20 +352,30 @@
     .card-grad-6 { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%); }
     .cat-grad-7  { background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%); }
     .cat-grad-8  { background: linear-gradient(135deg, #14B8A6 0%, #0EA5E9 100%); }
+
+    /* Hide scrollbar for category filter chips */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .cursor-pointer { cursor: pointer; }
 </style>
 
 
-<!-- PREMIUM FIGMA-LEVEL HERO SECTION -->
-<section class="position-relative text-white py-5 py-lg-6 overflow-hidden hero-bg-gradient">
+<!-- PREMIUM FIGMA-LEVEL HERO SECTION WITH ANIMATED ORBS -->
+<section class="position-relative text-white py-5 py-lg-6 overflow-hidden hero-bg-gradient reveal-on-scroll">
+    <!-- Animated Floating Background Orbs -->
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+
     <!-- Soft Background Radial Glow -->
     <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none hero-radial-glow"></div>
 
-    <div class="container position-relative py-4 py-lg-5 animate-fade-in-up">
+    <div class="container position-relative py-4 py-lg-5 animate-fade-in-up" style="z-index: 1;">
         <div class="row align-items-center g-5">
             <!-- Left Column: Bilingual Headline & Search -->
             <div class="col-lg-7 text-center text-lg-start">
-                <!-- AI Badge -->
-                <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1.5 rounded-pill bg-white bg-opacity-20 backdrop-blur text-white mb-4 border border-white border-opacity-30 shadow-sm">
+                <!-- AI Badge with Floating Motion -->
+                <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1.5 rounded-pill bg-white bg-opacity-20 backdrop-blur text-white mb-4 border border-white border-opacity-30 shadow-sm animate-badge-float">
                     <span class="badge bg-white text-primary rounded-pill px-2.5 py-1 small fw-bold">AI 2.0</span>
                     <span class="small fw-semibold">Next-Gen Intelligent Design Hub</span>
                 </div>
@@ -266,40 +392,44 @@
 
                 <!-- Glassmorphism Search Bar -->
                 <div class="p-2 hero-search-box rounded-pill shadow-lg mb-4 text-start" style="max-width: 590px;">
-                    <form class="d-flex align-items-center" action="#templates" method="GET">
+                    <form class="d-flex align-items-center" action="#templates" method="GET" onsubmit="event.preventDefault(); document.getElementById('templates').scrollIntoView({behavior:'smooth'});">
                         <span class="ps-3 text-muted fs-5">
                             <i class="bi bi-search text-primary"></i>
                         </span>
-                        <input type="text" class="form-control border-0 shadow-none bg-transparent ps-3 text-dark fs-6" placeholder="Search templates, UI kits, vectors, logos..." aria-label="Search Marketplace">
-                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm" type="button" style="background: linear-gradient(135deg, #6C4CF1 0%, #4F46E5 100%);">
+                        <input type="text" id="heroSearchInput" class="form-control border-0 shadow-none bg-transparent ps-3 text-dark fs-6" placeholder="Search templates, UI kits, vectors, logos..." aria-label="Search Marketplace">
+                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm btn-search-hero" type="button" onclick="document.getElementById('templates').scrollIntoView({behavior:'smooth'});" style="background: linear-gradient(135deg, #6C4CF1 0%, #4F46E5 100%);">
                             Search / খুঁজুন
                         </button>
                     </form>
                 </div>
 
-                <!-- Two CTA Buttons -->
+                <!-- Hero CTA Buttons -->
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3 mb-5">
                     <a href="#templates" class="btn btn-cta-primary btn-lg rounded-pill px-4 py-3 fw-bold shadow-sm">
                         <i class="bi bi-grid-3x3-gap-fill me-2"></i> Explore Templates
+                    </a>
+                    <a href="{{ route('resource.demo') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
+                        <i class="bi bi-eye-fill me-2"></i> View Demo Resource
                     </a>
                     <a href="{{ route('register') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
                         <i class="bi bi-bag-plus-fill me-2"></i> Become Seller
                     </a>
                 </div>
 
-                <!-- Bottom Statistics Grid -->
+
+                <!-- Bottom Statistics Grid with Animated Counters -->
                 <div class="pt-4 border-top border-white border-opacity-20">
                     <div class="row g-3 text-center text-lg-start">
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0">10K+</div>
+                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="10" data-suffix="K+">0K+</div>
                             <div class="small text-white text-opacity-80 fw-semibold">Templates</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0">2K+</div>
+                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="2" data-suffix="K+">0K+</div>
                             <div class="small text-white text-opacity-80 fw-semibold">Creators</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0">50K+</div>
+                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="50" data-suffix="K+">0K+</div>
                             <div class="small text-white text-opacity-80 fw-semibold">Downloads</div>
                         </div>
                     </div>
@@ -320,7 +450,7 @@
                                 <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
                                 <span class="small fw-semibold text-white ms-2">Noksha Studio Canvas v2.4</span>
                             </div>
-                            <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 small border border-white border-opacity-25">
+                            <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 small border border-white border-opacity-25 animate-badge-float">
                                 <i class="bi bi-stars text-warning me-1"></i> AI Powered
                             </span>
                         </div>
@@ -335,7 +465,7 @@
                                     <div class="h6 fw-bold text-white mb-0">E-Commerce Brand Kit.fig</div>
                                     <div class="small text-white text-opacity-75">Figma UI Kit & Vector Presets</div>
                                 </div>
-                                <span class="badge bg-success text-white rounded-pill px-2.5 py-1">Verified</span>
+                                <span class="badge bg-success text-white rounded-pill px-2.5 py-1 animate-badge-float">Verified</span>
                             </div>
 
                             <!-- Design Tool Badges -->
@@ -391,12 +521,12 @@
 </section>
 
 
-<!-- FEATURED TEMPLATES SECTION (REDESIGNED FIGMA-LEVEL MARKETPLACE UI) -->
-<section id="templates" class="py-5 py-lg-6 featured-templates-section">
+<!-- FEATURED TEMPLATES SECTION (REDESIGNED FIGMA/DRIBBBLE FLOATING GLASS FILTER BAR & POLISHED CARDS) -->
+<section id="templates" class="py-5 py-lg-6 featured-templates-section reveal-on-scroll">
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
                 <i class="bi bi-stars me-1"></i> Featured Showcase
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
@@ -407,48 +537,99 @@
             </p>
         </div>
 
+        <!-- FLOATING GLASSMORPHISM FILTER BAR -->
+        <div class="card p-3.5 p-md-4 border-0 shadow-lg mb-4 rounded-4 filter-bar-glass position-relative overflow-hidden">
+            <!-- Top Row: Search Input (Left) & Sort Dropdown (Right) -->
+            <div class="row g-3 align-items-center mb-3">
+                <!-- Search Input (Left) -->
+                <div class="col-12 col-md-7 col-lg-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white bg-opacity-75 border-end-0 text-muted ps-3.5 rounded-pill-start">
+                            <i class="bi bi-search text-primary fs-6"></i>
+                        </span>
+                        <input type="text" id="filterSearchInput" class="form-control bg-white bg-opacity-75 border-start-0 shadow-none ps-1 rounded-pill-end fs-6 text-dark" placeholder="Search templates, categories, keywords..." aria-label="Search">
+                    </div>
+                </div>
+
+                <!-- Sort Dropdown (Right) -->
+                <div class="col-12 col-md-5 col-lg-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small fw-bold text-muted text-nowrap d-none d-sm-inline"><i class="bi bi-sort-down text-primary me-1"></i> Sort:</span>
+                        <select id="sortSelect" class="form-select bg-white bg-opacity-75 border shadow-none rounded-pill text-dark fw-semibold fs-6">
+                            <option value="popular">Most Popular</option>
+                            <option value="newest">Newest First</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separate Row: Premium Category Chips -->
+            <div class="d-flex align-items-center gap-2.5 overflow-x-auto pt-3 border-top border-purple-subtle pb-1 no-scrollbar">
+                <span class="small fw-bold text-muted text-uppercase tracking-wider me-2 flex-shrink-0"><i class="bi bi-funnel-fill text-primary me-1"></i> Category:</span>
+                <button type="button" class="btn cat-chip-pill active" data-cat="All">All</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="UI Kit">UI Kit</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="Logo">Logo</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="Social">Social</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="Branding">Branding</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="Poster">Poster</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="Web">Web</button>
+                <button type="button" class="btn cat-chip-pill" data-cat="3D">3D</button>
+            </div>
+        </div>
+
+        <!-- Result Counter Badge -->
+        <div class="d-flex align-items-center justify-content-between mb-4 px-1">
+            <div class="small fw-bold text-muted">
+                <i class="bi bi-layers me-1 text-primary"></i> <span id="resultCountText">Showing 6 templates</span>
+            </div>
+        </div>
+
         <!-- 6 Modern Cards Grid (Desktop: 3 cols col-lg-4, Tablet: 2 cols col-md-6, Mobile: 1 col col-12) -->
-        <div class="row g-4">
+        <div class="row g-4" id="templateCardsContainer">
             
             <!-- Card 1 -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="fintech mobile app ui kit" data-category="UI Kit" data-price="paid" data-downloads="1400" data-price-val="499" data-id="1">
                 <div class="card h-100 template-card-figma">
-                    <!-- Gradient Preview Area -->
+                    <!-- Bigger Gradient Preview Area -->
                     <div class="template-preview-area card-grad-1 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                             <line x1="8" y1="21" x2="16" y2="21"></line>
                             <line x1="12" y1="17" x2="12" y2="21"></line>
                         </svg>
                         <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
                             UI Kit
                         </span>
                     </div>
 
                     <!-- Card Content -->
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                            <!-- Rating Pill -->
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.9 (128)
                             </span>
+                            <!-- Download Badge -->
                             <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.4k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Fintech Mobile App UI Kit">
+                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Fintech Mobile App UI Kit">
                             Fintech Mobile App UI Kit
                         </h5>
                         <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             50+ iOS & Android screens with dark and light mode vector components.
                         </p>
 
-                        <!-- Price & Purple CTA Button -->
+                        <!-- Price Badge & Purple CTA Button -->
                         <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
                                 <span class="fw-extrabold text-dark fs-5">৳499</span>
                             </div>
-                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
+                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
                                 View Details
                             </a>
                         </div>
@@ -457,38 +638,40 @@
             </div>
 
             <!-- Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="corporate business flyer" data-category="Vector" data-price="free" data-downloads="2800" data-price-val="0" data-id="2">
                 <div class="card h-100 template-card-figma">
-                    <!-- Gradient Preview Area -->
+                    <!-- Bigger Gradient Preview Area -->
                     <div class="template-preview-area card-grad-2 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                             <polyline points="2 17 12 22 22 17"></polyline>
                             <polyline points="2 12 12 17 22 12"></polyline>
                         </svg>
                         <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
                             Vector
                         </span>
                     </div>
 
                     <!-- Card Content -->
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                            <!-- Rating Pill -->
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.8 (94)
                             </span>
+                            <!-- Download Badge -->
                             <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>2.8k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Corporate Business Flyer">
+                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Corporate Business Flyer">
                             Corporate Business Flyer
                         </h5>
                         <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             Print-ready A4 vector layout for corporate brand presentations.
                         </p>
 
-                        <!-- Price & Purple CTA Button -->
+                        <!-- Price Badge & Purple CTA Button -->
                         <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
@@ -503,38 +686,40 @@
             </div>
 
             <!-- Card 3 -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="instagram post & story bundle" data-category="Social Media" data-price="paid" data-downloads="3100" data-price-val="299" data-id="3">
                 <div class="card h-100 template-card-figma">
-                    <!-- Gradient Preview Area -->
+                    <!-- Bigger Gradient Preview Area -->
                     <div class="template-preview-area card-grad-3 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                         </svg>
                         <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
                             Social Media
                         </span>
                     </div>
 
                     <!-- Card Content -->
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                            <!-- Rating Pill -->
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>5.0 (210)
                             </span>
+                            <!-- Download Badge -->
                             <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>3.1k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Instagram Post & Story Bundle">
+                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Instagram Post & Story Bundle">
                             Instagram Post & Story Bundle
                         </h5>
                         <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             30 minimalist social media layouts for agency marketing.
                         </p>
 
-                        <!-- Price & Purple CTA Button -->
+                        <!-- Price Badge & Purple CTA Button -->
                         <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
@@ -549,38 +734,40 @@
             </div>
 
             <!-- Card 4 -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="3d isometric tech icons" data-category="3D Mockup" data-price="paid" data-downloads="950" data-price-val="199" data-id="4">
                 <div class="card h-100 template-card-figma">
-                    <!-- Gradient Preview Area -->
+                    <!-- Bigger Gradient Preview Area -->
                     <div class="template-preview-area card-grad-4 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
                         <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
                             3D Mockup
                         </span>
                     </div>
 
                     <!-- Card Content -->
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                            <!-- Rating Pill -->
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.9 (67)
                             </span>
+                            <!-- Download Badge -->
                             <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>950 downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="3D Isometric Tech Icons">
+                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="3D Isometric Tech Icons">
                             3D Isometric Tech Icons
                         </h5>
                         <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             High-res transparent PNG & Blender 3D source files included.
                         </p>
 
-                        <!-- Price & Purple CTA Button -->
+                        <!-- Price Badge & Purple CTA Button -->
                         <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
@@ -595,36 +782,38 @@
             </div>
 
             <!-- Card 5 -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="minimalist agency logo kit" data-category="Branding" data-price="free" data-downloads="1900" data-price-val="0" data-id="5">
                 <div class="card h-100 template-card-figma">
-                    <!-- Gradient Preview Area -->
+                    <!-- Bigger Gradient Preview Area -->
                     <div class="template-preview-area card-grad-5 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                         </svg>
                         <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
                             Branding
                         </span>
                     </div>
 
                     <!-- Card Content -->
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                            <!-- Rating Pill -->
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.7 (112)
                             </span>
+                            <!-- Download Badge -->
                             <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.9k downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="Minimalist Agency Logo Kit">
+                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Minimalist Agency Logo Kit">
                             Minimalist Agency Logo Kit
                         </h5>
                         <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             Fully editable vector logotypes with font pairing guidelines.
                         </p>
 
-                        <!-- Price & Purple CTA Button -->
+                        <!-- Price Badge & Purple CTA Button -->
                         <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
@@ -639,38 +828,40 @@
             </div>
 
             <!-- Card 6 -->
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="saas web admin system" data-category="SaaS System" data-price="paid" data-downloads="820" data-price-val="299" data-id="6">
                 <div class="card h-100 template-card-figma">
-                    <!-- Gradient Preview Area -->
+                    <!-- Bigger Gradient Preview Area -->
                     <div class="template-preview-area card-grad-6 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="3" y1="9" x2="21" y2="9"></line>
                             <line x1="9" y1="21" x2="9" y2="9"></line>
                         </svg>
                         <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
                             SaaS System
                         </span>
                     </div>
 
                     <!-- Card Content -->
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
+                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                            <!-- Rating Pill -->
                             <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
                                 <i class="bi bi-star-fill text-warning me-1"></i>4.9 (88)
                             </span>
+                            <!-- Download Badge -->
                             <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>820 downloads</span>
                         </div>
 
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="SaaS Web Admin System">
+                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="SaaS Web Admin System">
                             SaaS Web Admin System
                         </h5>
                         <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                             Complete admin dashboard UI component library with charts.
                         </p>
 
-                        <!-- Price & Purple CTA Button -->
+                        <!-- Price Badge & Purple CTA Button -->
                         <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
                             <div>
                                 <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
@@ -690,11 +881,11 @@
 
 
 <!-- PROFESSIONAL CATEGORIES SECTION (IMMEDIATELY BELOW FEATURED TEMPLATES) -->
-<section id="categories" class="py-5 py-lg-6" style="background-color: #F8F5FF;">
+<section id="categories" class="py-5 py-lg-6 reveal-on-scroll" style="background-color: #F8F5FF;">
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
                 <i class="bi bi-grid-fill me-1"></i> Categories
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
@@ -710,7 +901,7 @@
             
             <!-- Category Card 1: UI Kits -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('UI Kit')">
                     <div class="cat-icon-wrapper card-grad-1 mb-3 shadow-sm">
                         <i class="bi bi-grid"></i>
                     </div>
@@ -721,7 +912,7 @@
 
             <!-- Category Card 2: Logos -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Logo')">
                     <div class="cat-icon-wrapper card-grad-3 mb-3 shadow-sm">
                         <i class="bi bi-vector-pen"></i>
                     </div>
@@ -732,7 +923,7 @@
 
             <!-- Category Card 3: Social Media -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Social')">
                     <div class="cat-icon-wrapper card-grad-5 mb-3 shadow-sm">
                         <i class="bi bi-instagram"></i>
                     </div>
@@ -743,7 +934,7 @@
 
             <!-- Category Card 4: Posters -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Poster')">
                     <div class="cat-icon-wrapper card-grad-4 mb-3 shadow-sm">
                         <i class="bi bi-image"></i>
                     </div>
@@ -754,7 +945,7 @@
 
             <!-- Category Card 5: Branding -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Branding')">
                     <div class="cat-icon-wrapper card-grad-2 mb-3 shadow-sm">
                         <i class="bi bi-palette"></i>
                     </div>
@@ -765,7 +956,7 @@
 
             <!-- Category Card 6: Web Design -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Web')">
                     <div class="cat-icon-wrapper card-grad-6 mb-3 shadow-sm">
                         <i class="bi bi-window"></i>
                     </div>
@@ -776,7 +967,7 @@
 
             <!-- Category Card 7: 3D Mockups -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('3D')">
                     <div class="cat-icon-wrapper cat-grad-7 mb-3 shadow-sm">
                         <i class="bi bi-box"></i>
                     </div>
@@ -787,7 +978,7 @@
 
             <!-- Category Card 8: Icons -->
             <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('UI Kit')">
                     <div class="cat-icon-wrapper cat-grad-8 mb-3 shadow-sm">
                         <i class="bi bi-stars"></i>
                     </div>
@@ -800,7 +991,7 @@
 
         <!-- Centered Bottom CTA Button -->
         <div class="text-center">
-            <a href="#categories" class="btn btn-purple-cta rounded-pill px-5 py-3 fs-6 fw-bold shadow-sm">
+            <a href="#templates" onclick="activateChipCategory('All')" class="btn btn-purple-cta rounded-pill px-5 py-3 fs-6 fw-bold shadow-sm">
                 View All Categories <i class="bi bi-arrow-right ms-2"></i>
             </a>
         </div>
@@ -809,11 +1000,11 @@
 
 
 <!-- TRENDING RESOURCES + AI RECOMMENDATION SECTION (IMMEDIATELY BELOW CATEGORIES) -->
-<section id="trending" class="py-5 py-lg-6" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8F5FF 100%);">
+<section id="trending" class="py-5 py-lg-6 reveal-on-scroll" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8F5FF 100%);">
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
                 <i class="bi bi-fire me-1 text-danger"></i> Trending
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
@@ -829,7 +1020,7 @@
             
             <!-- Left Column: Featured Large Card (7 Columns) -->
             <div class="col-12 col-lg-7">
-                <div class="card h-100 trending-card-figma">
+                <div class="card h-100 trending-card-figma" data-title="fintech mobile app ui kit" data-category="UI Kit" data-price="free" data-downloads="5200" data-price-val="0" data-id="101">
                     <!-- Gradient Preview Area -->
                     <div class="position-relative card-grad-1 p-4 d-flex align-items-center justify-content-center text-white" style="height: 280px;">
                         <svg width="88" height="88" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
@@ -839,7 +1030,7 @@
                         </svg>
 
                         <!-- Editor's Pick Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3.5 py-2 fw-bold small">
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3.5 py-2 fw-bold small animate-badge-float">
                             <i class="bi bi-award-fill text-primary me-1"></i> Editor's Pick
                         </span>
 
@@ -883,7 +1074,7 @@
             <div class="col-12 col-lg-5 d-flex flex-column gap-4">
                 
                 <!-- Right Card 1 -->
-                <div class="card h-100 trending-card-figma">
+                <div class="card h-100 trending-card-figma" data-title="corporate business flyer" data-category="Vector" data-price="paid" data-downloads="2100" data-price-val="299" data-id="102">
                     <div class="row g-0 align-items-center h-100">
                         <div class="col-5 card-grad-3 p-4 d-flex align-items-center justify-content-center text-white h-100 position-relative" style="min-height: 180px;">
                             <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
@@ -891,7 +1082,7 @@
                                 <polyline points="2 17 12 22 22 17"></polyline>
                                 <polyline points="2 12 12 17 22 12"></polyline>
                             </svg>
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm">
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm animate-badge-float">
                                 <i class="bi bi-stars text-primary me-1"></i> AI Recommended
                             </span>
                         </div>
@@ -916,7 +1107,7 @@
                 </div>
 
                 <!-- Right Card 2 -->
-                <div class="card h-100 trending-card-figma">
+                <div class="card h-100 trending-card-figma" data-title="instagram story bundle" data-category="Social Media" data-price="paid" data-downloads="3400" data-price-val="199" data-id="103">
                     <div class="row g-0 align-items-center h-100">
                         <div class="col-5 card-grad-5 p-4 d-flex align-items-center justify-content-center text-white h-100 position-relative" style="min-height: 180px;">
                             <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
@@ -924,7 +1115,7 @@
                                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                             </svg>
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm">
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm animate-badge-float">
                                 <i class="bi bi-graph-up-arrow text-success me-1"></i> Fast Growing
                             </span>
                         </div>
@@ -952,7 +1143,7 @@
         </div>
 
         <!-- Bottom AI Recommendation Strip -->
-        <div class="p-4 ai-strip-box d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+        <div class="p-4 ai-strip-box d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 reveal-on-scroll">
             <div class="d-flex align-items-center gap-3 text-center text-md-start">
                 <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
                     <i class="bi bi-robot fs-3 text-primary"></i>
@@ -972,7 +1163,7 @@
 
 
 <!-- AI FEATURES SPOTLIGHT -->
-<section id="ai-features" class="py-5 bg-light">
+<section id="ai-features" class="py-5 bg-light reveal-on-scroll">
     <div class="container py-4">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
@@ -1054,5 +1245,130 @@
         </div>
     </div>
 </section>
+
+<!-- SCROLL TO TOP BUTTON -->
+<button type="button" id="scrollTopBtn" class="btn btn-purple-cta rounded-circle position-fixed bottom-0 end-0 m-4 shadow-lg d-flex align-items-center justify-content-center opacity-0 pointer-events-none" style="width: 50px; height: 50px; z-index: 1050; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);" aria-label="Scroll to top">
+    <i class="bi bi-arrow-up fs-5 text-white"></i>
+</button>
+
+<!-- FIGMA/DRIBBBLE FILTER CHIP UI & HERO INTERACTION ENGINE SCRIPT -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const heroSearchInput = document.getElementById('heroSearchInput');
+    const filterSearchInput = document.getElementById('filterSearchInput');
+    const catChips = document.querySelectorAll('.cat-chip-pill');
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    // 1. Sync Hero Search with Filter Bar Search Input
+    if (heroSearchInput && filterSearchInput) {
+        heroSearchInput.addEventListener('input', function (e) {
+            filterSearchInput.value = e.target.value;
+            if (e.target.value.trim() !== '') {
+                const templatesElem = document.getElementById('templates');
+                if (templatesElem) templatesElem.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        filterSearchInput.addEventListener('input', function () {
+            heroSearchInput.value = filterSearchInput.value;
+        });
+    }
+
+    // 2. Category Chips Active State Toggle
+    function setActiveChip(categoryName) {
+        catChips.forEach(chip => {
+            const chipCat = chip.getAttribute('data-cat');
+            if (chipCat === categoryName || (categoryName === 'All' && chipCat === 'All')) {
+                chip.classList.add('active');
+            } else {
+                chip.classList.remove('active');
+            }
+        });
+    }
+
+    catChips.forEach(chip => {
+        chip.addEventListener('click', function () {
+            const selectedCat = this.getAttribute('data-cat');
+            setActiveChip(selectedCat);
+        });
+    });
+
+    window.activateChipCategory = function (categoryName) {
+        setActiveChip(categoryName);
+        const templatesElem = document.getElementById('templates');
+        if (templatesElem) {
+            templatesElem.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    // 3. Scroll Reveal Observer
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+
+    // 4. Statistics Counters Animation on Scroll
+    let countersAnimated = false;
+    function animateCounters() {
+        const counters = document.querySelectorAll('.stat-counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target') || 0, 10);
+            const suffix = counter.getAttribute('data-suffix') || '';
+            let start = 0;
+            const duration = 1800;
+            const stepTime = 20;
+            const totalSteps = duration / stepTime;
+            const increment = target / totalSteps;
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    counter.textContent = target + suffix;
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.floor(start) + suffix;
+                }
+            }, stepTime);
+        });
+    }
+
+    const heroStatSection = document.querySelector('.stat-counter');
+    if (heroStatSection) {
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !countersAnimated) {
+                    countersAnimated = true;
+                    animateCounters();
+                }
+            });
+        }, { threshold: 0.5 });
+        statObserver.observe(heroStatSection);
+    }
+
+    // 5. Scroll-to-Top Button Handler
+    if (scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                scrollTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+                scrollTopBtn.classList.add('opacity-100');
+            } else {
+                scrollTopBtn.classList.remove('opacity-100');
+                scrollTopBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+});
+</script>
 
 @endsection

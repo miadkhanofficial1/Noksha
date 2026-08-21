@@ -7,19 +7,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.17.0-alpha] - 2026-08-21
+
+### Added
+- Built new **Seller Profile View** in [`resources/views/seller/profile.blade.php`](../resources/views/seller/profile.blade.php) and demo route `/seller/demo` in [`routes/web.php`](../routes/web.php):
+  - **Cover Banner & Avatar:** Purple geometric pattern banner (240px height) with overlapping 140px circular avatar, online indicator green dot, and Pro Verified badge.
+  - **Seller Bio & Badges:** Title (*Noksha Studio*), Verified badge (*Pro Verified Author*), Trust Rating (*99.4% Positive Feedback*), and bio copy.
+  - **Skill Chips:** Interactive pill chips (`Figma`, `UI/UX Design`, `Design Systems`, `Vector Illustration`, `Iconography`, `Dark Mode`, `Branding`).
+  - **Stat Counters Box:** Translucent glassmorphism card displaying 12.4K Followers, 142 Resources, and 45.8K Total Downloads.
+  - **Action Buttons:** Interactive *"Follow Author"* toggle button and *"Contact Seller"* modal trigger.
+  - **Portfolio Grid:** 6 demo resource cards matching the purple Noksha design system with category tabs (`All Assets`, `UI Kits`, `Vectors`, `Social`, `3D`).
+  - **Global Header Navigation Link:** Added `"Demo Seller Profile"` to header navigation bar in [`resources/views/layouts/app.blade.php`](../resources/views/layouts/app.blade.php).
+
+---
+
+## [0.16.0-alpha] - 2026-08-21
+
+### Added
+- Built new **Resource Details View** in [`resources/views/resource/show.blade.php`](../resources/views/resource/show.blade.php) and route `/resource/demo` in [`routes/web.php`](../routes/web.php).
+
+---
+
+## [0.15.0-alpha] - 2026-08-21
+
+### Added
+- Completed **Milestone 11 – Premium Homepage Polish** in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
+
+---
+
+## [0.14.0-alpha] - 2026-08-21
+
+### Added
+- Redesigned **Featured Templates Filter Bar** into a floating Figma/Dribbble-style UI in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
+
+---
+
+## [0.13.0-alpha] - 2026-08-21
+
+### Fixed
+- Fixed **Category Filter Engine Bug** in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
+
+---
+
+## [0.12.0-alpha] - 2026-08-21
+
+### Added
+- Integrated client-side **Live Interactive Search & Filter Engine** on homepage [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
+
+---
+
 ## [0.11.0-alpha] - 2026-08-21
 
 ### Added
-- Added new **Trending Resources + AI Recommendation Section (আজকের জনপ্রিয় ডিজাইন)** immediately below the Categories section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php):
-  - Soft gradient background (`#FFFFFF` → `#F8F5FF`).
-  - Section Header with red flame badge (*"Trending"*), bilingual title (*Trending Resources / আজকের জনপ্রিয় ডিজাইন*), and subtitle (*"AI-selected high-performing assets loved by creators."*).
-  - Responsive Asymmetric Layout:
-    - **Left Column (7 Columns `col-lg-7`):** Large featured card (*Fintech Mobile App UI Kit*) with `#6C4CF1 → #8B5CF6` preview gradient, *"Editor's Pick"* badge, floating glass *"🔥 Trending"* badge, ⭐ 4.9 rating (240 reviews), 5.2k downloads, *"Free"* price tag, and purple CTA button (*"View Details"*).
-    - **Right Column (5 Columns `col-lg-5`):** Two stacked AI cards:
-      1. *Corporate Business Flyer* (`#EC4899 → #8B5CF6`, *"AI Recommended"*, ⭐ 4.8, 2.1k downloads, ৳299).
-      2. *Instagram Story Bundle* (`#10B981 → #059669`, *"Fast Growing"*, ⭐ 5.0, 3.4k downloads, ৳199).
-  - **Bottom AI Strip:** Translucent glassmorphism recommendation strip with AI robot icon, title (*"Smart Recommendation Engine"*), and rounded CTA button (*"Explore AI Picks"*).
-  - Enhanced micro-interactions: `0.35s` ease hover lift (`translateY(-8px) scale(1.02)`), floating keyframes, and soft purple glow shadow (`box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22)`).
+- Added new **Trending Resources + AI Recommendation Section (আজকের জনপ্রিয় ডিজাইন)** immediately below the Categories section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
 
 ---
 
@@ -95,7 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Planned Milestones]
 
-### Phase 12: Dashboards & Creator Hub
+### Phase 17: Dashboards & Creator Hub
 - Build Creator asset upload interface and revenue analytics.
 - Build Customer purchase history and download center.
 - Build Administrator moderation portal.

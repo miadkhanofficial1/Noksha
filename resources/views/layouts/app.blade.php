@@ -53,8 +53,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold text-secondary" href="{{ route('home') }}#categories">
-                                <i class="bi bi-folder2-open me-1"></i> Categories
+                            <a class="nav-link fw-semibold {{ request()->routeIs('seller.demo') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('seller.demo') }}">
+                                <i class="bi bi-person-badge me-1"></i> Demo Seller Profile
                             </a>
                         </li>
                     </ul>

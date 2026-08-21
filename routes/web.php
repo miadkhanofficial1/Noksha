@@ -19,6 +19,18 @@ use Illuminate\Support\Facades\Route;
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Demo Resource Details Page
+Route::get('/resource/demo', function () {
+    return view('resource.show');
+})->name('resource.demo');
+
+// Demo Seller Profile Page
+Route::get('/seller/demo', function () {
+    return view('seller.profile');
+})->name('seller.demo');
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Guest Authentication Routes
