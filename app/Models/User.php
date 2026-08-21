@@ -57,6 +57,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * User's seller identity verification record.
+     */
+    public function verification(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(SellerVerification::class, 'user_id');
+    }
+
+    /**
      * User's uploaded design resources.
      */
     public function resources(): HasMany

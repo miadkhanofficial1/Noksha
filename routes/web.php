@@ -8,6 +8,10 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminResourceController;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SellerDashboardController;
+use App\Http\Controllers\SellerVerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,4 +82,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/otp/verify', [OtpController::class, 'showForm'])->name('otp.form');
     Route::post('/otp/send', [OtpController::class, 'send'])->name('otp.send');
     Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
+
+    // Seller Asset Upload Routes
+    Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
+    Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
+
+    // Seller Dashboard Routes
+    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])->name('seller.dashboard');
+    Route::delete('/seller/resource/{resource}', [SellerDashboardController::class, 'destroy'])->name('seller.resource.destroy');
+
+    // Super Admin Resource Approval Panel Routes
+    Route::get('/admin/resources', [AdminResourceController::class, 'index'])->name('admin.resources.index');
+    Route::post('/admin/resources/{resource}/approve', [AdminResourceController::class, 'approve'])->name('admin.resources.approve');
+    Route::post('/admin/resources/{resource}/reject', [AdminResourceController::class, 'reject'])->name('admin.resources.reject');
+
+    // Seller Identity Verification Routes
+    Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
+    Route::post('/seller/verification', [SellerVerificationController::class, 'store'])->name('seller.verification.store');
 });

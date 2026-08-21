@@ -53,8 +53,23 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('seller.dashboard') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('seller.dashboard') }}">
+                                <i class="bi bi-speedometer2 me-1 text-primary"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link fw-semibold {{ request()->routeIs('seller.demo') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('seller.demo') }}">
-                                <i class="bi bi-person-badge me-1"></i> Demo Seller Profile
+                                <i class="bi bi-person-badge me-1"></i> Seller Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('seller.verification.create') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('seller.verification.create') }}">
+                                <i class="bi bi-shield-check me-1 text-success"></i> Verify Identity
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('admin.resources.index') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('admin.resources.index') }}">
+                                <i class="bi bi-shield-lock-fill me-1 text-warning"></i> Admin Panel
                             </a>
                         </li>
                     </ul>
@@ -96,10 +111,22 @@
                                     <li class="px-3 py-2 border-bottom">
                                         <div class="fw-bold small text-dark">{{ auth()->user()->name }}</div>
                                         <div class="text-muted small">@ {{ auth()->user()->username }}</div>
-                                        <span class="badge bg-primary bg-opacity-10 text-primary mt-1" style="font-size: 0.7rem;">
-                                            Role: {{ ucfirst(auth()->user()->role) }} (Buyer & Contributor)
-                                        </span>
+                                    <li>
+                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.dashboard') }}">
+                                            <i class="bi bi-speedometer2 me-2 text-primary"></i> Seller Dashboard
+                                        </a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('resource.create') }}">
+                                            <i class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i> Upload Resource
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.demo') }}">
+                                            <i class="bi bi-person-badge me-2 text-primary"></i> My Profile
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider my-1"></li>
                                     <li>
                                         <form action="{{ route('logout') }}" method="POST">
                                             @csrf
