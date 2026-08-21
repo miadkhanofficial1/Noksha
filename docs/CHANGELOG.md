@@ -7,84 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0-alpha] - 2026-08-21
+
+### Added
+- Refined UI finish of [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php) to a premium Figma-level standard:
+  - Enhanced Hero background with a 3-stop smooth gradient (`#6C4CF1` → `#8B5CF6` → `#9F7AEA`) and multi-layer radial glow overlays.
+  - Added pure CSS `@keyframes fadeInUp` entrance animation and floating keyframe animation (`@keyframes floatSlow`) for glassmorphism cards.
+  - Upgraded Hero Search Bar with glassmorphism styling (`backdrop-filter: blur(16px)`), white translucent container, and focus ring expansion.
+  - Upgraded CTA buttons with white/purple gradient fill, subtle depth shadows, and lift transitions.
+  - Glassmorphism studio illustration card updated with enhanced backdrop blur (`24px`), border highlights, and floating badge layering.
+  - Upgraded Featured Template Cards:
+    - Increased preview container height to `210px` with SVG scaling hover effects.
+    - 24px border radius (`1.5rem`) and soft purple shadow glow on hover (`translateY(-10px)`).
+    - Cleaner price tags and warning-badge rating layouts.
+
+---
+
+## [0.7.0-alpha] - 2026-08-21
+
+### Added
+- Added new **Featured Templates (জনপ্রিয় টেমপ্লেট)** section immediately below the Hero Section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php).
+
+---
+
 ## [0.6.0-alpha] - 2026-08-21
 
 ### Added
-- Upgraded homepage Hero Section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php) with a premium Figma-level Bootstrap 5 UI:
-  - Custom purple gradient background (`#6C4CF1` → `#8B5CF6`).
-  - Large bilingual headline: *"বাংলার সেরা Graphic Marketplace"*.
-  - Subtitle: *"AI-powered marketplace for templates, UI kits, vectors and digital assets."*
-  - Large rounded-pill search bar with search icon and action button.
-  - Dual CTA buttons: *"Explore Templates"* and *"Become Seller"* (routed to seller registration).
-  - Right-side modern glassmorphism UI canvas mockup (pure CSS/HTML glass backdrop, Figma/PSD/AI/SVG badges, verified indicators, ratings, and floating overlays).
-  - Bottom statistics grid displaying `10K+ Templates`, `2K+ Creators`, `50K+ Downloads`.
+- Upgraded homepage Hero Section in [`resources/views/welcome.blade.php`](../resources/views/welcome.blade.php) with a premium Figma-level Bootstrap 5 UI.
 
 ---
 
 ## [0.5.0-alpha] - 2026-08-21
 
 ### Added
-- Built full authentication foundation and workflow controllers in `app/Http/Controllers/Auth/`:
-  - `RegisterController.php`: Handles registration with Name, unique Username validation, Email, optional Phone, and Password confirmation. Enforces default role `role = 'user'` (dual Buyer & Contributor capability) and fires `Registered` event.
-  - `LoginController.php`: Supports login by either **Email or Username** with password authentication and session regeneration / destruction.
-  - `VerificationController.php`: Implements email verification notices, signed verification links, and resend notifications.
-  - `ForgotPasswordController.php` & `ResetPasswordController.php`: Full password reset email request and password token reset handling.
-  - `SocialAuthController.php`: Prepared Google OAuth login architecture placeholder structure (`auth.google` & `auth.google.callback`).
-  - `OtpController.php` & `OtpService.php`: Prepared 6-digit OTP code generation and verification architecture stub for future SMS gateway integration.
-- Updated `app/Models/User.php` to implement `MustVerifyEmail` and extend `Authenticatable`.
-- Built Bootstrap 5 styled bilingual (Bangla + English) responsive Auth views in `resources/views/auth/`:
-  - `register.blade.php`, `login.blade.php`, `verify.blade.php`, `passwords/email.blade.php`, `passwords/reset.blade.php`, `otp.blade.php`.
-- Integrated active guest sign-in / registration links and authenticated user profile dropdown in [`resources/views/layouts/app.blade.php`](../resources/views/layouts/app.blade.php).
+- Built full authentication foundation and workflow controllers in `app/Http/Controllers/Auth/`.
 
 ---
 
 ## [0.4.0-alpha] - 2026-08-21
 
 ### Added
-- Designed core database architecture with 8 Laravel 12 migration files in `database/migrations/`:
-  - `2026_08_21_000001_create_users_table.php` (User accounts with roles, avatar, trust score, verification, and soft deletes).
-  - `2026_08_21_000002_create_categories_table.php` (Nested categories hierarchy with `parent_id` foreign key).
-  - `2026_08_21_000003_create_resources_table.php` (Graphic templates, preview images, file paths, tags, prices, statuses, download/view counts).
-  - `2026_08_21_000004_create_carts_table.php` (User shopping cart items with unique constraints).
-  - `2026_08_21_000005_create_orders_table.php` (Customer orders, payment statuses, total prices, and unique order numbers).
-  - `2026_08_21_000006_create_order_items_table.php` (Line items linking orders to digital resources).
-  - `2026_08_21_000007_create_reviews_table.php` (Ratings & feedback on resources with user constraints).
-  - `2026_08_21_000008_create_notifications_table.php` (System notifications for users with read status).
-- Created 8 Eloquent models in `app/Models/` with foreign keys, type casts, and full bidirectional relationships.
+- Designed core database architecture with 8 Laravel 12 migration files in `database/migrations/`.
 
 ---
 
 ## [0.3.0-alpha] - 2026-08-21
 
 ### Added
-- Created comprehensive Laravel `.gitignore` file excluding `node_modules`, `public/build`, `vendor`, `.env`, storage logs, and IDE configuration folders.
-- Configured `.env` & `.env.example` for MySQL integration (`noksha_db`).
-- Added complete Laragon setup instructions and Virtual Host configuration for `noksha.test` in [`docs/INSTALL.md`](INSTALL.md).
-- Updated [`docs/README.md`](README.md) with stack specifications and database credentials.
+- Created comprehensive Laravel `.gitignore` file and MySQL environment settings.
 
 ---
 
 ## [0.2.0-alpha] - 2026-08-21
 
 ### Added
-- Converted project folder into a modern **Laravel 12** project structure.
-- Configured PHP 8.3 target compatibility in `composer.json` and `.env`.
-- Integrated **Vite 6** with Bootstrap 5 and Sass processing (`vite.config.js`).
-- Created reusable base layout (`resources/views/layouts/app.blade.php`) and welcome homepage (`resources/views/welcome.blade.php`).
+- Converted project folder into a modern **Laravel 12** project structure with Bootstrap 5 & Vite.
 
 ---
 
 ## [0.1.0-alpha] - 2026-08-21
 
 ### Added
-- Initialized core repository folder structure: `docs/`, `prompts/`, `assets/`, `screenshots/`, `backup/`.
-- Created preliminary project documentation (`README.md`, `INSTALL.md`, `SRS.md`, `CHANGELOG.md`, `PRESENTATION.md`).
+- Initialized core repository folder structure and documentation files.
 
 ---
 
 ## [Planned Milestones]
 
-### Phase 7: Dashboards & Creator Hub
+### Phase 9: Dashboards & Creator Hub
 - Build Creator asset upload interface and revenue analytics.
 - Build Customer purchase history and download center.
 - Build Administrator moderation portal.
