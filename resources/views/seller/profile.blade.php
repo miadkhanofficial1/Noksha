@@ -175,12 +175,12 @@
                     <!-- Name & Badges -->
                     <div class="pb-1">
                         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1.5">
-                            <h2 class="fw-extrabold text-dark mb-0">Noksha Studio</h2>
-                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 fw-bold small">
-                                <i class="bi bi-patch-check-fill me-1"></i> Pro Verified Author
-                            </span>
+                            <h2 class="fw-extrabold text-dark mb-0">Miad Khan</h2>
                             <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold small">
-                                <i class="bi bi-shield-check me-1"></i> 99.4% Trust Rating
+                                <i class="bi bi-patch-check-fill me-1"></i> Contributor ✓
+                            </span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 fw-bold small">
+                                <i class="bi bi-shield-check me-1"></i> Verified Creator
                             </span>
                         </div>
                         <p class="text-secondary fw-semibold mb-2">

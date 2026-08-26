@@ -382,23 +382,23 @@
 
                 <!-- Bilingual Headline -->
                 <h1 class="display-3 fw-extrabold text-white mb-3 tracking-tight lh-sm">
-                    বাংলার সেরা <span class="text-warning">Graphic Marketplace</span>
+                    {{ __('marketplace.hero_title') }}
                 </h1>
 
                 <!-- Subtitle -->
                 <p class="fs-5 text-white text-opacity-90 mb-4 me-lg-4 lh-base" style="max-width: 620px;">
-                    AI-powered marketplace for templates, UI kits, vectors and digital assets.
+                    {{ __('marketplace.hero_subtitle') }}
                 </p>
 
                 <!-- Glassmorphism Search Bar -->
                 <div class="p-2 hero-search-box rounded-pill shadow-lg mb-4 text-start" style="max-width: 590px;">
-                    <form class="d-flex align-items-center" action="#templates" method="GET" onsubmit="event.preventDefault(); document.getElementById('templates').scrollIntoView({behavior:'smooth'});">
+                    <form class="d-flex align-items-center" action="{{ route('search.index') }}" method="GET">
                         <span class="ps-3 text-muted fs-5">
                             <i class="bi bi-search text-primary"></i>
                         </span>
-                        <input type="text" id="heroSearchInput" class="form-control border-0 shadow-none bg-transparent ps-3 text-dark fs-6" placeholder="Search templates, UI kits, vectors, logos..." aria-label="Search Marketplace">
-                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm btn-search-hero" type="button" onclick="document.getElementById('templates').scrollIntoView({behavior:'smooth'});" style="background: linear-gradient(135deg, #6C4CF1 0%, #4F46E5 100%);">
-                            Search / খুঁজুন
+                        <input type="text" name="q" id="heroSearchInput" class="form-control border-0 shadow-none bg-transparent ps-3 text-dark fs-6" placeholder="{{ __('marketplace.search_placeholder') }}" aria-label="Search Marketplace">
+                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm btn-search-hero" type="submit" style="background: linear-gradient(135deg, #6C4CF1 0%, #4F46E5 100%);">
+                            {{ __('app.search') }}
                         </button>
                     </form>
                 </div>
@@ -406,13 +406,13 @@
                 <!-- Hero CTA Buttons -->
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3 mb-5">
                     <a href="#templates" class="btn btn-cta-primary btn-lg rounded-pill px-4 py-3 fw-bold shadow-sm">
-                        <i class="bi bi-grid-3x3-gap-fill me-2"></i> Explore Templates
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i> {{ __('marketplace.explore_templates') }}
                     </a>
                     <a href="{{ route('resource.demo') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
                         <i class="bi bi-eye-fill me-2"></i> View Demo Resource
                     </a>
                     <a href="{{ route('register') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
-                        <i class="bi bi-bag-plus-fill me-2"></i> Become Seller
+                        <i class="bi bi-bag-plus-fill me-2"></i> {{ __('marketplace.become_seller') }}
                     </a>
                 </div>
 

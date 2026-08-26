@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Register - Noksha (নিবন্ধন - নকশা)')
+@section('title', __('auth.register') . ' - Noksha')
 
 @section('content')
 <div class="container py-5">
@@ -12,8 +12,8 @@
                     <div class="d-inline-flex align-items-center justify-content-center mb-3 noksha-logo-badge" style="width: 54px; height: 54px; font-size: 1.5rem;">
                         ন
                     </div>
-                    <h2 class="fw-bold text-dark mb-1">Create Account <span class="text-primary">(অ্যাকাউন্ট তৈরি করুন)</span></h2>
-                    <p class="text-muted small">Join Noksha as a Creator & Buyer to license and share templates</p>
+                    <h2 class="fw-bold text-dark mb-1">{{ __('auth.sign_up') }}</h2>
+                    <p class="text-muted small">Join Noksha as a Creator & Buyer</p>
                 </div>
 
                 <!-- Alert Messages -->
@@ -37,13 +37,13 @@
                             <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
                             <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
                         </svg>
-                        <span>Continue with Google / গুগল দিয়ে এগিয়ে যান</span>
+                        <span>{{ __('auth.google_sign_in') }}</span>
                     </a>
                 </div>
 
                 <div class="d-flex align-items-center my-3">
                     <hr class="flex-grow-1 text-muted opacity-25">
-                    <span class="px-3 text-muted small fw-semibold">OR REGISTER WITH EMAIL</span>
+                    <span class="px-3 text-muted small fw-semibold">{{ __('auth.or') }}</span>
                     <hr class="flex-grow-1 text-muted opacity-25">
                 </div>
 
@@ -54,7 +54,7 @@
                     <!-- Name -->
                     <div class="mb-3">
                         <label for="name" class="form-label fw-semibold text-dark">
-                            Full Name <span class="text-primary">(পূর্ণ নাম)</span> <span class="text-danger">*</span>
+                            {{ __('auth.name') }} <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control rounded-3 @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="e.g. Miad Khan" required autofocus>
                     </div>
@@ -62,19 +62,18 @@
                     <!-- Username -->
                     <div class="mb-3">
                         <label for="username" class="form-label fw-semibold text-dark">
-                            Username <span class="text-primary">(ইউজারনেম)</span> <span class="text-danger">*</span>
+                            {{ __('auth.username') }} <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text bg-light">@</span>
                             <input type="text" class="form-control rounded-end-3 @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username') }}" placeholder="e.g. miadkhan" required>
                         </div>
-                        <div class="form-text text-muted small">Must be unique. Used for your profile URL.</div>
                     </div>
 
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label fw-semibold text-dark">
-                            Email Address <span class="text-primary">(ইমেইল ঠিকানা)</span> <span class="text-danger">*</span>
+                            {{ __('auth.email') }} <span class="text-danger">*</span>
                         </label>
                         <input type="email" class="form-control rounded-3 @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="name@example.com" required>
                     </div>
@@ -82,7 +81,7 @@
                     <!-- Phone -->
                     <div class="mb-3">
                         <label for="phone" class="form-label fw-semibold text-dark">
-                            Phone Number <span class="text-primary">(ফোন নম্বর)</span> <span class="text-muted">(Optional)</span>
+                            {{ __('auth.phone') }} <span class="text-muted">(Optional)</span>
                         </label>
                         <input type="text" class="form-control rounded-3 @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="+8801700000000">
                     </div>
@@ -90,7 +89,7 @@
                     <!-- Password -->
                     <div class="mb-3">
                         <label for="password" class="form-label fw-semibold text-dark">
-                            Password <span class="text-primary">(পাসওয়ার্ড)</span> <span class="text-danger">*</span>
+                            {{ __('auth.password') }} <span class="text-danger">*</span>
                         </label>
                         <input type="password" class="form-control rounded-3 @error('password') is-invalid @enderror" id="password" name="password" placeholder="At least 8 characters" required>
                     </div>
@@ -98,26 +97,20 @@
                     <!-- Confirm Password -->
                     <div class="mb-4">
                         <label for="password_confirmation" class="form-label fw-semibold text-dark">
-                            Confirm Password <span class="text-primary">(পাসওয়ার্ড নিশ্চিত করুন)</span> <span class="text-danger">*</span>
+                            {{ __('auth.confirm_password') }} <span class="text-danger">*</span>
                         </label>
                         <input type="password" class="form-control rounded-3" id="password_confirmation" name="password_confirmation" placeholder="Re-enter password" required>
                     </div>
 
-                    <!-- Role Info Badge -->
-                    <div class="alert alert-light border rounded-3 p-3 mb-4 small text-muted">
-                        <i class="bi bi-info-circle-fill text-primary me-1"></i>
-                        Every account automatically operates as both a <strong>Buyer</strong> and a <strong>Contributor</strong>.
-                    </div>
-
                     <!-- Submit Button -->
                     <button type="submit" class="btn btn-noksha w-100 py-2.5 rounded-3 mb-3 fs-6">
-                        Create Account / অ্যাকাউন্ট তৈরি করুন
+                        {{ __('auth.register') }}
                     </button>
 
                     <!-- Footer Link -->
                     <div class="text-center text-muted small">
-                        Already have an account? 
-                        <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">Sign In / লগইন করুন</a>
+                        {{ __('auth.already_registered') }} 
+                        <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">{{ __('auth.login_now') }}</a>
                     </div>
                 </form>
 

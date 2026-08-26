@@ -80,17 +80,17 @@
         <div class="row align-items-center g-4">
             <div class="col-lg-8">
                 <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold mb-3 border border-white border-opacity-25">
-                    <i class="bi bi-shield-check-fill me-1 text-warning"></i> Seller Identity Verification (KYC)
+                    <i class="bi bi-shield-check-fill me-1 text-warning"></i> Contributor Identity Verification (KYC)
                 </span>
                 <h1 class="display-5 fw-extrabold text-white mb-2">
-                    Seller Identity Verification <span class="text-warning">(ভেরিফিকেশন)</span>
+                    Apply to Become Contributor <span class="text-warning">(ভেরিফিকেশন)</span>
                 </h1>
                 <p class="fs-6 text-white text-opacity-90 mb-0" style="max-width: 620px;">
-                    Verify your identity to earn the Pro Verified badge, unlock seller permissions, and build trust on Noksha Marketplace.
+                    Verify your identity to earn the Contributor badge, unlock publishing permissions, and build trust as a Verified Creator on Noksha.
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('seller.dashboard') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                <a href="{{ route('dashboard') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
                     <i class="bi bi-speedometer2 me-1"></i> Back to Dashboard
                 </a>
             </div>

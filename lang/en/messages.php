@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'home' => 'Home',
+    'search' => 'Search',
+    'templates' => 'Templates',
+    'ai_tools' => 'AI Tools',
+    'categories' => 'Categories',
+    'wishlist' => 'Wishlist',
+    'cart' => 'Cart',
+    'dashboard' => 'Dashboard',
+    'seller_dashboard' => 'Seller Dashboard',
+    'buyer_dashboard' => 'Buyer Dashboard',
+    'upload_resource' => 'Upload Resource',
+    'become_seller' => 'Become Seller',
+    'explore_templates' => 'Explore Templates',
+    'login' => 'Sign In',
+    'register' => 'Register',
+    'notifications' => 'Notifications',
+    'contests' => 'Contests',
+    'orders' => 'My Orders',
+    'verify_identity' => 'Verify Identity',
+    'logout' => 'Log Out',
+    'alerts' => 'Alerts',
+    'executive_admin' => 'Executive Admin Console',
+];

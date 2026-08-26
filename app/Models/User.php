@@ -30,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'bio',
         'trust_score',
         'is_verified',
+        'contributor_status',
     ];
 
     /**
@@ -55,6 +56,24 @@ class User extends Authenticatable implements MustVerifyEmail
             'trust_score' => 'float',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if user is an approved contributor / verified creator.
+     */
+    public function isContributor(): bool
+    {
+        return $this->contributor_status === 'approved'
+            || $this->is_verified
+            || in_array($this->role, ['admin', 'super_admin', 'seller']);
+    }
+
+    /**
+     * Check if user is a verified creator.
+     */
+    public function isVerifiedCreator(): bool
+    {
+        return (bool) $this->is_verified;
     }
 
     /**

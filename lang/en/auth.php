@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'login' => 'Sign In',
+    'register' => 'Register Account',
+    'sign_in' => 'Sign In',
+    'sign_up' => 'Create New Account',
+    'email' => 'Email Address',
+    'password' => 'Password',
+    'confirm_password' => 'Confirm Password',
+    'remember_me' => 'Remember Me',
+    'forgot_password' => 'Forgot Password?',
+    'reset_password' => 'Reset Password',
+    'name' => 'Full Name',
+    'username' => 'Username',
+    'phone' => 'Phone Number',
+    'role' => 'Account Type',
+    'buyer' => 'Buyer (Customer)',
+    'seller' => 'Seller (Designer)',
+    'verify_email' => 'Verify Email Address',
+    'already_registered' => 'Already registered?',
+    'dont_have_account' => 'Don\'t have an account?',
+    'register_now' => 'Register Now',
+    'login_now' => 'Sign In Now',
+    'logout' => 'Log Out',
+    'google_sign_in' => 'Sign In with Google',
+    'or' => 'OR',
+];

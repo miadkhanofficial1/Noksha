@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'home' => 'হোম',
+    'search' => 'খুঁজুন',
+    'templates' => 'টেমপ্লেট',
+    'ai_tools' => 'এআই টুলস',
+    'categories' => 'ক্যাটাগরি',
+    'wishlist' => 'উইশলিস্ট',
+    'cart' => 'কার্ট',
+    'dashboard' => 'ড্যাশবোর্ড',
+    'seller_dashboard' => 'সেলার ড্যাশবোর্ড',
+    'buyer_dashboard' => 'বায়ার ড্যাশবোর্ড',
+    'upload_resource' => 'আপলোড টেমপ্লেট',
+    'become_seller' => 'সেলার হন',
+    'explore_templates' => 'টেমপ্লেট দেখুন',
+    'login' => 'লগইন',
+    'register' => 'নিবন্ধন',
+    'notifications' => 'নোটিফিকেশন',
+    'contests' => 'কন্টেস্ট',
+    'orders' => 'অর্ডারসমূহ',
+    'verify_identity' => 'পরিচয় যাচাই (KYC)',
+    'logout' => 'লগআউট',
+    'alerts' => 'অ্যালার্ট',
+    'executive_admin' => 'এডমিন কনসোল',
+];

@@ -12,7 +12,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContestController;
 use App\Http\Controllers\ContestSubmissionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
@@ -34,6 +36,9 @@ use Illuminate\Support\Facades\Route;
 
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Language Switcher Route
+Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 // Smart Marketplace Search Route
 Route::get('/search', [SearchController::class, 'index'])->name('search.index');
@@ -105,12 +110,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
     Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
 
-    // Seller Dashboard Routes
-    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])->name('seller.dashboard');
+    // Unified User & Contributor Dashboard Route (/dashboard)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/buyer/dashboard', [DashboardController::class, 'index'])->name('buyer.dashboard');
+    Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
     Route::delete('/seller/resource/{resource}', [SellerDashboardController::class, 'destroy'])->name('seller.resource.destroy');
 
-    // Buyer Dashboard Route
-    Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
+    // Contributor Identity Verification Routes (Apply to Become Contributor)
+    Route::get('/contributor/apply', [SellerVerificationController::class, 'create'])->name('contributor.apply');
+    Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
+    Route::post('/seller/verification', [SellerVerificationController::class, 'store'])->name('seller.verification.store');
 
     // Cart Routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -139,33 +148,38 @@ Route::middleware('auth')->group(function () {
     // Seller Contest Submission Route
     Route::post('/contests/{contest}/submit', [ContestSubmissionController::class, 'store'])->name('contests.submit');
 
-    // Super Admin Design Contests Panel Routes
-    Route::get('/admin/contests', [ContestController::class, 'adminIndex'])->name('admin.contests.index');
-    Route::post('/admin/contests', [ContestController::class, 'adminStore'])->name('admin.contests.store');
-    Route::post('/admin/contests/{contest}/winner', [ContestController::class, 'selectWinner'])->name('admin.contests.winner');
-
     // Notification Center Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read/{notification}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
-    // Super Admin Executive Dashboard Routes
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    Route::post('/admin/users/{user}/toggle-status', [AdminDashboardController::class, 'toggleUserStatus'])->name('admin.users.toggleStatus');
-    Route::post('/admin/broadcast', [AdminDashboardController::class, 'broadcastNotification'])->name('admin.broadcast');
-
-    // Super Admin Resource Approval Panel Routes
-    Route::get('/admin/resources', [AdminResourceController::class, 'index'])->name('admin.resources.index');
-    Route::post('/admin/resources/{resource}/approve', [AdminResourceController::class, 'approve'])->name('admin.resources.approve');
-    Route::post('/admin/resources/{resource}/reject', [AdminResourceController::class, 'reject'])->name('admin.resources.reject');
-
     // Seller Identity Verification Routes
     Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
     Route::post('/seller/verification', [SellerVerificationController::class, 'store'])->name('seller.verification.store');
 
-    // Super Admin Seller Verification Review Routes
-    Route::get('/admin/verifications', [AdminVerificationController::class, 'index'])->name('admin.verifications.index');
-    Route::get('/admin/verifications/{verification}', [AdminVerificationController::class, 'show'])->name('admin.verifications.show');
-    Route::post('/admin/verifications/{verification}/approve', [AdminVerificationController::class, 'approve'])->name('admin.verifications.approve');
-    Route::post('/admin/verifications/{verification}/reject', [AdminVerificationController::class, 'reject'])->name('admin.verifications.reject');
+    // ==========================================
+    // SUPER ADMIN PROTECTED ROUTES (auth + admin)
+    // ==========================================
+    Route::middleware(['admin'])->group(function () {
+        // Super Admin Executive Dashboard Routes
+        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::post('/admin/users/{user}/toggle-status', [AdminDashboardController::class, 'toggleUserStatus'])->name('admin.users.toggleStatus');
+        Route::post('/admin/broadcast', [AdminDashboardController::class, 'broadcastNotification'])->name('admin.broadcast');
+
+        // Super Admin Resource Approval Panel Routes
+        Route::get('/admin/resources', [AdminResourceController::class, 'index'])->name('admin.resources.index');
+        Route::post('/admin/resources/{resource}/approve', [AdminResourceController::class, 'approve'])->name('admin.resources.approve');
+        Route::post('/admin/resources/{resource}/reject', [AdminResourceController::class, 'reject'])->name('admin.resources.reject');
+
+        // Super Admin Design Contests Panel Routes
+        Route::get('/admin/contests', [ContestController::class, 'adminIndex'])->name('admin.contests.index');
+        Route::post('/admin/contests', [ContestController::class, 'adminStore'])->name('admin.contests.store');
+        Route::post('/admin/contests/{contest}/winner', [ContestController::class, 'selectWinner'])->name('admin.contests.winner');
+
+        // Super Admin Seller Verification Review Routes
+        Route::get('/admin/verifications', [AdminVerificationController::class, 'index'])->name('admin.verifications.index');
+        Route::get('/admin/verifications/{verification}', [AdminVerificationController::class, 'show'])->name('admin.verifications.show');
+        Route::post('/admin/verifications/{verification}/approve', [AdminVerificationController::class, 'approve'])->name('admin.verifications.approve');
+        Route::post('/admin/verifications/{verification}/reject', [AdminVerificationController::class, 'reject'])->name('admin.verifications.reject');
+        });
 });
