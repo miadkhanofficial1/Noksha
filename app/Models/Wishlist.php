@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OrderItem extends Model
+class Wishlist extends Model
 {
     use HasFactory;
 
@@ -16,35 +16,20 @@ class OrderItem extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'order_id',
+        'user_id',
         'resource_id',
-        'price',
-        'quantity',
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * User owning this wishlist item.
      */
-    protected function casts(): array
+    public function user(): BelongsTo
     {
-        return [
-            'price' => 'float',
-            'quantity' => 'integer',
-        ];
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
-     * Parent order relationship.
-     */
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class, 'order_id');
-    }
-
-    /**
-     * Resource associated with this order item.
+     * Resource in the wishlist.
      */
     public function resource(): BelongsTo
     {

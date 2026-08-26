@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'phone',
         'role',
+        'status',
         'avatar',
         'bio',
         'trust_score',
@@ -94,6 +95,30 @@ class User extends Authenticatable implements MustVerifyEmail
     public function cartItems(): HasMany
     {
         return $this->hasMany(Cart::class, 'user_id');
+    }
+
+    /**
+     * User's wishlist items.
+     */
+    public function wishlistItems(): HasMany
+    {
+        return $this->hasMany(Wishlist::class, 'user_id');
+    }
+
+    /**
+     * User's contest submissions.
+     */
+    public function contestSubmissions(): HasMany
+    {
+        return $this->hasMany(ContestSubmission::class, 'user_id');
+    }
+
+    /**
+     * User's won contests.
+     */
+    public function wonContests(): HasMany
+    {
+        return $this->hasMany(Contest::class, 'winner_id');
     }
 
     /**

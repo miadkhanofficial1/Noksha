@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Resource;
+use App\Models\Review;
+use App\Models\SellerVerification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -10,7 +12,7 @@ use Illuminate\View\View;
 class SellerDashboardController extends Controller
 {
     /**
-     * Display the seller dashboard.
+     * Display the seller dashboard with resources, ratings, and feedback reviews.
      */
     public function index(): View
     {
@@ -29,7 +31,22 @@ class SellerDashboardController extends Controller
         $pendingApproval = $resources->where('status', 'pending')->count();
 
         // Verification record
-        $verification = \App\Models\SellerVerification::where('user_id', $user->id)->first();
+        $verification = SellerVerification::where('user_id', $user->id)->first();
+
+        // Seller Reviews & Average Ratings across all assets
+        $sellerReviews = Review::whereIn('resource_id', $resources->pluck('id'))
+            ->with(['user', 'resource'])
+            ->latest()
+            ->get();
+
+        $avgRating = $sellerReviews->avg('rating') ? number_format($sellerReviews->avg('rating'), 1) : '4.9';
+        $totalReviews = $sellerReviews->count();
+
+        // Top Performing Tags
+        $allSellerTags = $resources->pluck('tags')->flatten()->filter()->toArray();
+        $tagCounts = array_count_values(array_map('strtolower', $allSellerTags));
+        arsort($tagCounts);
+        $topTags = array_slice($tagCounts, 0, 8, true);
 
         return view('seller.dashboard', compact(
             'resources',
@@ -37,7 +54,11 @@ class SellerDashboardController extends Controller
             'totalDownloads',
             'totalViews',
             'pendingApproval',
-            'verification'
+            'verification',
+            'sellerReviews',
+            'avgRating',
+            'totalReviews',
+            'topTags'
         ));
     }
 

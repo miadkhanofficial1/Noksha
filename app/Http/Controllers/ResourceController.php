@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Resource;
+use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -51,18 +53,26 @@ class ResourceController extends Controller
         $filePath = $request->file('resource_file')->store('resources', 'public');
         $fileExtension = strtolower($request->file('resource_file')->getClientOriginalExtension());
 
-        // Process Tags array
-        $tagsArray = [];
+        // Process Manual & AI Auto-generated Tags
+        $manualTags = [];
         if (!empty($request->tags)) {
-            $tagsArray = array_map('trim', explode(',', $request->tags));
+            $manualTags = array_map('trim', explode(',', $request->tags));
         }
+
+        $categoryName = $request->category_id ? Category::find($request->category_id)?->name : null;
+        $tagsArray = \App\Services\TagService::generate(
+            $validated['title'],
+            $validated['description'],
+            $categoryName,
+            $manualTags
+        );
 
         // Generate unique slug
         $baseSlug = Str::slug($validated['title']);
         $slug = $baseSlug . '-' . Str::random(6);
 
         // Create Resource record
-        Resource::create([
+        $resource = Resource::create([
             'user_id' => auth()->id(),
             'category_id' => $request->category_id ?: null,
             'title' => $validated['title'],
@@ -81,7 +91,107 @@ class ResourceController extends Controller
             'views' => 0,
         ]);
 
+        // Send Notifications
+        \App\Models\Notification::send(
+            auth()->id(),
+            'Resource Uploaded',
+            "Your design asset \"{$resource->title}\" was uploaded and is pending approval.",
+            'seller',
+            route('seller.dashboard')
+        );
+
+        $adminUsers = \App\Models\User::where('role', 'admin')->get();
+        foreach ($adminUsers as $admin) {
+            \App\Models\Notification::send(
+                $admin->id,
+                'New Resource Pending Approval',
+                "Resource \"{$resource->title}\" by " . auth()->user()->name . " requires review.",
+                'admin',
+                route('admin.resources.index')
+            );
+        }
+
         return redirect()->route('resource.create')
             ->with('success', '✨ Asset uploaded successfully! Your template is pending moderation approval.');
+    }
+
+    /**
+     * Display details of a specific resource along with purchase verification & ratings.
+     */
+    public function show(string $slugOrId): View
+    {
+        $resource = Resource::where('slug', $slugOrId)
+            ->orWhere('id', $slugOrId)
+            ->with(['owner', 'category', 'reviews.user'])
+            ->first();
+
+        if (!$resource) {
+            $resource = Resource::with(['owner', 'category', 'reviews.user'])->latest()->first();
+        }
+
+        $hasPurchased = false;
+        $hasReviewed = false;
+
+        if ($resource) {
+            $resource->increment('views');
+
+            $relatedResources = Resource::where('status', 'approved')
+                ->where('id', '!=', $resource->id)
+                ->where('category_id', $resource->category_id)
+                ->take(3)
+                ->get();
+
+            if (auth()->check()) {
+                $hasPurchased = !$resource->is_paid || Order::where('user_id', auth()->id())
+                    ->where('payment_status', 'completed')
+                    ->whereHas('items', function ($query) use ($resource) {
+                        $query->where('resource_id', $resource->id);
+                    })
+                    ->exists();
+
+                $hasReviewed = Review::where('user_id', auth()->id())
+                    ->where('resource_id', $resource->id)
+                    ->exists();
+            }
+
+            $reviews = $resource->reviews()->with('user')->latest()->get();
+            $totalReviews = $reviews->count();
+            $avgRating = $totalReviews > 0 ? number_format($reviews->avg('rating'), 1) : '4.9';
+
+            $ratingBreakdown = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+            if ($totalReviews > 0) {
+                foreach ($reviews as $rev) {
+                    $star = (int) $rev->rating;
+                    if (isset($ratingBreakdown[$star])) {
+                        $ratingBreakdown[$star]++;
+                    }
+                }
+            }
+        } else {
+            $relatedResources = collect();
+            $reviews = collect();
+            $totalReviews = 0;
+            $avgRating = '4.9';
+            $ratingBreakdown = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        }
+
+        return view('resource.show', compact(
+            'resource',
+            'relatedResources',
+            'hasPurchased',
+            'hasReviewed',
+            'reviews',
+            'totalReviews',
+            'avgRating',
+            'ratingBreakdown'
+        ));
+    }
+
+    /**
+     * Display demo resource page.
+     */
+    public function showDemo(): View
+    {
+        return $this->show('demo');
     }
 }

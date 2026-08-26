@@ -43,6 +43,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('search.index') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('search.index') }}">
+                                <i class="bi bi-search me-1 text-primary"></i> Search
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link fw-semibold text-secondary" href="{{ route('home') }}#templates">
                                 <i class="bi bi-grid me-1"></i> Templates
                             </a>
@@ -50,6 +55,21 @@
                         <li class="nav-item">
                             <a class="nav-link fw-semibold text-secondary" href="{{ route('home') }}#ai-features">
                                 <i class="bi bi-magic me-1"></i> AI Tools
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('contests.*') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('contests.index') }}">
+                                <i class="bi bi-trophy-fill me-1 text-warning"></i> Contests
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('admin.dashboard') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('admin.dashboard') }}">
+                                <i class="bi bi-shield-lock-fill me-1 text-primary"></i> Executive Admin
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('admin.contests.*') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('admin.contests.index') }}">
+                                <i class="bi bi-award-fill me-1 text-danger"></i> Contests Admin
                             </a>
                         </li>
                         <li class="nav-item">
@@ -69,7 +89,12 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link fw-semibold {{ request()->routeIs('admin.resources.index') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('admin.resources.index') }}">
-                                <i class="bi bi-shield-lock-fill me-1 text-warning"></i> Admin Panel
+                                <i class="bi bi-shield-lock-fill me-1 text-warning"></i> Assets Admin
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold {{ request()->routeIs('admin.verifications.*') ? 'active text-primary' : 'text-secondary' }}" href="{{ route('admin.verifications.index') }}">
+                                <i class="bi bi-person-check-fill me-1 text-primary"></i> KYC Admin
                             </a>
                         </li>
                     </ul>
@@ -100,6 +125,68 @@
                                 </a>
                             @endif
 
+                            @php
+                                $wishCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
+                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->count();
+                                $notifCount = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
+                                $recentNotifs = \App\Models\Notification::where('user_id', auth()->id())->latest()->take(5)->get();
+                            @endphp
+                            <!-- Notification Bell Icon Dropdown -->
+                            <div class="dropdown me-1">
+                                <button class="btn btn-light border btn-sm position-relative rounded-3 px-2.5 py-1.5" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                                    <i class="bi bi-bell-fill text-warning fs-6 me-1"></i>
+                                    @if($notifCount > 0)
+                                        <span class="badge bg-danger rounded-pill extra-small me-1">{{ $notifCount }}</span>
+                                    @endif
+                                    <span class="d-none d-xl-inline small fw-semibold">Alerts</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-0 overflow-hidden" style="width: 320px;">
+                                    <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between">
+                                        <span class="fw-bold small text-dark"><i class="bi bi-bell me-1"></i> Notifications</span>
+                                        <span class="badge bg-primary rounded-pill extra-small">{{ $notifCount }} New</span>
+                                    </div>
+                                    <div class="list-group list-group-flush" style="max-height: 280px; overflow-y: auto;">
+                                        @if($recentNotifs->count() > 0)
+                                            @foreach($recentNotifs as $rn)
+                                                <form action="{{ route('notifications.read', $rn->id) }}" method="POST" class="m-0">
+                                                    @csrf
+                                                    <button type="submit" class="list-group-item list-group-item-action p-3 text-start border-bottom small {{ !$rn->is_read ? 'bg-light font-weight-bold' : '' }}">
+                                                        <div class="fw-bold text-dark extra-small">{{ $rn->title }}</div>
+                                                        <div class="text-muted extra-small line-clamp-1">{{ $rn->message }}</div>
+                                                        <div class="extra-small text-primary font-monospace mt-1">{{ $rn->created_at->diffForHumans() }}</div>
+                                                    </button>
+                                                </form>
+                                            @endforeach
+                                        @else
+                                            <div class="p-3 text-center text-muted extra-small">No notifications yet</div>
+                                        @endif
+                                    </div>
+                                    <div class="p-2 bg-light text-center border-top">
+                                        <a href="{{ route('notifications.index') }}" class="extra-small fw-bold text-primary text-decoration-none">
+                                            View All Notifications <i class="bi bi-arrow-right me-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Wishlist Icon Badge -->
+                            <a href="{{ route('wishlist.index') }}" class="btn btn-light border btn-sm position-relative rounded-3 px-2.5 py-1.5 me-1" title="Saved Wishlist">
+                                <i class="bi bi-heart-fill text-danger fs-6 me-1"></i>
+                                @if($wishCount > 0)
+                                    <span class="badge bg-danger rounded-pill extra-small me-1">{{ $wishCount }}</span>
+                                @endif
+                                <span class="d-none d-xl-inline small fw-semibold">Wishlist</span>
+                            </a>
+
+                            <!-- Cart Icon Badge -->
+                            <a href="{{ route('cart.index') }}" class="btn btn-light border btn-sm position-relative rounded-3 px-2.5 py-1.5 me-2" title="Shopping Cart">
+                                <i class="bi bi-cart-fill text-primary fs-6 me-1"></i>
+                                @if($cartCount > 0)
+                                    <span class="badge bg-primary rounded-pill extra-small me-1">{{ $cartCount }}</span>
+                                @endif
+                                <span class="d-none d-xl-inline small fw-semibold">Cart</span>
+                            </a>
+
                             <div class="dropdown">
                                 <button class="btn btn-light border btn-sm dropdown-toggle d-flex align-items-center gap-2 rounded-3 px-3 py-1.5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="noksha-logo-badge" style="width:26px; height:26px; font-size:0.8rem;">
@@ -111,6 +198,16 @@
                                     <li class="px-3 py-2 border-bottom">
                                         <div class="fw-bold small text-dark">{{ auth()->user()->name }}</div>
                                         <div class="text-muted small">@ {{ auth()->user()->username }}</div>
+                                    <li>
+                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('buyer.dashboard') }}">
+                                            <i class="bi bi-bag-heart-fill me-2 text-purple"></i> Buyer Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('orders.index') }}">
+                                            <i class="bi bi-receipt me-2 text-success"></i> My Orders
+                                        </a>
+                                    </li>
                                     <li>
                                         <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.dashboard') }}">
                                             <i class="bi bi-speedometer2 me-2 text-primary"></i> Seller Dashboard
@@ -224,6 +321,64 @@
             </div>
         </div>
     </footer>
+
+    <!-- GLOBAL TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+        @if(session('success'))
+            <div class="toast show align-items-center text-white bg-success border-0 shadow-lg rounded-4 p-1" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body small fw-bold">
+                        <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+        @if(session('warning'))
+            <div class="toast show align-items-center text-dark bg-warning border-0 shadow-lg rounded-4 p-1" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body small fw-bold">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('warning') }}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="toast show align-items-center text-white bg-danger border-0 shadow-lg rounded-4 p-1" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body small fw-bold">
+                        <i class="bi bi-exclamation-diamond-fill me-2"></i>{{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <!-- GLOBAL LOADING INDICATOR & UX SCRIPTS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Auto-hide toasts after 6 seconds
+            document.querySelectorAll('.toast').forEach(t => {
+                setTimeout(() => {
+                    const bsToast = bootstrap.Toast.getOrCreateInstance(t);
+                    bsToast.hide();
+                }, 6000);
+            });
+
+            // Form Submit Loading Indicator
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function () {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled && !form.hasAttribute('data-no-loader')) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1.5" role="status" aria-hidden="true"></span> Processing...';
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

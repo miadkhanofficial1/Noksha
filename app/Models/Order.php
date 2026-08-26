@@ -23,6 +23,8 @@ class Order extends Model
         'total',
         'payment_status',
         'payment_method',
+        'order_status',
+        'transaction_id',
     ];
 
     /**
@@ -35,6 +37,14 @@ class Order extends Model
         return [
             'total' => 'float',
         ];
+    }
+
+    /**
+     * Alias accessor for total_amount.
+     */
+    public function getTotalAmountAttribute(): float
+    {
+        return (float) $this->total;
     }
 
     /**

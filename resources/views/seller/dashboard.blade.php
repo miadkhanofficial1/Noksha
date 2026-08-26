@@ -128,9 +128,19 @@
             <div class="row align-items-center g-4 position-relative" style="z-index: 1;">
                 <div class="col-lg-8">
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold border border-white border-opacity-25">
-                            <i class="bi bi-patch-check-fill me-1 text-warning"></i> Pro Verified Author
-                        </span>
+                        @if(isset($verification) && $verification->status === 'approved')
+                            <span class="badge bg-success bg-opacity-90 text-white rounded-pill px-3 py-1.5 small fw-bold">
+                                <i class="bi bi-patch-check-fill me-1 text-warning"></i> Pro Verified Author
+                            </span>
+                        @elseif(isset($verification) && $verification->status === 'pending')
+                            <span class="badge bg-warning bg-opacity-90 text-dark rounded-pill px-3 py-1.5 small fw-bold">
+                                <i class="bi bi-clock-history me-1"></i> Verification Pending
+                            </span>
+                        @else
+                            <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold border border-white border-opacity-25">
+                                <i class="bi bi-shield-exclamation me-1"></i> Unverified Contributor
+                            </span>
+                        @endif
                         <span class="badge bg-success bg-opacity-90 text-white rounded-pill px-3 py-1.5 small fw-bold">
                             <i class="bi bi-shield-check me-1"></i> 99.4% Trust Score
                         </span>
@@ -213,7 +223,25 @@
                             <i class="bi bi-eye-fill me-1"></i> View Status
                         </a>
                     @endif
-                </div>
+        <!-- TOP PERFORMING TAGS WIDGET -->
+        <div class="card card-figma p-4 mb-4 border-0 shadow-sm rounded-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h6 class="fw-extrabold text-dark mb-0">
+                    <i class="bi bi-tags-fill me-2 text-primary"></i> Top Performing AI Tags
+                </h6>
+                <span class="extra-small text-muted font-monospace">Auto-Indexed Keywords</span>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                @if(isset($topTags) && count($topTags) > 0)
+                    @foreach($topTags as $tag => $count)
+                        <a href="{{ route('search.index', ['tag' => $tag]) }}" class="badge bg-primary bg-opacity-10 text-primary text-decoration-none rounded-pill px-3 py-2 extra-small fw-bold border border-primary border-opacity-10">
+                            #{{ $tag }} <span class="badge bg-primary rounded-circle ms-1 extra-small">{{ $count }}</span>
+                        </a>
+                    @endforeach
+                @else
+                    <span class="extra-small text-muted">Upload design assets to see your top performing keywords.</span>
+                @endif
             </div>
         </div>
 
@@ -484,6 +512,54 @@
                     <a href="{{ route('resource.create') }}" class="btn btn-purple-cta rounded-pill px-4 py-3 fw-bold">
                         <i class="bi bi-cloud-arrow-up-fill me-2"></i> Upload Your First Asset
                     </a>
+                </div>
+            @endif
+        </div>
+
+        <!-- RECENT CUSTOMER FEEDBACK & REVIEWS -->
+        <div class="card p-4 rounded-4 border-0 shadow-sm bg-white mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                <h5 class="fw-extrabold text-dark mb-0">
+                    <i class="bi bi-star-fill text-warning me-2"></i> Recent Customer Reviews ({{ $totalReviews }})
+                </h5>
+                <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-3 py-1 fw-bold">
+                    <i class="bi bi-star-fill text-warning me-1"></i> Average Rating: {{ $avgRating }} / 5.0
+                </span>
+            </div>
+
+            @if(isset($sellerReviews) && $sellerReviews->count() > 0)
+                <div class="row g-3">
+                    @foreach($sellerReviews->take(4) as $rev)
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 rounded-3 bg-light border">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-primary bg-opacity-20 text-primary fw-bold extra-small d-flex align-items-center justify-content-center" style="width:32px; height:32px;">
+                                            {{ strtoupper(substr($rev->user ? $rev->user->name : 'U', 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold small text-dark mb-0">{{ $rev->user ? $rev->user->name : 'Customer' }}</div>
+                                            <div class="extra-small text-success fw-semibold"><i class="bi bi-patch-check-fill me-1"></i> Verified Buyer</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-warning small">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="bi bi-star-fill{{ $i <= $rev->rating ? '' : ' text-muted opacity-25' }}"></i>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <p class="text-secondary extra-small mb-1 line-clamp-2">"{{ $rev->review }}"</p>
+                                <div class="extra-small text-muted font-monospace d-flex justify-content-between">
+                                    <span>Asset: {{ $rev->resource ? $rev->resource->title : 'Template' }}</span>
+                                    <span>{{ $rev->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-4">
+                    <p class="text-muted small mb-0"><i class="bi bi-chat-left-text me-1"></i> No customer reviews received yet. Reviews will appear here once verified buyers rate your templates.</p>
                 </div>
             @endif
         </div>

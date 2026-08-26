@@ -19,6 +19,8 @@ class Notification extends Model
         'user_id',
         'title',
         'message',
+        'type',
+        'action_url',
         'is_read',
         'read_at',
     ];
@@ -42,5 +44,20 @@ class Notification extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Helper method to dispatch a notification to a specific user.
+     */
+    public static function send(int $userId, string $title, string $message, string $type = 'system', ?string $actionUrl = null): self
+    {
+        return self::create([
+            'user_id' => $userId,
+            'title' => $title,
+            'message' => $message,
+            'type' => $type,
+            'action_url' => $actionUrl,
+            'is_read' => false,
+        ]);
     }
 }

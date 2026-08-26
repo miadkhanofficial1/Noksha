@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OrderItem extends Model
+class ContestSubmission extends Model
 {
     use HasFactory;
 
@@ -16,10 +16,13 @@ class OrderItem extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'order_id',
-        'resource_id',
-        'price',
-        'quantity',
+        'contest_id',
+        'user_id',
+        'title',
+        'preview_image',
+        'design_file',
+        'note',
+        'is_winner',
     ];
 
     /**
@@ -30,24 +33,23 @@ class OrderItem extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'float',
-            'quantity' => 'integer',
+            'is_winner' => 'boolean',
         ];
     }
 
     /**
-     * Parent order relationship.
+     * Parent contest.
      */
-    public function order(): BelongsTo
+    public function contest(): BelongsTo
     {
-        return $this->belongsTo(Order::class, 'order_id');
+        return $this->belongsTo(Contest::class, 'contest_id');
     }
 
     /**
-     * Resource associated with this order item.
+     * Submitting user (creator/seller).
      */
-    public function resource(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Resource::class, 'resource_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

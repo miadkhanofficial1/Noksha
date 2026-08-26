@@ -12,8 +12,11 @@ class AdminResourceController extends Controller
     /**
      * Display the Admin Resource Approval Panel with search & filters.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
+        if (!in_array(auth()->user()->role ?? 'user', ['admin', 'super_admin'])) {
+            return redirect()->route('home')->with('warning', 'Access restricted. Super Admin privileges required.');
+        }
         $query = Resource::with(['owner', 'category']);
 
         // Filter by Status if specified

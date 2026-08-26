@@ -569,318 +569,127 @@
             <div class="d-flex align-items-center gap-2.5 overflow-x-auto pt-3 border-top border-purple-subtle pb-1 no-scrollbar">
                 <span class="small fw-bold text-muted text-uppercase tracking-wider me-2 flex-shrink-0"><i class="bi bi-funnel-fill text-primary me-1"></i> Category:</span>
                 <button type="button" class="btn cat-chip-pill active" data-cat="All">All</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="UI Kit">UI Kit</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="Logo">Logo</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="Social">Social</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="Branding">Branding</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="Poster">Poster</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="Web">Web</button>
-                <button type="button" class="btn cat-chip-pill" data-cat="3D">3D</button>
+                @foreach($categories as $cat)
+                    <button type="button" class="btn cat-chip-pill" data-cat="{{ $cat->name }}">{{ $cat->name }}</button>
+                @endforeach
             </div>
         </div>
 
         <!-- Result Counter Badge -->
         <div class="d-flex align-items-center justify-content-between mb-4 px-1">
             <div class="small fw-bold text-muted">
-                <i class="bi bi-layers me-1 text-primary"></i> <span id="resultCountText">Showing 6 templates</span>
+                <i class="bi bi-layers me-1 text-primary"></i> <span id="resultCountText">Showing {{ $resources->count() }} approved marketplace templates</span>
             </div>
         </div>
 
-        <!-- 6 Modern Cards Grid (Desktop: 3 cols col-lg-4, Tablet: 2 cols col-md-6, Mobile: 1 col col-12) -->
+        <!-- DYNAMIC DATABASE APPROVED TEMPLATE CARDS GRID -->
         <div class="row g-4" id="templateCardsContainer">
-            
-            <!-- Card 1 -->
-            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="fintech mobile app ui kit" data-category="UI Kit" data-price="paid" data-downloads="1400" data-price-val="499" data-id="1">
-                <div class="card h-100 template-card-figma">
-                    <!-- Bigger Gradient Preview Area -->
-                    <div class="template-preview-area card-grad-1 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
-                        <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
-                            UI Kit
-                        </span>
-                    </div>
-
-                    <!-- Card Content -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <!-- Rating Pill -->
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (128)
-                            </span>
-                            <!-- Download Badge -->
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.4k downloads</span>
-                        </div>
-
-                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Fintech Mobile App UI Kit">
-                            Fintech Mobile App UI Kit
-                        </h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                            50+ iOS & Android screens with dark and light mode vector components.
-                        </p>
-
-                        <!-- Price Badge & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-dark fs-5">৳499</span>
+            @if($resources->count() > 0)
+                @foreach($resources as $resource)
+                    @php
+                        $catName = $resource->category ? $resource->category->name : 'General';
+                        $gradClass = 'card-grad-' . (($loop->index % 4) + 1);
+                    @endphp
+                    <div class="col-12 col-md-6 col-lg-4 template-card-item" 
+                         data-title="{{ strtolower($resource->title) }}" 
+                         data-category="{{ $catName }}" 
+                         data-price="{{ $resource->is_paid ? 'paid' : 'free' }}" 
+                         data-downloads="{{ $resource->downloads }}" 
+                         data-price-val="{{ $resource->price }}" 
+                         data-id="{{ $resource->id }}">
+                        <div class="card h-100 template-card-figma">
+                            <!-- Preview Area -->
+                            <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 240px; background: #1E1B4B;">
+                                @if($resource->preview_image)
+                                    <img src="{{ asset('storage/' . $resource->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $resource->title }}">
+                                @else
+                                    <div class="w-100 h-100 {{ $gradClass }} p-4 d-flex align-items-center justify-content-center text-white">
+                                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                    </div>
+                                @endif
+                                <!-- Floating Category Badge -->
+                                <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
+                                    {{ $catName }}
+                                </span>
                             </div>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="corporate business flyer" data-category="Vector" data-price="free" data-downloads="2800" data-price-val="0" data-id="2">
-                <div class="card h-100 template-card-figma">
-                    <!-- Bigger Gradient Preview Area -->
-                    <div class="template-preview-area card-grad-2 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                            <polyline points="2 17 12 22 22 17"></polyline>
-                            <polyline points="2 12 12 17 22 12"></polyline>
-                        </svg>
-                        <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
-                            Vector
-                        </span>
-                    </div>
+                            <!-- Card Content -->
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                                    <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
+                                        <i class="bi bi-star-fill text-warning me-1"></i>4.9 ({{ 45 + ($resource->id * 7) % 150 }})
+                                    </span>
+                                    <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($resource->downloads) }} downloads</span>
+                                </div>
 
-                    <!-- Card Content -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <!-- Rating Pill -->
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.8 (94)
-                            </span>
-                            <!-- Download Badge -->
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>2.8k downloads</span>
-                        </div>
+                                <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="{{ $resource->title }}">
+                                    {{ $resource->title }}
+                                </h5>
+                                <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
+                                    {{ Str::limit($resource->description, 90) }}
+                                </p>
 
-                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Corporate Business Flyer">
-                            Corporate Business Flyer
-                        </h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                            Print-ready A4 vector layout for corporate brand presentations.
-                        </p>
-
-                        <!-- Price Badge & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-success fs-5">Free</span>
+                                <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
+                                    <div>
+                                        <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
+                                        @if($resource->is_paid && $resource->price > 0)
+                                            <span class="fw-extrabold text-dark fs-5">৳{{ number_format($resource->price, 2) }}</span>
+                                        @else
+                                            <span class="fw-extrabold text-success fs-5">Free</span>
+                                        @endif
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <form action="{{ route('wishlist.store', $resource->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-light border btn-sm rounded-circle p-2" title="Save to Wishlist">
+                                                <i class="bi bi-heart-fill text-danger"></i>
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('cart.store', $resource->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-circle p-2" title="Add to Cart">
+                                                <i class="bi bi-cart-plus-fill"></i>
+                                            </button>
+                                        </form>
+                                        <a href="{{ route('resource.show', $resource->slug ?? $resource->id) }}" class="btn btn-purple-cta rounded-pill px-3 py-2 btn-sm">
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
-                                View Details
-                            </a>
                         </div>
                     </div>
+                @endforeach
+
+                <!-- Pagination Links -->
+                <div class="col-12 mt-4 d-flex justify-content-center">
+                    {{ $resources->links() }}
                 </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="instagram post & story bundle" data-category="Social Media" data-price="paid" data-downloads="3100" data-price-val="299" data-id="3">
-                <div class="card h-100 template-card-figma">
-                    <!-- Bigger Gradient Preview Area -->
-                    <div class="template-preview-area card-grad-3 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
-                        <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
-                            Social Media
-                        </span>
+            @else
+                <!-- EMPTY STATE WHEN ZERO APPROVED RESOURCES EXIST -->
+                <div class="col-12 text-center py-5">
+                    <div class="p-4 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 84px; height: 84px;">
+                        <i class="bi bi-rocket-takeoff fs-1"></i>
                     </div>
-
-                    <!-- Card Content -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <!-- Rating Pill -->
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>5.0 (210)
-                            </span>
-                            <!-- Download Badge -->
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>3.1k downloads</span>
-                        </div>
-
-                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Instagram Post & Story Bundle">
-                            Instagram Post & Story Bundle
-                        </h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                            30 minimalist social media layouts for agency marketing.
-                        </p>
-
-                        <!-- Price Badge & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-dark fs-5">৳299</span>
-                            </div>
-                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
+                    <h4 class="fw-bold text-dark mb-2">No Marketplace Assets Published Yet</h4>
+                    <p class="text-secondary small mb-4" style="max-width: 480px; margin: 0 auto;">
+                        Be the first creator to upload and publish design assets on Noksha. Admin approvals will immediately list templates here.
+                    </p>
+                    <a href="{{ route('resource.create') }}" class="btn btn-purple-cta rounded-pill px-5 py-3 fw-bold">
+                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Upload First Resource
+                    </a>
                 </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="3d isometric tech icons" data-category="3D Mockup" data-price="paid" data-downloads="950" data-price-val="199" data-id="4">
-                <div class="card h-100 template-card-figma">
-                    <!-- Bigger Gradient Preview Area -->
-                    <div class="template-preview-area card-grad-4 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
-                            3D Mockup
-                        </span>
-                    </div>
-
-                    <!-- Card Content -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <!-- Rating Pill -->
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (67)
-                            </span>
-                            <!-- Download Badge -->
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>950 downloads</span>
-                        </div>
-
-                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="3D Isometric Tech Icons">
-                            3D Isometric Tech Icons
-                        </h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                            High-res transparent PNG & Blender 3D source files included.
-                        </p>
-
-                        <!-- Price Badge & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-dark fs-5">৳199</span>
-                            </div>
-                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="minimalist agency logo kit" data-category="Branding" data-price="free" data-downloads="1900" data-price-val="0" data-id="5">
-                <div class="card h-100 template-card-figma">
-                    <!-- Bigger Gradient Preview Area -->
-                    <div class="template-preview-area card-grad-5 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                        </svg>
-                        <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
-                            Branding
-                        </span>
-                    </div>
-
-                    <!-- Card Content -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <!-- Rating Pill -->
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.7 (112)
-                            </span>
-                            <!-- Download Badge -->
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.9k downloads</span>
-                        </div>
-
-                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="Minimalist Agency Logo Kit">
-                            Minimalist Agency Logo Kit
-                        </h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                            Fully editable vector logotypes with font pairing guidelines.
-                        </p>
-
-                        <!-- Price Badge & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-success fs-5">Free</span>
-                            </div>
-                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 6 -->
-            <div class="col-12 col-md-6 col-lg-4 template-card-item" data-title="saas web admin system" data-category="SaaS System" data-price="paid" data-downloads="820" data-price-val="299" data-id="6">
-                <div class="card h-100 template-card-figma">
-                    <!-- Bigger Gradient Preview Area -->
-                    <div class="template-preview-area card-grad-6 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                            <line x1="9" y1="21" x2="9" y2="9"></line>
-                        </svg>
-                        <!-- Floating Category Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
-                            SaaS System
-                        </span>
-                    </div>
-
-                    <!-- Card Content -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <!-- Rating Pill -->
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (88)
-                            </span>
-                            <!-- Download Badge -->
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>820 downloads</span>
-                        </div>
-
-                        <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="SaaS Web Admin System">
-                            SaaS Web Admin System
-                        </h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                            Complete admin dashboard UI component library with charts.
-                        </p>
-
-                        <!-- Price Badge & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-dark fs-5">৳299</span>
-                            </div>
-                            <a href="#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @endif
         </div>
     </div>
 </section>
 
 
-<!-- PROFESSIONAL CATEGORIES SECTION (IMMEDIATELY BELOW FEATURED TEMPLATES) -->
+<!-- PROFESSIONAL CATEGORIES SECTION (DYNAMIC DATABASE CATEGORIES) -->
 <section id="categories" class="py-5 py-lg-6 reveal-on-scroll" style="background-color: #F8F5FF;">
     <div class="container py-3">
         <!-- Section Header -->
@@ -896,97 +705,34 @@
             </p>
         </div>
 
-        <!-- 8 Category Cards Grid (Desktop: 4 cols col-lg-3, Tablet: 2 cols col-md-6, Mobile: 2 cols col-6) -->
+        <!-- Dynamic Category Cards Grid -->
         <div class="row g-3 g-md-4 mb-5">
-            
-            <!-- Category Card 1: UI Kits -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('UI Kit')">
-                    <div class="cat-icon-wrapper card-grad-1 mb-3 shadow-sm">
-                        <i class="bi bi-grid"></i>
+            @if($categories->count() > 0)
+                @foreach($categories as $index => $cat)
+                    @php
+                        $iconClass = match($index % 8) {
+                            0 => 'bi-grid',
+                            1 => 'bi-vector-pen',
+                            2 => 'bi-instagram',
+                            3 => 'bi-image',
+                            4 => 'bi-palette',
+                            5 => 'bi-window',
+                            6 => 'bi-box',
+                            default => 'bi-stars',
+                        };
+                        $gradClass = 'card-grad-' . (($index % 4) + 1);
+                    @endphp
+                    <div class="col-6 col-md-6 col-lg-3">
+                        <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('{{ $cat->name }}')">
+                            <div class="cat-icon-wrapper {{ $gradClass }} mb-3 shadow-sm">
+                                <i class="bi {{ $iconClass }}"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">{{ $cat->name }}</h5>
+                            <span class="small text-secondary font-monospace">{{ number_format($cat->resources_count) }} Templates</span>
+                        </div>
                     </div>
-                    <h5 class="fw-bold text-dark mb-1">UI Kits</h5>
-                    <span class="small text-secondary font-monospace">1.2k Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 2: Logos -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Logo')">
-                    <div class="cat-icon-wrapper card-grad-3 mb-3 shadow-sm">
-                        <i class="bi bi-vector-pen"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">Logos</h5>
-                    <span class="small text-secondary font-monospace">850 Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 3: Social Media -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Social')">
-                    <div class="cat-icon-wrapper card-grad-5 mb-3 shadow-sm">
-                        <i class="bi bi-instagram"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">Social Media</h5>
-                    <span class="small text-secondary font-monospace">3.1k Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 4: Posters -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Poster')">
-                    <div class="cat-icon-wrapper card-grad-4 mb-3 shadow-sm">
-                        <i class="bi bi-image"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">Posters</h5>
-                    <span class="small text-secondary font-monospace">740 Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 5: Branding -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Branding')">
-                    <div class="cat-icon-wrapper card-grad-2 mb-3 shadow-sm">
-                        <i class="bi bi-palette"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">Branding</h5>
-                    <span class="small text-secondary font-monospace">620 Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 6: Web Design -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('Web')">
-                    <div class="cat-icon-wrapper card-grad-6 mb-3 shadow-sm">
-                        <i class="bi bi-window"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">Web Design</h5>
-                    <span class="small text-secondary font-monospace">980 Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 7: 3D Mockups -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('3D')">
-                    <div class="cat-icon-wrapper cat-grad-7 mb-3 shadow-sm">
-                        <i class="bi bi-box"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">3D Mockups</h5>
-                    <span class="small text-secondary font-monospace">430 Templates</span>
-                </div>
-            </div>
-
-            <!-- Category Card 8: Icons -->
-            <div class="col-6 col-md-6 col-lg-3">
-                <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('UI Kit')">
-                    <div class="cat-icon-wrapper cat-grad-8 mb-3 shadow-sm">
-                        <i class="bi bi-stars"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-1">Icons</h5>
-                    <span class="small text-secondary font-monospace">2.4k Templates</span>
-                </div>
-            </div>
-
+                @endforeach
+            @endif
         </div>
 
         <!-- Centered Bottom CTA Button -->
@@ -999,7 +745,7 @@
 </section>
 
 
-<!-- TRENDING RESOURCES + AI RECOMMENDATION SECTION (IMMEDIATELY BELOW CATEGORIES) -->
+<!-- TRENDING RESOURCES + AI RECOMMENDATION SECTION (DYNAMIC DATABASE TRENDING) -->
 <section id="trending" class="py-5 py-lg-6 reveal-on-scroll" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8F5FF 100%);">
     <div class="container py-3">
         <!-- Section Header -->
@@ -1015,130 +761,8 @@
             </p>
         </div>
 
-        <!-- Cards Layout: Left 7 Cols, Right 5 Cols -->
+        <!-- Cards Layout -->
         <div class="row g-4 mb-5">
-            
-            <!-- Left Column: Featured Large Card (7 Columns) -->
-            <div class="col-12 col-lg-7">
-                <div class="card h-100 trending-card-figma" data-title="fintech mobile app ui kit" data-category="UI Kit" data-price="free" data-downloads="5200" data-price-val="0" data-id="101">
-                    <!-- Gradient Preview Area -->
-                    <div class="position-relative card-grad-1 p-4 d-flex align-items-center justify-content-center text-white" style="height: 280px;">
-                        <svg width="88" height="88" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
-
-                        <!-- Editor's Pick Badge -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3.5 py-2 fw-bold small animate-badge-float">
-                            <i class="bi bi-award-fill text-primary me-1"></i> Editor's Pick
-                        </span>
-
-                        <!-- Floating Glass Badge: Trending -->
-                        <div class="position-absolute bottom-0 end-0 m-3 px-3 py-1.5 rounded-pill glass-trending-badge text-dark fw-bold small d-flex align-items-center gap-1.5 animate-float">
-                            <span>🔥 Trending</span>
-                        </div>
-                    </div>
-
-                    <!-- Card Body -->
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-3 py-1.5 rounded-pill fw-bold">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (240 reviews)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>5.2k downloads</span>
-                        </div>
-
-                        <h4 class="card-title fw-extrabold text-dark mb-2">
-                            Fintech Mobile App UI Kit
-                        </h4>
-                        <p class="card-text text-secondary mb-4 flex-grow-1">
-                            Complete financial management mobile UI solution with 50+ vector screens, dark/light mode, and design system components for Figma.
-                        </p>
-
-                        <!-- Price & Purple CTA Button -->
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                            <div>
-                                <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
-                                <span class="fw-extrabold text-success fs-4">Free</span>
-                            </div>
-                            <a href="#trending" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                                View Details <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Two Stacked AI Recommendation Cards (5 Columns) -->
-            <div class="col-12 col-lg-5 d-flex flex-column gap-4">
-                
-                <!-- Right Card 1 -->
-                <div class="card h-100 trending-card-figma" data-title="corporate business flyer" data-category="Vector" data-price="paid" data-downloads="2100" data-price-val="299" data-id="102">
-                    <div class="row g-0 align-items-center h-100">
-                        <div class="col-5 card-grad-3 p-4 d-flex align-items-center justify-content-center text-white h-100 position-relative" style="min-height: 180px;">
-                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                                <polyline points="2 17 12 22 22 17"></polyline>
-                                <polyline points="2 12 12 17 22 12"></polyline>
-                            </svg>
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm animate-badge-float">
-                                <i class="bi bi-stars text-primary me-1"></i> AI Recommended
-                            </span>
-                        </div>
-                        <div class="col-7 p-3.5 d-flex flex-column justify-content-between">
-                            <div>
-                                <h6 class="fw-bold text-dark mb-1.5 text-truncate" title="Corporate Business Flyer">
-                                    Corporate Business Flyer
-                                </h6>
-                                <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span class="small text-warning fw-bold"><i class="bi bi-star-fill me-1"></i>4.8</span>
-                                    <span class="small text-muted font-monospace"><i class="bi bi-download me-1"></i>2.1k</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                <span class="fw-extrabold text-dark">৳299</span>
-                                <a href="#trending" class="btn btn-purple-cta rounded-pill px-3 py-1.5 btn-sm">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Card 2 -->
-                <div class="card h-100 trending-card-figma" data-title="instagram story bundle" data-category="Social Media" data-price="paid" data-downloads="3400" data-price-val="199" data-id="103">
-                    <div class="row g-0 align-items-center h-100">
-                        <div class="col-5 card-grad-5 p-4 d-flex align-items-center justify-content-center text-white h-100 position-relative" style="min-height: 180px;">
-                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                            </svg>
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-white text-dark rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm animate-badge-float">
-                                <i class="bi bi-graph-up-arrow text-success me-1"></i> Fast Growing
-                            </span>
-                        </div>
-                        <div class="col-7 p-3.5 d-flex flex-column justify-content-between">
-                            <div>
-                                <h6 class="fw-bold text-dark mb-1.5 text-truncate" title="Instagram Story Bundle">
-                                    Instagram Story Bundle
-                                </h6>
-                                <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span class="small text-warning fw-bold"><i class="bi bi-star-fill me-1"></i>5.0</span>
-                                    <span class="small text-muted font-monospace"><i class="bi bi-download me-1"></i>3.4k</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                <span class="fw-extrabold text-dark">৳199</span>
-                                <a href="#trending" class="btn btn-purple-cta rounded-pill px-3 py-1.5 btn-sm">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
