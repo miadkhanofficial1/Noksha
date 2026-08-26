@@ -137,11 +137,11 @@
                         </div>
                         <div>
                             <span class="badge bg-success text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
-                                <i class="bi bi-check-circle-fill me-1"></i> Approved
+                                <i class="bi bi-check-circle-fill me-1"></i> Contributor Approved ✓
                             </span>
-                            <h5 class="fw-bold text-dark mb-0">Pro Verified Author Status</h5>
+                            <h5 class="fw-bold text-dark mb-0">Verified Creator Status Activated</h5>
                             <p class="text-secondary extra-small mb-0">
-                                Verified on {{ $verification->reviewed_at ? $verification->reviewed_at->format('M d, Y') : $verification->updated_at->format('M d, Y') }}.
+                                Verified on {{ $verification->reviewed_at ? $verification->reviewed_at->format('M d, Y') : $verification->updated_at->format('M d, Y') }}. Creator publishing tools unlocked!
                             </p>
                         </div>
                     @elseif(isset($verification) && $verification->status === 'pending')
@@ -150,11 +150,11 @@
                         </div>
                         <div>
                             <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fw-bold mb-1">
-                                <i class="bi bi-hourglass-split me-1"></i> Pending Review
+                                <i class="bi bi-hourglass-split me-1"></i> Pending Approval
                             </span>
                             <h5 class="fw-bold text-dark mb-0">Application Under Compliance Review</h5>
                             <p class="text-secondary extra-small mb-0">
-                                Submitted on {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y') }}.
+                                Submitted on {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y') }}. Our compliance team is verifying your NID/Passport & selfie.
                             </p>
                         </div>
                     @elseif(isset($verification) && $verification->status === 'rejected')
@@ -163,11 +163,11 @@
                         </div>
                         <div>
                             <span class="badge bg-danger text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
-                                <i class="bi bi-x-circle-fill me-1"></i> Rejected / Resubmission Required
+                                <i class="bi bi-x-circle-fill me-1"></i> Declined / Resubmission Required
                             </span>
                             <h5 class="fw-bold text-dark mb-0">Verification Declined</h5>
                             <p class="text-secondary extra-small mb-0">
-                                {{ $verification->admin_note ?? 'Please re-upload clear government ID and selfie photos.' }}
+                                {{ $verification->admin_note ?? 'Please re-upload clear government ID (NID/Passport) and selfie photos.' }}
                             </p>
                         </div>
                     @else
@@ -178,8 +178,8 @@
                             <span class="badge bg-secondary text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
                                 <i class="bi bi-info-circle-fill me-1"></i> Not Submitted
                             </span>
-                            <h5 class="fw-bold text-dark mb-0">Identity Verification Required</h5>
-                            <p class="text-secondary extra-small mb-0">Please submit your official identity details below.</p>
+                            <h5 class="fw-bold text-dark mb-0">Apply to Become a Contributor</h5>
+                            <p class="text-secondary extra-small mb-0">Please submit your official identity details and selfie below.</p>
                         </div>
                     @endif
                 </div>

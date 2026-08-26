@@ -7,26 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.4] - 2026-08-26 — Single User & Contributor Architecture Refactoring
+## [1.0.6] - 2026-08-26 — Dashboard UI Glassmorphism & Micro-Interaction Polish
 
 ### Added & Updated
-- **Single User & Contributor Architecture**:
-  - Refactored account architecture so every account starts as a single unified `User` (`role = 'user'`). Removed separate Buyer and Seller account types on registration.
-  - Added `contributor_status` column (`none`, `pending`, `approved`, `rejected`) to `users` table via migration [`database/migrations/2026_08_26_000016_add_contributor_status_to_users_table.php`](../database/migrations/2026_08_26_000016_add_contributor_status_to_users_table.php).
-  - Added helper methods `$user->isContributor()` and `$user->isVerifiedCreator()` in [`app/Models/User.php`](../app/Models/User.php).
-- **Unified User & Contributor Dashboard (`/dashboard`)**:
-  - Created [`app/Http/Controllers/DashboardController.php`](../app/Http/Controllers/DashboardController.php) and view [`resources/views/dashboard/index.blade.php`](../resources/views/dashboard/index.blade.php):
-    - **Buyer Features (Always Visible):** Dashboard Overview, Order History, Purchased & Free Downloads, Saved Wishlist, and Cart counters.
-    - **Contributor Features (Hidden until verified):** Upload Resource button, Portfolio stats, Uploaded Resources management table, Recent Sales, and Feedback Reviews.
-- **Contributor Verification Flow & Naming Standard**:
-  - Replaced all "Seller" references with **Contributor** (e.g. *Contributor ✓*, *Apply to Become Contributor*, *Verified Creator*).
-  - Updated [`resources/views/seller/verification.blade.php`](../resources/views/seller/verification.blade.php) and [`resources/views/seller/profile.blade.php`](../resources/views/seller/profile.blade.php).
-- **Clean Navbar Links**:
-  - Updated [`resources/views/layouts/app.blade.php`](../resources/views/layouts/app.blade.php): Cleaned up navbar links for guests (Home, Templates, Categories, AI Tools, Login, Register) and logged-in users (Home, Templates, Dashboard, Contests, Wishlist, Cart).
+- **Dashboard UI Polish**:
+  - Polished [`resources/views/dashboard/index.blade.php`](../resources/views/dashboard/index.blade.php) with Figma/Dribbble glassmorphism backdrop blurs (`backdrop-filter: blur(20px)`), subtle purple borders (`rgba(108, 76, 241, 0.16)`), 24px border radius, and floating hover animations (`transform: translateY(-4px)`).
+  - Enhanced statistics cards with vibrant metric counters and scaling icon containers.
+  - Enhanced Contributor Badge (`Contributor ✓`) and Verified Shield Icon (`Verified Creator`) with glowing pill badges.
+  - Styled Download History and Purchased Downloads tables with subtle hover highlights, rounded corners, and pill action buttons.
 
 ---
 
-## [1.0.3] - 2026-08-26 — Comprehensive Project-Wide Bilingual Localization (200+ Texts)
+## [1.0.5] - 2026-08-26 — Premium Contributor Verification (KYC) & Instant Creator Unlock
 
 ### Added & Updated
-- Structured domain translation dictionaries and localized views.
+- Premium Contributor KYC Flow and instant Super Admin approval with automatic creator tools unlock.

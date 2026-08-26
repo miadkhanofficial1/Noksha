@@ -92,7 +92,12 @@ class SellerVerificationController extends Controller
             ]
         );
 
+        // Update user contributor_status to pending
+        auth()->user()->update([
+            'contributor_status' => 'pending',
+        ]);
+
         return redirect()->route('seller.verification.create')
-            ->with('success', '✨ Seller identity verification submitted successfully! Our compliance team will review your application.');
+            ->with('success', '✨ Contributor identity verification submitted successfully! Our compliance team will review your application.');
     }
 }

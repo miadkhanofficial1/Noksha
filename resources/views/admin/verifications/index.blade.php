@@ -108,10 +108,10 @@
                         <i class="bi bi-shield-check-fill me-1 text-warning"></i> Super Admin Compliance Portal
                     </span>
                     <h2 class="display-6 fw-extrabold text-white mb-2">
-                        Seller KYC Verification Panel <span class="text-warning">(ভেরিফিকেশন রিভিউ)</span>
+                        Contributor Identity Verification Panel <span class="text-warning">(ভেরিফিকেশন রিভিউ)</span>
                     </h2>
                     <p class="text-white text-opacity-90 mb-0 small" style="max-width: 620px;">
-                        Inspect submitted government NIDs, passports, driving licenses, face selfies, and verification videos to approve seller identity applications.
+                        Inspect submitted government NIDs, passports, driving licenses, face selfies, and verification videos to approve contributor applications and unlock creator tools.
                     </p>
                 </div>
                 <div class="col-lg-4 text-lg-end">

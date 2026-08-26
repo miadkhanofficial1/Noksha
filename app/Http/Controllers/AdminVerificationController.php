@@ -76,11 +76,20 @@ class AdminVerificationController extends Controller
         if ($verification->user) {
             $verification->user->update([
                 'is_verified' => true,
+                'contributor_status' => 'approved',
             ]);
+
+            \App\Models\Notification::send(
+                $verification->user_id,
+                '🎉 Contributor Verification Approved!',
+                'Congratulations! Your identity has been verified. Contributor badge, verified creator shield, and creator upload tools are now unlocked.',
+                'success',
+                route('dashboard')
+            );
         }
 
         return redirect()->back()
-            ->with('success', '✨ Seller "' . $verification->full_name . '" identity has been APPROVED! Pro Verified Author status activated.');
+            ->with('success', '✨ Contributor "' . $verification->full_name . '" identity has been APPROVED! Contributor Badge and Creator Tools unlocked.');
     }
 
     /**
@@ -104,10 +113,19 @@ class AdminVerificationController extends Controller
         if ($verification->user) {
             $verification->user->update([
                 'is_verified' => false,
+                'contributor_status' => 'rejected',
             ]);
+
+            \App\Models\Notification::send(
+                $verification->user_id,
+                '⚠️ Contributor Verification Declined',
+                'Your contributor verification application was declined: ' . $note,
+                'warning',
+                route('contributor.apply')
+            );
         }
 
         return redirect()->back()
-            ->with('success', '🚫 Seller "' . $verification->full_name . '" verification application has been REJECTED.');
+            ->with('success', '🚫 Contributor "' . $verification->full_name . '" verification application has been REJECTED.');
     }
 }
