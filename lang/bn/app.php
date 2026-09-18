@@ -8,6 +8,7 @@ return [
     'templates' => 'টেমপ্লেট',
     'ai_tools' => 'এআই টুলস',
     'categories' => 'ক্যাটাগরি',
+    'dashboard' => 'ড্যাশবোর্ড',
     'contests' => 'কন্টেস্ট',
     'notifications' => 'নোটিফিকেশন',
     'alerts' => 'অ্যালার্ট',

@@ -357,6 +357,281 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .cursor-pointer { cursor: pointer; }
+
+    /* ========================================================= */
+    /* COMPREHENSIVE DARK MODE OVERRIDES FOR WELCOME PAGE        */
+    /* ========================================================= */
+    html.dark {
+        /* Hero Section */
+        .hero-bg-gradient {
+            background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 50%, #0B0F19 100%) !important;
+        }
+
+        .hero-radial-glow {
+            background: 
+                radial-gradient(circle at 18% 25%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 82% 75%, rgba(124, 58, 237, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.6) 0%, transparent 60%) !important;
+        }
+
+        .hero-search-box {
+            background: rgba(30, 41, 59, 0.85) !important;
+            border-color: rgba(75, 85, 99, 0.6) !important;
+            box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.5) !important;
+
+            input {
+                color: #FFFFFF !important;
+                &::placeholder {
+                    color: #9CA3AF !important;
+                }
+            }
+        }
+
+        .glass-mockup-card {
+            background: rgba(30, 41, 59, 0.55) !important;
+            border: 1px solid rgba(75, 85, 99, 0.45) !important;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        .hero-canvas-workspace {
+            background: rgba(15, 23, 42, 0.75) !important;
+            border-color: rgba(55, 65, 81, 0.7) !important;
+        }
+
+        .hero-stat-mini-card {
+            background: rgba(15, 23, 42, 0.65) !important;
+            border-color: rgba(55, 65, 81, 0.7) !important;
+        }
+
+        .hero-tool-icon {
+            background: #1E293B !important;
+            color: #818CF8 !important;
+        }
+
+        .hero-floating-pill {
+            background: #1E293B !important;
+            border-color: #374151 !important;
+            color: #F3F4F6 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+
+            .text-dark {
+                color: #F3F4F6 !important;
+            }
+            .text-muted {
+                color: #9CA3AF !important;
+            }
+        }
+
+        /* Featured Templates Section */
+        .featured-templates-section {
+            background-color: #0B0F19 !important;
+
+            &::before {
+                background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 50%, #06B6D4 100%) !important;
+            }
+
+            h2, .text-dark {
+                color: #F9FAFB !important;
+            }
+            .text-secondary {
+                color: #9CA3AF !important;
+            }
+        }
+
+        /* Floating Glass Filter Bar */
+        .filter-bar-glass {
+            background: rgba(30, 41, 59, 0.85) !important;
+            border: 1px solid rgba(55, 65, 81, 0.8) !important;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6) !important;
+
+            .input-group-text {
+                background-color: rgba(15, 23, 42, 0.7) !important;
+                border-color: #374151 !important;
+                color: #9CA3AF !important;
+            }
+
+            #filterSearchInput {
+                background-color: rgba(15, 23, 42, 0.7) !important;
+                border-color: #374151 !important;
+                color: #FFFFFF !important;
+                &::placeholder {
+                    color: #9CA3AF !important;
+                }
+            }
+
+            #sortSelect {
+                background-color: rgba(15, 23, 42, 0.7) !important;
+                border-color: #374151 !important;
+                color: #F3F4F6 !important;
+            }
+
+            .border-top {
+                border-color: #374151 !important;
+            }
+        }
+
+        /* Category Chips */
+        .cat-chip-pill {
+            background: rgba(15, 23, 42, 0.7) !important;
+            border: 1px solid rgba(55, 65, 81, 0.8) !important;
+            color: #D1D5DB !important;
+
+            &:hover {
+                border-color: #6366F1 !important;
+                color: #A5B4FC !important;
+                background: rgba(99, 102, 241, 0.2) !important;
+            }
+
+            &.active {
+                background: #4F46E5 !important;
+                color: #FFFFFF !important;
+                border-color: #4F46E5 !important;
+                box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.5) !important;
+            }
+        }
+
+        /* Template Cards */
+        .template-card-figma {
+            background: #1E293B !important;
+            border-color: #374151 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+
+            &:hover {
+                border-color: #6366F1 !important;
+                box-shadow: 0 20px 35px -10px rgba(79, 70, 229, 0.35) !important;
+            }
+
+            .card-title, h5 {
+                color: #FFFFFF !important;
+            }
+            .card-text {
+                color: #9CA3AF !important;
+            }
+            .border-top {
+                border-color: #374151 !important;
+            }
+            .fw-extrabold.text-dark {
+                color: #FFFFFF !important;
+            }
+
+            .btn-light {
+                background: #374151 !important;
+                border-color: #4B5563 !important;
+                color: #F3F4F6 !important;
+                &:hover {
+                    background: #4B5563 !important;
+                }
+            }
+
+            .btn-outline-primary {
+                border-color: #6366F1 !important;
+                color: #A5B4FC !important;
+                &:hover {
+                    background: #6366F1 !important;
+                    color: #FFFFFF !important;
+                }
+            }
+        }
+
+        .template-preview-area .badge {
+            background: #1E293B !important;
+            color: #F3F4F6 !important;
+            border: 1px solid #374151 !important;
+        }
+
+        /* Categories Section */
+        #categories {
+            background-color: #0B0F19 !important;
+
+            h2, .text-dark {
+                color: #FFFFFF !important;
+            }
+            .text-secondary {
+                color: #9CA3AF !important;
+            }
+        }
+
+        .cat-card-figma {
+            background: #1E293B !important;
+            border-color: #374151 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+
+            &:hover {
+                border-color: #6366F1 !important;
+                box-shadow: 0 20px 35px -10px rgba(79, 70, 229, 0.35) !important;
+            }
+
+            h5 {
+                color: #FFFFFF !important;
+            }
+            span {
+                color: #9CA3AF !important;
+            }
+        }
+
+        /* Trending Section */
+        #trending {
+            background: #0B0F19 !important;
+
+            h2, .text-dark {
+                color: #FFFFFF !important;
+            }
+            .text-secondary {
+                color: #9CA3AF !important;
+            }
+        }
+
+        .ai-strip-box {
+            background: #1E293B !important;
+            border-color: #374151 !important;
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.4) !important;
+
+            h5 {
+                color: #FFFFFF !important;
+            }
+            p {
+                color: #9CA3AF !important;
+            }
+        }
+
+        /* AI Features Section */
+        #ai-features {
+            background-color: #0F172A !important;
+
+            h2, h5, h6 {
+                color: #FFFFFF !important;
+            }
+            p, .text-secondary, .text-muted {
+                color: #9CA3AF !important;
+            }
+            .bg-white {
+                background-color: #1E293B !important;
+                border-color: #374151 !important;
+            }
+            .bg-light {
+                background-color: #0F172A !important;
+                border-color: #374151 !important;
+            }
+            .border-bottom {
+                border-color: #374151 !important;
+            }
+            .text-dark {
+                color: #FFFFFF !important;
+            }
+            .badge.bg-light {
+                background-color: #374151 !important;
+                color: #E5E7EB !important;
+                border-color: #4B5563 !important;
+            }
+        }
+
+        /* Badge Floats */
+        .animate-badge-float {
+            background: rgba(99, 102, 241, 0.18) !important;
+            color: #A5B4FC !important;
+            border-color: rgba(99, 102, 241, 0.35) !important;
+        }
+    }
 </style>
 
 
@@ -456,9 +731,9 @@
                         </div>
 
                         <!-- Canvas Workspace Mockup -->
-                        <div class="bg-white bg-opacity-20 rounded-3 p-3 mb-3 border border-white border-opacity-20">
+                        <div class="bg-white bg-opacity-20 rounded-3 p-3 mb-3 border border-white border-opacity-20 hero-canvas-workspace">
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="p-3 bg-white text-primary rounded-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                                <div class="p-3 bg-white text-primary rounded-3 shadow-sm d-flex align-items-center justify-content-center hero-tool-icon" style="width: 52px; height: 52px;">
                                     <i class="bi bi-layers-fill fs-3"></i>
                                 </div>
                                 <div class="flex-grow-1">
@@ -480,13 +755,13 @@
                         <!-- Glass Mini Cards -->
                         <div class="row g-2">
                             <div class="col-6">
-                                <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white">
+                                <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
                                     <div class="small text-white text-opacity-75 mb-1">Rating</div>
                                     <div class="fw-bold fs-5 text-warning"><i class="bi bi-star-fill me-1"></i> 4.9 / 5.0</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white">
+                                <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
                                     <div class="small text-white text-opacity-75 mb-1">Downloads</div>
                                     <div class="fw-bold fs-5"><i class="bi bi-download me-1"></i> 12.8K</div>
                                 </div>
@@ -495,7 +770,7 @@
                     </div>
 
                     <!-- Decorative Floating Badges with Depth -->
-                    <div class="position-absolute top-0 end-0 translate-middle-y me-n2 mt-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light" style="transform: rotate(4deg);">
+                    <div class="position-absolute top-0 end-0 translate-middle-y me-n2 mt-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(4deg);">
                         <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
                             <i class="bi bi-lightning-charge-fill"></i>
                         </div>
@@ -505,7 +780,7 @@
                         </div>
                     </div>
 
-                    <div class="position-absolute bottom-0 start-0 translate-middle-y ms-n2 mb-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light" style="transform: rotate(-3deg);">
+                    <div class="position-absolute bottom-0 start-0 translate-middle-y ms-n2 mb-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(-3deg);">
                         <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
                             <i class="bi bi-shield-check"></i>
                         </div>

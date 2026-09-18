@@ -8,6 +8,7 @@ return [
     'templates' => 'Templates',
     'ai_tools' => 'AI Tools',
     'categories' => 'Categories',
+    'dashboard' => 'Dashboard',
     'contests' => 'Contests',
     'notifications' => 'Notifications',
     'alerts' => 'Alerts',
