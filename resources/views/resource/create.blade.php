@@ -104,6 +104,52 @@
         box-shadow: 0 14px 28px -4px rgba(108, 76, 241, 0.45);
         color: #ffffff !important;
     }
+
+    /* Dark Mode Overrides */
+    html.dark .glass-upload-card {
+        background: #1E293B !important;
+        border-color: #374151 !important;
+        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    html.dark .form-control-figma, 
+    html.dark .form-select-figma {
+        background-color: #0F172A !important;
+        border-color: #374151 !important;
+        color: #F3F4F6 !important;
+    }
+
+    html.dark .dropzone-box {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border-color: #374151 !important;
+    }
+
+    html.dark .dropzone-box:hover {
+        background: rgba(99, 102, 241, 0.15) !important;
+        border-color: #6366F1 !important;
+    }
+
+    html.dark .price-option-card {
+        background: #0F172A !important;
+        border-color: #374151 !important;
+    }
+
+    html.dark .price-option-card.active {
+        border-color: #6366F1 !important;
+        background: rgba(99, 102, 241, 0.15) !important;
+    }
+
+    html.dark .upload-content-section {
+        background-color: #0B0F19 !important;
+    }
+
+    html.dark .text-dark {
+        color: #FFFFFF !important;
+    }
+
+    html.dark .text-secondary {
+        color: #9CA3AF !important;
+    }
 </style>
 
 <!-- UPLOAD HERO BANNER -->
@@ -131,7 +177,7 @@
 </section>
 
 <!-- MAIN UPLOAD FORM SECTION -->
-<section class="py-5" style="background-color: #F8F7FF;">
+<section class="upload-content-section py-5" style="background-color: #F8F7FF;">
     <div class="container py-2" style="max-width: 960px;">
         
         <!-- Flash Success Notification -->
@@ -147,10 +193,13 @@
             </div>
         @endif
 
-        <!-- Validation Error Alerts -->
+        <!-- Global Validation Error Alerts Display -->
         @if ($errors->any())
-            <div class="alert alert-danger border-0 shadow-sm rounded-4 p-4 mb-4 bg-white text-danger border-start border-danger border-4">
-                <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i> Please correct the following errors:</h6>
+            <div class="alert alert-danger border-0 shadow-lg rounded-4 p-4 mb-4 bg-white text-danger border-start border-danger border-4">
+                <h6 class="fw-bold mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                    <span>Please correct the following errors before submitting:</span>
+                </h6>
                 <ul class="mb-0 small ps-3">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -186,22 +235,11 @@
                             <label for="category_id" class="form-label fw-bold text-dark small">Primary Category</label>
                             <select name="category_id" id="category_id" class="form-select form-select-figma @error('category_id') is-invalid @enderror">
                                 <option value="">-- Select Category --</option>
-                                @if(isset($categories) && $categories->count() > 0)
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                @else
-                                    <!-- Fallback Options if DB categories pending seed -->
-                                    <option value="1">UI Kits</option>
-                                    <option value="2">Logos & Vectors</option>
-                                    <option value="3">Social Media Templates</option>
-                                    <option value="4">Posters & Flyers</option>
-                                    <option value="5">Branding Guidelines</option>
-                                    <option value="6">Web Design Systems</option>
-                                    <option value="7">3D Mockups</option>
-                                @endif
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
                             </select>
                             @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -237,9 +275,9 @@
                                     <i class="bi bi-image"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">Click or Drag Image Here</h6>
-                                <p class="text-muted extra-small mb-2">Supports PNG, JPG, WEBP (Max 5MB)</p>
+                                <p class="text-muted extra-small mb-2">Supports PNG, JPG, WEBP, GIF, SVG (Max 10MB)</p>
                                 <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="previewFileName">Choose Cover File</span>
-                                <input type="file" name="preview_image" id="preview_image" class="d-none" accept="image/*" required onchange="handlePreviewImageSelect(this)">
+                                <input type="file" name="preview_image" id="preview_image" class="d-none" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" required onchange="handlePreviewImageSelect(this)">
                             </div>
                             <!-- Image Preview Display Canvas -->
                             <div id="imagePreviewContainer" class="mt-3 text-center d-none">
@@ -258,9 +296,9 @@
                                     <i class="bi bi-file-earmark-zip"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">Click or Drag Asset Package</h6>
-                                <p class="text-muted extra-small mb-2">Supports ZIP, RAR, PSD, AI, SVG (Max 50MB)</p>
-                                <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="resourceFileName">Choose Source ZIP</span>
-                                <input type="file" name="resource_file" id="resource_file" class="d-none" accept=".zip,.rar,.psd,.ai,.svg,.pdf" required onchange="handleResourceFileSelect(this)">
+                                <p class="text-muted extra-small mb-2">Supports ZIP, RAR, 7Z, PNG, JPG, PSD, FIGMA, AI, SVG, PDF, EPS (Max 100MB)</p>
+                                <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="resourceFileName">Choose Asset File</span>
+                                <input type="file" name="resource_file" id="resource_file" class="d-none" accept=".zip,.rar,.7z,.tar,.gz,.png,.jpg,.jpeg,.psd,.fig,.figma,.ai,.svg,.pdf,.eps,.xd,.sketch" required onchange="handleResourceFileSelect(this)">
                             </div>
                             <!-- File Upload Progress Bar Simulation -->
                             <div id="uploadProgressBar" class="mt-3 d-none">

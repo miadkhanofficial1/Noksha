@@ -454,7 +454,7 @@
                                     <td class="text-end pe-4">
                                         <div class="d-inline-flex gap-1">
                                             <!-- View -->
-                                            <a href="{{ route('resource.demo') }}" class="btn btn-light border btn-sm rounded-circle" title="View details">
+                                            <a href="{{ route('resource.show', $resource->slug) }}" class="btn btn-light border btn-sm rounded-circle" title="View details">
                                                 <i class="bi bi-eye-fill text-primary"></i>
                                             </a>
 

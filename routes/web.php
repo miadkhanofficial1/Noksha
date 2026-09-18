@@ -45,7 +45,7 @@ Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
 // Resource Details Routes
 Route::get('/resource/demo', [ResourceController::class, 'showDemo'])->name('resource.demo');
-Route::get('/resource/{slug}', [ResourceController::class, 'show'])->name('resource.show');
+Route::get('/resource/{slug}', [ResourceController::class, 'show'])->where('slug', '^(?!upload$|demo$).*')->name('resource.show');
 
 // Demo Seller Profile Page
 Route::get('/seller/demo', function () {
@@ -113,7 +113,7 @@ Route::middleware('auth')->group(function () {
     // Unified User & Contributor Dashboard Route (/dashboard)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/buyer/dashboard', [DashboardController::class, 'index'])->name('buyer.dashboard');
-    Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
+    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])->name('seller.dashboard');
     Route::delete('/seller/resource/{resource}', [SellerDashboardController::class, 'destroy'])->name('seller.resource.destroy');
 
     // Contributor Identity Verification Routes (Apply to Become Contributor)

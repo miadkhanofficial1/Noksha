@@ -18,6 +18,11 @@ class ResourceController extends Controller
      */
     public function create(): View
     {
+        $user = auth()->user();
+        if ($user && $user->status === 'suspended') {
+            abort(403, 'Your account has been suspended. Please contact support.');
+        }
+
         $categories = Category::all();
 
         return view('resource.create', compact('categories'));
@@ -28,24 +33,37 @@ class ResourceController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $user = auth()->user();
+        if ($user && $user->status === 'suspended') {
+            abort(403, 'Your account has been suspended. Please contact support.');
+        }
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'description' => ['required', 'string'],
-            'preview_image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // Max 5MB
-            'resource_file' => ['required', 'file', 'mimes:zip,rar,psd,ai,svg,pdf', 'max:51200'], // Max 50MB
-            'is_paid' => ['required', 'boolean'],
-            'price' => ['required_if:is_paid,1,true', 'nullable', 'numeric', 'min:0'],
+            'preview_image' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:10240'], // Max 10MB
+            'resource_file' => [
+                'required',
+                'file',
+                'extensions:zip,rar,7z,tar,gz,png,jpg,jpeg,psd,fig,figma,ai,svg,pdf,eps,xd,sketch',
+                'max:102400', // Max 100MB
+            ],
+            'is_paid' => ['nullable'],
+            'price' => [$request->boolean('is_paid') ? 'required' : 'nullable', 'numeric', 'min:0'],
             'tags' => ['nullable', 'string'],
             'requirements' => ['nullable', 'string'],
             'demo_link' => ['nullable', 'url', 'max:255'],
         ], [
             'title.required' => 'Resource title is required.',
             'description.required' => 'Product description is required.',
-            'preview_image.required' => 'Please upload a preview image for your asset.',
-            'preview_image.image' => 'Preview image must be a valid image file (JPG, PNG, WEBP).',
-            'resource_file.required' => 'Please upload the main resource file (ZIP, PSD, AI, SVG).',
-            'price.required_if' => 'Price is required when resource is marked as Paid.',
+            'preview_image.required' => 'Please upload a cover preview image for your asset.',
+            'preview_image.mimes' => 'Preview image must be a valid image file (JPG, PNG, WEBP, GIF, SVG).',
+            'preview_image.max' => 'Preview image size cannot exceed 10 MB.',
+            'resource_file.required' => 'Please upload the main resource package file.',
+            'resource_file.extensions' => 'The resource file must be a valid design asset format (ZIP, RAR, 7Z, PNG, JPG, PSD, FIGMA, AI, SVG, PDF, EPS, or XD).',
+            'resource_file.max' => 'The resource file size cannot exceed 100 MB.',
+            'price.required' => 'Price is required when resource is marked as Paid.',
         ]);
 
         // Process File Storage
@@ -59,7 +77,7 @@ class ResourceController extends Controller
             $manualTags = array_map('trim', explode(',', $request->tags));
         }
 
-        $categoryName = $request->category_id ? Category::find($request->category_id)?->name : null;
+        $categoryName = !empty($validated['category_id']) ? Category::find($validated['category_id'])?->name : null;
         $tagsArray = \App\Services\TagService::generate(
             $validated['title'],
             $validated['description'],
@@ -71,10 +89,13 @@ class ResourceController extends Controller
         $baseSlug = Str::slug($validated['title']);
         $slug = $baseSlug . '-' . Str::random(6);
 
+        $isPaid = $request->boolean('is_paid');
+        $price = $isPaid ? (float) ($validated['price'] ?? 0.00) : 0.00;
+
         // Create Resource record
         $resource = Resource::create([
             'user_id' => auth()->id(),
-            'category_id' => $request->category_id ?: null,
+            'category_id' => !empty($validated['category_id']) ? $validated['category_id'] : null,
             'title' => $validated['title'],
             'slug' => $slug,
             'description' => $validated['description'],
@@ -82,8 +103,8 @@ class ResourceController extends Controller
             'file_path' => $filePath,
             'file_type' => $fileExtension,
             'tags' => $tagsArray,
-            'is_paid' => $request->boolean('is_paid'),
-            'price' => $request->boolean('is_paid') ? ($validated['price'] ?? 0.00) : 0.00,
+            'is_paid' => $isPaid,
+            'price' => $price,
             'requirements' => $request->requirements,
             'demo_link' => $request->demo_link,
             'status' => 'pending',
@@ -100,7 +121,7 @@ class ResourceController extends Controller
             route('seller.dashboard')
         );
 
-        $adminUsers = \App\Models\User::where('role', 'admin')->get();
+        $adminUsers = \App\Models\User::whereIn('role', ['admin', 'super_admin'])->get();
         foreach ($adminUsers as $admin) {
             \App\Models\Notification::send(
                 $admin->id,
@@ -111,7 +132,7 @@ class ResourceController extends Controller
             );
         }
 
-        return redirect()->route('resource.create')
+        return redirect()->route('seller.dashboard')
             ->with('success', '✨ Asset uploaded successfully! Your template is pending moderation approval.');
     }
 
