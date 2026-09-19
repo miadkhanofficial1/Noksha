@@ -32,6 +32,7 @@ class Resource extends Model
         'requirements',
         'demo_link',
         'status',
+        'rejection_reason',
         'downloads',
         'views',
     ];
@@ -56,6 +57,14 @@ class Resource extends Model
      * Resource owner (creator/designer).
      */
     public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * User alias for owner.
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }

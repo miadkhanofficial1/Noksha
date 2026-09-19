@@ -23,6 +23,10 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminResourceController;
 use App\Http\Controllers\AdminVerificationController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminContestController;
+use App\Http\Controllers\AdminPayoutController;
+use App\Http\Controllers\AdminLogController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
@@ -160,26 +164,49 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     // SUPER ADMIN PROTECTED ROUTES (auth + admin)
     // ==========================================
-    Route::middleware(['admin'])->group(function () {
-        // Super Admin Executive Dashboard Routes
-        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-        Route::post('/admin/users/{user}/toggle-status', [AdminDashboardController::class, 'toggleUserStatus'])->name('admin.users.toggleStatus');
-        Route::post('/admin/broadcast', [AdminDashboardController::class, 'broadcastNotification'])->name('admin.broadcast');
-
-        // Super Admin Resource Approval Panel Routes
-        Route::get('/admin/resources', [AdminResourceController::class, 'index'])->name('admin.resources.index');
-        Route::post('/admin/resources/{resource}/approve', [AdminResourceController::class, 'approve'])->name('admin.resources.approve');
-        Route::post('/admin/resources/{resource}/reject', [AdminResourceController::class, 'reject'])->name('admin.resources.reject');
-
-        // Super Admin Design Contests Panel Routes
-        Route::get('/admin/contests', [ContestController::class, 'adminIndex'])->name('admin.contests.index');
-        Route::post('/admin/contests', [ContestController::class, 'adminStore'])->name('admin.contests.store');
-        Route::post('/admin/contests/{contest}/winner', [ContestController::class, 'selectWinner'])->name('admin.contests.winner');
-
-        // Super Admin Seller Verification Review Routes
-        Route::get('/admin/verifications', [AdminVerificationController::class, 'index'])->name('admin.verifications.index');
-        Route::get('/admin/verifications/{verification}', [AdminVerificationController::class, 'show'])->name('admin.verifications.show');
-        Route::post('/admin/verifications/{verification}/approve', [AdminVerificationController::class, 'approve'])->name('admin.verifications.approve');
-        Route::post('/admin/verifications/{verification}/reject', [AdminVerificationController::class, 'reject'])->name('admin.verifications.reject');
+    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        // Direct redirect /admin -> /admin/dashboard
+        Route::get('/', function () {
+            return redirect()->route('admin.dashboard');
         });
+
+        // 1. Executive Dashboard & Metrics
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/broadcast', [AdminDashboardController::class, 'broadcastNotification'])->name('broadcast');
+
+        // 2. Resource Moderation Center
+        Route::get('/resources', [AdminResourceController::class, 'index'])->name('resources.index');
+        Route::get('/resources/{resource}/download', [AdminResourceController::class, 'download'])->name('resources.download');
+        Route::post('/resources/{resource}/approve', [AdminResourceController::class, 'approve'])->name('resources.approve');
+        Route::post('/resources/{resource}/reject', [AdminResourceController::class, 'reject'])->name('resources.reject');
+        Route::delete('/resources/{resource}', [AdminResourceController::class, 'destroy'])->name('resources.destroy');
+
+        // 3. User & KYC Verification Hub
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggleStatus');
+        Route::post('/users/{user}/kyc/approve', [AdminUserController::class, 'approveKyc'])->name('users.kyc.approve');
+        Route::post('/users/{user}/kyc/reject', [AdminUserController::class, 'rejectKyc'])->name('users.kyc.reject');
+
+        // Existing verification routes fallback
+        Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
+        Route::get('/verifications/{verification}', [AdminVerificationController::class, 'show'])->name('verifications.show');
+        Route::post('/verifications/{verification}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
+        Route::post('/verifications/{verification}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
+
+        // 4. Contest Hub Control
+        Route::get('/contests', [AdminContestController::class, 'index'])->name('contests.index');
+        Route::post('/contests', [AdminContestController::class, 'store'])->name('contests.store');
+        Route::put('/contests/{contest}', [AdminContestController::class, 'update'])->name('contests.update');
+        Route::post('/contests/{contest}/cancel', [AdminContestController::class, 'cancel'])->name('contests.cancel');
+        Route::delete('/contests/{contest}', [AdminContestController::class, 'destroy'])->name('contests.destroy');
+        Route::get('/contests/{contest}/submissions', [AdminContestController::class, 'submissions'])->name('contests.submissions');
+        Route::post('/contests/{contest}/winner', [AdminContestController::class, 'selectWinner'])->name('contests.winner');
+
+        // 5. Financials & Payouts
+        Route::get('/payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
+
+        // 6. Live System Logs
+        Route::get('/logs', [AdminLogController::class, 'index'])->name('logs.index');
+        Route::post('/logs/clear', [AdminLogController::class, 'clear'])->name('logs.clear');
+    });
 });

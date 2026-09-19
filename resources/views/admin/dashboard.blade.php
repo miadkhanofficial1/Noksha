@@ -1,538 +1,419 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Super Admin Dashboard - Noksha (নকশা)')
+@section('title', 'Admin Executive Command Center - Noksha (নকশা)')
+@section('page_title', 'Overview')
+@section('page_heading', 'Executive Command Center')
 
 @section('content')
-
-<!-- CHART.JS INTEGRATION -->
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- CUSTOM SUPER ADMIN STYLES -->
-<style>
-    .admin-layout-bg {
-        background: #F4F3FA;
-        min-height: 100vh;
-    }
+<div class="space-y-6">
 
-    .admin-sidebar {
-        background: #1E1B4B;
-        color: #ffffff;
-        border-radius: 1.5rem;
-        position: sticky;
-        top: 90px;
-    }
-
-    .admin-sidebar .nav-link {
-        color: rgba(255, 255, 255, 0.75);
-        font-weight: 600;
-        border-radius: 0.75rem;
-        padding: 0.75rem 1.25rem;
-        transition: all 0.25s ease;
-        margin-bottom: 0.25rem;
-    }
-
-    .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
-        color: #ffffff;
-        background: rgba(108, 76, 241, 0.35);
-        transform: translateX(4px);
-    }
-
-    .stat-card-admin {
-        background: #ffffff;
-        border-radius: 1.25rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.08) !important;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .stat-card-admin:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px -10px rgba(108, 76, 241, 0.18) !important;
-    }
-
-    .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
-        color: #ffffff !important;
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-2px);
-        color: #ffffff !important;
-    }
-</style>
-
-<div class="admin-layout-bg py-4 py-lg-5">
-    <div class="container-fluid px-lg-5">
+    <!-- TOP ROW: HIGH-IMPACT STAT CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
-        <div class="row g-4">
-            
-            <!-- LEFT SIDEBAR (3 COLUMNS) -->
-            <div class="col-12 col-lg-3 col-xl-2">
-                <div class="admin-sidebar p-3 shadow-lg">
-                    <div class="p-3 mb-3 border-bottom border-white border-opacity-10 d-flex align-items-center gap-2">
-                        <div class="rounded-circle bg-warning text-dark p-2 fw-extrabold d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                            <i class="bi bi-shield-lock-fill"></i>
-                        </div>
-                        <div>
-                            <h6 class="fw-extrabold text-white mb-0">Super Admin</h6>
-                            <span class="extra-small text-white text-opacity-60 font-monospace">Control Center</span>
-                        </div>
-                    </div>
-
-                    <nav class="nav flex-column">
-                        <a class="nav-link active" href="#overview"><i class="bi bi-speedometer2 me-2"></i> Overview</a>
-                        <a class="nav-link" href="#analytics"><i class="bi bi-bar-chart-line-fill me-2"></i> Analytics</a>
-                        <a class="nav-link" href="#resources-table"><i class="bi bi-layers-fill me-2"></i> Resources</a>
-                        <a class="nav-link" href="#users-table"><i class="bi bi-people-fill me-2"></i> Users</a>
-                        <a class="nav-link" href="{{ route('admin.resources.index') }}"><i class="bi bi-check-circle-fill me-2 text-info"></i> Approvals</a>
-                        <a class="nav-link" href="{{ route('admin.verifications.index') }}"><i class="bi bi-person-check-fill me-2 text-success"></i> KYC Panel</a>
-                        <a class="nav-link" href="{{ route('admin.contests.index') }}"><i class="bi bi-trophy-fill me-2 text-warning"></i> Contests</a>
-                        <a class="nav-link" href="{{ route('notifications.index') }}"><i class="bi bi-bell-fill me-2 text-danger"></i> Notifications</a>
-                        <a class="nav-link" href="#broadcast" data-bs-toggle="modal" data-bs-target="#broadcastModal"><i class="bi bi-broadcast me-2 text-warning"></i> Broadcast</a>
-                    </nav>
+        <!-- Total Platform Users -->
+        <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:border-brand-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Users</span>
+                <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center">
+                    <i class="bi bi-people-fill text-lg"></i>
                 </div>
             </div>
+            <div class="mt-3">
+                <div class="text-2xl font-black text-gray-900 dark:text-white">{{ number_format($totalUsers) }}</div>
+                <div class="text-[11px] text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5">
+                    <span class="text-emerald-500 font-semibold">{{ $activeSellers }} sellers</span>
+                    <span>•</span>
+                    <span>{{ $totalBuyers }} buyers</span>
+                </div>
+            </div>
+        </div>
 
-            <!-- RIGHT MAIN CONTENT (9 COLUMNS) -->
-            <div class="col-12 col-lg-9 col-xl-10">
-                
-                <!-- HEADER & QUICK ACTION BUTTONS -->
-                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
-                    <div>
-                        <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small" style="background: rgba(108, 76, 241, 0.1); color: #6C4CF1;">
-                            <i class="bi bi-cpu-fill me-1"></i> Central Management Console
+        <!-- Active Sellers -->
+        <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:border-emerald-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Creators</span>
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                    <i class="bi bi-patch-check-fill text-lg"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl font-black text-gray-900 dark:text-white">{{ number_format($activeSellers) }}</div>
+                <div class="text-[11px] text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5">
+                    @if($pendingKyc > 0)
+                        <span class="text-amber-500 font-semibold flex items-center gap-1">
+                            <i class="bi bi-clock-history"></i> {{ $pendingKyc }} KYC awaiting
                         </span>
-                        <h2 class="display-6 fw-extrabold text-dark mt-1 mb-0">Marketplace Executive Dashboard</h2>
-                    </div>
+                    @else
+                        <span class="text-emerald-500 font-semibold">100% KYC clear</span>
+                    @endif
+                </div>
+            </div>
+        </div>
 
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <a href="{{ route('admin.contests.index') }}" class="btn btn-warning rounded-pill px-3.5 py-2.5 fw-bold btn-sm text-dark shadow-sm">
-                            <i class="bi bi-plus-circle me-1"></i> Create Contest
+        <!-- Pending Moderation -->
+        <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border {{ $pendingResources > 0 ? 'border-amber-400/80 dark:border-amber-500/50 bg-amber-500/[0.02]' : 'border-gray-200 dark:border-gray-800' }} shadow-sm relative overflow-hidden group transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold {{ $pendingResources > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400' }} uppercase tracking-wider">
+                    Pending Approval
+                </span>
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center {{ $pendingResources > 0 ? 'animate-bounce' : '' }}">
+                    <i class="bi bi-hourglass-split text-lg"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl font-black text-gray-900 dark:text-white">{{ number_format($pendingResources) }}</div>
+                <div class="text-[11px] mt-1">
+                    @if($pendingResources > 0)
+                        <a href="{{ route('admin.resources.index', ['status' => 'pending']) }}" class="text-amber-600 dark:text-amber-400 font-bold hover:underline flex items-center gap-1">
+                            Moderate Now <i class="bi bi-arrow-right"></i>
                         </a>
-                        <a href="{{ route('admin.resources.index', ['status' => 'pending']) }}" class="btn btn-outline-primary rounded-pill px-3.5 py-2.5 fw-bold btn-sm shadow-sm">
-                            <i class="bi bi-clock-history me-1"></i> Pending Resources ({{ $pendingResources }})
-                        </a>
-                        <button type="button" class="btn btn-purple-cta rounded-pill px-3.5 py-2.5 fw-bold btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#broadcastModal">
-                            <i class="bi bi-broadcast me-1"></i> Broadcast Alert
-                        </button>
+                    @else
+                        <span class="text-emerald-500 font-semibold">Queue clean</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Ongoing Contests -->
+        <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:border-purple-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Live Contests</span>
+                <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
+                    <i class="bi bi-trophy-fill text-lg"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl font-black text-gray-900 dark:text-white">{{ number_format($ongoingContests) }}</div>
+                <div class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                    <a href="{{ route('admin.contests.index') }}" class="text-purple-600 dark:text-purple-400 font-medium hover:underline">
+                        {{ $totalContests }} total tournaments
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Revenue & Platform Cut -->
+        <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:border-teal-500/50 transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Platform Cut (20%)</span>
+                <div class="w-9 h-9 rounded-xl bg-teal-500/10 text-teal-500 flex items-center justify-center">
+                    <i class="bi bi-wallet2 text-lg"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl font-black text-teal-600 dark:text-teal-400">৳{{ number_format($platformCut, 2) }}</div>
+                <div class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                    GMV: <span class="font-semibold text-gray-800 dark:text-gray-200">৳{{ number_format($totalRevenue, 2) }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ROW 2: ACTIONABLE QUEUE & QUICK BROADCAST -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left: Actionable Pending Resource Approvals Table (2 cols) -->
+        <div class="lg:col-span-2 bg-white dark:bg-[#0F1623] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-800/80 flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                        <i class="bi bi-shield-exclamation text-base"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white">Resource Moderation Queue</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Latest assets pending Super Admin moderation</p>
                     </div>
                 </div>
+                <a href="{{ route('admin.resources.index') }}" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+                    View All Assets <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
 
-                <!-- 6 STATISTIC METRIC CARDS -->
-                <div id="overview" class="row g-3 g-md-4 mb-5">
-                    <!-- 1. Total Users -->
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <div class="card stat-card-admin p-3.5 text-center">
-                            <div class="p-2.5 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mb-2" style="width:48px; height:48px; justify-content:center; align-items:center;">
-                                <i class="bi bi-people-fill fs-4"></i>
-                            </div>
-                            <div class="display-6 fw-extrabold text-dark mb-0">{{ number_format($totalUsers) }}</div>
-                            <div class="extra-small text-uppercase tracking-wider fw-bold text-muted mt-1">Total Users</div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Total Resources -->
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <div class="card stat-card-admin p-3.5 text-center">
-                            <div class="p-2.5 bg-info bg-opacity-10 text-info rounded-circle d-inline-flex mb-2" style="width:48px; height:48px; justify-content:center; align-items:center;">
-                                <i class="bi bi-layers-fill fs-4"></i>
-                            </div>
-                            <div class="display-6 fw-extrabold text-dark mb-0">{{ number_format($totalResources) }}</div>
-                            <div class="extra-small text-uppercase tracking-wider fw-bold text-muted mt-1">Resources</div>
-                        </div>
-                    </div>
-
-                    <!-- 3. Total Orders -->
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <div class="card stat-card-admin p-3.5 text-center">
-                            <div class="p-2.5 bg-success bg-opacity-10 text-success rounded-circle d-inline-flex mb-2" style="width:48px; height:48px; justify-content:center; align-items:center;">
-                                <i class="bi bi-bag-check-fill fs-4"></i>
-                            </div>
-                            <div class="display-6 fw-extrabold text-dark mb-0">{{ number_format($totalOrders) }}</div>
-                            <div class="extra-small text-uppercase tracking-wider fw-bold text-muted mt-1">Orders</div>
-                        </div>
-                    </div>
-
-                    <!-- 4. Revenue -->
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <div class="card stat-card-admin p-3.5 text-center">
-                            <div class="p-2.5 bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex mb-2" style="width:48px; height:48px; justify-content:center; align-items:center;">
-                                <i class="bi bi-cash-stack fs-4 text-warning"></i>
-                            </div>
-                            <div class="fw-extrabold text-dark fs-4 mb-0">৳{{ number_format($revenue, 2) }}</div>
-                            <div class="extra-small text-uppercase tracking-wider fw-bold text-muted mt-1">Revenue</div>
-                        </div>
-                    </div>
-
-                    <!-- 5. Pending KYC -->
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <div class="card stat-card-admin p-3.5 text-center">
-                            <div class="p-2.5 bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex mb-2" style="width:48px; height:48px; justify-content:center; align-items:center;">
-                                <i class="bi bi-shield-exclamation fs-4"></i>
-                            </div>
-                            <div class="display-6 fw-extrabold text-danger mb-0">{{ $pendingVerifications }}</div>
-                            <div class="extra-small text-uppercase tracking-wider fw-bold text-muted mt-1">Pending KYC</div>
-                        </div>
-                    </div>
-
-                    <!-- 6. Pending Assets -->
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <div class="card stat-card-admin p-3.5 text-center">
-                            <div class="p-2.5 bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-flex mb-2" style="width:48px; height:48px; justify-content:center; align-items:center;">
-                                <i class="bi bi-clock-history fs-4"></i>
-                            </div>
-                            <div class="display-6 fw-extrabold text-dark mb-0">{{ $pendingResources }}</div>
-                            <div class="extra-small text-uppercase tracking-wider fw-bold text-muted mt-1">Pending Assets</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ANALYTICS SECTION (CHARTS) -->
-                <div id="analytics" class="row g-4 mb-5">
-                    <!-- Chart 1: Monthly Uploads & Orders Line Chart -->
-                    <div class="col-12 col-xl-8">
-                        <div class="card stat-card-admin p-4 h-100">
-                            <h5 class="fw-extrabold text-dark mb-3"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Monthly Uploads & Orders Trend</h5>
-                            <div style="height: 280px;">
-                                <canvas id="trendsChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chart 2: Top Categories Doughnut Chart -->
-                    <div class="col-12 col-xl-4">
-                        <div class="card stat-card-admin p-4 h-100">
-                            <h5 class="fw-extrabold text-dark mb-3"><i class="bi bi-pie-chart-fill text-warning me-2"></i>Top Categories</h5>
-                            <div style="height: 280px;">
-                                <canvas id="categoriesChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RECENT ACTIVITY & RECENT VERIFICATIONS ROW -->
-                <div class="row g-4 mb-5">
-                    <!-- Recent Activity Feed -->
-                    <div class="col-12 col-lg-6">
-                        <div class="card stat-card-admin p-4 h-100">
-                            <h5 class="fw-extrabold text-dark mb-3 pb-2 border-bottom"><i class="bi bi-activity text-primary me-2"></i>Real-time Marketplace Activity</h5>
-                            
-                            <div class="d-flex flex-column gap-3">
-                                @if(isset($recentActivity) && $recentActivity->count() > 0)
-                                    @foreach($recentActivity as $act)
-                                        <div class="d-flex align-items-start gap-3 p-2.5 rounded-3 bg-light border">
-                                            <div class="p-2 rounded-circle bg-white shadow-sm extra-small">
-                                                <i class="bi {{ $act['icon'] }} fs-5"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="fw-bold text-dark small mb-0">{{ $act['title'] }}</div>
-                                                <div class="extra-small text-secondary">{{ $act['desc'] }}</div>
-                                            </div>
-                                            <span class="extra-small text-muted font-monospace">{{ $act['time'] }}</span>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-gray-50/80 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold border-b border-gray-100 dark:border-gray-800">
+                        <tr>
+                            <th class="px-4 py-3">Asset</th>
+                            <th class="px-4 py-3">Creator</th>
+                            <th class="px-4 py-3">Category / Price</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 text-right">Moderation Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                        @forelse($recentPendingResources as $res)
+                            <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-11 h-11 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 border border-gray-200 dark:border-gray-700">
+                                            @if($res->preview_image)
+                                                <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-full h-full object-cover" alt="{{ $res->title }}">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                                    <i class="bi bi-file-earmark-image"></i>
+                                                </div>
+                                            @endif
                                         </div>
-                                    @endforeach
-                                @else
-                                    <div class="text-center text-muted py-4 small">No activity logged yet.</div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+                                        <div class="max-w-[200px]">
+                                            <div class="font-bold text-gray-900 dark:text-white truncate" title="{{ $res->title }}">{{ $res->title }}</div>
+                                            <div class="text-[10px] text-gray-400 font-mono uppercase">{{ $res->file_type }} • {{ $res->created_at->diffForHumans() }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="font-semibold text-gray-900 dark:text-gray-200">{{ $res->owner->name ?? 'Unknown' }}</div>
+                                    <div class="text-[11px] text-gray-400">{{ $res->owner->email ?? 'No email' }}</div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-[11px] font-medium">
+                                        {{ $res->category->name ?? 'General' }}
+                                    </span>
+                                    <div class="font-bold text-gray-900 dark:text-gray-100 mt-0.5">
+                                        {{ $res->is_paid ? '৳' . number_format($res->price, 2) : 'Free' }}
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if($res->status === 'approved')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                            Approved
+                                        </span>
+                                    @elseif($res->status === 'rejected')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                            Rejected
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 animate-pulse">
+                                            Pending
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <!-- Admin Free Download -->
+                                        <a href="{{ route('admin.resources.download', $res->id) }}" title="Free Admin Download (Bypass Paywall)" class="p-1.5 text-gray-500 hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10 rounded-lg transition-colors">
+                                            <i class="bi bi-download text-sm"></i>
+                                        </a>
 
-                    <!-- Quick Verifications Inspector -->
-                    <div class="col-12 col-lg-6">
-                        <div class="card stat-card-admin p-4 h-100">
-                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                                <h5 class="fw-extrabold text-dark mb-0"><i class="bi bi-shield-check text-success me-2"></i>KYC Approvals Queue</h5>
-                                <a href="{{ route('admin.verifications.index') }}" class="extra-small fw-bold text-primary text-decoration-none">View All</a>
-                            </div>
-
-                            @if($pendingVerifications > 0)
-                                <div class="alert alert-warning rounded-4 small border-0 mb-3">
-                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $pendingVerifications }} seller identity verification applications waiting for compliance review.
-                                </div>
-                                <a href="{{ route('admin.verifications.index') }}" class="btn btn-outline-primary rounded-pill w-100 py-2.5 fw-bold btn-sm">
-                                    Open Verification Inspector Panel <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
-                            @else
-                                <div class="text-center py-5">
-                                    <i class="bi bi-patch-check-fill text-success fs-1 mb-2 d-block"></i>
-                                    <h6 class="fw-bold text-dark mb-1">Queue Clear!</h6>
-                                    <p class="extra-small text-muted mb-0">All seller KYC requests have been processed.</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <!-- POPULAR SEARCH & AUTO TAGS ANALYTICS CARD -->
-                <div class="card stat-card-admin p-4 mb-5">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                        <h5 class="fw-extrabold text-dark mb-0"><i class="bi bi-tags-fill text-primary me-2"></i>Popular Search & AI Indexed Tags</h5>
-                        <span class="extra-small text-muted font-monospace">Top Keywords</span>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2">
-                        @if(isset($popularSearchTags) && count($popularSearchTags) > 0)
-                            @foreach($popularSearchTags as $tag => $count)
-                                <a href="{{ route('search.index', ['tag' => $tag]) }}" class="badge bg-primary bg-opacity-10 text-primary text-decoration-none rounded-pill px-3 py-2 extra-small fw-bold border border-primary border-opacity-10">
-                                    #{{ $tag }} <span class="badge bg-primary rounded-circle ms-1 extra-small">{{ $count }}</span>
-                                </a>
-                            @endforeach
-                        @else
-                            <span class="extra-small text-muted">No tag telemetry available yet.</span>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- RESOURCE MANAGEMENT TABLE -->
-                <div id="resources-table" class="card stat-card-admin p-4 mb-5">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                        <h5 class="fw-extrabold text-dark mb-0"><i class="bi bi-layers-fill text-primary me-2"></i>Resource Management Table</h5>
-                        <a href="{{ route('admin.resources.index') }}" class="extra-small fw-bold text-primary text-decoration-none">Full Table</a>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light text-uppercase extra-small text-muted fw-bold">
-                                <tr>
-                                    <th>Preview</th>
-                                    <th>Title</th>
-                                    <th>Seller</th>
-                                    <th>Status</th>
-                                    <th>Views</th>
-                                    <th>Downloads</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($resources as $res)
-                                    <tr>
-                                        <td>
-                                            <div class="rounded-3 overflow-hidden" style="width: 50px; height: 36px; background: #1E1B4B;">
-                                                @if($res->preview_image)
-                                                    <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $res->title }}">
-                                                @else
-                                                    <div class="w-100 h-100 bg-primary p-1 text-white text-center"><i class="bi bi-box"></i></div>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="fw-bold text-dark small text-truncate" style="max-width: 220px;">{{ $res->title }}</div>
-                                            <div class="extra-small text-muted">{{ $res->category ? $res->category->name : 'General' }}</div>
-                                        </td>
-                                        <td class="small">{{ $res->owner ? $res->owner->name : 'Noksha Creator' }}</td>
-                                        <td>
-                                            @if($res->status === 'approved')
-                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2.5 py-1 extra-small fw-bold">Approved</span>
-                                            @elseif($res->status === 'pending')
-                                                <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-2.5 py-1 extra-small fw-bold">Pending</span>
-                                            @else
-                                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2.5 py-1 extra-small fw-bold">Rejected</span>
-                                            @endif
-                                        </td>
-                                        <td class="extra-small font-monospace text-muted">{{ number_format($res->views) }}</td>
-                                        <td class="extra-small font-monospace text-muted">{{ number_format($res->downloads) }}</td>
-                                        <td class="text-end">
-                                            <div class="d-inline-flex gap-1">
-                                                @if($res->status === 'pending')
-                                                    <form action="{{ route('admin.resources.approve', $res->id) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-success btn-sm rounded-circle p-1" title="Approve">
-                                                            <i class="bi bi-check-lg"></i>
-                                                        </button>
-                                                    </form>
-                                                    <form action="{{ route('admin.resources.reject', $res->id) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle p-1" title="Reject">
-                                                            <i class="bi bi-x-lg"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                                <a href="{{ route('resource.show', $res->slug ?? $res->id) }}" class="btn btn-light border btn-sm rounded-circle p-1" title="View">
-                                                    <i class="bi bi-eye-fill text-primary"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3">
-                        {{ $resources->appends(['users_page' => $users->currentPage()])->links() }}
-                    </div>
-                </div>
-
-                <!-- USER MANAGEMENT TABLE -->
-                <div id="users-table" class="card stat-card-admin p-4 mb-4">
-                    <h5 class="fw-extrabold text-dark mb-3 pb-2 border-bottom"><i class="bi bi-people-fill text-primary me-2"></i>User Management Table</h5>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light text-uppercase extra-small text-muted fw-bold">
-                                <tr>
-                                    <th>User</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>KYC Status</th>
-                                    <th>User Status</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $usr)
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-2.5">
-                                                <div class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                                    {{ strtoupper(substr($usr->name, 0, 1)) }}
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold text-dark small mb-0">{{ $usr->name }}</div>
-                                                    <div class="extra-small text-muted">@ {{ $usr->username }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="small text-muted font-monospace">{{ $usr->email }}</td>
-                                        <td>
-                                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                                {{ ucfirst($usr->role ?? 'user') }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if($usr->is_verified)
-                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2.5 py-1 extra-small fw-bold">Verified</span>
-                                            @else
-                                                <span class="badge bg-light text-secondary rounded-pill px-2.5 py-1 extra-small">Unverified</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if(($usr->status ?? 'active') === 'suspended')
-                                                <span class="badge bg-danger text-white rounded-pill px-2.5 py-1 extra-small fw-bold">Suspended</span>
-                                            @else
-                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2.5 py-1 extra-small fw-bold">Active</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-end">
-                                            <form action="{{ route('admin.users.toggleStatus', $usr->id) }}" method="POST" class="d-inline">
+                                        @if($res->status !== 'approved')
+                                            <!-- Approve -->
+                                            <form method="POST" action="{{ route('admin.resources.approve', $res->id) }}" class="inline">
                                                 @csrf
-                                                @if(($usr->status ?? 'active') === 'suspended')
-                                                    <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 py-1 extra-small fw-bold">
-                                                        Activate
-                                                    </button>
-                                                @else
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 extra-small fw-bold">
-                                                        Suspend
-                                                    </button>
-                                                @endif
+                                                <button type="submit" title="Approve & Publish" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition-colors">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                        @endif
 
-                    <div class="mt-3">
-                        {{ $users->appends(['resources_page' => $resources->currentPage()])->links() }}
-                    </div>
-                </div>
-
+                                        @if($res->status !== 'rejected')
+                                            <!-- Reject with Reason Trigger -->
+                                            <button type="button" onclick="openRejectModal('{{ $res->id }}', '{{ addslashes($res->title) }}')" title="Reject Asset" class="px-2 py-1 rounded bg-rose-600/10 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white font-bold text-[11px] transition-colors border border-rose-500/30">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                    <i class="bi bi-check-circle-fill text-3xl text-emerald-500 block mb-1"></i>
+                                    Moderation queue is completely clear.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-
         </div>
 
-    </div>
-</div>
-
-<!-- BROADCAST NOTIFICATION MODAL -->
-<div class="modal fade text-start" id="broadcastModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 border-0 shadow-lg">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-broadcast text-primary me-2"></i> Broadcast System Notification</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('admin.broadcast') }}" method="POST">
-                @csrf
-                <div class="modal-body py-3">
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold text-uppercase text-muted">Notification Title</label>
-                        <input type="text" name="title" class="form-control rounded-3" placeholder="e.g. Scheduled Marketplace Maintenance" required>
+        <!-- Right: Broadcast Notification Card (1 col) -->
+        <div class="space-y-6">
+            <!-- Broadcast Card -->
+            <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+                <div class="flex items-center gap-2.5 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                        <i class="bi bi-megaphone-fill text-base"></i>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label extra-small fw-bold text-uppercase text-muted">Message Content</label>
-                        <textarea name="message" rows="3" class="form-control rounded-3" placeholder="Enter message to broadcast to all registered users..." required></textarea>
+                    <div>
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white">Broadcast Alert</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Send system announcement to all users</p>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-purple-cta rounded-pill px-4 fw-bold">
-                        <i class="bi bi-send-fill me-1"></i> Broadcast Now
+
+                <form method="POST" action="{{ route('admin.broadcast') }}" class="space-y-3">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Announcement Title</label>
+                        <input type="text" name="title" required placeholder="e.g., Scheduled Platform Maintenance" class="w-full px-3 py-2 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Message Body</label>
+                        <textarea name="message" rows="3" required placeholder="Write message details..." class="w-full px-3 py-2 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-brand-500"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5">
+                        <i class="bi bi-send-fill"></i> Broadcast to All Users
                     </button>
+                </form>
+            </div>
+
+            <!-- Quick Activity Stream -->
+            <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">Live Platform Feed</h4>
+                <div class="space-y-3">
+                    @forelse($recentActivity as $act)
+                        <div class="flex items-start gap-2.5 text-xs">
+                            <div class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+                                <i class="bi {{ $act['icon'] }}"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-gray-900 dark:text-white truncate">{{ $act['title'] }}</div>
+                                <div class="text-[11px] text-gray-500 dark:text-gray-400 truncate">{{ $act['desc'] }}</div>
+                            </div>
+                            <span class="text-[10px] text-gray-400 flex-shrink-0">{{ $act['time'] }}</span>
+                        </div>
+                    @empty
+                        <p class="text-xs text-gray-400">No recent activity logged.</p>
+                    @endforelse
                 </div>
-            </form>
+            </div>
         </div>
+
+    </div>
+
+    <!-- ROW 3: RECENT USERS TABLE WITH 1-CLICK STATUS TOGGLE -->
+    <div class="bg-white dark:bg-[#0F1623] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-gray-100 dark:border-gray-800/80 flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center">
+                    <i class="bi bi-person-lines-fill text-base"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm text-gray-900 dark:text-white">Recent User Registrations</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Inspect newly onboarded accounts and toggle access status</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.users.index') }}" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+                Manage All Users <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-gray-50/80 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold border-b border-gray-100 dark:border-gray-800">
+                    <tr>
+                        <th class="px-5 py-3">User Profile</th>
+                        <th class="px-5 py-3">Role</th>
+                        <th class="px-5 py-3">Status</th>
+                        <th class="px-5 py-3">Joined</th>
+                        <th class="px-5 py-3 text-right">Account Control</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    @foreach($recentUsers as $usr)
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full bg-brand-600/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                        {{ strtoupper(substr($usr->name, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-gray-900 dark:text-white">{{ $usr->name }}</div>
+                                        <div class="text-[11px] text-gray-400 font-mono">{{ $usr->email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3.5">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                    {{ $usr->role === 'admin' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20' : ($usr->role === 'seller' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300') }}">
+                                    {{ $usr->role }}
+                                </span>
+                            </td>
+                            <td class="px-5 py-3.5">
+                                @if($usr->status === 'suspended')
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                        Suspended
+                                    </span>
+                                @else
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                        Active
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3.5 text-gray-500 dark:text-gray-400">
+                                {{ $usr->created_at->format('M d, Y') }}
+                            </td>
+                            <td class="px-5 py-3.5 text-right">
+                                @if($usr->id !== auth()->id())
+                                    <form method="POST" action="{{ route('admin.users.toggleStatus', $usr->id) }}" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                onclick="return confirm('Change account status for {{ addslashes($usr->name) }}?')"
+                                                class="px-3 py-1 rounded-lg text-xs font-semibold transition-colors
+                                                {{ $usr->status === 'suspended' ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white border border-rose-500/30' }}">
+                                            {{ $usr->status === 'suspended' ? 'Activate' : 'Suspend' }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-[11px] text-gray-400 italic">Current Admin</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- REJECTION MODAL (For rejecting resources with prompt reason) -->
+<div id="rejectResourceModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#0F1623] rounded-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-800 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800 mb-4">
+            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill text-rose-500"></i> Reject Resource Asset
+            </h3>
+            <button type="button" onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form id="rejectResourceForm" method="POST" action="">
+            @csrf
+            <p class="text-xs text-gray-600 dark:text-gray-300 mb-3">
+                Specify why <strong id="rejectResourceTitle" class="text-gray-900 dark:text-white"></strong> is being rejected. This feedback will be sent directly to the creator.
+            </p>
+
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Rejection Reason</label>
+                <textarea name="rejection_reason" rows="3" required placeholder="e.g., Low preview resolution, corrupted zip archive, or missing source components." class="w-full px-3 py-2 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-rose-500"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" onclick="closeRejectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors">
+                    Confirm Rejection
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- CHART INITIALIZATION SCRIPT -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // 1. Line Chart: Trends
-        const trendsCtx = document.getElementById('trendsChart').getContext('2d');
-        new Chart(trendsCtx, {
-            type: 'line',
-            data: {
-                labels: @json($chartData['monthlyLabels']),
-                datasets: [
-                    {
-                        label: 'Resource Uploads',
-                        data: @json($chartData['monthlyUploads']),
-                        borderColor: '#6C4CF1',
-                        backgroundColor: 'rgba(108, 76, 241, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Completed Orders',
-                        data: @json($chartData['monthlyOrders']),
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } }
-            }
-        });
+    function openRejectModal(resourceId, resourceTitle) {
+        document.getElementById('rejectResourceTitle').textContent = `"${resourceTitle}"`;
+        document.getElementById('rejectResourceForm').action = `/admin/resources/${resourceId}/reject`;
+        document.getElementById('rejectResourceModal').classList.remove('hidden');
+    }
 
-        // 2. Doughnut Chart: Categories
-        const catCtx = document.getElementById('categoriesChart').getContext('2d');
-        new Chart(catCtx, {
-            type: 'doughnut',
-            data: {
-                labels: @json($chartData['topCategories']),
-                datasets: [{
-                    data: @json($chartData['categoryCounts']),
-                    backgroundColor: ['#6C4CF1', '#3B82F6', '#10B981', '#F59E0B', '#EC4899']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } }
-            }
-        });
-    });
+    function closeRejectModal() {
+        document.getElementById('rejectResourceModal').classList.add('hidden');
+    }
 </script>
 @endsection
