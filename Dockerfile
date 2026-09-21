@@ -23,6 +23,7 @@ COPY . .
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 RUN npm install && npm run build
 
+# Nginx configuration
 RUN mkdir -p /run/nginx
 RUN echo 'server { \
     listen 80; \
@@ -39,8 +40,14 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/http.d/default.conf
 
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Ensure directories exist and grant full permissions
+RUN mkdir -p /var/www/storage/framework/cache/data \
+    && mkdir -p /var/www/storage/framework/sessions \
+    && mkdir -p /var/www/storage/framework/views \
+    && mkdir -p /var/www/storage/logs \
+    && mkdir -p /var/www/bootstrap/cache \
+    && chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 80
 
-CMD sh -c "mkdir -p /var/www/storage/logs && chmod -R 777 /var/www/storage /var/www/bootstrap/cache && php artisan config:clear && php artisan migrate --force || true; php-fpm -D && nginx -g 'daemon off;'"
+CMD ["sh", "-c", "chmod -R 777 /var/www/storage /var/www/bootstrap/cache && php artisan config:clear && php artisan migrate --force || true; php-fpm -D && nginx -g 'daemon off;'"]
