@@ -43,4 +43,4 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 80
 
-CMD sh -c "php artisan config:clear && php artisan migrate --force || true; php-fpm -D && nginx -g 'daemon off;'"
+CMD sh -c "mkdir -p /var/www/storage/logs && chmod -R 777 /var/www/storage /var/www/bootstrap/cache && php artisan config:clear && php artisan migrate --force || true; php-fpm -D && nginx -g 'daemon off;'"
