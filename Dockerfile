@@ -50,4 +50,4 @@ RUN mkdir -p /var/www/storage/framework/cache/data \
 
 EXPOSE 80
 
-CMD sh -c "php artisan migrate --force && php-fpm -D && nginx -g 'daemon off;'"
+CMD sh -c "php artisan migrate --force && php artisan db:seed --force && php-fpm -D && nginx -g 'daemon off;'"
