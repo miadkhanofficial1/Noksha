@@ -50,4 +50,4 @@ RUN mkdir -p /var/www/storage/framework/cache/data \
 
 EXPOSE 80
 
-CMD ["sh", "-c", "chmod -R 777 /var/www/storage /var/www/bootstrap/cache && php artisan config:clear && php artisan migrate --force || true; php-fpm -D && nginx -g 'daemon off;'"]
+CMD php-fpm -D && nginx -g "daemon off;"
