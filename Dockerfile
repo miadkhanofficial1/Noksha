@@ -11,15 +11,16 @@ RUN apk add --no-cache \
     libzip-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo_mysql bcmath gd zip
+    oniguruma-dev \
+    && docker-php-ext-install pdo_mysql mbstring bcmath gd zip
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 RUN npm install && npm run build
 
 RUN mkdir -p /run/nginx
