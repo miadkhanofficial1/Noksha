@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Noksha (নকশা) - বাংলার সেরা Graphic Marketplace')
+@section('title', 'Noksha')
 
 @section('content')
 
@@ -857,6 +857,11 @@
             </div>
         </div>
 
+        <!-- SKELETON LOADERS (Subtle In-App Content Transition Placeholders) -->
+        <div id="templateSkeletonGrid" class="d-none mb-4">
+            @include('partials.skeleton-cards', ['count' => 6])
+        </div>
+
         <!-- DYNAMIC DATABASE APPROVED TEMPLATE CARDS GRID -->
         <div class="row g-4" id="templateCardsContainer">
             @if($resources->count() > 0)
@@ -1159,6 +1164,49 @@ document.addEventListener('DOMContentLoaded', function () {
     const scrollTopBtn = document.getElementById('scrollTopBtn');
 
     // 1. Sync Hero Search with Filter Bar Search Input
+    let currentCategory = 'All';
+    let filterDebounceTimer = null;
+
+    function applyTemplateFilters() {
+        const query = (filterSearchInput ? filterSearchInput.value : '').toLowerCase().trim();
+        const items = document.querySelectorAll('.template-card-item');
+        const skeletonGrid = document.getElementById('templateSkeletonGrid');
+        const cardsGrid = document.getElementById('templateCardsContainer');
+        const countText = document.getElementById('resultCountText');
+
+        if (skeletonGrid && cardsGrid) {
+            skeletonGrid.classList.remove('d-none');
+            cardsGrid.classList.add('d-none');
+        }
+
+        setTimeout(() => {
+            let visibleCount = 0;
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category') || '';
+                const itemTitle = item.getAttribute('data-title') || '';
+                
+                const matchesCat = (currentCategory === 'All' || itemCat.toLowerCase() === currentCategory.toLowerCase());
+                const matchesQuery = (!query || itemTitle.includes(query) || itemCat.toLowerCase().includes(query));
+
+                if (matchesCat && matchesQuery) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (countText) {
+                countText.textContent = `Showing ${visibleCount} approved marketplace templates`;
+            }
+
+            if (skeletonGrid && cardsGrid) {
+                skeletonGrid.classList.add('d-none');
+                cardsGrid.classList.remove('d-none');
+            }
+        }, 220);
+    }
+
     if (heroSearchInput && filterSearchInput) {
         heroSearchInput.addEventListener('input', function (e) {
             filterSearchInput.value = e.target.value;
@@ -1166,14 +1214,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const templatesElem = document.getElementById('templates');
                 if (templatesElem) templatesElem.scrollIntoView({ behavior: 'smooth' });
             }
+            clearTimeout(filterDebounceTimer);
+            filterDebounceTimer = setTimeout(applyTemplateFilters, 280);
         });
 
         filterSearchInput.addEventListener('input', function () {
             heroSearchInput.value = filterSearchInput.value;
+            clearTimeout(filterDebounceTimer);
+            filterDebounceTimer = setTimeout(applyTemplateFilters, 280);
         });
     }
 
-    // 2. Category Chips Active State Toggle
+    // 2. Category Chips Active State Toggle & Skeleton Filter
     function setActiveChip(categoryName) {
         catChips.forEach(chip => {
             const chipCat = chip.getAttribute('data-cat');
@@ -1188,12 +1240,16 @@ document.addEventListener('DOMContentLoaded', function () {
     catChips.forEach(chip => {
         chip.addEventListener('click', function () {
             const selectedCat = this.getAttribute('data-cat');
+            currentCategory = selectedCat;
             setActiveChip(selectedCat);
+            applyTemplateFilters();
         });
     });
 
     window.activateChipCategory = function (categoryName) {
+        currentCategory = categoryName;
         setActiveChip(categoryName);
+        applyTemplateFilters();
         const templatesElem = document.getElementById('templates');
         if (templatesElem) {
             templatesElem.scrollIntoView({ behavior: 'smooth' });

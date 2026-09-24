@@ -7,8 +7,14 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="noksha-card p-4 p-md-5 shadow-sm">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold text-dark mb-1">Set New Password <span class="text-primary fs-5">(নতুন পাসওয়ার্ড)</span></h3>
+                <div class="text-center mb-4 overflow-hidden">
+                    <a href="{{ route('home') }}" class="d-block text-center text-decoration-none">
+                        <img src="{{ asset('images/logo.png') }}" 
+                             alt="Noksha" 
+                             height="48"
+                             style="height: 48px; width: auto; max-height: 48px; object-fit: contain; margin: 0 auto 1.5rem auto; display: block;">
+                    </a>
+                    <h3 class="fw-bold text-dark dark:text-white mb-1">Set New Password <span class="text-primary fs-5">(নতুন পাসওয়ার্ড)</span></h3>
                     <p class="text-muted small">Please enter your new password below</p>
                 </div>
 

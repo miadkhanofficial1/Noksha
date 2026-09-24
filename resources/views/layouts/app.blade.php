@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@yield('title', 'Noksha (নকশা) - AI-Powered Graphics Template Marketplace')</title>
+    <title>@yield('title', 'Noksha')</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,6 +87,9 @@
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-[#0B0F19] dark:text-gray-100 min-h-screen d-flex flex-column transition-colors duration-300">
 
+    <!-- INITIAL PRELOADER / SPLASH SCREEN -->
+    @include('partials.preloader')
+
     <!-- HEADER NAVIGATION -->
     @include('layouts.navigation')
 
@@ -97,8 +105,14 @@
                 <!-- Column 1: Brand Info -->
                 <div class="col-lg-4 col-md-6">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="noksha-logo-badge">ন</span>
-                        <span class="fw-bold fs-4 text-white">Noksha <span class="text-noksha-gradient fs-5">(নকশা)</span></span>
+                        <img src="{{ asset('images/logo.png') }}" 
+                             alt="Noksha" 
+                             class="noksha-brand-logo h-10 w-auto object-contain flex-shrink-0"
+                             height="40"
+                             style="height: 40px; width: auto; max-height: 40px; object-fit: contain; display: block;">
+                        <span class="fw-bold fs-4 text-white text-nowrap">
+                            {{ app()->getLocale() === 'bn' ? 'নকশা' : 'Noksha' }}
+                        </span>
                     </div>
                     <p class="text-secondary small mb-3">
                         Noksha is an AI-Powered Graphics Template Marketplace connecting designers, creators, and buyers with automated tagging, intelligent search, and high-quality design assets.
@@ -153,7 +167,7 @@
             <!-- Bottom Copyright & Status -->
             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-secondary small gap-2">
                 <div>
-                    &copy; 2026 <strong>Noksha (নকশা)</strong>. All rights reserved.
+                    &copy; 2026 <strong>{{ app()->getLocale() === 'bn' ? 'নকশা' : 'Noksha' }}</strong>. All rights reserved.
                 </div>
                 <div class="d-flex gap-3">
                     <a href="{{ url('/docs/README.md') }}" class="text-secondary text-decoration-none">Documentation</a>

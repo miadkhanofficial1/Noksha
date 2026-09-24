@@ -16,15 +16,14 @@
             <!-- ========================================================= -->
             <div class="d-flex align-items-center gap-3 gap-xl-4 flex-shrink-0">
                 <!-- Brand Logo -->
-                <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ route('home') }}" aria-label="Noksha Homepage">
+                <a class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0" href="{{ route('home') }}" aria-label="{{ $currentLocale === 'bn' ? 'নকশা' : 'Noksha' }}" style="height: 40px; max-height: 40px;">
                     <img src="{{ asset('images/logo.png') }}" 
-                         alt="Noksha Logo" 
-                         class="noksha-brand-logo img-fluid h-9 sm:h-10 w-auto object-contain flex-shrink-0"
-                         width="40"
+                         alt="Noksha" 
+                         class="noksha-brand-logo h-10 w-auto object-contain flex-shrink-0"
                          height="40"
-                         loading="eager">
-                    <span class="fw-bold fs-4 tracking-tight text-dark d-flex align-items-baseline gap-1">
-                        Noksha <span class="text-primary fs-6 fw-bold">(নকশা)</span>
+                         style="height: 40px; width: auto; max-height: 40px; object-fit: contain; display: block;">
+                    <span class="fw-bold fs-4 tracking-tight text-dark dark:text-white text-nowrap">
+                        {{ $currentLocale === 'bn' ? 'নকশা' : 'Noksha' }}
                     </span>
                 </a>
 

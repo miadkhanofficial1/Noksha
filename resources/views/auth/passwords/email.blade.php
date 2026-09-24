@@ -7,11 +7,14 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="noksha-card p-4 p-md-5 shadow-sm">
-                <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle bg-secondary bg-opacity-10 text-secondary p-3" style="width: 64px; height: 64px;">
-                        <i class="bi bi-key-fill fs-2"></i>
-                    </div>
-                    <h3 class="fw-bold text-dark mb-1">Reset Password <span class="text-primary fs-5">(পাসওয়ার্ড রিসেট)</span></h3>
+                <div class="text-center mb-4 overflow-hidden">
+                    <a href="{{ route('home') }}" class="d-block text-center text-decoration-none">
+                        <img src="{{ asset('images/logo.png') }}" 
+                             alt="Noksha" 
+                             height="48"
+                             style="height: 48px; width: auto; max-height: 48px; object-fit: contain; margin: 0 auto 1.5rem auto; display: block;">
+                    </a>
+                    <h3 class="fw-bold text-dark dark:text-white mb-1">Reset Password <span class="text-primary fs-5">(পাসওয়ার্ড রিসেট)</span></h3>
                     <p class="text-muted small">Enter your email address to receive a password reset link</p>
                 </div>
 

@@ -8,11 +8,14 @@
         <div class="col-md-6 col-lg-5">
             <div class="noksha-card p-4 p-md-5 shadow-sm">
                 <!-- Header Title -->
-                <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center mb-3 noksha-logo-badge" style="width: 54px; height: 54px; font-size: 1.5rem;">
-                        ন
-                    </div>
-                    <h2 class="fw-bold text-dark mb-1">{{ __('auth.login') }}</h2>
+                <div class="text-center mb-4 overflow-hidden">
+                    <a href="{{ route('home') }}" class="d-block text-center text-decoration-none">
+                        <img src="{{ asset('images/logo.png') }}" 
+                             alt="Noksha" 
+                             height="48"
+                             style="height: 48px; width: auto; max-height: 48px; object-fit: contain; margin: 0 auto 1.5rem auto; display: block;">
+                    </a>
+                    <h2 class="fw-bold text-dark dark:text-white mb-1">{{ __('auth.login') }}</h2>
                     <p class="text-muted small">Noksha Marketplace Account</p>
                 </div>
 

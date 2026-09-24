@@ -554,3 +554,57 @@ html.dark {
     }
 }
 
+// ============================================================
+// SKELETON LOADERS (Subtle In-App Content Loading Placeholders)
+// ============================================================
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s infinite ease-in-out;
+}
+
+html.dark .skeleton-shimmer {
+    background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+    background-size: 200% 100%;
+}
+
+.skeleton-card {
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: #FFFFFF;
+    border: 1px solid rgba(108, 76, 241, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+html.dark .skeleton-card {
+    background: #0F172A;
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.skeleton-thumb {
+    height: 240px;
+    width: 100%;
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+}
+
+.skeleton-line {
+    border-radius: 0.375rem;
+    height: 12px;
+}
+
+.skeleton-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
+
