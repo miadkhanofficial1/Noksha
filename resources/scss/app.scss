@@ -131,6 +131,20 @@ main {
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
+// Brand Logo Image
+.noksha-brand-logo {
+    height: 38px;
+    width: auto;
+    max-height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+
+    @media (min-width: 768px) {
+        height: 42px;
+    }
+}
+
 // -------------------------------------------------------------
 // Responsive Layout & Utility Helpers (Tailwind-compatible)
 // -------------------------------------------------------------

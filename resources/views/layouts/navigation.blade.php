@@ -16,8 +16,13 @@
             <!-- ========================================================= -->
             <div class="d-flex align-items-center gap-3 gap-xl-4 flex-shrink-0">
                 <!-- Brand Logo -->
-                <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ route('home') }}">
-                    <span class="noksha-logo-badge">ন</span>
+                <a class="d-flex align-items-center gap-2 text-decoration-none" href="{{ route('home') }}" aria-label="Noksha Homepage">
+                    <img src="{{ asset('images/logo.png') }}" 
+                         alt="Noksha Logo" 
+                         class="noksha-brand-logo img-fluid h-9 sm:h-10 w-auto object-contain flex-shrink-0"
+                         width="40"
+                         height="40"
+                         loading="eager">
                     <span class="fw-bold fs-4 tracking-tight text-dark d-flex align-items-baseline gap-1">
                         Noksha <span class="text-primary fs-6 fw-bold">(নকশা)</span>
                     </span>
