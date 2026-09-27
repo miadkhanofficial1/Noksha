@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Seller Identity Verification - Noksha (নকশা)')
+@section('title', 'Seller Identity Verification - Noksha')
 
 @section('content')
 
@@ -83,7 +83,7 @@
                     <i class="bi bi-shield-check-fill me-1 text-warning"></i> Contributor Identity Verification (KYC)
                 </span>
                 <h1 class="display-5 fw-extrabold text-white mb-2">
-                    Apply to Become Contributor <span class="text-warning">(ভেরিফিকেশন)</span>
+                    Apply to Become Contributor <span class="text-warning"></span>
                 </h1>
                 <p class="fs-6 text-white text-opacity-90 mb-0" style="max-width: 620px;">
                     Verify your identity to earn the Contributor badge, unlock publishing permissions, and build trust as a Verified Creator on Noksha.
@@ -102,21 +102,9 @@
 <section class="py-5" style="background-color: #F8F7FF;">
     <div class="container py-2" style="max-width: 900px;">
         
-        <!-- Flash Success Notification -->
-        @if(session('success'))
-            <div class="alert alert-success border-0 shadow-lg rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark bg-white">
-                <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
-                    <i class="bi bi-check-circle-fill fs-3"></i>
-                </div>
-                <div>
-                    <h5 class="fw-bold mb-1">Submission Successful!</h5>
-                    <p class="mb-0 small text-secondary">{{ session('success') }}</p>
-                </div>
-            </div>
-        @endif
 
         <!-- Validation Error Summary -->
-        @if ($errors->any())
+        @if (isset($errors) && $errors->any())
             <div class="alert alert-danger border-0 shadow-sm rounded-4 p-4 mb-4 bg-white text-danger border-start border-danger border-4">
                 <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i> Please fix the errors below:</h6>
                 <ul class="mb-0 small ps-3">
@@ -157,17 +145,33 @@
                                 Submitted on {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y') }}. Our compliance team is verifying your NID/Passport & selfie.
                             </p>
                         </div>
+                    @elseif(auth()->user()->isKycRejectedInCooldown())
+                        <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle fs-3">
+                            <i class="bi bi-shield-x"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-danger text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
+                                <i class="bi bi-shield-x me-1"></i> 7-Day Resubmission Cooldown
+                            </span>
+                            <h5 class="fw-bold text-dark mb-1">{{ __('dashboard.kyc_cooldown_title') }}</h5>
+                            <p class="text-danger small mb-1 fw-bold">
+                                Reason: {{ auth()->user()->getKycRejectionReason() }}
+                            </p>
+                            <p class="text-secondary extra-small mb-0">
+                                Reapplication unlocks after <strong>{{ auth()->user()->getKycCooldownRemainingDate() }}</strong>.
+                            </p>
+                        </div>
                     @elseif(isset($verification) && $verification->status === 'rejected')
                         <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle fs-3">
                             <i class="bi bi-x-circle-fill"></i>
                         </div>
                         <div>
                             <span class="badge bg-danger text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
-                                <i class="bi bi-x-circle-fill me-1"></i> Declined / Resubmission Required
+                                <i class="bi bi-x-circle-fill me-1"></i> Declined / Resubmission Allowed
                             </span>
                             <h5 class="fw-bold text-dark mb-0">Verification Declined</h5>
                             <p class="text-secondary extra-small mb-0">
-                                {{ $verification->admin_note ?? 'Please re-upload clear government ID (NID/Passport) and selfie photos.' }}
+                                {{ auth()->user()->getKycRejectionReason() }}
                             </p>
                         </div>
                     @else
@@ -191,51 +195,89 @@
             </div>
         </div>
 
-        <!-- GLASSMORPHISM VERIFICATION FORM -->
-        <div class="card glass-verification-card p-4 p-md-5">
-            <form action="{{ route('seller.verification.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
+        @if(auth()->user()->isKycRejectedInCooldown())
+            <!-- COOLDOWN ACTIVE CARD -->
+            <div class="card glass-verification-card p-4 p-md-5 text-center border-danger border-opacity-30">
+                <div class="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto mb-3.5 fs-1" style="width: 64px; height: 64px; margin: 0 auto;">
+                    <i class="bi bi-shield-x"></i>
+                </div>
+                <h4 class="fw-extrabold text-dark mb-2">
+                    {{ __('dashboard.kyc_cooldown_title') }}
+                </h4>
+                <p class="text-secondary small mb-4" style="max-width: 560px; margin: 0 auto;">
+                    {{ __('dashboard.kyc_cooldown_desc', ['reason' => auth()->user()->getKycRejectionReason(), 'date' => auth()->user()->getKycCooldownRemainingDate()]) }}
+                </p>
+                <div class="p-3.5 bg-light rounded-3 text-start small border mb-4" style="max-width: 480px; margin: 0 auto;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Rejection Feedback:</span>
+                        <span class="fw-bold text-danger">{{ auth()->user()->getKycRejectionReason() }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Status:</span>
+                        <span class="badge bg-danger bg-opacity-15 text-danger fw-bold">7-Day Resubmission Cooldown</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Reapplication Unlocks:</span>
+                        <span class="fw-bold text-dark font-mono">{{ auth()->user()->getKycCooldownRemainingDate() }}</span>
+                    </div>
+                </div>
+                <div>
+                    <a href="{{ route('dashboard') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                        &larr; Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        @else
+            <!-- GLASSMORPHISM VERIFICATION FORM (Option 1B Synced) -->
+            <div class="card glass-verification-card p-4 p-md-5">
+                <form action="{{ route('seller.verification.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-                <!-- SECTION 1: PERSONAL IDENTITY -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-person-vcard-fill text-primary"></i> Identity Information
-                    </h5>
-                    <p class="text-secondary small mb-4">Provide your legal details as printed on your government identity card.</p>
+                    <!-- SECTION 1: PERSONAL IDENTITY -->
+                    <div class="mb-5">
+                        <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
+                            <i class="bi bi-person-vcard-fill text-primary"></i> Identity Information
+                        </h5>
+                        <p class="text-secondary small mb-4">Provide your legal details as printed on your government identity card.</p>
 
-                    <div class="row g-4">
-                        <!-- Full Name -->
-                        <div class="col-12 col-md-6">
-                            <label for="full_name" class="form-label fw-bold text-dark small">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" name="full_name" id="full_name" class="form-control form-control-figma @error('full_name') is-invalid @enderror" placeholder="Legal full name" value="{{ old('full_name', $verification->full_name ?? auth()->user()->name) }}" required>
-                            @error('full_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        <div class="row g-4">
+                            <!-- Full Name -->
+                            <div class="col-12 col-md-6">
+                                <label for="full_name" class="form-label fw-bold text-dark small">Full Legal Name <span class="text-danger">*</span></label>
+                                <input type="text" name="full_name" id="full_name" class="form-control form-control-figma @error('full_name') is-invalid @enderror" placeholder="Legal full name" value="{{ old('full_name', $verification->full_name ?? auth()->user()->name) }}" required>
+                                @error('full_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Phone / WhatsApp -->
+                            <div class="col-12 col-md-6">
+                                <label for="phone" class="form-label fw-bold text-dark small">Phone / WhatsApp Number <span class="text-danger">*</span></label>
+                                <input type="text" name="phone" id="phone" class="form-control form-control-figma @error('phone') is-invalid @enderror" placeholder="01XXXXXXXXX" value="{{ old('phone', auth()->user()->phone) }}" required>
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- National ID / Passport Number -->
+                            <div class="col-12 col-md-6">
+                                <label for="id_number" class="form-label fw-bold text-dark small">National ID / Passport Number <span class="text-danger">*</span></label>
+                                <input type="text" name="id_number" id="id_number" class="form-control form-control-figma @error('id_number') is-invalid @enderror" placeholder="e.g. 199XXXXXXXXXX or Passport Number" value="{{ old('id_number', $verification->id_number ?? '') }}" required>
+                                @error('id_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Portfolio Link -->
+                            <div class="col-12 col-md-6">
+                                <label for="portfolio_link" class="form-label fw-bold text-dark small">Portfolio Link <span class="text-danger">*</span></label>
+                                <input type="url" name="portfolio_link" id="portfolio_link" class="form-control form-control-figma @error('portfolio_link') is-invalid @enderror" placeholder="https://behance.net/... or https://dribbble.com/..." value="{{ old('portfolio_link', $verification->portfolio_link ?? '') }}" required>
+                                @error('portfolio_link')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-
-                        <!-- Date of Birth -->
-                        <div class="col-12 col-md-6">
-                            <label for="date_of_birth" class="form-label fw-bold text-dark small">Date of Birth <span class="text-danger">*</span></label>
-                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control form-control-figma @error('date_of_birth') is-invalid @enderror" value="{{ old('date_of_birth', isset($verification->date_of_birth) ? $verification->date_of_birth->format('Y-m-d') : '') }}" required>
-                            @error('date_of_birth')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Country -->
-                        <div class="col-12 col-md-6">
-                            <label for="country" class="form-label fw-bold text-dark small">Country <span class="text-danger">*</span></label>
-                            <select name="country" id="country" class="form-select form-select-figma @error('country') is-invalid @enderror" required>
-                                <option value="Bangladesh" {{ old('country', $verification->country ?? 'Bangladesh') == 'Bangladesh' ? 'selected' : '' }}>Bangladesh</option>
-                                <option value="United States" {{ old('country', $verification->country ?? '') == 'United States' ? 'selected' : '' }}>United States</option>
-                                <option value="United Kingdom" {{ old('country', $verification->country ?? '') == 'United Kingdom' ? 'selected' : '' }}>United Kingdom</option>
-                                <option value="Canada" {{ old('country', $verification->country ?? '') == 'Canada' ? 'selected' : '' }}>Canada</option>
-                                <option value="India" {{ old('country', $verification->country ?? '') == 'India' ? 'selected' : '' }}>India</option>
-                            </select>
-                            @error('country')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    </div>
 
                         <!-- Government ID Type -->
                         <div class="col-12 col-md-6">
@@ -284,7 +326,7 @@
                     <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
                         <i class="bi bi-camera-fill text-primary"></i> Selfie Photo Upload
                     </h5>
-                    <p class="text-secondary small mb-4">Upload a clear photo of your face (JPG, PNG max 5MB).</p>
+                    <p class="text-secondary small mb-4">Please upload a clear selfie holding your NID card next to your face for identity verification.</p>
 
                     <div class="kyc-dropzone" onclick="document.getElementById('selfie_file').click();">
                         <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 54px; height: 54px;">
@@ -354,6 +396,7 @@
 
             </form>
         </div>
+        @endif
 
     </div>
 </section>

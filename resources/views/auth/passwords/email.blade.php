@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Forgot Password - Noksha (পাসওয়ার্ড ভুলে গেছেন)')
+@section('title', 'Forgot Password - Noksha')
 
 @section('content')
 <div class="container py-5">
@@ -14,7 +14,7 @@
                              height="48"
                              style="height: 48px; width: auto; max-height: 48px; object-fit: contain; margin: 0 auto 1.5rem auto; display: block;">
                     </a>
-                    <h3 class="fw-bold text-dark dark:text-white mb-1">Reset Password <span class="text-primary fs-5">(পাসওয়ার্ড রিসেট)</span></h3>
+                    <h3 class="fw-bold text-dark dark:text-white mb-1">Reset Password</h3>
                     <p class="text-muted small">Enter your email address to receive a password reset link</p>
                 </div>
 
@@ -39,18 +39,18 @@
 
                     <div class="mb-4">
                         <label for="email" class="form-label fw-semibold text-dark">
-                            Email Address <span class="text-primary">(ইমেইল ঠিকানা)</span> <span class="text-danger">*</span>
+                            Email Address <span class="text-danger">*</span>
                         </label>
                         <input type="email" class="form-control rounded-3 @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="name@example.com" required autofocus>
                     </div>
 
                     <button type="submit" class="btn btn-noksha w-100 py-2.5 rounded-3 mb-3">
-                        Send Password Reset Link / রিসেট লিংক পাঠান
+                        Send Password Reset Link
                     </button>
 
                     <div class="text-center text-muted small">
                         Remembered password? 
-                        <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">Back to Login / লগইনে ফিরে যান</a>
+                        <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none">Back to Login</a>
                     </div>
                 </form>
             </div>

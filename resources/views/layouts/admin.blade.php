@@ -95,6 +95,7 @@
     @php
         $pendingResourcesCount = \App\Models\Resource::where('status', 'pending')->count();
         $pendingKycCount = \App\Models\SellerVerification::where('status', 'pending')->count();
+        $pendingContestsCount = \App\Models\Contest::where('status', 'pending_approval')->count();
         $currentRoute = request()->route() ? request()->route()->getName() : '';
     @endphp
 
@@ -107,9 +108,7 @@
             <!-- Brand / Logo Header -->
             <div class="h-16 flex items-center justify-between px-5 border-b border-gray-800/80 bg-[#080B11]/50">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
-                        <i class="bi bi-shield-lock-fill text-lg"></i>
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="Noksha" class="h-9 w-auto object-contain">
                     <div>
                         <div class="flex items-center gap-1.5">
                             <span class="font-extrabold text-white text-base tracking-tight">NOKSHA</span>
@@ -171,7 +170,21 @@
                    class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all duration-200 text-gray-300 hover:text-white hover:bg-gray-800/60 {{ str_starts_with($currentRoute, 'admin.contests') ? 'active' : '' }}">
                     <div class="flex items-center gap-3">
                         <i class="bi bi-trophy-fill text-amber-400 text-base"></i>
-                        <span>Contest Management</span>
+                        <span>Contest Hub & Escrow</span>
+                    </div>
+                    @if($pendingContestsCount > 0)
+                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                            {{ $pendingContestsCount }}
+                        </span>
+                    @endif
+                </a>
+
+                <!-- Broadcast Alerts & History -->
+                <a href="{{ route('admin.broadcastHistory') }}"
+                   class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all duration-200 text-gray-300 hover:text-white hover:bg-gray-800/60 {{ str_starts_with($currentRoute, 'admin.broadcastHistory') ? 'active' : '' }}">
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-megaphone-fill text-indigo-400 text-base"></i>
+                        <span>Broadcast Alerts</span>
                     </div>
                 </a>
 
@@ -349,7 +362,7 @@
                     </div>
                 @endif
 
-                @if($errors->any())
+                @if(isset($errors) && $errors->any())
                     <div class="p-3.5 mb-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-sm shadow-sm">
                         <div class="font-bold mb-1 flex items-center gap-1.5">
                             <i class="bi bi-exclamation-circle-fill text-rose-600 dark:text-rose-400"></i>

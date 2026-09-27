@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Noksha Studio (Pro Verified Author) - Noksha (নকশা)')
+@section('title', 'Noksha Studio (Pro Verified Author) - Noksha')
 
 @section('content')
 
@@ -175,12 +175,12 @@
                     <!-- Name & Badges -->
                     <div class="pb-1">
                         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1.5">
-                            <h2 class="fw-extrabold text-dark mb-0">Miad Khan</h2>
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold small">
-                                <i class="bi bi-patch-check-fill me-1"></i> Contributor ✓
+                            <h2 class="fw-extrabold text-dark mb-0">{{ $seller->name ?? 'Miad Khan' }}</h2>
+                            <span class="badge rounded-pill px-3 py-1 fw-bold small text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);">
+                                <i class="bi bi-patch-check-fill text-emerald-500 me-1"></i> Verified Creator
                             </span>
-                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 fw-bold small">
-                                <i class="bi bi-shield-check me-1"></i> Verified Creator
+                            <span class="badge rounded-pill px-3 py-1 fw-bold small text-amber-700 bg-amber-50 border border-amber-300 shadow-sm" style="box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);">
+                                <i class="bi bi-award-fill text-amber-500 me-1"></i> Pro Author
                             </span>
                         </div>
                         <p class="text-secondary fw-semibold mb-2">
@@ -263,7 +263,7 @@
                 <span class="badge px-3 py-1 rounded-pill text-uppercase fw-bold small mb-1" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1;">
                     Author Portfolio
                 </span>
-                <h3 class="fw-extrabold text-dark mb-0">Created Resources <span class="text-primary">(পোর্টফোলিও ডিজাইন)</span></h3>
+                <h3 class="fw-extrabold text-dark mb-0">Created Resources <span class="text-primary"></span></h3>
             </div>
 
             <!-- Category Filter Tabs -->

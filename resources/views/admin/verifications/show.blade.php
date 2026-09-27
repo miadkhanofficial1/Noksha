@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Verification Details - ' . $verification->full_name . ' - Noksha (নকশা)')
+@section('title', 'Verification Details - ' . $verification->full_name . ' - Noksha')
 
 @section('content')
 
@@ -89,18 +89,6 @@
 <section class="py-5" style="background-color: #F8F7FF;">
     <div class="container py-2" style="max-width: 1100px;">
         
-        <!-- Flash Alert -->
-        @if(session('success'))
-            <div class="alert alert-success border-0 shadow-lg rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark bg-white">
-                <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
-                    <i class="bi bi-check-circle-fill fs-3"></i>
-                </div>
-                <div>
-                    <h5 class="fw-bold mb-1">Status Updated!</h5>
-                    <p class="mb-0 small text-secondary">{{ session('success') }}</p>
-                </div>
-            </div>
-        @endif
 
         <div class="row g-4">
             

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Verify Email - Noksha (ইমেইল যাচাই করুন)')
+@section('title', 'Verify Email - Noksha')
 
 @section('content')
 <div class="container py-5">
@@ -11,9 +11,9 @@
                     <i class="bi bi-envelope-check-fill display-5"></i>
                 </div>
 
-                <h3 class="fw-bold text-dark mb-2">Verify Your Email Address <span class="text-primary fs-4">(ইমেইল যাচাই করুন)</span></h3>
+                <h3 class="fw-bold text-dark mb-2">Verify Your Email Address</h3>
                 <p class="text-muted mb-4">
-                    Thanks for registering with <strong>Noksha (নকশা)</strong>! Before getting started, please check your email for a verification link.
+                    Thanks for registering with <strong>Noksha</strong>! Before getting started, please check your email for a verification link.
                 </p>
 
                 @if (session('status'))
@@ -26,14 +26,14 @@
                     <form action="{{ route('verification.send') }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-noksha w-100 py-2.5 rounded-3 fw-semibold">
-                            <i class="bi bi-send me-1"></i> Resend Verification Email / আবার যাচাইকরণ ইমেইল পাঠান
+                            <i class="bi bi-send me-1"></i> Resend Verification Email
                         </button>
                     </form>
 
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-secondary w-100 py-2 rounded-3">
-                            <i class="bi bi-box-arrow-right me-1"></i> Log Out / লগআউট করুন
+                            <i class="bi bi-box-arrow-right me-1"></i> Log Out
                         </button>
                     </form>
                 </div>

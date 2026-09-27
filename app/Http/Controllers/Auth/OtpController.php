@@ -31,7 +31,7 @@ class OtpController extends Controller
         $user = $request->user();
         $code = $this->otpService->generateOtp($user);
 
-        return back()->with('info', "OTP generated (Simulation Code: {$code}). Ready for SMS Gateway activation. / ওটিপি প্রস্তুত।");
+        return back()->with('info', "OTP generated (Simulation Code: {$code}). Ready for SMS Gateway activation.");
     }
 
     /**
@@ -43,9 +43,9 @@ class OtpController extends Controller
         $user = $request->user();
 
         if ($this->otpService->verifyOtp($user, $request->otp_code)) {
-            return redirect()->route('home')->with('status', 'OTP verified successfully! / ওটিপি সফলভাবে যাচাই করা হয়েছে।');
+            return redirect()->route('home')->with('status', 'OTP verified successfully!');
         }
 
-        return back()->withErrors(['otp_code' => 'Invalid or expired OTP code. / অকার্যকর বা মেয়াদউত্তীর্ণ ওটিপি কোড।']);
+        return back()->withErrors(['otp_code' => 'Invalid or expired OTP code.']);
     }
 }

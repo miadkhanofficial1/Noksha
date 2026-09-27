@@ -16,14 +16,22 @@ class AdminUserController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = User::with(['verification', 'resources'])->latest();
+        $query = User::where('is_admin', false)
+            ->where('role', '!=', 'admin')
+            ->where('role', '!=', 'super_admin')
+            ->with(['verification', 'resources'])
+            ->latest();
 
         // Filter by Role
-        if ($request->filled('role') && in_array($request->role, ['seller', 'buyer', 'user', 'admin'])) {
-            if ($request->role === 'buyer') {
-                $query->whereIn('role', ['buyer', 'user']);
-            } else {
-                $query->where('role', $request->role);
+        if ($request->filled('role')) {
+            if ($request->role === 'seller') {
+                $query->where(function ($q) {
+                    $q->where('is_contributor', true)
+                      ->orWhere('role', 'seller');
+                });
+            } elseif (in_array($request->role, ['buyer', 'user'])) {
+                $query->where('is_contributor', false)
+                      ->where('role', '!=', 'seller');
             }
         }
 
@@ -51,12 +59,21 @@ class AdminUserController extends Controller
 
         $users = $query->paginate(15)->withQueryString();
 
-        // Statistics
-        $totalUsers = User::count();
-        $totalSellers = User::where('role', 'seller')->count();
-        $totalBuyers = User::whereIn('role', ['user', 'buyer'])->count();
-        $totalSuspended = User::where('status', 'suspended')->count();
-        $totalPendingKyc = SellerVerification::where('status', 'pending')->count();
+        // Statistics (Strictly Exclude Admins)
+        $totalUsers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->count();
+        $totalSellers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->where('is_contributor', true)->count();
+        $totalBuyers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->where('is_contributor', false)->count();
+        $totalSuspended = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->where('status', 'suspended')->count();
+        $totalPendingKyc = SellerVerification::where('status', 'pending')
+            ->whereHas('user', function ($q) {
+                $q->where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin');
+            })->count();
+        $pendingKycUsers = User::where('is_admin', false)
+            ->where('role', '!=', 'admin')
+            ->where('role', '!=', 'super_admin')
+            ->whereHas('verification', function ($q) {
+                $q->where('status', 'pending');
+            })->with(['verification', 'resources'])->latest()->get();
 
         return view('admin.users.index', compact(
             'users',
@@ -64,7 +81,8 @@ class AdminUserController extends Controller
             'totalSellers',
             'totalBuyers',
             'totalSuspended',
-            'totalPendingKyc'
+            'totalPendingKyc',
+            'pendingKycUsers'
         ));
     }
 
@@ -73,8 +91,8 @@ class AdminUserController extends Controller
      */
     public function toggleStatus(User $user): RedirectResponse
     {
-        if ($user->id === auth()->id()) {
-            return redirect()->back()->with('error', 'You cannot suspend your own Super Admin account.');
+        if ($user->id === auth()->id() || $user->isAdmin()) {
+            return redirect()->back()->with('error', 'Administrator accounts cannot be modified here.');
         }
 
         $newStatus = $user->status === 'suspended' ? 'active' : 'suspended';
@@ -88,7 +106,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Approve KYC Identity Verification for a user.
+     * Approve KYC Identity Verification for a user and upgrade to Contributor.
      */
     public function approveKyc(User $user): RedirectResponse
     {
@@ -97,6 +115,8 @@ class AdminUserController extends Controller
             $verification->update([
                 'status' => 'approved',
                 'reviewed_at' => now(),
+                'rejected_at' => null,
+                'rejection_reason' => null,
                 'admin_note' => null,
                 'admin_notes' => null,
             ]);
@@ -104,23 +124,27 @@ class AdminUserController extends Controller
 
         $user->update([
             'is_verified' => true,
+            'is_contributor' => true,
             'contributor_status' => 'approved',
+            'kyc_rejected_at' => null,
+            'kyc_rejection_reason' => null,
+            'role' => in_array($user->role, ['admin', 'super_admin']) ? $user->role : 'seller',
         ]);
 
         Notification::send(
             $user->id,
-            '🎉 KYC Identity Verification Approved!',
-            'Your identity verification documents have been approved by Super Admin compliance. Your creator badge and marketplace seller tools are now fully active.',
+            '🎉 Contributor KYC Approved!',
+            'Congratulations! Your Contributor KYC application has been approved. The Verified Creator badge is now active on your profile and Seller Studio is unlocked.',
             'seller',
-            route('seller.dashboard')
+            route('dashboard') . '?mode=seller'
         );
 
         return redirect()->back()
-            ->with('success', "✨ KYC identity for \"{$user->name}\" has been APPROVED! Verified creator privileges unlocked.");
+            ->with('success', "✨ Contributor KYC for \"{$user->name}\" has been APPROVED! Verified Creator & Pro Author badges unlocked.");
     }
 
     /**
-     * Reject KYC Identity Verification for a user.
+     * Reject KYC Identity Verification for a user with 7-day cooldown.
      */
     public function rejectKyc(Request $request, User $user): RedirectResponse
     {
@@ -133,6 +157,8 @@ class AdminUserController extends Controller
             $verification->update([
                 'status' => 'rejected',
                 'reviewed_at' => now(),
+                'rejected_at' => now(),
+                'rejection_reason' => $validated['admin_note'],
                 'admin_note' => $validated['admin_note'],
                 'admin_notes' => $validated['admin_note'],
             ]);
@@ -140,18 +166,22 @@ class AdminUserController extends Controller
 
         $user->update([
             'is_verified' => false,
+            'is_contributor' => false,
             'contributor_status' => 'rejected',
+            'kyc_rejected_at' => now(),
+            'kyc_rejection_reason' => $validated['admin_note'],
         ]);
 
+        $reapplyDate = now()->addDays(7)->format('M d, Y');
         Notification::send(
             $user->id,
-            '⚠️ KYC Verification Declined',
-            'Your KYC verification was declined: ' . $validated['admin_note'],
+            '⚠️ Contributor KYC Application Declined',
+            "Your Contributor KYC application was declined. Reason: {$validated['admin_note']}. You may submit a new application after {$reapplyDate}.",
             'warning',
-            route('seller.verification.create')
+            route('dashboard') . '?mode=seller'
         );
 
         return redirect()->back()
-            ->with('success', "🚫 KYC verification for \"{$user->name}\" was REJECTED with note recorded.");
+            ->with('success', "🚫 KYC verification for \"{$user->name}\" has been REJECTED. 7-day cooldown applied until {$reapplyDate}.");
     }
 }

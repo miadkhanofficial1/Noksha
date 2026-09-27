@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Fintech Mobile App UI Kit - Noksha (নকশা)')
+@section('title', 'Fintech Mobile App UI Kit - Noksha')
 
 @section('content')
 
@@ -163,6 +163,16 @@
                     <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1.5 fw-bold small">
                         <i class="bi bi-patch-check-fill me-1"></i> Verified Marketplace Asset
                     </span>
+                    @if(isset($resource) && $resource->owner)
+                        <span class="text-secondary small ms-1 d-inline-flex align-items-center gap-1">
+                            by <strong class="text-dark">{{ $resource->owner->name }}</strong>
+                            @if($resource->owner->isVerifiedCreator())
+                                <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);" title="Verified Creator">
+                                    <i class="bi bi-patch-check-fill text-emerald-500"></i> Verified
+                                </span>
+                            @endif
+                        </span>
+                    @endif
                 </div>
                 <h1 class="display-5 fw-extrabold text-dark mb-2">
                     {{ isset($resource) ? $resource->title : 'Fintech Mobile App UI Kit' }}
@@ -175,8 +185,16 @@
             <div class="col-lg-4 text-lg-end">
                 <div class="d-inline-flex flex-wrap gap-3 p-3 bg-white rounded-4 border shadow-sm align-items-center justify-content-center">
                     <div class="text-center">
-                        <div class="fw-extrabold text-dark fs-5 mb-0"><i class="bi bi-star-fill text-warning me-1"></i>4.9</div>
-                        <div class="extra-small text-muted fw-semibold">120 Reviews</div>
+                        <div class="fw-extrabold text-dark fs-5 mb-0">
+                            @if(($totalReviews ?? 0) > 0)
+                                <i class="bi bi-star-fill text-warning me-1"></i>{{ number_format($avgRating, 1) }}
+                            @else
+                                <i class="bi bi-star text-muted me-1"></i>0.0
+                            @endif
+                        </div>
+                        <div class="extra-small text-muted fw-semibold">
+                            {{ ($totalReviews ?? 0) > 0 ? $totalReviews . ' ' . Str::plural('Review', $totalReviews) : 'No ratings yet' }}
+                        </div>
                     </div>
                     <div class="vr opacity-20"></div>
                     <div class="text-center">
@@ -270,23 +288,38 @@
                         <div class="p-4 rounded-4 bg-white border mb-4 shadow-sm">
                             <div class="row align-items-center g-4">
                                 <div class="col-12 col-md-4 text-center border-md-end">
-                                    <div class="display-3 fw-extrabold text-dark mb-0">{{ $avgRating ?? '4.9' }}</div>
-                                    <div class="text-warning fs-5 my-1">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-half"></i>
-                                    </div>
-                                    <div class="extra-small text-muted font-monospace fw-bold">Based on {{ $totalReviews ?? 0 }} Customer Reviews</div>
+                                    @if(($totalReviews ?? 0) === 0)
+                                        <div class="display-3 fw-extrabold text-muted mb-0">0.0</div>
+                                        <div class="text-muted fs-5 my-1" style="opacity: 0.35;">
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                            <i class="bi bi-star"></i>
+                                        </div>
+                                        <div class="extra-small text-muted font-monospace fw-bold">No ratings yet</div>
+                                    @else
+                                        <div class="display-3 fw-extrabold text-dark mb-0">{{ number_format($avgRating, 1) }}</div>
+                                        <div class="text-warning fs-5 my-1">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($avgRating >= $i)
+                                                    <i class="bi bi-star-fill"></i>
+                                                @elseif($avgRating >= ($i - 0.5))
+                                                    <i class="bi bi-star-half"></i>
+                                                @else
+                                                    <i class="bi bi-star text-muted" style="opacity: 0.35;"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <div class="extra-small text-muted font-monospace fw-bold">Based on {{ $totalReviews }} Customer Reviews</div>
+                                    @endif
                                 </div>
 
                                 <div class="col-12 col-md-8">
                                     <div class="d-flex flex-column gap-2">
                                         @foreach([5, 4, 3, 2, 1] as $stars)
                                             @php
-                                                $count = $ratingBreakdown[$stars] ?? 0;
-                                                $pct = ($totalReviews ?? 0) > 0 ? round(($count / $totalReviews) * 100) : ($stars >= 4 ? 80 : 5);
+                                                $pct = ($totalReviews ?? 0) > 0 ? ($ratingPercentages[$stars] ?? ($starPercentages[$stars] ?? (isset($ratingBreakdown[$stars]) ? round(($ratingBreakdown[$stars] / $totalReviews) * 100) : 0))) : 0;
                                             @endphp
                                             <div class="d-flex align-items-center gap-2 extra-small">
                                                 <span class="fw-bold text-muted" style="width: 40px;">{{ $stars }} ★</span>
@@ -463,9 +496,28 @@
                                 {{ strtoupper(substr(isset($resource) && $resource->owner ? $resource->owner->name : 'N', 0, 1)) }}
                             </div>
                             <div>
-                                <h6 class="fw-bold text-dark mb-0">{{ isset($resource) && $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</h6>
-                                <div class="small text-muted"><i class="bi bi-patch-check-fill text-primary me-1"></i> Pro Verified Author</div>
-                                <div class="small text-warning fw-bold"><i class="bi bi-star-fill me-1"></i>4.9 (120 Ratings)</div>
+                                <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                                    <h6 class="fw-bold text-dark mb-0">{{ isset($resource) && $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</h6>
+                                    @if(isset($resource) && $resource->owner && $resource->owner->isVerifiedCreator())
+                                        <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);" title="Verified Creator">
+                                            <i class="bi bi-patch-check-fill text-emerald-500"></i> Verified
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="d-flex align-items-center gap-1.5 mt-1 flex-wrap">
+                                    @if(isset($resource) && $resource->owner && $resource->owner->isProAuthor())
+                                        <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-amber-700 bg-amber-50 border border-amber-300 shadow-sm" style="box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);">
+                                            <i class="bi bi-award-fill text-amber-500 me-0.5"></i> Pro Author
+                                        </span>
+                                    @else
+                                        <div class="small text-muted"><i class="bi bi-patch-check-fill text-primary me-1"></i> Author</div>
+                                    @endif
+                                </div>
+                                @if(($totalReviews ?? 0) > 0)
+                                    <div class="small text-warning fw-bold mt-1"><i class="bi bi-star-fill me-1"></i>{{ number_format($avgRating, 1) }} ({{ $totalReviews }} {{ Str::plural('Review', $totalReviews) }})</div>
+                                @else
+                                    <div class="small text-muted mt-1"><i class="bi bi-star me-1"></i>0.0 (No reviews yet)</div>
+                                @endif
                             </div>
                         </div>
 
@@ -489,7 +541,7 @@
                 <span class="badge px-3 py-1 rounded-pill text-uppercase fw-bold small mb-1" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1;">
                     Recommendations
                 </span>
-                <h3 class="fw-extrabold text-dark mb-0">Related Marketplace Resources <span class="text-primary">(সম্পর্কিত ডিজাইন)</span></h3>
+                <h3 class="fw-extrabold text-dark mb-0">Related Marketplace Resources <span class="text-primary"></span></h3>
             </div>
             <a href="{{ route('home') }}#templates" class="btn btn-outline-purple rounded-pill px-4 py-2 fw-bold btn-sm">
                 View All <i class="bi bi-arrow-right ms-1"></i>

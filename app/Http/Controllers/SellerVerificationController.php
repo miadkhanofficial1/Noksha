@@ -28,29 +28,60 @@ class SellerVerificationController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // 1. Enforce 7-Day Rejection Cooldown Lock
+        if (auth()->user()->isKycRejectedInCooldown()) {
+            $remainingDate = auth()->user()->getKycCooldownRemainingDate();
+            $reason = auth()->user()->getKycRejectionReason();
+            $msg = "Your application was rejected. Reason: {$reason}. You can reapply after {$remainingDate}.";
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 422);
+            }
+            return redirect()->to(route('dashboard') . '?mode=seller')->with('error', $msg);
+        }
+
         $existing = SellerVerification::where('user_id', auth()->id())->first();
 
-        $validated = $request->validate([
+        // 2. Strict Anti-Fraud Validation Rules
+        $rules = [
             'full_name' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['required', 'date', 'before:today'],
-            'country' => ['required', 'string', 'max:100'],
+            'phone' => ['required', 'string', 'max:30'],
+            'id_number' => ['required', 'string', 'max:100'],
+            'portfolio_link' => ['required', 'url', 'max:255'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
+            'country' => ['nullable', 'string', 'max:100'],
             'document_type' => ['nullable', 'in:nid,passport,driving_license'],
-            'id_type' => ['nullable', 'in:nid,passport,driving_license'],
-            'document_file' => [$existing && $existing->document_file ? 'nullable' : 'required_without:id_file', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:10240'],
-            'id_file' => [$existing && $existing->id_file_path ? 'nullable' : 'required_without:document_file', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:10240'],
-            'selfie_file' => [$existing && ($existing->selfie_file || $existing->selfie_file_path) ? 'nullable' : 'required', 'file', 'mimes:jpeg,png,jpg', 'max:5120'],
-            'video_file' => ['nullable', 'file', 'mimes:mp4,webm,mov', 'max:51200'],
+            'document_file' => [
+                $existing && $existing->document_file ? 'nullable' : 'required',
+                'file',
+                'mimes:jpeg,png,jpg,pdf',
+                'max:10240'
+            ],
+            'selfie_file' => [
+                $existing && $existing->selfie_file ? 'nullable' : 'required',
+                'file',
+                'mimes:jpeg,png,jpg',
+                'max:5120'
+            ],
             'agreement' => ['required', 'accepted'],
-        ], [
-            'full_name.required' => 'Full name is required as stated on your government ID.',
-            'date_of_birth.required' => 'Date of birth is required.',
-            'document_file.required_without' => 'Government ID document file (NID/Passport/License) is required.',
-            'selfie_file.required' => 'Please upload a clear selfie photo of your face.',
-            'video_file.mimes' => 'Video file must be in MP4 or WEBM format.',
-            'agreement.accepted' => 'You must confirm that all submitted information is accurate.',
-        ]);
+        ];
 
-        $docType = $validated['document_type'] ?? $validated['id_type'] ?? 'nid';
+        $messages = [
+            'full_name.required' => 'Full legal name is required as stated on your government ID.',
+            'phone.required' => 'Phone or WhatsApp number is required.',
+            'id_number.required' => 'National ID or Passport number is required.',
+            'portfolio_link.required' => 'Portfolio link (Behance, Dribbble, or personal site) is required.',
+            'portfolio_link.url' => 'Please enter a valid portfolio URL.',
+            'document_file.required' => 'Government ID or Passport scan is required.',
+            'selfie_file.required' => 'Face selfie holding the NID card is required for identity verification.',
+            'agreement.accepted' => 'You must accept the contributor guidelines and copyright terms.',
+        ];
+
+        $validated = $request->validate($rules, $messages);
+
+        $docType = $validated['document_type'] ?? 'nid';
+        $country = $validated['country'] ?? 'Bangladesh';
+        $dob = $validated['date_of_birth'] ?? now()->subYears(22)->format('Y-m-d');
 
         // File uploads handling via Laravel Storage (public disk)
         $docPath = $existing ? $existing->document_file : null;
@@ -65,39 +96,60 @@ class SellerVerificationController extends Controller
             $selfiePath = $request->file('selfie_file')->store('verifications/selfies', 'public');
         }
 
-        $videoPath = $existing ? $existing->video_file : null;
-        if ($request->hasFile('video_file')) {
-            $videoPath = $request->file('video_file')->store('verifications/videos', 'public');
-        }
+        // Formatted admin notes combining portfolio and ID number
+        $adminNotes = "ID/Passport: {$validated['id_number']} | Portfolio: {$validated['portfolio_link']}";
 
         // Save or Update Verification Record
         SellerVerification::updateOrCreate(
             ['user_id' => auth()->id()],
             [
                 'full_name' => $validated['full_name'],
-                'date_of_birth' => $validated['date_of_birth'],
-                'country' => $validated['country'],
+                'date_of_birth' => $dob,
+                'country' => $country,
                 'id_type' => $docType,
                 'document_type' => $docType,
+                'id_number' => $validated['id_number'],
+                'portfolio_link' => $validated['portfolio_link'],
                 'id_file_path' => $docPath,
                 'document_file' => $docPath,
                 'selfie_file_path' => $selfiePath,
                 'selfie_file' => $selfiePath,
-                'video_file_path' => $videoPath,
-                'video_file' => $videoPath,
                 'status' => 'pending',
-                'admin_notes' => null,
-                'admin_note' => null,
+                'admin_notes' => $adminNotes,
+                'admin_note' => $adminNotes,
+                'rejection_reason' => null,
+                'rejected_at' => null,
                 'submitted_at' => now(),
             ]
         );
 
-        // Update user contributor_status to pending
-        auth()->user()->update([
+        // Update user: contributor_status to pending and clear previous rejection cooldown
+        $userUpdates = [
             'contributor_status' => 'pending',
-        ]);
+            'kyc_rejected_at' => null,
+            'kyc_rejection_reason' => null,
+            'phone' => $validated['phone'],
+        ];
+        auth()->user()->update($userUpdates);
 
-        return redirect()->route('seller.verification.create')
-            ->with('success', '✨ Contributor identity verification submitted successfully! Our compliance team will review your application.');
+        // Notify Admins about new KYC application
+        $adminUsers = \App\Models\User::whereIn('role', ['admin', 'super_admin'])->get();
+        foreach ($adminUsers as $admin) {
+            \App\Models\Notification::send(
+                $admin->id,
+                'New Contributor KYC Application',
+                "User " . auth()->user()->name . " submitted a Contributor KYC application for review.",
+                'admin',
+                route('admin.users.index') . '?status=pending_kyc'
+            );
+        }
+
+        $msg = 'Your Contributor KYC application has been submitted and is under review.';
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => $msg]);
+        }
+
+        return redirect()->to(route('dashboard') . '?mode=seller')->with('success', $msg);
     }
 }

@@ -34,14 +34,15 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - Noksha (নকশা)
+| Web Routes - Noksha
 |--------------------------------------------------------------------------
 */
 
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Language Switcher Route
+// Language Switcher Routes
+Route::get('/locale/{locale}', [LanguageController::class, 'switch'])->name('locale.switch');
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 // Smart Marketplace Search Route
@@ -58,7 +59,8 @@ Route::get('/seller/demo', function () {
 
 // Public Design Contests & Leaderboard Routes
 Route::get('/contests', [ContestController::class, 'index'])->name('contests.index');
-Route::get('/contests/{contest:slug}', [ContestController::class, 'show'])->name('contests.show');
+Route::post('/contests/entries/{entry}/like', [ContestSubmissionController::class, 'toggleLike'])->name('contests.entries.like');
+Route::get('/contests/{contest:slug}', [ContestController::class, 'show'])->where('contest', '^(?!create$).*')->name('contests.show');
 
 
 
@@ -110,15 +112,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/otp/send', [OtpController::class, 'send'])->name('otp.send');
     Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
 
-    // Seller Asset Upload Routes
+    // Seller Asset Upload Routes (Unified into Dashboard Top-Tabs)
     Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
     Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
+    Route::redirect('/contributor/upload', '/dashboard?tab=upload');
+    Route::redirect('/seller/upload', '/dashboard?tab=upload');
+    Route::redirect('/upload', '/dashboard?tab=upload');
 
     // Unified User & Contributor Dashboard Route (/dashboard)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/buyer/dashboard', [DashboardController::class, 'index'])->name('buyer.dashboard');
-    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])->name('seller.dashboard');
-    Route::delete('/seller/resource/{resource}', [SellerDashboardController::class, 'destroy'])->name('seller.resource.destroy');
+    Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
+    Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
+    Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
 
     // Contributor Identity Verification Routes (Apply to Become Contributor)
     Route::get('/contributor/apply', [SellerVerificationController::class, 'create'])->name('contributor.apply');
@@ -149,13 +155,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/resource/{resource}/reviews', [ReviewController::class, 'index'])->name('resource.reviews.index');
     Route::post('/resource/{resource}/review', [ReviewController::class, 'store'])->name('resource.review.store');
 
-    // Seller Contest Submission Route
+    // Freelancer-Style Contest Hub Routes
+    Route::get('/contests/create', [ContestController::class, 'create'])->name('contests.create');
+    Route::post('/contests', [ContestController::class, 'store'])->name('contests.store');
     Route::post('/contests/{contest}/submit', [ContestSubmissionController::class, 'store'])->name('contests.submit');
+    Route::post('/contests/{contest}/entries/{entry}/rate', [ContestController::class, 'rateEntry'])->name('contests.entries.rate');
+    Route::post('/contests/{contest}/entries/{entry}/award', [ContestController::class, 'awardWinner'])->name('contests.entries.award');
 
     // Notification Center Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/read/{notification}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::get('/notifications/read/{notification}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read/{notification}', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    // AJAX: Mark all dropdown-visible notifications as seen (clears bell badge) without full page reload
+    Route::post('/notifications/badge-clear', [NotificationController::class, 'badgeClear'])->name('notifications.badgeClear');
+    // AJAX / Dedicated route: Mark a single notification as read
+    Route::match(['post', 'patch'], '/notifications/{notification}/mark-as-read', [NotificationController::class, 'markSingleAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/ajax-read/{notification}', [NotificationController::class, 'markSingleAsRead'])->name('notifications.ajaxRead');
+    // Admin: Broadcast history page
+    Route::get('/admin/broadcast-history', [NotificationController::class, 'broadcastHistory'])->name('admin.broadcastHistory')->middleware('admin');
 
     // Seller Identity Verification Routes
     Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
@@ -196,6 +214,8 @@ Route::middleware('auth')->group(function () {
         // 4. Contest Hub Control
         Route::get('/contests', [AdminContestController::class, 'index'])->name('contests.index');
         Route::post('/contests', [AdminContestController::class, 'store'])->name('contests.store');
+        Route::post('/contests/{contest}/approve', [AdminContestController::class, 'approve'])->name('contests.approve');
+        Route::post('/contests/{contest}/reject', [AdminContestController::class, 'reject'])->name('contests.reject');
         Route::put('/contests/{contest}', [AdminContestController::class, 'update'])->name('contests.update');
         Route::post('/contests/{contest}/cancel', [AdminContestController::class, 'cancel'])->name('contests.cancel');
         Route::delete('/contests/{contest}', [AdminContestController::class, 'destroy'])->name('contests.destroy');

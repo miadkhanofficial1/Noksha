@@ -1,205 +1,294 @@
 @extends('layouts.app')
 
-@section('title', 'Upload New Asset - Noksha (নকশা)')
+@php
+    $errors = $errors ?? new \Illuminate\Support\ViewErrorBag;
+@endphp
+
+@section('title', __('upload.page_title') . ' - Noksha')
 
 @section('content')
 
-<!-- CUSTOM FIGMA/DRIBBBLE GLASSMORPHISM UPLOAD STYLES -->
+<!-- SLEEK CREATOR STUDIO STYLES -->
 <style>
     .upload-hero-section {
-        background: linear-gradient(135deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
+        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #9333EA 100%);
         position: relative;
     }
 
-    .glass-upload-card {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        border-radius: 1.5rem !important;
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.15) !important;
+    /* Minimalist Sleek Warning Banner */
+    .warning-suspension-banner {
+        background: rgba(220, 38, 38, 0.92);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 0.75rem;
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(220, 38, 38, 0.18);
     }
 
-    /* Drag & Drop Upload Boxes */
-    .dropzone-box {
-        border: 2px dashed rgba(108, 76, 241, 0.3);
-        border-radius: 1.25rem;
-        background: rgba(108, 76, 241, 0.03);
-        padding: 2.5rem 1.5rem;
+    .form-studio-card {
+        background: #ffffff;
+        border: 1px solid rgba(124, 58, 237, 0.12) !important;
+        border-radius: 1.25rem !important;
+        box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.08) !important;
+    }
+
+    /* Left Column: Image Dropzone */
+    .image-dropzone-box {
+        border: 2px dashed rgba(124, 58, 237, 0.28);
+        border-radius: 1rem;
+        background: rgba(124, 58, 237, 0.02);
+        padding: 2.5rem 1.25rem;
         text-align: center;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
         position: relative;
-    }
-
-    .dropzone-box:hover, .dropzone-box.dragover {
-        border-color: #6C4CF1;
-        background: rgba(108, 76, 241, 0.08);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.2);
-    }
-
-    .dropzone-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: rgba(108, 76, 241, 0.1);
-        color: #6C4CF1;
+        min-height: 340px;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 1rem auto;
-        font-size: 1.75rem;
-        transition: transform 0.3s ease;
     }
 
-    .dropzone-box:hover .dropzone-icon {
-        transform: scale(1.1) rotate(-5deg);
+    .image-dropzone-box:hover, .image-dropzone-box.dragover {
+        border-color: #7C3AED;
+        background: rgba(124, 58, 237, 0.06);
+        transform: translateY(-2px);
     }
 
-    /* Form Controls */
-    .form-control-figma, .form-select-figma {
-        border-radius: 0.85rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        padding: 0.75rem 1rem !important;
-        font-size: 0.95rem;
-        transition: all 0.25s ease;
-        background: #ffffff;
-    }
-
-    .form-control-figma:focus, .form-select-figma:focus {
-        border-color: #6C4CF1 !important;
-        box-shadow: 0 0 0 4px rgba(108, 76, 241, 0.18) !important;
-        background: #ffffff;
-    }
-
-    /* Pricing Option Cards */
-    .price-option-card {
-        border: 2px solid rgba(108, 76, 241, 0.15);
+    .image-preview-wrapper {
+        position: relative;
         border-radius: 1rem;
-        padding: 1.25rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        overflow: hidden;
+        border: 1.5px solid rgba(124, 58, 237, 0.2);
+        box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.12);
+        background: #0B0F19;
+    }
+
+    .image-preview-wrapper img {
+        width: 100%;
+        max-height: 380px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Pricing Set 1 Block */
+    .pricing-set-box {
+        background: #FAF8FF;
+        border: 1.5px solid rgba(124, 58, 237, 0.2);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .pricing-set-badge {
+        position: absolute;
+        top: -12px;
+        left: 20px;
+        background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        padding: 0.25rem 0.85rem;
+        border-radius: 50rem;
+        box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+    }
+
+    /* Studio Form Controls */
+    .form-control-studio, .form-select-studio {
+        border-radius: 0.75rem !important;
+        border: 1px solid rgba(124, 58, 237, 0.2) !important;
+        padding: 0.7rem 0.95rem !important;
+        font-size: 0.92rem;
+        transition: all 0.2s ease;
         background: #ffffff;
     }
 
-    .price-option-card:hover, .price-option-card.active {
-        border-color: #6C4CF1;
-        background: rgba(108, 76, 241, 0.04);
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.2);
+    .form-control-studio:focus, .form-select-studio:focus {
+        border-color: #7C3AED !important;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.16) !important;
+        background: #ffffff;
     }
 
-    .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
+    /* ======================================================== */
+    /* DISTINCT EXTENSION BUTTONS (Dark Slate vs High-Contrast) */
+    /* ======================================================== */
+    .ext-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.95rem;
+        border-radius: 0.65rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        
+        /* Default Unselected: Clean dark slate button with subtle border */
+        background: #0F172A;
+        border: 1px solid #334155;
+        color: #94A3B8;
+    }
+
+    .ext-toggle-btn:hover {
+        border-color: #64748B;
+        color: #F8FAFC;
+        transform: translateY(-1px);
+    }
+
+    /* Selected State: High-contrast active gradient with glow & ring */
+    .ext-toggle-input:checked + .ext-toggle-btn {
+        background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%) !important;
+        border-color: transparent !important;
+        color: #FFFFFF !important;
+        font-weight: 700;
+        box-shadow: 0 6px 18px -2px rgba(124, 58, 237, 0.45);
+        outline: 2px solid rgba(167, 139, 250, 0.6);
+        outline-offset: 1px;
+    }
+
+    .ext-toggle-btn .ext-check-svg {
+        display: none;
+        width: 14px;
+        height: 14px;
+    }
+
+    .ext-toggle-input:checked + .ext-toggle-btn .ext-check-svg {
+        display: inline-block;
+    }
+
+    /* Color Swatches */
+    .color-swatch-circle {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .color-swatch-circle:hover {
+        transform: scale(1.15);
+    }
+
+    /* CTA Button */
+    .btn-studio-cta {
+        background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
         color: #ffffff !important;
         border: none;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.35);
+        font-weight: 700;
+        border-radius: 50rem;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 8px 22px -4px rgba(124, 58, 237, 0.4);
     }
 
-    .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 14px 28px -4px rgba(108, 76, 241, 0.45);
-        color: #ffffff !important;
+    .btn-studio-cta:hover {
+        background: linear-gradient(135deg, #6D28D9 0%, #4338CA 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px -4px rgba(124, 58, 237, 0.5);
     }
 
     /* Dark Mode Overrides */
-    html.dark .glass-upload-card {
+    html.dark .form-studio-card,
+    html.dark .pricing-set-box {
         background: #1E293B !important;
-        border-color: #374151 !important;
-        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5) !important;
+        border-color: #334155 !important;
     }
 
-    html.dark .form-control-figma, 
-    html.dark .form-select-figma {
+    html.dark .form-control-studio,
+    html.dark .form-select-studio {
         background-color: #0F172A !important;
-        border-color: #374151 !important;
-        color: #F3F4F6 !important;
+        border-color: #334155 !important;
+        color: #F8FAFC !important;
     }
 
-    html.dark .dropzone-box {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: #374151 !important;
-    }
-
-    html.dark .dropzone-box:hover {
-        background: rgba(99, 102, 241, 0.15) !important;
-        border-color: #6366F1 !important;
-    }
-
-    html.dark .price-option-card {
-        background: #0F172A !important;
-        border-color: #374151 !important;
-    }
-
-    html.dark .price-option-card.active {
-        border-color: #6366F1 !important;
-        background: rgba(99, 102, 241, 0.15) !important;
-    }
-
-    html.dark .upload-content-section {
-        background-color: #0B0F19 !important;
+    html.dark .image-dropzone-box {
+        background: rgba(15, 23, 42, 0.5) !important;
+        border-color: #334155 !important;
     }
 
     html.dark .text-dark {
-        color: #FFFFFF !important;
+        color: #F8FAFC !important;
     }
 
     html.dark .text-secondary {
-        color: #9CA3AF !important;
+        color: #94A3B8 !important;
     }
 </style>
 
 <!-- UPLOAD HERO BANNER -->
-<section class="upload-hero-section py-4 py-lg-5 text-white">
-    <div class="container py-3">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-                <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold mb-3 border border-white border-opacity-25">
-                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Creator Studio
+<section class="upload-hero-section py-3 py-md-4 text-white">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 extra-small fw-bold mb-1.5 border border-white border-opacity-25">
+                    <i class="bi bi-palette2 me-1"></i> {{ __('upload.hero_badge') }}
                 </span>
-                <h1 class="display-5 fw-extrabold text-white mb-2">
-                    Upload Digital Asset <span class="text-warning">(নতুন রিসোর্স আপলোড করুন)</span>
+                <h1 class="h3 fw-extrabold text-white mb-0">
+                    {{ __('upload.hero_title') }}
                 </h1>
-                <p class="fs-6 text-white text-opacity-90 mb-0" style="max-width: 620px;">
-                    Publish your Figma templates, vector graphics, UI kits, and 3D assets to Noksha Creator Marketplace.
+                <p class="extra-small text-white text-opacity-80 mb-0">
+                    {{ __('upload.hero_subtitle') }}
                 </p>
             </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('home') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Back to Marketplace
+            <div>
+                <a href="{{ route('seller.dashboard') }}" class="btn btn-light rounded-pill px-3.5 py-1.5 fw-bold text-primary shadow-sm extra-small">
+                    <i class="bi bi-speedometer2 me-1"></i> {{ __('upload.back_dashboard') }}
                 </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- MAIN UPLOAD FORM SECTION -->
-<section class="upload-content-section py-5" style="background-color: #F8F7FF;">
-    <div class="container py-2" style="max-width: 960px;">
-        
-        <!-- Flash Success Notification -->
-        @if(session('success'))
-            <div class="alert alert-success border-0 shadow-lg rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark bg-white">
-                <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
-                    <i class="bi bi-check-circle-fill fs-3"></i>
+<!-- MAIN STUDIO CONTENT -->
+<section class="py-4" style="background-color: #F8F7FF; min-height: 80vh;">
+    <div class="container" style="max-width: 1100px;">
+
+        <!-- 1. CONCISE SUSPENSION WARNING BANNER -->
+        <div class="warning-suspension-banner py-2.5 px-3 mb-3.5 d-flex align-items-center gap-2.5">
+            <i class="bi bi-shield-slash-fill text-warning fs-5 flex-shrink-0"></i>
+            <div class="small fw-semibold flex-grow-1">
+                {{ __('upload.warning_suspension') }}
+            </div>
+            <a href="#contributorRulesCollapse" class="text-white text-decoration-underline extra-small fw-bold flex-shrink-0" data-bs-toggle="collapse">
+                {{ __('upload.view_guidelines') }}
+            </a>
+        </div>
+
+        <!-- 2. COLLAPSIBLE GUIDELINES -->
+        <div class="collapse mb-3.5" id="contributorRulesCollapse">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <div class="p-2.5 rounded-2 bg-light border h-100">
+                            <span class="fw-bold text-primary small d-block mb-1">{{ __('upload.guideline_1_title') }}</span>
+                            <span class="extra-small text-secondary">{{ __('upload.guideline_1_desc') }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2.5 rounded-2 bg-light border h-100">
+                            <span class="fw-bold text-success small d-block mb-1">{{ __('upload.guideline_2_title') }}</span>
+                            <span class="extra-small text-secondary">{{ __('upload.guideline_2_desc') }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-2.5 rounded-2 bg-light border h-100">
+                            <span class="fw-bold text-warning small d-block mb-1">{{ __('upload.guideline_3_title') }}</span>
+                            <span class="extra-small text-secondary">{{ __('upload.guideline_3_desc') }}</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h5 class="fw-bold mb-1">Upload Successful!</h5>
-                    <p class="mb-0 small text-secondary">{{ session('success') }}</p>
+                <div class="mt-2 text-danger extra-small fw-bold">
+                    <i class="bi bi-info-circle-fill me-1"></i> {{ __('upload.guideline_zip_note') }}
                 </div>
             </div>
-        @endif
+        </div>
 
-        <!-- Global Validation Error Alerts Display -->
+        <!-- Validation Error Alerts Display -->
         @if ($errors->any())
-            <div class="alert alert-danger border-0 shadow-lg rounded-4 p-4 mb-4 bg-white text-danger border-start border-danger border-4">
-                <h6 class="fw-bold mb-2 d-flex align-items-center gap-2">
-                    <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
-                    <span>Please correct the following errors before submitting:</span>
-                </h6>
+            <div class="alert alert-danger border-0 shadow-sm rounded-3 p-3 mb-3 bg-white text-danger border-start border-danger border-4">
                 <ul class="mb-0 small ps-3">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -208,33 +297,91 @@
             </div>
         @endif
 
-        <!-- Glassmorphism Upload Card Form -->
-        <div class="card glass-upload-card p-4 p-md-5">
-            <form action="{{ route('resource.store') }}" method="POST" enctype="multipart/form-data" id="resourceUploadForm">
+        <!-- MAIN FORM CARD -->
+        <div class="card form-studio-card p-3.5 p-md-4">
+            <form action="{{ route('resource.store') }}" method="POST" enctype="multipart/form-data" id="designUploadForm">
                 @csrf
 
-                <!-- SECTION 1: BASIC ASSET INFORMATION -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-info-circle-fill text-primary"></i> 1. Asset Overview & Information
-                    </h5>
-                    <p class="text-secondary small mb-4">Provide clear titles and details to help buyers discover your design.</p>
+                <!-- TWO-COLUMN LAYOUT -->
+                <div class="row g-4">
+                    
+                    <!-- ========================================== -->
+                    <!-- LEFT COLUMN: DRAG & DROP PREVIEW ZONE -->
+                    <!-- ========================================== -->
+                    <div class="col-12 col-lg-5">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <label class="form-label fw-bold text-dark small mb-0">
+                                {{ __('upload.cover_image') }} <span class="text-danger">*</span>
+                            </label>
+                            <span class="extra-small text-muted">{{ __('upload.cover_image_specs') }}</span>
+                        </div>
 
-                    <div class="row g-4">
-                        <!-- Asset Title -->
-                        <div class="col-12">
-                            <label for="title" class="form-label fw-bold text-dark small">Resource Title <span class="text-danger">*</span></label>
-                            <input type="text" name="title" id="title" class="form-control form-control-figma @error('title') is-invalid @enderror" placeholder="e.g. Fintech Mobile App UI Kit, Corporate Business Flyer" value="{{ old('title') }}" required>
+                        <!-- Dropzone Container -->
+                        <div class="image-dropzone-box" id="imageDropZone" onclick="document.getElementById('preview_image').click();">
+                            <div class="mb-2 text-primary opacity-80" style="font-size: 3rem; line-height: 1;">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1 small">
+                                {{ __('upload.dropzone_text') }}
+                            </h6>
+                            <p class="text-muted extra-small mb-3">
+                                {{ __('upload.dropzone_sub') }}
+                            </p>
+                            <button type="button" class="btn btn-outline-primary rounded-pill px-3.5 py-1.5 fw-bold extra-small" onclick="event.stopPropagation(); document.getElementById('preview_image').click();">
+                                <i class="bi bi-image me-1"></i> {{ __('upload.add_image_btn') }}
+                            </button>
+                            <input type="file" name="preview_image" id="preview_image" class="d-none" accept="image/png,image/jpeg,image/webp,image/jpg" required onchange="handlePreviewImageSelect(this)">
+                        </div>
+
+                        <!-- Active Image Preview Container (Hidden by default) -->
+                        <div id="imagePreviewContainer" class="d-none mt-2">
+                            <div class="image-preview-wrapper position-relative">
+                                <img id="imagePreviewCanvas" src="" alt="Cover Preview">
+                                <div class="position-absolute top-0 end-0 p-2">
+                                    <button type="button" class="btn btn-danger btn-sm rounded-circle p-1.5 shadow" onclick="removeSelectedImage()" title="Remove">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-1.5 px-1">
+                                <span class="extra-small fw-bold text-success" id="imageFileName">image.png</span>
+                                <span class="extra-small text-muted" id="imageFileSize">0 KB</span>
+                            </div>
+                        </div>
+                        @error('preview_image')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+
+                        <!-- Minimalist Tip Tooltip -->
+                        <div class="mt-3 p-2.5 bg-light rounded-3 border extra-small text-secondary d-flex align-items-center gap-2">
+                            <i class="bi bi-lightbulb text-warning fs-6"></i>
+                            <span>{{ __('upload.image_tip_desc') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- RIGHT COLUMN: METADATA & PRICING BLOCK -->
+                    <!-- ========================================== -->
+                    <div class="col-12 col-lg-7">
+                        
+                        <!-- 1. Title -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-bold text-dark small mb-1">
+                                {{ __('upload.title') }} <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="title" id="title" class="form-control form-control-studio @error('title') is-invalid @enderror" placeholder="{{ __('upload.title_placeholder') }}" value="{{ old('title') }}" required>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <!-- Category Selection -->
-                        <div class="col-12 col-md-6">
-                            <label for="category_id" class="form-label fw-bold text-dark small">Primary Category</label>
-                            <select name="category_id" id="category_id" class="form-select form-select-figma @error('category_id') is-invalid @enderror">
-                                <option value="">-- Select Category --</option>
+                        <!-- 2. Category -->
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label fw-bold text-dark small mb-1">
+                                {{ __('upload.category') }} <span class="text-danger">*</span>
+                            </label>
+                            <select name="category_id" id="category_id" class="form-select form-select-studio @error('category_id') is-invalid @enderror" required>
+                                <option value="">-- {{ __('upload.select_category') }} --</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
@@ -246,165 +393,181 @@
                             @enderror
                         </div>
 
-                        <!-- Asset Description -->
-                        <div class="col-12">
-                            <label for="description" class="form-label fw-bold text-dark small">Description <span class="text-danger">*</span></label>
-                            <textarea name="description" id="description" rows="4" class="form-control form-control-figma @error('description') is-invalid @enderror" placeholder="Explain what makes this resource unique, screen count, software layers, and font specs..." required>{{ old('description') }}</textarea>
+                        <!-- 3. Color Palette -->
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <label class="form-label fw-bold text-dark small mb-0">
+                                    {{ __('upload.color') }} <span class="text-danger">*</span>
+                                </label>
+                                <span class="extra-small text-muted">{{ __('upload.color_sub') }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <input type="color" name="color" id="colorPicker" value="{{ old('color', '#7C3AED') }}" class="form-control form-control-color border-0 p-0 rounded-circle" style="width: 32px; height: 32px; cursor: pointer;">
+                                <span class="badge bg-light text-dark border px-2 py-1 font-monospace extra-small" id="colorHexText">{{ old('color', '#7C3AED') }}</span>
+                                
+                                <!-- Color Swatch Circles -->
+                                <button type="button" class="color-swatch-circle" style="background: #000000;" onclick="selectColor('#000000')" title="Black"></button>
+                                <button type="button" class="color-swatch-circle" style="background: #FFFFFF; border-color: #cbd5e1;" onclick="selectColor('#FFFFFF')" title="White"></button>
+                                <button type="button" class="color-swatch-circle" style="background: #7C3AED;" onclick="selectColor('#7C3AED')" title="Purple"></button>
+                                <button type="button" class="color-swatch-circle" style="background: #3B82F6;" onclick="selectColor('#3B82F6')" title="Blue"></button>
+                                <button type="button" class="color-swatch-circle" style="background: #10B981;" onclick="selectColor('#10B981')" title="Green"></button>
+                                <button type="button" class="color-swatch-circle" style="background: #EF4444;" onclick="selectColor('#EF4444')" title="Red"></button>
+                                <button type="button" class="color-swatch-circle" style="background: #F59E0B;" onclick="selectColor('#F59E0B')" title="Yellow"></button>
+                            </div>
+                        </div>
+
+                        <!-- 4. Supported Extensions (DISTINCT BUTTON SELECTION STATES) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-dark small mb-1.5 d-block">
+                                {{ __('upload.extensions') }} <span class="text-danger">*</span>
+                            </label>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                @php
+                                    $availableExts = ['Figma', 'PSD', 'AI', 'XD', 'EPS', 'Sketch', 'SVG', 'PDF'];
+                                @endphp
+                                @foreach($availableExts as $ext)
+                                    <div>
+                                        <input type="checkbox" name="extensions[]" value="{{ $ext }}" id="ext_{{ $ext }}" class="d-none ext-toggle-input" {{ $loop->first ? 'checked' : '' }}>
+                                        <label for="ext_{{ $ext }}" class="ext-toggle-btn">
+                                            <!-- Crisp SVG Checkmark -->
+                                            <svg class="ext-check-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            <span>{{ $ext }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- 5. Tags -->
+                        <div class="mb-3.5">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <label for="tagsInput" class="form-label fw-bold text-dark small mb-0">
+                                    {{ __('upload.tags') }} <span class="text-danger">*</span>
+                                </label>
+                                <span class="extra-small text-muted font-monospace" id="tagCounter">0/10 {{ __('upload.tags_max') }}</span>
+                            </div>
+                            <input type="text" name="tags" id="tagsInput" class="form-control form-control-studio" placeholder="{{ __('upload.tags_placeholder') }}" value="{{ old('tags') }}" oninput="updateTagCounter(this)">
+                            <div class="extra-small text-muted mt-1">{{ __('upload.tags_sub') }}</div>
+                        </div>
+
+                        <!-- ========================================== -->
+                        <!-- PRICING & FILE ASSET BLOCK ("Pricing Set - 1") -->
+                        <!-- ========================================== -->
+                        <div class="pricing-set-box mb-3.5">
+                            <span class="pricing-set-badge">
+                                {{ __('upload.pricing_set') }}
+                            </span>
+
+                            <div class="row g-3 mt-0.5">
+                                <!-- Size / Dimensions -->
+                                <div class="col-12 col-md-6">
+                                    <label for="size_dimensions" class="form-label fw-bold text-dark small mb-1">
+                                        {{ __('upload.size_dimensions') }} <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="size_dimensions" id="size_dimensions" class="form-control form-control-studio @error('size_dimensions') is-invalid @enderror" placeholder="{{ __('upload.size_placeholder') }}" value="{{ old('size_dimensions', '1920x1080 px') }}" required>
+                                </div>
+
+                                <!-- Status (Active / Inactive) -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label fw-bold text-dark small mb-1">
+                                        {{ __('upload.status') }}
+                                    </label>
+                                    <select name="status_toggle" id="status_toggle" class="form-select form-select-studio">
+                                        <option value="active" selected>{{ __('upload.status_active') }}</option>
+                                        <option value="inactive">{{ __('upload.status_inactive') }}</option>
+                                    </select>
+                                </div>
+
+                                <!-- ZIP File Upload -->
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <label class="form-label fw-bold text-dark small mb-0">
+                                            {{ __('upload.zip_file') }} <span class="text-danger">*</span>
+                                        </label>
+                                        <span class="badge bg-danger bg-opacity-10 text-danger extra-small fw-bold">{{ __('upload.zip_note') }}</span>
+                                    </div>
+                                    <div class="p-2.5 border rounded-3 bg-white d-flex align-items-center justify-content-between flex-wrap gap-2" style="border-style: dashed !important; border-width: 1.5px !important; border-color: rgba(124,58,237,0.3) !important;">
+                                        <div class="d-flex align-items-center gap-2.5">
+                                            <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-2 fs-5">
+                                                <i class="bi bi-file-earmark-zip-fill"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark extra-small" id="zipFileNameDisplay">{{ __('upload.zip_no_file') }}</div>
+                                                <div class="extra-small text-muted" id="zipFileSizeDisplay">{{ __('upload.zip_format_only') }}</div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-studio-cta btn-sm px-3 py-1 extra-small" onclick="document.getElementById('resource_file').click();">
+                                            <i class="bi bi-folder2-open me-1"></i> {{ __('upload.zip_select_btn') }}
+                                        </button>
+                                        <input type="file" name="resource_file" id="resource_file" class="d-none" accept=".zip" required onchange="handleZipFileSelect(this)">
+                                    </div>
+                                    @error('resource_file')
+                                        <div class="text-danger small mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Pricing Type: Free / Premium -->
+                                <div class="col-12 col-md-5">
+                                    <label class="form-label fw-bold text-dark small mb-1">
+                                        {{ __('upload.asset_type') }} <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="is_paid" id="is_paid" class="form-select form-select-studio" onchange="togglePricingType(this.value)">
+                                        <option value="1" {{ old('is_paid', '1') == '1' ? 'selected' : '' }}>{{ __('upload.type_premium') }}</option>
+                                        <option value="0" {{ old('is_paid') == '0' ? 'selected' : '' }}>{{ __('upload.type_free') }}</option>
+                                    </select>
+                                </div>
+
+                                <!-- Price in BDT -->
+                                <div class="col-12 col-md-7" id="priceInputContainer">
+                                    <label for="price" class="form-label fw-bold text-dark small mb-1">
+                                        {{ __('upload.price') }} <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-light fw-bold text-primary">৳</span>
+                                        <input type="number" step="1" min="10" name="price" id="price" class="form-control form-control-studio @error('price') is-invalid @enderror" placeholder="{{ __('upload.price_placeholder') }}" value="{{ old('price', '299') }}" oninput="calculateCreatorShare(this.value)">
+                                    </div>
+                                    <div class="extra-small text-success fw-bold mt-1 d-flex align-items-center gap-1" id="shareCalculatorText">
+                                        <i class="bi bi-cash-stack"></i> {{ __('upload.share_calculation') }}: ৳149.50
+                                    </div>
+                                    @error('price')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-bold text-dark small mb-1">
+                                {{ __('upload.description') }} <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="description" id="description" rows="3" class="form-control form-control-studio @error('description') is-invalid @enderror" placeholder="{{ __('upload.description_placeholder') }}" required>{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <!-- Live Demo Link (Optional) -->
+                        <div class="mb-3.5">
+                            <label for="demo_link" class="form-label fw-bold text-dark small mb-1">
+                                {{ __('upload.demo_link') }}
+                            </label>
+                            <input type="url" name="demo_link" id="demo_link" class="form-control form-control-studio" placeholder="{{ __('upload.demo_placeholder') }}" value="{{ old('demo_link') }}">
+                        </div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <div class="pt-1">
+                            <button type="submit" class="btn btn-studio-cta btn-lg w-100 py-2.5 fw-bold shadow">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i> {{ __('upload.submit_button') }}
+                            </button>
+                            <div class="text-center mt-2 extra-small text-muted">
+                                <i class="bi bi-shield-check text-success me-1"></i> {{ __('upload.submit_sub') }}
+                            </div>
+                        </div>
+
                     </div>
-                </div>
-
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 2: MEDIA & FILE UPLOADS -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-cloud-upload-fill text-primary"></i> 2. Media Preview & Source File Storage
-                    </h5>
-                    <p class="text-secondary small mb-4">Upload a high-resolution preview image and your packaged asset source file.</p>
-
-                    <div class="row g-4">
-                        <!-- Preview Image Upload Box -->
-                        <div class="col-12 col-md-6">
-                            <label class="form-label fw-bold text-dark small">Cover Preview Image <span class="text-danger">*</span></label>
-                            <div class="dropzone-box" id="previewDropZone" onclick="document.getElementById('preview_image').click();">
-                                <div class="dropzone-icon">
-                                    <i class="bi bi-image"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">Click or Drag Image Here</h6>
-                                <p class="text-muted extra-small mb-2">Supports PNG, JPG, WEBP, GIF, SVG (Max 10MB)</p>
-                                <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="previewFileName">Choose Cover File</span>
-                                <input type="file" name="preview_image" id="preview_image" class="d-none" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" required onchange="handlePreviewImageSelect(this)">
-                            </div>
-                            <!-- Image Preview Display Canvas -->
-                            <div id="imagePreviewContainer" class="mt-3 text-center d-none">
-                                <img id="imagePreviewCanvas" class="img-fluid rounded-3 border shadow-sm" style="max-height: 140px;" alt="Selected Preview">
-                            </div>
-                            @error('preview_image')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Main Resource File Upload Box -->
-                        <div class="col-12 col-md-6">
-                            <label class="form-label fw-bold text-dark small">Main Resource Package File <span class="text-danger">*</span></label>
-                            <div class="dropzone-box" id="fileDropZone" onclick="document.getElementById('resource_file').click();">
-                                <div class="dropzone-icon">
-                                    <i class="bi bi-file-earmark-zip"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">Click or Drag Asset Package</h6>
-                                <p class="text-muted extra-small mb-2">Supports ZIP, RAR, 7Z, PNG, JPG, PSD, FIGMA, AI, SVG, PDF, EPS (Max 100MB)</p>
-                                <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="resourceFileName">Choose Asset File</span>
-                                <input type="file" name="resource_file" id="resource_file" class="d-none" accept=".zip,.rar,.7z,.tar,.gz,.png,.jpg,.jpeg,.psd,.fig,.figma,.ai,.svg,.pdf,.eps,.xd,.sketch" required onchange="handleResourceFileSelect(this)">
-                            </div>
-                            <!-- File Upload Progress Bar Simulation -->
-                            <div id="uploadProgressBar" class="mt-3 d-none">
-                                <div class="d-flex justify-content-between small fw-bold text-muted mb-1">
-                                    <span>File Selected</span>
-                                    <span id="fileSizeText">0 MB</span>
-                                </div>
-                                <div class="progress rounded-pill" style="height: 8px;">
-                                    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" style="width: 100%;"></div>
-                                </div>
-                            </div>
-                            @error('resource_file')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 3: PRICING & COMMERCIAL MODEL -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-tag-fill text-primary"></i> 3. Pricing & Access Control
-                    </h5>
-                    <p class="text-secondary small mb-4">Choose whether to publish this item as a Free download or a Paid commercial asset.</p>
-
-                    <!-- Hidden Is Paid Input -->
-                    <input type="hidden" name="is_paid" id="is_paid" value="{{ old('is_paid', '0') }}">
-
-                    <div class="row g-3 mb-4">
-                        <!-- Free Option -->
-                        <div class="col-6">
-                            <div class="price-option-card text-center {{ old('is_paid', '0') == '0' ? 'active' : '' }}" id="optFree" onclick="selectPricingModel('0')">
-                                <div class="fs-4 text-success mb-1"><i class="bi bi-gift-fill"></i></div>
-                                <h6 class="fw-bold text-dark mb-0">Free Resource</h6>
-                                <span class="extra-small text-muted">Available to all users (৳0)</span>
-                            </div>
-                        </div>
-
-                        <!-- Paid Option -->
-                        <div class="col-6">
-                            <div class="price-option-card text-center {{ old('is_paid') == '1' ? 'active' : '' }}" id="optPaid" onclick="selectPricingModel('1')">
-                                <div class="fs-4 text-primary mb-1"><i class="bi bi-cash-stack"></i></div>
-                                <h6 class="fw-bold text-dark mb-0">Paid Commercial</h6>
-                                <span class="extra-small text-muted">Set price in BDT (৳)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Price Input Container (Shown only when Paid) -->
-                    <div id="priceInputBox" class="{{ old('is_paid') == '1' ? '' : 'd-none' }}">
-                        <label for="price" class="form-label fw-bold text-dark small">Price in BDT (৳) <span class="text-danger">*</span></label>
-                        <div class="input-group" style="max-width: 320px;">
-                            <span class="input-group-text bg-light fw-bold">৳</span>
-                            <input type="number" step="0.01" min="1" name="price" id="price" class="form-control form-control-figma @error('price') is-invalid @enderror" placeholder="299" value="{{ old('price') }}">
-                        </div>
-                        @error('price')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 4: METADATA, TAGS & LINKS -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-sliders text-primary"></i> 4. Metadata, Tags & Live Demo
-                    </h5>
-                    <p class="text-secondary small mb-4">Add optional metadata to enhance search indexing and AI recommendation matching.</p>
-
-                    <div class="row g-4">
-                        <!-- AI Tags -->
-                        <div class="col-12 col-md-6">
-                            <label for="tags" class="form-label fw-bold text-dark small">Tags (Comma Separated)</label>
-                            <input type="text" name="tags" id="tags" class="form-control form-control-figma" placeholder="e.g. figma, ui-kit, fintech, dark-mode, mobile" value="{{ old('tags') }}">
-                            <div class="form-text extra-small">Separate keywords with commas for AI search indexing.</div>
-                        </div>
-
-                        <!-- Live Demo URL -->
-                        <div class="col-12 col-md-6">
-                            <label for="demo_link" class="form-label fw-bold text-dark small">Live Demo / Figma Preview URL</label>
-                            <input type="url" name="demo_link" id="demo_link" class="form-control form-control-figma @error('demo_link') is-invalid @enderror" placeholder="https://figma.com/file/..." value="{{ old('demo_link') }}">
-                            @error('demo_link')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- System Requirements -->
-                        <div class="col-12">
-                            <label for="requirements" class="form-label fw-bold text-dark small">System & Software Requirements</label>
-                            <textarea name="requirements" id="requirements" rows="2" class="form-control form-control-figma" placeholder="e.g. Figma Desktop v116+, Inter & Plus Jakarta Sans Fonts required">{{ old('requirements') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SUBMIT ACTION BAR -->
-                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 pt-3 border-top">
-                    <span class="small text-muted">
-                        <i class="bi bi-shield-check text-success me-1"></i> All uploaded assets undergo automatic AI scan & moderation checks.
-                    </span>
-
-                    <button type="submit" class="btn btn-purple-cta btn-lg rounded-pill px-5 py-3 fw-bold w-100 w-sm-auto">
-                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Submit & Publish Asset
-                    </button>
                 </div>
 
             </form>
@@ -413,85 +576,136 @@
     </div>
 </section>
 
-<!-- INTERACTIVE DRAG & DROP AND FORM TOGGLE SCRIPT -->
+<!-- INTERACTIVE SCRIPTS -->
 <script>
-function selectPricingModel(modelVal) {
-    document.getElementById('is_paid').value = modelVal;
-    const optFree = document.getElementById('optFree');
-    const optPaid = document.getElementById('optPaid');
-    const priceInputBox = document.getElementById('priceInputBox');
-
-    if (modelVal === '1') {
-        optFree.classList.remove('active');
-        optPaid.classList.add('active');
-        priceInputBox.classList.remove('d-none');
-        document.getElementById('price').setAttribute('required', 'required');
-    } else {
-        optPaid.classList.remove('active');
-        optFree.classList.add('active');
-        priceInputBox.classList.add('d-none');
-        document.getElementById('price').removeAttribute('required');
-    }
-}
-
+// Handle Image Drop & Select
 function handlePreviewImageSelect(input) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
-        document.getElementById('previewFileName').textContent = file.name;
         
+        if (!file.type.match('image.*')) {
+            alert('Please select a valid image file (JPG, PNG, WEBP).');
+            return;
+        }
+
+        document.getElementById('imageFileName').textContent = file.name;
+        document.getElementById('imageFileSize').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
         const reader = new FileReader();
-        reader.onload = function (e) {
-            const canvas = document.getElementById('imagePreviewCanvas');
-            canvas.src = e.target.result;
+        reader.onload = function(e) {
+            document.getElementById('imagePreviewCanvas').src = e.target.result;
+            document.getElementById('imageDropZone').classList.add('d-none');
             document.getElementById('imagePreviewContainer').classList.remove('d-none');
         };
         reader.readAsDataURL(file);
     }
 }
 
-function handleResourceFileSelect(input) {
+function removeSelectedImage() {
+    document.getElementById('preview_image').value = '';
+    document.getElementById('imagePreviewCanvas').src = '';
+    document.getElementById('imagePreviewContainer').classList.add('d-none');
+    document.getElementById('imageDropZone').classList.remove('d-none');
+}
+
+// Drag & Drop handlers for Image
+const dropZone = document.getElementById('imageDropZone');
+['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+    });
+});
+['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+    });
+});
+dropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files && files.length > 0) {
+        document.getElementById('preview_image').files = files;
+        handlePreviewImageSelect(document.getElementById('preview_image'));
+    }
+});
+
+// Color picker & presets
+function selectColor(hex) {
+    document.getElementById('colorPicker').value = hex;
+    document.getElementById('colorHexText').textContent = hex;
+}
+document.getElementById('colorPicker').addEventListener('input', function() {
+    document.getElementById('colorHexText').textContent = this.value.toUpperCase();
+});
+
+// ZIP file select handler
+function handleZipFileSelect(input) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
-        document.getElementById('resourceFileName').textContent = file.name;
-        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-        document.getElementById('fileSizeText').textContent = sizeMb + ' MB';
-        document.getElementById('uploadProgressBar').classList.remove('d-none');
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        if (ext !== 'zip') {
+            alert('Invalid file format. Only .zip archives are allowed.');
+            input.value = '';
+            document.getElementById('zipFileNameDisplay').textContent = "{{ __('upload.zip_no_file') }}";
+            document.getElementById('zipFileSizeDisplay').textContent = "{{ __('upload.zip_format_only') }}";
+            return;
+        }
+
+        document.getElementById('zipFileNameDisplay').textContent = file.name;
+        document.getElementById('zipFileSizeDisplay').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB (ZIP Archive)';
     }
 }
 
-// Drag and drop event handlers
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    document.getElementById('previewDropZone').addEventListener(eventName, preventDefaults, false);
-    document.getElementById('fileDropZone').addEventListener(eventName, preventDefaults, false);
-});
-
-function preventDefaults (e) {
-    e.preventDefault();
-    e.stopPropagation();
+// Pricing switch & 50% revenue share calculator
+function togglePricingType(val) {
+    const priceBox = document.getElementById('priceInputContainer');
+    const priceInput = document.getElementById('price');
+    if (val === '0') {
+        priceBox.classList.add('d-none');
+        priceInput.removeAttribute('required');
+    } else {
+        priceBox.classList.remove('d-none');
+        priceInput.setAttribute('required', 'required');
+        calculateCreatorShare(priceInput.value);
+    }
 }
 
-['dragenter', 'dragover'].forEach(eventName => {
-    document.getElementById('previewDropZone').addEventListener(eventName, () => document.getElementById('previewDropZone').classList.add('dragover'), false);
-    document.getElementById('fileDropZone').addEventListener(eventName, () => document.getElementById('fileDropZone').classList.add('dragover'), false);
-});
+const shareLabelBase = "{{ __('upload.share_calculation') }}";
+function calculateCreatorShare(amount) {
+    const val = parseFloat(amount) || 0;
+    const share = (val * 0.50).toFixed(2);
+    document.getElementById('shareCalculatorText').innerHTML = 
+        `<i class="bi bi-cash-stack"></i> ${shareLabelBase}: ৳${share}`;
+}
 
-['dragleave', 'drop'].forEach(eventName => {
-    document.getElementById('previewDropZone').addEventListener(eventName, () => document.getElementById('previewDropZone').classList.remove('dragover'), false);
-    document.getElementById('fileDropZone').addEventListener(eventName, () => document.getElementById('fileDropZone').classList.remove('dragover'), false);
-});
+// Tags counter (Max 10)
+function updateTagCounter(input) {
+    const val = input.value.trim();
+    if (!val) {
+        document.getElementById('tagCounter').textContent = '0/10 {{ __("upload.tags_max") }}';
+        return;
+    }
+    const tags = val.split(',').filter(t => t.trim().length > 0);
+    document.getElementById('tagCounter').textContent = `${tags.length}/10 {{ __("upload.tags_max") }}`;
+    if (tags.length > 10) {
+        document.getElementById('tagCounter').classList.add('text-danger');
+    } else {
+        document.getElementById('tagCounter').classList.remove('text-danger');
+    }
+}
 
-document.getElementById('previewDropZone').addEventListener('drop', function(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById('preview_image').files = files;
-    handlePreviewImageSelect(document.getElementById('preview_image'));
-});
-
-document.getElementById('fileDropZone').addEventListener('drop', function(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById('resource_file').files = files;
-    handleResourceFileSelect(document.getElementById('resource_file'));
+// Initial calculation on load
+document.addEventListener('DOMContentLoaded', function() {
+    const initialPrice = document.getElementById('price').value;
+    if (initialPrice) {
+        calculateCreatorShare(initialPrice);
+    }
+    updateTagCounter(document.getElementById('tagsInput'));
 });
 </script>
 

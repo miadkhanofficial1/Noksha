@@ -3,8 +3,9 @@
     $user = auth()->user();
     $wishCount = $user ? \App\Models\Wishlist::where('user_id', $user->id)->count() : 0;
     $cartCount = $user ? \App\Models\Cart::where('user_id', $user->id)->count() : 0;
-    $notifCount = $user ? \App\Models\Notification::where('user_id', $user->id)->where('is_read', false)->count() : 0;
-    $recentNotifs = $user ? \App\Models\Notification::where('user_id', $user->id)->latest()->take(5)->get() : collect();
+    $notifCount = $notifCount ?? ($user ? \App\Models\Notification::where('user_id', $user->id)->where('is_seen', false)->count() : 0);
+    $unreadCount = $unreadCount ?? (auth()->check() ? auth()->user()->unreadNotifications->count() : 0);
+    $recentNotifs = $recentNotifs ?? (auth()->check() ? auth()->user()->notifications()->latest()->take(10)->get() : collect());
 @endphp
 
 <header class="noksha-header sticky-top py-2 py-lg-2.5">
@@ -16,14 +17,14 @@
             <!-- ========================================================= -->
             <div class="d-flex align-items-center gap-3 gap-xl-4 flex-shrink-0">
                 <!-- Brand Logo -->
-                <a class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0" href="{{ route('home') }}" aria-label="{{ $currentLocale === 'bn' ? 'নকশা' : 'Noksha' }}" style="height: 40px; max-height: 40px;">
+                <a class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0" href="{{ route('home') }}" aria-label="Noksha" style="height: 40px; max-height: 40px;">
                     <img src="{{ asset('images/logo.png') }}" 
                          alt="Noksha" 
                          class="noksha-brand-logo h-10 w-auto object-contain flex-shrink-0"
                          height="40"
                          style="height: 40px; width: auto; max-height: 40px; object-fit: contain; display: block;">
                     <span class="fw-bold fs-4 tracking-tight text-dark dark:text-white text-nowrap">
-                        {{ $currentLocale === 'bn' ? 'নকশা' : 'Noksha' }}
+                        Noksha
                     </span>
                 </a>
 
@@ -73,19 +74,7 @@
             <!-- ========================================================= -->
             <div class="d-flex align-items-center gap-2 gap-sm-2.5 flex-shrink-0 flex-nowrap">
 
-                <!-- Segmented Language Switcher (Desktop) -->
-                <div class="lang-switcher-pill d-none d-sm-inline-flex">
-                    <a href="{{ route('lang.switch', 'bn') }}" 
-                       class="lang-switcher-btn {{ $currentLocale === 'bn' ? 'active' : '' }}" 
-                       title="বাংলা ভাষা নির্বাচন করুন">
-                        🇧🇩 বাংলা
-                    </a>
-                    <a href="{{ route('lang.switch', 'en') }}" 
-                       class="lang-switcher-btn {{ $currentLocale === 'en' ? 'active' : '' }}" 
-                       title="Switch to English">
-                        🇬🇧 EN
-                    </a>
-                </div>
+                
 
                 <!-- Dark / Light Theme Toggle Button -->
                 <button type="button" 
@@ -111,35 +100,106 @@
                         {{ __('auth.register') }}
                     </a>
                 @else
+                    @php
+                        $unreadCount = $unreadCount ?? (auth()->check() ? auth()->user()->unreadNotifications()->count() : 0);
+                        $recentNotifs = $recentNotifs ?? (auth()->check() ? auth()->user()->notifications()->latest()->take(10)->get() : collect());
+                    @endphp
+
                     <!-- Notification Bell Dropdown -->
-                    <div class="dropdown">
-                        <button class="nav-action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ __('app.notifications') }}">
+                    <div class="dropdown" id="notifDropdown">
+                        <button class="nav-action-btn position-relative" type="button"
+                                id="notifBellBtn"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                title="{{ __('app.notifications') }}">
                             <i class="bi bi-bell-fill text-warning fs-6"></i>
-                            @if($notifCount > 0)
-                                <span class="badge-counter bg-danger text-white">{{ $notifCount > 9 ? '9+' : $notifCount }}</span>
-                            @endif
+                            <span class="badge-counter bg-danger text-white {{ ($unreadCount ?? 0) > 0 ? '' : 'd-none' }}" id="notifBadgeCount">{{ ($unreadCount ?? 0) > 0 ? $unreadCount : '' }}</span>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end sleek-dropdown-menu mt-2 p-0 overflow-hidden" style="width: 320px;">
+
+                        <div class="dropdown-menu dropdown-menu-end sleek-dropdown-menu mt-2 p-0 overflow-hidden" style="width: 350px;">
+                            {{-- Header --}}
                             <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between">
-                                <span class="fw-bold small text-dark"><i class="bi bi-bell me-1.5"></i> {{ __('app.notifications') }}</span>
-                                @if($notifCount > 0)
-                                    <span class="badge bg-primary rounded-pill extra-small">{{ $notifCount }} {{ __('app.notifications') }}</span>
-                                @endif
+                                <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1.5 text-warning"></i> {{ __('app.notifications') }}</span>
+                                <span class="badge bg-primary rounded-pill extra-small {{ ($unreadCount ?? 0) > 0 ? '' : 'd-none' }}" id="notifHeaderBadge">{{ ($unreadCount ?? 0) }} unread</span>
                             </div>
-                            <div class="list-group list-group-flush" style="max-height: 280px; overflow-y: auto;">
-                                @forelse($recentNotifs as $rn)
-                                    <form action="{{ route('notifications.read', $rn->id) }}" method="POST" class="m-0">
-                                        @csrf
-                                        <button type="submit" class="list-group-item list-group-item-action p-3 text-start border-bottom small {{ !$rn->is_read ? 'bg-light font-weight-bold' : '' }}">
-                                            <div class="fw-bold text-dark extra-small">{{ $rn->title }}</div>
-                                            <div class="text-muted extra-small line-clamp-1">{{ $rn->message }}</div>
-                                            <div class="extra-small text-primary font-monospace mt-1">{{ $rn->created_at->diffForHumans() }}</div>
-                                        </button>
-                                    </form>
+
+                            {{-- Notification Items List --}}
+                            <div class="list-group list-group-flush" style="max-height: 340px; overflow-y: auto;">
+                                @forelse(($recentNotifs ?? collect()) as $rn)
+                                    @php
+                                        $type = $rn->type ?? 'system';
+                                        $isBroadcast = in_array($type, ['broadcast', 'admin']) ||
+                                                       str_contains(strtolower($rn->title), 'broadcast') ||
+                                                       str_contains(strtolower($rn->title), 'announcement');
+                                        $isContest = in_array($type, ['contest', 'success']) ||
+                                                       str_contains(strtolower($rn->title), 'contest');
+
+                                        if ($isBroadcast) {
+                                            $itemClass = 'notif-item-broadcast';
+                                            $iconClass = 'bi-megaphone-fill text-indigo-500';
+                                            $iconBg = 'background: rgba(99, 102, 241, 0.12); color: #6366f1;';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-size: 0.62rem;"><i class="bi bi-megaphone-fill me-1"></i>Broadcast</span>';
+                                        } elseif ($isContest) {
+                                            $itemClass = 'notif-item-contest';
+                                            $iconClass = 'bi-trophy-fill text-amber-500';
+                                            $iconBg = 'background: rgba(245, 158, 11, 0.12); color: #f59e0b;';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5" style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: #fff; font-size: 0.62rem;"><i class="bi bi-trophy-fill me-1"></i>Contest Alert</span>';
+                                        } else {
+                                            $itemClass = 'notif-item-standard ' . (!$rn->is_read ? 'bg-light' : '');
+                                            $iconClass = match($type) {
+                                                'seller' => 'bi-shop-fill text-primary',
+                                                'buyer'  => 'bi-bag-check-fill text-success',
+                                                'warning'=> 'bi-exclamation-triangle-fill text-warning',
+                                                default  => 'bi-bell-fill text-info',
+                                            };
+                                            $iconBg = 'background: rgba(108, 76, 241, 0.08);';
+                                            $typeBadge = '';
+                                        }
+                                    @endphp
+
+                                    <div class="notif-dropdown-item border-bottom {{ $itemClass }} p-3"
+                                         data-notif-id="{{ $rn->id }}"
+                                         data-notif-type="{{ $rn->type }}"
+                                         data-notif-title="{{ e($rn->title) }}"
+                                         data-notif-message="{{ e($rn->message) }}"
+                                         data-notif-date="{{ $rn->created_at->format('d M Y, g:i A') }}"
+                                         data-is-broadcast="{{ $isBroadcast ? 'true' : 'false' }}"
+                                         data-is-unread="{{ !$rn->is_read ? 'true' : 'false' }}"
+                                         data-ajax-read-url="{{ route('notifications.markAsRead', $rn->id) }}"
+                                         data-redirect-url="{{ $rn->action_url ? url(parse_url($rn->action_url, PHP_URL_PATH) ?: '/') : '' }}"
+                                         style="cursor: pointer; transition: all 0.2s ease;">
+                                        <div class="d-flex align-items-start gap-2.5">
+                                            {{-- Type Icon --}}
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                                                 style="width: 36px; height: 36px; {{ $iconBg }}">
+                                                <i class="bi {{ $iconClass }} fs-6"></i>
+                                            </div>
+
+                                            <div class="flex-grow-1 min-w-0">
+                                                <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
+                                                    <span class="fw-bold extra-small text-dark text-truncate">{{ $rn->title }}</span>
+                                                    {{-- Glowing green dot for unread --}}
+                                                    @if(!$rn->is_read)
+                                                        <span class="notif-unread-dot flex-shrink-0" title="Unread"></span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-muted extra-small line-clamp-2" style="line-height: 1.4;">{{ $rn->message }}</div>
+                                                <div class="d-flex align-items-center gap-2 mt-1.5 flex-wrap">
+                                                    <span class="extra-small text-secondary font-monospace" style="font-size: 0.68rem;">{{ $rn->created_at->diffForHumans() }}</span>
+                                                    {!! $typeBadge !!}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @empty
-                                    <div class="p-3 text-center text-muted extra-small">{{ __('app.no_data') }}</div>
+                                    <div class="p-4 text-center text-muted extra-small">
+                                        <i class="bi bi-bell-slash fs-4 d-block mb-2 opacity-50"></i>
+                                        {{ __('app.no_data') }}
+                                    </div>
                                 @endforelse
                             </div>
+
+                            {{-- Footer --}}
                             <div class="p-2 bg-light text-center border-top">
                                 <a href="{{ route('notifications.index') }}" class="extra-small fw-bold text-primary text-decoration-none">
                                     {{ __('app.view_all') }} {{ __('app.notifications') }} <i class="bi bi-arrow-right ms-1"></i>
@@ -185,7 +245,7 @@
                                     @if($user->isContributor())
                                         <span class="badge bg-success bg-opacity-10 text-success extra-small">Contributor ✓</span>
                                     @else
-                                        <span class="badge bg-primary bg-opacity-10 text-primary extra-small">User / বায়ার</span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary extra-small">Buyer</span>
                                     @endif
                                 </div>
                             </li>
@@ -224,7 +284,7 @@
                             <!-- Contributor / Creator Action -->
                             @if($user->isContributor())
                                 <li>
-                                    <a class="dropdown-item small py-2 fw-semibold" href="{{ route('resource.create') }}">
+                                    <a class="dropdown-item small py-2 fw-semibold" href="{{ route('dashboard', ['tab' => 'upload']) }}">
                                         <i class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i> {{ __('dashboard.upload') }}
                                     </a>
                                 </li>
@@ -316,22 +376,11 @@
                 @endauth
             </div>
 
-            <!-- Mobile Language Switcher (Visible on small phones) -->
-            <div class="d-sm-none d-flex align-items-center justify-content-between p-2.5 bg-light rounded-3 mb-3">
-                <span class="small fw-semibold text-muted">Language / ভাষা</span>
-                <div class="lang-switcher-pill m-0">
-                    <a href="{{ route('lang.switch', 'bn') }}" class="lang-switcher-btn {{ $currentLocale === 'bn' ? 'active' : '' }}">
-                        🇧🇩 বাংলা
-                    </a>
-                    <a href="{{ route('lang.switch', 'en') }}" class="lang-switcher-btn {{ $currentLocale === 'en' ? 'active' : '' }}">
-                        🇬🇧 EN
-                    </a>
-                </div>
-            </div>
+            
 
             <!-- Mobile Dark / Light Theme Toggle -->
             <div class="d-flex align-items-center justify-content-between p-2.5 bg-light rounded-3 mb-3">
-                <span class="small fw-semibold text-muted">Theme / থিম</span>
+                <span class="small fw-semibold text-muted">Theme</span>
                 <button type="button" class="nav-action-btn theme-toggle-btn" aria-label="Toggle dark mode">
                     <svg class="theme-icon-sun text-warning" style="display: none; width: 1.15rem; height: 1.15rem;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
@@ -363,7 +412,7 @@
                     @endif
 
                     @if($user->isContributor())
-                        <a class="nav-link-custom text-primary" href="{{ route('resource.create') }}">
+                        <a class="nav-link-custom text-primary" href="{{ route('dashboard', ['tab' => 'upload']) }}">
                             <i class="bi bi-cloud-arrow-up-fill me-2"></i> {{ __('dashboard.upload') }}
                         </a>
                     @else

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'OTP Verification - Noksha (ওটিপি যাচাইকরণ)')
+@section('title', 'OTP Verification - Noksha')
 
 @section('content')
 <div class="container py-5">
@@ -11,7 +11,7 @@
                     <i class="bi bi-shield-lock-fill fs-2"></i>
                 </div>
 
-                <h3 class="fw-bold text-dark mb-1">OTP Verification <span class="text-primary fs-5">(ওটিপি যাচাইকরণ)</span></h3>
+                <h3 class="fw-bold text-dark mb-1">OTP Verification</h3>
                 <p class="text-muted small mb-4">Enter the 6-digit verification code sent to your device</p>
 
                 @if (session('info'))
@@ -38,14 +38,14 @@
                     </div>
 
                     <button type="submit" class="btn btn-noksha w-100 py-2.5 rounded-3 mb-3">
-                        Verify Code / ওটিপি যাচাই করুন
+                        Verify Code
                     </button>
                 </form>
 
                 <form action="{{ route('otp.send') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-link text-decoration-none small text-muted">
-                        Didn't receive code? Resend OTP / আবার কোড পাঠান
+                        Didn't receive code? Resend OTP
                     </button>
                 </form>
             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('app.dashboard') . ' - Noksha (নকশা)')
+@section('title', __('app.dashboard') . ' - Noksha')
 
 @section('content')
 
@@ -133,7 +133,7 @@
                                 </span>
                             @else
                                 <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold border border-white border-opacity-25">
-                                    <i class="bi bi-person me-1"></i> Member / বায়ার
+                                    <i class="bi bi-person me-1"></i> Member / Buyer
                                 </span>
                             @endif
                         </div>
@@ -159,18 +159,6 @@
         </div>
     </div>
 
-    <!-- FLASH NOTIFICATIONS -->
-    @if(session('success'))
-        <div class="alert alert-success border-0 shadow-lg rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark bg-white">
-            <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
-                <i class="bi bi-check-circle-fill fs-3"></i>
-            </div>
-            <div>
-                <h6 class="fw-bold mb-1">Success</h6>
-                <p class="mb-0 small text-secondary">{{ session('success') }}</p>
-            </div>
-        </div>
-    @endif
 
     <!-- CONTRIBUTOR VERIFICATION APPLICATION BANNER (For Non-Contributors) -->
     @if(!$isContributor)

@@ -37,7 +37,7 @@ class LoginController extends Controller
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'login' => trans('auth.failed', [], 'en') ?: 'These credentials do not match our records. / এই তথ্য আমাদের রেকর্ডের সাথে মিলছে না।',
+                'login' => trans('auth.failed', [], 'en') ?: 'These credentials do not match our records.',
             ]);
         }
 
@@ -58,6 +58,6 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home')
-            ->with('status', 'You have been logged out successfully. / আপনি সফলভাবে লগআউট করেছেন।');
+            ->with('status', 'You have been logged out successfully.');
     }
 }

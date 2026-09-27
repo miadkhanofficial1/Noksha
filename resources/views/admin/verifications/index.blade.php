@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Seller Verification Review Panel - Noksha (নকশা)')
+@section('title', 'Admin Seller Verification Review Panel - Noksha')
 
 @section('content')
 
@@ -87,18 +87,6 @@
 <section class="py-4 py-lg-5" style="background-color: #F8F7FF;">
     <div class="container">
         
-        <!-- Flash Success Notification -->
-        @if(session('success'))
-            <div class="alert alert-success border-0 shadow-lg rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark bg-white">
-                <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
-                    <i class="bi bi-check-circle-fill fs-3"></i>
-                </div>
-                <div>
-                    <h5 class="fw-bold mb-1">Action Complete!</h5>
-                    <p class="mb-0 small text-secondary">{{ session('success') }}</p>
-                </div>
-            </div>
-        @endif
 
         <!-- HERO BANNER -->
         <div class="card admin-verification-hero p-4 p-md-5 text-white mb-4 position-relative">
@@ -108,7 +96,7 @@
                         <i class="bi bi-shield-check-fill me-1 text-warning"></i> Super Admin Compliance Portal
                     </span>
                     <h2 class="display-6 fw-extrabold text-white mb-2">
-                        Contributor Identity Verification Panel <span class="text-warning">(ভেরিফিকেশন রিভিউ)</span>
+                        Contributor Identity Verification Panel
                     </h2>
                     <p class="text-white text-opacity-90 mb-0 small" style="max-width: 620px;">
                         Inspect submitted government NIDs, passports, driving licenses, face selfies, and verification videos to approve contributor applications and unlock creator tools.

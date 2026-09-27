@@ -2,7 +2,7 @@
 
 return [
 
-    'name' => env('APP_NAME', 'Noksha (নকশা)'),
+    'name' => env('APP_NAME', 'Noksha'),
 
     'env' => env('APP_ENV', 'production'),
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Seller Verification - Noksha (নকশা)')
+@section('title', 'Seller Verification - Noksha')
 
 @section('content')
 
@@ -83,7 +83,7 @@
                     <i class="bi bi-shield-check-fill me-1 text-warning"></i> Seller Compliance & KYC
                 </span>
                 <h1 class="display-5 fw-extrabold text-white mb-2">
-                    Seller Identity Verification <span class="text-warning">(ভেরিফিকেশন)</span>
+                    Seller Identity Verification <span class="text-warning"></span>
                 </h1>
                 <p class="fs-6 text-white text-opacity-90 mb-0" style="max-width: 620px;">
                     Verify your seller profile to earn the Pro Verified badge, build buyer trust, and unlock asset publishing on Noksha.
@@ -102,18 +102,6 @@
 <section class="py-5" style="background-color: #F8F7FF;">
     <div class="container py-2" style="max-width: 900px;">
         
-        <!-- Flash Success Notification -->
-        @if(session('success'))
-            <div class="alert alert-success border-0 shadow-lg rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark bg-white">
-                <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
-                    <i class="bi bi-check-circle-fill fs-3"></i>
-                </div>
-                <div>
-                    <h5 class="fw-bold mb-1">Submission Complete!</h5>
-                    <p class="mb-0 small text-secondary">{{ session('success') }}</p>
-                </div>
-            </div>
-        @endif
 
         <!-- Validation Error Summary -->
         @if ($errors->any())

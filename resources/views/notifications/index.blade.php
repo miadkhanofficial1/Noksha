@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Notification Center - Noksha (নকশা)')
+@section('title', 'Notification Center - Noksha')
 
 @section('content')
 
@@ -42,6 +42,27 @@
         border: none;
         font-weight: 600;
         transition: all 0.3s ease;
+    }
+
+    .notif-unread-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #22c55e;
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7), 0 0 8px #22c55e;
+        animation: greenDotPulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        display: inline-block;
+        flex-shrink: 0;
+    }
+    @keyframes greenDotPulse {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7), 0 0 8px #22c55e;
+            transform: scale(1);
+        }
+        50% {
+            box-shadow: 0 0 0 5px rgba(34, 197, 94, 0), 0 0 12px rgba(34, 197, 94, 0.9);
+            transform: scale(1.15);
+        }
     }
 </style>
 

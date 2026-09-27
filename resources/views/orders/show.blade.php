@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Order Details #' . $order->order_number . ' - Noksha (নকশা)')
+@section('title', 'Order Details #' . $order->order_number . ' - Noksha')
 
 @section('content')
 

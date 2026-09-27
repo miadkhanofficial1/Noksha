@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buyer Dashboard - Noksha (নকশা)')
+@section('title', 'Buyer Dashboard - Noksha')
 
 @section('content')
 

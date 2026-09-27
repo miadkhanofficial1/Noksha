@@ -25,7 +25,7 @@ class VerificationController extends Controller
     {
         $request->fulfill();
 
-        return redirect()->route('home')->with('status', 'Email verified successfully! Welcome to Noksha. / ইমেইল সফলভাবে যাচাই করা হয়েছে! নকশায় আপনাকে স্বাগতম।');
+        return redirect()->route('home')->with('status', 'Email verified successfully! Welcome to Noksha.');
     }
 
     /**
@@ -39,6 +39,6 @@ class VerificationController extends Controller
 
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with('status', 'Verification link sent! Please check your inbox. / যাচাইকরণ লিংক পাঠানো হয়েছে! অনুগ্রহ করে আপনার ইনবক্স চেক করুন।');
+        return back()->with('status', 'Verification link sent! Please check your inbox.');
     }
 }

@@ -805,7 +805,7 @@
                 <i class="bi bi-stars me-1"></i> Featured Showcase
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
-                Featured Templates <span class="text-primary">(জনপ্রিয় টেমপ্লেট)</span>
+                Featured Templates <span class="text-primary"></span>
             </h2>
             <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
                 Hand-picked premium and free design assets.
@@ -906,9 +906,17 @@
                                     <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($resource->downloads) }} downloads</span>
                                 </div>
 
-                                <h5 class="card-title fw-bold text-dark mb-1.5 text-truncate" title="{{ $resource->title }}">
+                                <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="{{ $resource->title }}">
                                     {{ $resource->title }}
                                 </h5>
+                                <div class="d-flex align-items-center gap-1 extra-small text-muted mb-2">
+                                    <span>by <strong class="text-dark">{{ $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</strong></span>
+                                    @if($resource->owner && $resource->owner->isVerifiedCreator())
+                                        <span class="text-emerald-500" title="Verified Creator">
+                                            <i class="bi bi-patch-check-fill" style="font-size: 0.85rem;"></i>
+                                        </span>
+                                    @endif
+                                </div>
                                 <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
                                     {{ Str::limit($resource->description, 90) }}
                                 </p>
@@ -959,7 +967,7 @@
                     <p class="text-secondary small mb-4" style="max-width: 480px; margin: 0 auto;">
                         Be the first creator to upload and publish design assets on Noksha. Admin approvals will immediately list templates here.
                     </p>
-                    <a href="{{ route('resource.create') }}" class="btn btn-purple-cta rounded-pill px-5 py-3 fw-bold">
+                    <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-purple-cta rounded-pill px-5 py-3 fw-bold">
                         <i class="bi bi-cloud-arrow-up-fill me-2"></i> Upload First Resource
                     </a>
                 </div>
@@ -978,7 +986,7 @@
                 <i class="bi bi-grid-fill me-1"></i> Categories
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
-                Explore Categories <span class="text-primary">(ক্যাটাগরি ব্রাউজ করুন)</span>
+                Explore Categories <span class="text-primary"></span>
             </h2>
             <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
                 Find templates by design type.
@@ -1034,7 +1042,7 @@
                 <i class="bi bi-fire me-1 text-danger"></i> Trending
             </span>
             <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
-                Trending Resources <span class="text-primary">(আজকের জনপ্রিয় ডিজাইন)</span>
+                Trending Resources <span class="text-primary"></span>
             </h2>
             <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
                 AI-selected high-performing assets loved by creators.

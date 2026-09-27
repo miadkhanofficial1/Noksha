@@ -47,7 +47,7 @@ class ResetPasswordController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status) . ' / আপনার পাসওয়ার্ড রিসেট করা হয়েছে। এখন লগইন করুন।')
+            ? redirect()->route('login')->with('status', __($status))
             : back()->withErrors(['email' => [__($status)]]);
     }
 }

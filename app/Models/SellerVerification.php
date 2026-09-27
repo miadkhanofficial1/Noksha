@@ -24,6 +24,8 @@ class SellerVerification extends Model
         'document_type',
         'id_file_path',
         'document_file',
+        'id_number',
+        'portfolio_link',
         'selfie_file_path',
         'selfie_file',
         'video_file_path',
@@ -31,8 +33,10 @@ class SellerVerification extends Model
         'status',
         'admin_notes',
         'admin_note',
+        'rejection_reason',
         'submitted_at',
         'reviewed_at',
+        'rejected_at',
     ];
 
     /**
@@ -46,6 +50,7 @@ class SellerVerification extends Model
             'date_of_birth' => 'date',
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'rejected_at' => 'datetime',
         ];
     }
 

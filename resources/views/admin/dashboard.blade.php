@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Executive Command Center - Noksha (নকশা)')
+@section('title', 'Admin Executive Command Center - Noksha')
 @section('page_title', 'Overview')
 @section('page_heading', 'Executive Command Center')
 
@@ -234,14 +234,23 @@
         <div class="space-y-6">
             <!-- Broadcast Card -->
             <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
-                <div class="flex items-center gap-2.5 mb-3">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
-                        <i class="bi bi-megaphone-fill text-base"></i>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                            <i class="bi bi-megaphone-fill text-base"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white">Broadcast Alert</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Send system announcement to all users</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-gray-900 dark:text-white">Broadcast Alert</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Send system announcement to all users</p>
-                    </div>
+                    <!-- Broadcast History Link in Card Header -->
+                    <a href="{{ route('admin.broadcastHistory') }}"
+                       class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                       title="View Broadcast History">
+                        <i class="bi bi-clock-history"></i>
+                        <span>History</span>
+                    </a>
                 </div>
 
                 <form method="POST" action="{{ route('admin.broadcast') }}" class="space-y-3">
@@ -254,9 +263,15 @@
                         <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Message Body</label>
                         <textarea name="message" rows="3" required placeholder="Write message details..." class="w-full px-3 py-2 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-brand-500"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5">
-                        <i class="bi bi-send-fill"></i> Broadcast to All Users
-                    </button>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                        <button type="submit" class="w-full py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5">
+                            <i class="bi bi-send-fill"></i> Broadcast Alert
+                        </button>
+                        <a href="{{ route('admin.broadcastHistory') }}"
+                           class="w-full py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 border border-gray-200 dark:border-gray-700">
+                            <i class="bi bi-clock-history"></i> Broadcast History
+                        </a>
+                    </div>
                 </form>
             </div>
 

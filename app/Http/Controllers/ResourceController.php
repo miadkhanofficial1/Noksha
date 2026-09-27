@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Resource;
 use App\Models\Review;
+use App\Models\User;
+use App\Services\TagService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -14,126 +17,148 @@ use Illuminate\View\View;
 class ResourceController extends Controller
 {
     /**
-     * Show the resource upload form.
+     * Show the contributor design upload form.
+     * Redirects to the Unified Dashboard Top-Tabs embedded upload form.
      */
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        $user = auth()->user();
-        if ($user && $user->status === 'suspended') {
-            abort(403, 'Your account has been suspended. Please contact support.');
-        }
-
-        $categories = Category::all();
-
-        return view('resource.create', compact('categories'));
+        return redirect()->route('dashboard', ['tab' => 'upload']);
     }
 
     /**
-     * Store a newly created resource in storage and database.
+     * Store a newly created design resource with strict ZIP validation and metadata.
      */
     public function store(Request $request): RedirectResponse
     {
         $user = auth()->user();
         if ($user && $user->status === 'suspended') {
-            abort(403, 'Your account has been suspended. Please contact support.');
+            abort(403, 'Your account has been suspended. Please contact support for assistance.');
         }
 
+        // Strict Server-Side Validation
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'category_id' => ['nullable', 'exists:categories,id'],
+            'category_id' => ['required', 'exists:categories,id'],
             'description' => ['required', 'string'],
-            'preview_image' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:10240'], // Max 10MB
+            'color' => ['nullable', 'string', 'max:100'],
+            'extensions' => ['nullable'], // Array or string of selected extensions
+            'tags' => ['nullable', 'string'],
+            'size_dimensions' => ['required', 'string', 'max:150'],
+            'preview_image' => ['required', 'file', 'mimes:jpeg,png,jpg,webp', 'max:10240'], // Max 10MB
             'resource_file' => [
                 'required',
                 'file',
-                'extensions:zip,rar,7z,tar,gz,png,jpg,jpeg,psd,fig,figma,ai,svg,pdf,eps,xd,sketch',
+                'extensions:zip',
                 'max:102400', // Max 100MB
             ],
             'is_paid' => ['nullable'],
             'price' => [$request->boolean('is_paid') ? 'required' : 'nullable', 'numeric', 'min:0'],
-            'tags' => ['nullable', 'string'],
-            'requirements' => ['nullable', 'string'],
+            'status_toggle' => ['nullable', 'string'],
             'demo_link' => ['nullable', 'url', 'max:255'],
+            'requirements' => ['nullable', 'string'],
         ], [
             'title.required' => 'Resource title is required.',
-            'description.required' => 'Product description is required.',
-            'preview_image.required' => 'Please upload a cover preview image for your asset.',
-            'preview_image.mimes' => 'Preview image must be a valid image file (JPG, PNG, WEBP, GIF, SVG).',
-            'preview_image.max' => 'Preview image size cannot exceed 10 MB.',
-            'resource_file.required' => 'Please upload the main resource package file.',
-            'resource_file.extensions' => 'The resource file must be a valid design asset format (ZIP, RAR, 7Z, PNG, JPG, PSD, FIGMA, AI, SVG, PDF, EPS, or XD).',
-            'resource_file.max' => 'The resource file size cannot exceed 100 MB.',
-            'price.required' => 'Price is required when resource is marked as Paid.',
+            'category_id.required' => 'Please select a category.',
+            'description.required' => 'Design description is required.',
+            'size_dimensions.required' => 'Design format / dimensions are required.',
+            'preview_image.required' => 'Cover preview image is required.',
+            'preview_image.mimes' => 'Preview image must be JPG, PNG, or WEBP format.',
+            'preview_image.max' => 'Preview image size cannot exceed 10MB.',
+            'resource_file.required' => 'Original design package .ZIP file is required.',
+            'resource_file.extensions' => 'Uploaded package must strictly be a valid .ZIP archive.',
+            'resource_file.max' => 'ZIP package size cannot exceed 100MB.',
+            'price.required' => 'Price is required for premium assets.',
         ]);
 
         // Process File Storage
         $previewPath = $request->file('preview_image')->store('previews', 'public');
         $filePath = $request->file('resource_file')->store('resources', 'public');
-        $fileExtension = strtolower($request->file('resource_file')->getClientOriginalExtension());
 
-        // Process Manual & AI Auto-generated Tags
+        // Process File Extensions
+        $extensionsSelected = $request->input('extensions');
+        if (is_array($extensionsSelected)) {
+            $extensionsStr = implode(', ', array_filter($extensionsSelected));
+        } else {
+            $extensionsStr = (string) $extensionsSelected;
+        }
+        $fileType = !empty($extensionsStr) ? strtoupper($extensionsStr) : 'ZIP';
+
+        // Process Formatted Requirements & Specs
+        $color = $request->input('color', '#6C4CF1');
+        $size = $validated['size_dimensions'];
+        $extraReq = $request->input('requirements', '');
+        $combinedRequirements = "Size: {$size} | Color: {$color} | Extensions: {$fileType}" . ($extraReq ? " | {$extraReq}" : "");
+
+        // Process Manual & AI Auto-generated Tags (Max 10 tags limit)
         $manualTags = [];
         if (!empty($request->tags)) {
-            $manualTags = array_map('trim', explode(',', $request->tags));
+            $exploded = array_map('trim', explode(',', $request->tags));
+            $manualTags = array_slice(array_filter($exploded), 0, 10);
         }
 
-        $categoryName = !empty($validated['category_id']) ? Category::find($validated['category_id'])?->name : null;
-        $tagsArray = \App\Services\TagService::generate(
+        $categoryName = Category::find($validated['category_id'])?->name;
+        $tagsArray = TagService::generate(
             $validated['title'],
             $validated['description'],
             $categoryName,
             $manualTags
         );
+        $tagsArray = array_slice($tagsArray, 0, 10);
 
-        // Generate unique slug
+        // Generate unique SEO slug
         $baseSlug = Str::slug($validated['title']);
         $slug = $baseSlug . '-' . Str::random(6);
 
+        // Pricing logic
         $isPaid = $request->boolean('is_paid');
         $price = $isPaid ? (float) ($validated['price'] ?? 0.00) : 0.00;
+
+        // Status logic: active ('pending' moderation) or 'inactive'
+        $status = ($request->input('status_toggle') === 'inactive') ? 'inactive' : 'pending';
 
         // Create Resource record
         $resource = Resource::create([
             'user_id' => auth()->id(),
-            'category_id' => !empty($validated['category_id']) ? $validated['category_id'] : null,
+            'category_id' => $validated['category_id'],
             'title' => $validated['title'],
             'slug' => $slug,
             'description' => $validated['description'],
             'preview_image' => $previewPath,
             'file_path' => $filePath,
-            'file_type' => $fileExtension,
+            'file_type' => $fileType,
             'tags' => $tagsArray,
             'is_paid' => $isPaid,
             'price' => $price,
-            'requirements' => $request->requirements,
+            'requirements' => $combinedRequirements,
             'demo_link' => $request->demo_link,
-            'status' => 'pending',
+            'status' => $status,
             'downloads' => 0,
             'views' => 0,
         ]);
 
-        // Send Notifications
-        \App\Models\Notification::send(
+        // Send Notification to Contributor
+        Notification::send(
             auth()->id(),
-            'Resource Uploaded',
-            "Your design asset \"{$resource->title}\" was uploaded and is pending approval.",
+            'Design Upload Submitted',
+            "Your design \"{$resource->title}\" was uploaded successfully and is pending admin moderation.",
             'seller',
-            route('seller.dashboard')
+            route('seller.dashboard') . '#designs'
         );
 
-        $adminUsers = \App\Models\User::whereIn('role', ['admin', 'super_admin'])->get();
+        // Send Notification to Super Admins
+        $adminUsers = User::whereIn('role', ['admin', 'super_admin'])->get();
         foreach ($adminUsers as $admin) {
-            \App\Models\Notification::send(
+            Notification::send(
                 $admin->id,
-                'New Resource Pending Approval',
-                "Resource \"{$resource->title}\" by " . auth()->user()->name . " requires review.",
+                'New Resource Awaiting Moderation',
+                "Contributor " . auth()->user()->name . " uploaded a new design \"{$resource->title}\".",
                 'admin',
                 route('admin.resources.index')
             );
         }
 
-        return redirect()->route('seller.dashboard')
-            ->with('success', '✨ Asset uploaded successfully! Your template is pending moderation approval.');
+        return redirect()->route('dashboard', ['mode' => 'seller', 'tab' => 'designs'])
+            ->with('success', '✨ Your design was uploaded successfully! It is currently awaiting admin moderation.');
     }
 
     /**
@@ -176,43 +201,32 @@ class ResourceController extends Controller
             }
 
             $reviews = $resource->reviews()->with('user')->latest()->get();
-            $totalReviews = $reviews->count();
-            $avgRating = $totalReviews > 0 ? number_format($reviews->avg('rating'), 1) : '4.9';
+            $totalReviews = $resource->reviews()->count();
+            $avgRating = $totalReviews > 0 ? round($resource->reviews()->avg('rating'), 1) : 0.0;
 
-            $ratingBreakdown = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
-            if ($totalReviews > 0) {
-                foreach ($reviews as $rev) {
-                    $star = (int) $rev->rating;
-                    if (isset($ratingBreakdown[$star])) {
-                        $ratingBreakdown[$star]++;
-                    }
-                }
+            // Star distribution percentages
+            $starBreakdown = [];
+            for ($i = 5; $i >= 1; $i--) {
+                $count = $resource->reviews()->where('rating', $i)->count();
+                $pct = $totalReviews > 0 ? round(($count / $totalReviews) * 100) : 0;
+                $starBreakdown[$i] = [
+                    'count' => $count,
+                    'percentage' => $pct,
+                ];
             }
-        } else {
-            $relatedResources = collect();
-            $reviews = collect();
-            $totalReviews = 0;
-            $avgRating = '4.9';
-            $ratingBreakdown = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+
+            return view('resource.show', compact(
+                'resource',
+                'relatedResources',
+                'hasPurchased',
+                'hasReviewed',
+                'reviews',
+                'totalReviews',
+                'avgRating',
+                'starBreakdown'
+            ));
         }
 
-        return view('resource.show', compact(
-            'resource',
-            'relatedResources',
-            'hasPurchased',
-            'hasReviewed',
-            'reviews',
-            'totalReviews',
-            'avgRating',
-            'ratingBreakdown'
-        ));
-    }
-
-    /**
-     * Display demo resource page.
-     */
-    public function showDemo(): View
-    {
-        return $this->show('demo');
+        abort(404, 'Design resource not found.');
     }
 }

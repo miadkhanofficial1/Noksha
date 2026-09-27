@@ -13,7 +13,7 @@ class SocialAuthController extends Controller
     public function redirectToGoogle()
     {
         // Socialite architecture structure ready for client_id & client_secret configuration
-        return redirect()->route('login')->with('info', 'Google OAuth structure prepared! Configure GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET in .env when ready. / গুগল অথেনটিকেশন স্ট্রাকচার প্রস্তুত।');
+        return redirect()->route('login')->with('info', 'Google OAuth structure prepared! Configure GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET in .env when ready.');
     }
 
     /**

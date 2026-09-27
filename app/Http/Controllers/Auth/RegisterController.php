@@ -32,9 +32,9 @@ class RegisterController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
-            'username.unique' => 'This username is already taken. / এই ইউজারনেমটি ইতিমধ্যে নেওয়া হয়েছে।',
-            'username.alpha_dash' => 'Username may only contain letters, numbers, dashes and underscores. / ইউজারনেমে কেবল অক্ষর, সংখ্যা, ড্যাশ এবং আন্ডারস্কোর থাকতে পারে।',
-            'email.unique' => 'This email address is already registered. / এই ইমেইল ঠিকানাটি ইতিমধ্যে নিবন্ধিত।',
+            'username.unique' => 'This username is already taken.',
+            'username.alpha_dash' => 'Username may only contain letters, numbers, dashes and underscores.',
+            'email.unique' => 'This email address is already registered.',
         ]);
 
         $user = User::create([
@@ -53,6 +53,6 @@ class RegisterController extends Controller
         Auth::login($user);
 
         return redirect()->route('verification.notice')
-            ->with('status', 'Registration successful! Please verify your email address to unlock full marketplace features. / নিবন্ধন সফল হয়েছে! পুরো মার্কেটপ্লেস সুবিধা পেতে আপনার ইমেইল যাচাই করুন।');
+            ->with('status', 'Registration successful! Please verify your email address to unlock full marketplace features.');
     }
 }

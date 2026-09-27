@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Smart Marketplace Search - Noksha (নকশা)')
+@section('title', 'Smart Marketplace Search - Noksha')
 
 @section('content')
 
@@ -192,7 +192,14 @@
                             <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                                 <div>
                                     <h6 class="fw-bold text-dark mb-1 text-truncate" title="{{ $resource->title }}">{{ $resource->title }}</h6>
-                                    <div class="extra-small text-muted font-monospace mb-2">by {{ $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</div>
+                                    <div class="extra-small text-muted mb-2 d-flex align-items-center gap-1">
+                                        <span>by <strong class="text-dark">{{ $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</strong></span>
+                                        @if($resource->owner && $resource->owner->isVerifiedCreator())
+                                            <span class="text-emerald-500" title="Verified Creator">
+                                                <i class="bi bi-patch-check-fill"></i>
+                                            </span>
+                                        @endif
+                                    </div>
                                     
                                     <!-- Auto-generated Tag Chips -->
                                     <div class="d-flex flex-wrap gap-1 mb-3">

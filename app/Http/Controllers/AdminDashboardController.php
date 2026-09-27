@@ -20,11 +20,11 @@ class AdminDashboardController extends Controller
      */
     public function index(Request $request): View|RedirectResponse
     {
-        // 1. Core High-Impact Stat Cards
-        $totalUsers = User::count();
-        $activeSellers = User::where('role', 'seller')->where('status', '!=', 'suspended')->count();
-        $totalBuyers = User::whereIn('role', ['user', 'buyer'])->count();
-        $suspendedUsers = User::where('status', 'suspended')->count();
+        // 1. Core High-Impact Stat Cards (Strictly Exclude Admins)
+        $totalUsers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->count();
+        $activeSellers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->where('is_contributor', true)->where('status', '!=', 'suspended')->count();
+        $totalBuyers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->where('is_contributor', false)->count();
+        $suspendedUsers = User::where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin')->where('status', 'suspended')->count();
 
         $pendingResources = Resource::where('status', 'pending')->count();
         $approvedResources = Resource::where('status', 'approved')->count();
@@ -36,7 +36,10 @@ class AdminDashboardController extends Controller
         $totalRevenue = (float) Order::where('payment_status', 'completed')->sum('total');
         $platformCut = $totalRevenue * 0.20; // 20% platform commission
 
-        $pendingKyc = SellerVerification::where('status', 'pending')->count();
+        $pendingKyc = SellerVerification::where('status', 'pending')
+            ->whereHas('user', function ($q) {
+                $q->where('is_admin', false)->where('role', '!=', 'admin')->where('role', '!=', 'super_admin');
+            })->count();
 
         // 2. Actionable Quick Tables: 5 Most Recent Pending Resources
         $recentPendingResources = Resource::where('status', 'pending')
@@ -53,20 +56,29 @@ class AdminDashboardController extends Controller
                 ->get();
         }
 
-        // 3. Actionable Quick Tables: 5 Most Recent User Registrations
-        $recentUsers = User::withCount(['resources', 'orders'])
+        // 3. Actionable Quick Tables: 5 Most Recent User Registrations (Strictly Exclude Admins)
+        $recentUsers = User::where('is_admin', false)
+            ->where('role', '!=', 'admin')
+            ->where('role', '!=', 'super_admin')
+            ->withCount(['resources', 'orders'])
             ->latest()
             ->take(5)
             ->get();
 
-        // 4. Activity stream
-        $recentActivity = User::latest()->take(3)->get()->map(fn($u) => [
-            'type' => 'user',
-            'title' => 'New User Registered',
-            'desc' => "{$u->name} joined Noksha.",
-            'time' => $u->created_at->diffForHumans(),
-            'icon' => 'bi-person-plus-fill text-sky-400',
-        ])->concat(
+        // 4. Activity stream (Strictly Exclude Admins)
+        $recentActivity = User::where('is_admin', false)
+            ->where('role', '!=', 'admin')
+            ->where('role', '!=', 'super_admin')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(fn($u) => [
+                'type' => 'user',
+                'title' => 'New User Registered',
+                'desc' => "{$u->name} joined Noksha.",
+                'time' => $u->created_at->diffForHumans(),
+                'icon' => 'bi-person-plus-fill text-sky-400',
+            ])->concat(
             Resource::with('owner')->latest()->take(3)->get()->map(fn($r) => [
                 'type' => 'upload',
                 'title' => 'Resource Uploaded',
@@ -121,7 +133,7 @@ class AdminDashboardController extends Controller
                 $user->id,
                 $validated['title'],
                 $validated['message'],
-                'system',
+                'broadcast',
                 route('home')
             );
         }
