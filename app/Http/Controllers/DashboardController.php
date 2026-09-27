@@ -78,7 +78,8 @@ class DashboardController extends Controller
         $completedSales = $completedSalesQuery->get();
         $totalSales = $completedSales->count();
         $grossSales = (float) $completedSales->sum('price');
-        $totalEarnings = $grossSales * 0.50; // 50.00% royalty
+        $contestWinnings = (float) ($user->balance ?? 0);
+        $totalEarnings = ($grossSales * 0.50) + $contestWinnings; // 50.00% royalty + contest escrow prizes
         $recentSales = $completedSales->take(15);
 
         // Verification application record
@@ -172,7 +173,8 @@ class DashboardController extends Controller
                 $q->where('payment_status', 'completed');
             })->sum('price');
 
-        $availableBalance = $grossSales * 0.50;
+        $contestWinnings = (float) ($user->balance ?? 0);
+        $availableBalance = ($grossSales * 0.50) + $contestWinnings;
 
         // Enforce strict 1,000 BDT minimum withdrawal threshold
         if ($availableBalance < 1000) {

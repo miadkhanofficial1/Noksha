@@ -258,43 +258,10 @@ class ContestController extends Controller
 
     /**
      * Award an entry as the WINNER of the contest (Organizer / Buyer action).
+     * Transitions contest to handover status.
      */
     public function awardWinner(Request $request, Contest $contest, ContestEntry $entry): RedirectResponse
     {
-        $user = auth()->user();
-        if ($user->id !== $contest->user_id && !$user->isAdmin()) {
-            abort(403, 'Only the contest organizer can select the winner.');
-        }
-
-        if ($entry->contest_id !== $contest->id) {
-            abort(400, 'Entry does not belong to this contest.');
-        }
-
-        // Reset previous winners if any
-        ContestEntry::where('contest_id', $contest->id)->update(['is_winner' => false]);
-
-        // Mark entry as winner
-        $entry->update(['is_winner' => true]);
-
-        // Complete contest
-        $contest->update([
-            'status' => 'completed',
-            'winner_id' => $entry->user_id,
-            'winner_entry_id' => $entry->id,
-        ]);
-
-        // Send notification to winner
-        if ($entry->user_id && $entry->user_id !== $user->id) {
-            Notification::send(
-                $entry->user_id,
-                '🏆 You Won the Contest!',
-                "Congratulations! Your submission \"{$entry->title}\" was awarded as the 1st Place Winner for contest \"{$contest->title}\". Prize: ৳" . number_format($contest->prize_amount, 2),
-                'success',
-                route('contests.show', $contest->slug)
-            );
-        }
-
-        return redirect()->back()
-            ->with('success', "🏆 Congratulations! You have awarded {$entry->user->name} as the WINNER of this contest!");
+        return app(ContestHandoverController::class)->awardWinner($request, $contest, $entry);
     }
 }

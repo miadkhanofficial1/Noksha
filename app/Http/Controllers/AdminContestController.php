@@ -246,27 +246,7 @@ class AdminContestController extends Controller
         $entry = ContestEntry::where('contest_id', $contest->id)->where('id', $entryId)->first();
 
         if ($entry) {
-            ContestEntry::where('contest_id', $contest->id)->update(['is_winner' => false]);
-            $entry->update(['is_winner' => true]);
-
-            $contest->update([
-                'status' => 'completed',
-                'winner_id' => $entry->user_id,
-                'winner_entry_id' => $entry->id,
-            ]);
-
-            if ($entry->user_id && $entry->user_id !== auth()->id()) {
-                Notification::send(
-                    $entry->user_id,
-                    '🏆 You Won the Contest!',
-                    "Congratulations! Your entry \"{$entry->title}\" was awarded the WINNER of \"{$contest->title}\". Prize: ৳" . number_format($contest->prize_amount, 2),
-                    'success',
-                    route('contests.show', $contest->slug)
-                );
-            }
-
-            return redirect()->back()
-                ->with('success', "🏆 Winner selected! Congratulations to {$entry->user->name}!");
+            return app(ContestHandoverController::class)->awardWinner($request, $contest, $entry);
         }
 
         return redirect()->back()->with('error', 'Entry not found.');

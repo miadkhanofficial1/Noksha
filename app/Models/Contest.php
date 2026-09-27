@@ -38,6 +38,7 @@ class Contest extends Model
         'winner_id',
         'winner_submission_id',
         'winner_entry_id',
+        'handover_completed_at',
     ];
 
     /**
@@ -54,6 +55,7 @@ class Contest extends Model
             'start_date' => 'datetime',
             'end_date' => 'datetime',
             'deadline' => 'datetime',
+            'handover_completed_at' => 'datetime',
         ];
     }
 
@@ -152,6 +154,14 @@ class Contest extends Model
     public function isJudging(): bool
     {
         return $this->status === 'judging';
+    }
+
+    /**
+     * Check if contest is in protected handover phase.
+     */
+    public function isHandover(): bool
+    {
+        return $this->status === 'handover';
     }
 
     /**

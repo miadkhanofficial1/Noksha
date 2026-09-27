@@ -32,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_verified',
         'is_admin',
         'is_contributor',
+        'balance',
         'contributor_status',
         'kyc_rejected_at',
         'kyc_rejection_reason',
@@ -59,6 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_verified' => 'boolean',
             'is_admin' => 'boolean',
             'is_contributor' => 'boolean',
+            'balance' => 'float',
             'kyc_rejected_at' => 'datetime',
             'trust_score' => 'float',
             'password' => 'hashed',
@@ -297,5 +299,33 @@ class User extends Authenticatable implements MustVerifyEmail
     public function unreadNotifications(): HasMany
     {
         return $this->hasMany(Notification::class, 'user_id')->where('is_read', false);
+    }
+
+    /**
+     * User's wallet / escrow transactions ledger.
+     */
+    public function walletTransactions(): HasMany
+    {
+        return $this->hasMany(WalletTransaction::class, 'user_id')->latest();
+    }
+
+    /**
+     * Increment user's wallet balance and record a ledger transaction.
+     */
+    public function creditBalance(float $amount, string $description, ?string $referenceType = null, ?int $referenceId = null): WalletTransaction
+    {
+        $this->increment('balance', $amount);
+        $freshBalance = (float) $this->fresh()->balance;
+
+        return WalletTransaction::create([
+            'user_id' => $this->id,
+            'type' => 'credit',
+            'amount' => $amount,
+            'balance_after' => $freshBalance,
+            'reference_type' => $referenceType,
+            'reference_id' => $referenceId,
+            'description' => $description,
+            'status' => 'completed',
+        ]);
     }
 }

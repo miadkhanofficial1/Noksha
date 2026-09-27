@@ -12,6 +12,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContestController;
 use App\Http\Controllers\ContestSubmissionController;
+use App\Http\Controllers\ContestHandoverController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
@@ -160,7 +161,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/contests', [ContestController::class, 'store'])->name('contests.store');
     Route::post('/contests/{contest}/submit', [ContestSubmissionController::class, 'store'])->name('contests.submit');
     Route::post('/contests/{contest}/entries/{entry}/rate', [ContestController::class, 'rateEntry'])->name('contests.entries.rate');
-    Route::post('/contests/{contest}/entries/{entry}/award', [ContestController::class, 'awardWinner'])->name('contests.entries.award');
+    Route::post('/contests/{contest}/award/{entry}', [ContestHandoverController::class, 'awardWinner'])->name('contests.award');
+    Route::post('/contests/{contest}/entries/{entry}/award', [ContestHandoverController::class, 'awardWinner'])->name('contests.entries.award');
+    Route::post('/contests/{contest}/handover/upload', [ContestHandoverController::class, 'uploadSourceFiles'])->name('contests.handover.upload');
+    Route::get('/contests/{contest}/handover/download', [ContestHandoverController::class, 'downloadHandoverFiles'])->name('contests.handover.download');
+    Route::post('/contests/{contest}/handover/release', [ContestHandoverController::class, 'releaseEscrow'])->name('contests.handover.release');
+    Route::post('/contests/{contest}/handover/revision', [ContestHandoverController::class, 'requestRevision'])->name('contests.handover.revision');
 
     // Notification Center Routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

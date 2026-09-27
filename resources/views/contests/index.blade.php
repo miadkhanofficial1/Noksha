@@ -259,6 +259,10 @@
                                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-record-fill me-1"></i> Active
                                                 </span>
+                                            @elseif($contest->status === 'handover')
+                                                <span class="badge bg-warning bg-opacity-15 text-dark border border-warning border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                                    <i class="bi bi-shield-lock-fill text-warning me-1"></i> Handover
+                                                </span>
                                             @elseif($contest->status === 'judging')
                                                 <span class="badge bg-warning bg-opacity-15 text-dark border border-warning border-opacity-25 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-hourglass-split me-1"></i> Judging

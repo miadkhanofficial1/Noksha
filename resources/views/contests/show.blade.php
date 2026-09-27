@@ -122,6 +122,26 @@
     .rating-star-interactive.active {
         color: #F59E0B;
     }
+
+    .drag-drop-zone {
+        border: 2px dashed rgba(108, 76, 241, 0.35);
+        background: #F8FAFC;
+        cursor: pointer;
+        border-radius: 1rem;
+        transition: all 0.25s ease;
+    }
+
+    .drag-drop-zone:hover, .drag-drop-zone.dragover {
+        border-color: #6C4CF1 !important;
+        background: #EEF2FF !important;
+    }
+
+    .handover-console-card {
+        border: 1px solid rgba(245, 158, 11, 0.25) !important;
+        background: #FFFFFF;
+        border-radius: 1.25rem !important;
+        box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.1) !important;
+    }
 </style>
 
 <div class="contest-detail-bg py-4 py-lg-5">
@@ -159,6 +179,10 @@
                         @elseif($contest->status === 'judging')
                             <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 extra-small fw-bold">
                                 <i class="bi bi-hourglass-split me-1"></i> In Review / Judging
+                            </span>
+                        @elseif($contest->status === 'handover')
+                            <span class="badge bg-primary text-white rounded-pill px-3 py-1.5 extra-small fw-bold shadow-sm">
+                                <i class="bi bi-shield-lock-fill me-1 text-warning"></i> File Handover in Progress
                             </span>
                         @elseif($contest->status === 'completed')
                             <span class="badge bg-secondary text-white rounded-pill px-3 py-1.5 extra-small fw-bold">
@@ -231,38 +255,217 @@
             </div>
         </div>
 
-        <!-- WINNER BANNER IF CONTEST IS COMPLETED -->
+        <!-- STATUS BANNER (PHASE 4) -->
+        @if($contest->status === 'handover')
+            <div class="alert alert-warning border-0 rounded-4 px-4 py-3 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3 shadow-sm text-dark">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 bg-warning bg-opacity-25 rounded-circle text-warning fs-5 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div>
+                        <span class="fw-bold small d-block">Winner Selected – Awaiting editable source file handover and verification.</span>
+                        <span class="extra-small text-muted">Contest submissions are locked. Escrow funds will be released upon buyer file verification.</span>
+                    </div>
+                </div>
+                <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 extra-small fw-bold">Handover Stage</span>
+            </div>
+        @elseif($contest->status === 'completed')
+            <div class="alert border-0 rounded-4 px-4 py-3 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3 shadow-sm text-dark" style="background-color: #ecfdf5; border-left: 4px solid #10b981 !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-circle text-success fs-5 d-flex align-items-center justify-content-center" style="background-color: #d1fae5; width: 42px; height: 42px;">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <span class="fw-bold small d-block text-success">Contest Completed – Payout released to winner.</span>
+                        <span class="extra-small text-muted">All design assets verified and ৳{{ number_format($contest->prize_amount, 0) }} escrow prize disbursed.</span>
+                    </div>
+                </div>
+                <span class="badge bg-success rounded-pill px-3 py-1.5 extra-small fw-bold text-white">Completed</span>
+            </div>
+        @endif
+
+        <!-- DEDICATED HANDOVER MANAGEMENT CONSOLE (PHASE 4) -->
         @php
             $winnerEntry = $contest->winningEntry ?? $contest->entries->firstWhere('is_winner', true);
             $winnerUser = $contest->winner ?? ($winnerEntry ? $winnerEntry->user : null);
+            $currentUser = auth()->user();
+            $isWinner = $currentUser && $winnerUser && ($currentUser->id === $winnerUser->id);
+            $isBuyer = $currentUser && ($contest->user_id === $currentUser->id);
+            $isAdmin = $currentUser && $currentUser->isAdmin();
+            $handoverStatus = $winnerEntry?->handover_status ?? 'pending';
+            $handoverFiles = is_array($winnerEntry?->handover_files) ? $winnerEntry->handover_files : [];
+            $latestHandoverFile = !empty($handoverFiles) ? end($handoverFiles) : null;
         @endphp
 
-        @if($contest->status === 'completed' && ($winnerUser || $winnerEntry))
-            <div class="card p-4 p-md-4 rounded-4 bg-warning bg-opacity-10 border border-warning mb-5 shadow-sm">
-                <div class="row align-items-center g-3">
-                    <div class="col-auto">
-                        <div class="p-3 bg-warning text-dark rounded-circle fs-1 shadow-sm d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                            🏆
+        @if(in_array($contest->status, ['handover', 'completed']) && ($winnerUser || $winnerEntry))
+            <div class="card handover-console-card p-4 mb-5 border-0 shadow-sm">
+                <!-- Console Top Header -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs-4">🏆</span>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">Handover Management Console</h6>
+                            <span class="extra-small text-muted">
+                                Winner: <strong class="text-dark">{{ $winnerUser ? ($winnerUser->username ? '@'.$winnerUser->username : $winnerUser->name) : 'Winning Designer' }}</strong> • Prize Bounty: <strong class="text-success font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</strong>
+                            </span>
                         </div>
                     </div>
-                    <div class="col">
-                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fw-extrabold extra-small text-uppercase mb-1">
-                            Official Contest Champion Announced
-                        </span>
-                        <h3 class="fw-extrabold text-dark mb-1">
-                            Congratulations to {{ $winnerUser ? $winnerUser->name : 'Winning Designer' }}!
-                        </h3>
-                        <p class="text-secondary small mb-0">
-                            Awarded <strong>৳{{ number_format($contest->prize_amount, 0) }}</strong> cash prize for winning design concept: 
-                            <span class="fw-bold text-dark font-monospace">"{{ $winnerEntry ? $winnerEntry->title : 'Winning Entry' }}"</span>
-                        </p>
+                    <div class="d-flex align-items-center gap-2">
+                        @if($contest->status === 'handover')
+                            @if($handoverStatus === 'pending')
+                                <span class="badge bg-warning bg-opacity-20 text-dark rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-clock me-1"></i> Awaiting Source Files
+                                </span>
+                            @elseif($handoverStatus === 'submitted')
+                                <span class="badge bg-primary text-white rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-file-earmark-check me-1"></i> Files Submitted
+                                </span>
+                            @elseif($handoverStatus === 'revision_requested')
+                                <span class="badge bg-danger text-white rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Revision Requested
+                                </span>
+                            @endif
+                        @else
+                            <span class="badge bg-success text-white rounded-pill px-3 py-1 extra-small fw-bold">
+                                <i class="bi bi-check2-all me-1"></i> Escrow Released
+                            </span>
+                        @endif
+                        @if($isAdmin)
+                            <span class="badge bg-dark text-white rounded-pill px-2.5 py-1 extra-small fw-bold">Admin Oversight</span>
+                        @endif
                     </div>
-                    @if($winnerEntry && $winnerEntry->watermarked_preview_image)
-                        <div class="col-auto text-end d-none d-md-block">
-                            <img src="{{ asset('storage/' . $winnerEntry->watermarked_preview_image) }}" alt="Winner" class="rounded-3 shadow-sm border border-warning" style="width: 100px; height: 70px; object-fit: cover;">
+                </div>
+
+                <!-- Role-Specific Views -->
+                @if($isWinner)
+                    <!-- 1. WINNING DESIGNER CONSOLE -->
+                    @if($contest->status === 'handover')
+                        @if(in_array($handoverStatus, ['pending', 'revision_requested']))
+                            @if($handoverStatus === 'revision_requested' && $winnerEntry->handover_notes)
+                                <div class="alert alert-warning border-0 rounded-3 extra-small mb-3">
+                                    <strong><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> Revision Notes from Client:</strong>
+                                    {{ $winnerEntry->handover_notes }}
+                                </div>
+                            @endif
+                            <form action="{{ route('contests.handover.upload', $contest->slug) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="drag-drop-zone p-4 text-center mb-3" id="dragDropZone" onclick="document.getElementById('sourceFileInput').click()">
+                                    <i class="bi bi-cloud-arrow-up text-primary fs-1 d-block mb-1"></i>
+                                    <span class="fw-bold small text-dark d-block">Drag & drop source files here, or <span class="text-primary text-decoration-underline">browse</span></span>
+                                    <span class="extra-small text-muted d-block">Accepts .zip, .rar, .ai, .psd, .eps, .svg (Max: 100MB)</span>
+                                    <span id="selectedFileName" class="badge bg-primary bg-opacity-10 text-primary font-monospace extra-small mt-2 d-none"></span>
+                                    <input type="file" name="source_file" id="sourceFileInput" class="d-none" accept=".zip,.rar,.ai,.psd,.eps,.svg,.7z" required onchange="handleFileSelect(this)">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" name="handover_notes" class="form-control form-control-sm rounded-pill px-3 extra-small" placeholder="Optional notes for buyer (e.g. font links, layer guide)">
+                                </div>
+                                <button type="submit" class="btn btn-purple-cta btn-sm rounded-pill px-4 py-2 fw-bold">
+                                    <i class="bi bi-upload me-1"></i> Submit Source Files
+                                </button>
+                            </form>
+                        @elseif($handoverStatus === 'submitted')
+                            <div class="alert alert-info border-0 rounded-3 mb-0 extra-small d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                <span><i class="bi bi-clock-history me-1.5"></i> Files submitted. Waiting for buyer review.</span>
+                                <a href="{{ route('contests.handover.download', $contest->slug) }}" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-download me-1"></i> Download Package
+                                </a>
+                            </div>
+                        @endif
+                    @else
+                        <div class="alert alert-success border-0 rounded-3 mb-0 extra-small d-flex flex-wrap align-items-center justify-content-between gap-2">
+                            <span><i class="bi bi-check-circle-fill text-success me-1.5"></i> Contest Completed – Payout released to winner.</span>
+                            <div class="d-flex align-items-center gap-2">
+                                @if($latestHandoverFile)
+                                    <a href="{{ route('contests.handover.download', $contest->slug) }}" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 extra-small fw-bold">
+                                        <i class="bi bi-download me-1"></i> Download Files
+                                    </a>
+                                @endif
+                                <a href="{{ route('dashboard') }}#wallet" class="btn btn-sm btn-success rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-wallet2 me-1"></i> View Wallet
+                                </a>
+                            </div>
                         </div>
                     @endif
-                </div>
+
+                @elseif($isBuyer)
+                    <!-- 2. BUYER CONSOLE -->
+                    @if($contest->status === 'handover')
+                        @if($handoverStatus === 'pending')
+                            <div class="alert alert-warning border-0 rounded-3 mb-0 extra-small d-flex align-items-center gap-2">
+                                <i class="bi bi-hourglass-split text-warning fs-5"></i>
+                                <span>Waiting for designer to upload editable source files.</span>
+                            </div>
+                        @elseif($handoverStatus === 'submitted')
+                            <div>
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 p-2.5 bg-light rounded-3 border mb-3">
+                                    <div>
+                                        <span class="badge bg-secondary bg-opacity-10 text-dark extra-small font-monospace me-1">{{ $latestHandoverFile['original_name'] ?? 'source_files.zip' }}</span>
+                                        <span class="extra-small text-muted">{{ !empty($latestHandoverFile['size']) ? number_format($latestHandoverFile['size'] / 1048576, 2) . ' MB' : '' }}</span>
+                                    </div>
+                                    <a href="{{ route('contests.handover.download', $contest->slug) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 extra-small fw-bold">
+                                        <i class="bi bi-download me-1"></i> Download Source Files
+                                    </a>
+                                </div>
+                                @if(!empty($winnerEntry->handover_notes))
+                                    <div class="extra-small text-muted mb-3"><strong class="text-dark">Notes:</strong> {{ $winnerEntry->handover_notes }}</div>
+                                @endif
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3.5 py-1.5 extra-small fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#releaseEscrowModal">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Approve Files & Release Escrow
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1.5 extra-small fw-bold" data-bs-toggle="modal" data-bs-target="#revisionModal">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Request Revision
+                                    </button>
+                                </div>
+                            </div>
+                        @elseif($handoverStatus === 'revision_requested')
+                            <div class="alert alert-secondary border-0 rounded-3 mb-0 extra-small">
+                                <i class="bi bi-info-circle me-1"></i> Revision requested. Waiting for designer to upload updated source files.
+                            </div>
+                        @endif
+                    @else
+                        <div class="alert alert-success border-0 rounded-3 mb-0 extra-small d-flex flex-wrap align-items-center justify-content-between gap-2">
+                            <span><i class="bi bi-check-circle-fill text-success me-1.5"></i> Contest Completed – Payout released to winner.</span>
+                            @if($latestHandoverFile)
+                                <a href="{{ route('contests.handover.download', $contest->slug) }}" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-download me-1"></i> Download Final Files
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+
+                @elseif($isAdmin)
+                    <!-- 3. ADMIN CONSOLE -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div>
+                            <span class="extra-small text-muted d-block">Status: <strong class="text-dark">{{ ucfirst($handoverStatus) }}</strong></span>
+                            @if($latestHandoverFile)
+                                <span class="extra-small text-muted">File: <span class="font-monospace text-dark">{{ $latestHandoverFile['original_name'] }}</span> ({{ number_format($latestHandoverFile['size'] / 1048576, 2) }} MB)</span>
+                            @endif
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            @if($latestHandoverFile)
+                                <a href="{{ route('contests.handover.download', $contest->slug) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 extra-small fw-bold">
+                                    <i class="bi bi-download me-1"></i> Inspect & Download
+                                </a>
+                            @endif
+                            @if($contest->status !== 'completed')
+                                <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 py-1 extra-small fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#adminForceReleaseModal">
+                                    <i class="bi bi-shield-lock-fill me-1"></i> Admin Force Release Escrow
+                                </button>
+                            @else
+                                <span class="badge bg-success rounded-pill px-3 py-1 extra-small fw-bold">Escrow Settled</span>
+                            @endif
+                        </div>
+                    </div>
+
+                @else
+                    <!-- 4. PUBLIC VISITOR VIEW -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 extra-small text-muted">
+                        <span>Winner selected: <strong class="text-dark">{{ $winnerUser ? $winnerUser->name : 'Winning Designer' }}</strong></span>
+                        <span class="badge bg-secondary bg-opacity-10 text-dark rounded-pill px-2.5 py-1">Protected Handover In Progress</span>
+                    </div>
+                @endif
             </div>
         @endif
 
@@ -283,8 +486,11 @@
                 </div>
 
                 @if($contest->entries->count() > 0)
+                    @php
+                        $sortedEntries = $contest->entries->sortByDesc('is_winner');
+                    @endphp
                     <div class="row g-4 mb-5">
-                        @foreach($contest->entries as $entry)
+                        @foreach($sortedEntries as $entry)
                             <div class="col-12 col-sm-6" id="entry-{{ $entry->id }}">
                                 <div class="card entry-card-figma h-100 {{ $entry->is_winner ? 'winner-glow-card' : '' }}">
                                     
@@ -309,7 +515,7 @@
                                         @if($entry->is_winner)
                                             <div class="position-absolute top-0 end-0 m-2.5">
                                                 <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fw-extrabold shadow-sm">
-                                                    🏆 WINNER
+                                                    🏆 Winner
                                                 </span>
                                             </div>
                                         @endif
@@ -385,11 +591,11 @@
                                                     </button>
 
                                                     <!-- Award as Winner Button -->
-                                                    @if($contest->status !== 'completed' && !$entry->is_winner)
+                                                    @if($contest->status === 'active' && $isOrganizer && !$entry->is_winner)
                                                         <button type="button"
-                                                                onclick="confirmAwardWinner({{ $entry->id }}, '{{ addslashes($entry->title) }}', '{{ addslashes($entry->user->name ?? 'Designer') }}')"
-                                                                class="btn btn-sm btn-success rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                                            <i class="bi bi-trophy-fill me-1"></i> Award
+                                                                onclick="confirmAwardWinner('{{ $entry->id }}', '{{ addslashes($entry->user->username ?? $entry->user->name ?? 'Designer') }}', '{{ $entry->id }}', '{{ number_format($contest->prize_amount, 0) }}')"
+                                                                class="btn btn-sm btn-success rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm">
+                                                            <i class="bi bi-trophy-fill me-1"></i> Award Winner
                                                         </button>
                                                     @endif
                                                 </div>
@@ -525,9 +731,18 @@
                                 </form>
                             @endif
                         @else
-                            <div class="alert alert-secondary rounded-4 small mb-0 text-center py-4">
+                            <div class="alert alert-secondary border-0 rounded-4 small mb-0 text-center py-4">
                                 <i class="bi bi-lock-fill text-muted fs-3 d-block mb-2"></i>
-                                Submissions are closed. This contest is currently in the <strong>{{ ucfirst($contest->status) }}</strong> stage.
+                                <div class="fw-bold text-dark mb-1">Submissions Locked</div>
+                                <p class="extra-small text-muted mb-0">
+                                    @if($contest->status === 'handover')
+                                        Winner selected. Protected source file handover in progress.
+                                    @elseif($contest->status === 'completed')
+                                        Contest completed. Payout released to the winning designer.
+                                    @else
+                                        This tournament is currently in the {{ ucfirst($contest->status) }} stage.
+                                    @endif
+                                </p>
                             </div>
                         @endif
                     @else
@@ -623,40 +838,148 @@
 
 <!-- AWARD WINNER CONFIRMATION MODAL (ORGANIZER ACTION) -->
 <div class="modal fade" id="awardModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content rounded-4 border-0 shadow-lg p-3">
             <div class="modal-header border-0 pb-0">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="fs-3">🏆</span>
-                    <h5 class="modal-title fw-bold text-dark mb-0">Award Contest Winner</h5>
+                    <span class="fs-4">🏆</span>
+                    <h6 class="modal-title fw-bold text-dark mb-0">Award Winner</h6>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="awardModalForm" method="POST">
                 @csrf
                 <div class="modal-body py-3">
-                    <p class="small text-secondary mb-3">
-                        Are you sure you want to award the 1st Place bounty of 
-                        <strong class="text-success fs-6 font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</strong> to:
+                    <div class="p-2.5 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="extra-small text-muted">Winner:</span>
+                            <span class="extra-small fw-bold text-dark font-monospace" id="awardWinnerUsername">@designer</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="extra-small text-muted">Entry:</span>
+                            <span class="badge bg-secondary bg-opacity-10 text-dark extra-small font-monospace" id="awardEntryNumber">#0</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="extra-small text-muted">Prize Bounty:</span>
+                            <strong class="text-success extra-small font-monospace">৳<span id="awardPrizeAmount">{{ number_format($contest->prize_amount, 0) }}</span></strong>
+                        </div>
+                    </div>
+                    <p class="extra-small text-secondary mb-0">
+                        Awarding this entry will lock the contest and prompt the designer to upload source files.
                     </p>
-                    <div class="p-3 bg-light rounded-3 border mb-3">
-                        <div class="fw-bold text-dark fs-6" id="awardWinnerName">Contributor Name</div>
-                        <div class="extra-small text-muted font-monospace" id="awardEntryTitle">Entry Title</div>
-                    </div>
-                    <div class="alert alert-warning border-0 rounded-3 extra-small mb-0">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i> This decision will conclude the contest, lock further submissions, and transfer the escrow prize pool.
-                    </div>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-3 py-2 extra-small fw-bold" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success rounded-pill px-4 py-2 extra-small fw-bold">
-                        <i class="bi bi-trophy-fill me-1"></i> Confirm & Award Prize
+                <div class="modal-footer border-0 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light rounded-pill flex-fill py-1.5 extra-small fw-bold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success rounded-pill flex-fill py-1.5 extra-small fw-bold shadow-sm">
+                        <i class="bi bi-trophy-fill me-1"></i> Confirm & Award
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- RELEASE ESCROW PAYMENT MODAL (ORGANIZER ACTION) -->
+<div class="modal fade" id="releaseEscrowModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-4 border-0 shadow-lg p-3">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4">💰</span>
+                    <h6 class="modal-title fw-bold text-dark mb-0">Release Escrow</h6>
+                </div>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('contests.handover.release', $contest->slug) }}" method="POST">
+                @csrf
+                <div class="modal-body py-3">
+                    <div class="p-2.5 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="extra-small text-muted">Recipient:</span>
+                            <span class="extra-small fw-bold text-dark">{{ $winnerUser ? $winnerUser->name : 'Winning Designer' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="extra-small text-muted">Payout:</span>
+                            <strong class="text-success extra-small font-monospace">৳{{ number_format($contest->prize_amount, 2) }}</strong>
+                        </div>
+                    </div>
+                    <p class="extra-small text-secondary mb-0">
+                        Approve deliverables and release ৳{{ number_format($contest->prize_amount, 0) }} escrow to winner's balance immediately.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light rounded-pill flex-fill py-1.5 extra-small fw-bold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success rounded-pill flex-fill py-1.5 extra-small fw-bold shadow-sm">
+                        <i class="bi bi-cash-coin me-1"></i> Confirm & Release
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- REQUEST REVISION MODAL (ORGANIZER ACTION) -->
+<div class="modal fade" id="revisionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg p-3">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4">🔄</span>
+                    <h6 class="modal-title fw-bold text-dark mb-0">Request Revision</h6>
+                </div>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('contests.handover.revision', $contest->slug) }}" method="POST">
+                @csrf
+                <div class="modal-body py-3">
+                    <label class="form-label extra-small fw-bold text-dark mb-1">Revision Notes *</label>
+                    <textarea name="revision_notes" class="form-control rounded-3 extra-small mb-2" rows="3" placeholder="Explain required edits, missing font formats, or layer adjustments..." required></textarea>
+                    <span class="extra-small text-muted">The designer will be notified to upload an updated archive.</span>
+                </div>
+                <div class="modal-footer border-0 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light rounded-pill px-3 py-1.5 extra-small fw-bold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning rounded-pill px-3 py-1.5 extra-small fw-bold text-dark">
+                        <i class="bi bi-send-fill me-1"></i> Send Revision Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN FORCE RELEASE MODAL (ADMIN ACTION) -->
+@if(auth()->check() && auth()->user()->isAdmin())
+<div class="modal fade" id="adminForceReleaseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-4 border-0 shadow-lg p-3">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-4 text-danger"><i class="bi bi-shield-lock-fill"></i></span>
+                    <h6 class="modal-title fw-bold text-dark mb-0">Admin Force Release</h6>
+                </div>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('contests.handover.release', $contest->slug) }}" method="POST">
+                @csrf
+                <div class="modal-body py-3">
+                    <div class="alert alert-danger border-0 rounded-3 extra-small mb-2">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Admin Override
+                    </div>
+                    <p class="extra-small text-secondary mb-0">
+                        Force release ৳{{ number_format($contest->prize_amount, 2) }} escrow to <strong>{{ $winnerUser ? $winnerUser->name : 'Winner' }}</strong> for dispute handling.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 pt-0 d-flex gap-2">
+                    <button type="button" class="btn btn-light rounded-pill flex-fill py-1.5 extra-small fw-bold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger rounded-pill flex-fill py-1.5 extra-small fw-bold shadow-sm">
+                        Force Release
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
 @endif
 
 <!-- SCRIPTS FOR LIGHTBOX, LIKE, & MODALS -->
@@ -724,14 +1047,58 @@
         });
     }
 
-    function confirmAwardWinner(entryId, title, creatorName) {
-        document.getElementById('awardWinnerName').textContent = creatorName;
-        document.getElementById('awardEntryTitle').textContent = title;
-        document.getElementById('awardModalForm').action = '/contests/{{ $contest->slug }}/entries/' + entryId + '/award';
+    function confirmAwardWinner(entryId, username, entryNum, prizeAmount) {
+        var usernameEl = document.getElementById('awardWinnerUsername');
+        var entryEl = document.getElementById('awardEntryNumber');
+        var prizeEl = document.getElementById('awardPrizeAmount');
+        if (usernameEl) usernameEl.textContent = '@' + username;
+        if (entryEl) entryEl.textContent = '#' + entryNum;
+        if (prizeEl) prizeEl.textContent = prizeAmount;
+        document.getElementById('awardModalForm').action = '/contests/{{ $contest->slug }}/award/' + entryId;
         var modal = new bootstrap.Modal(document.getElementById('awardModal'));
         modal.show();
     }
     @endif
+
+    function handleFileSelect(input) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            var nameBadge = document.getElementById('selectedFileName');
+            if (nameBadge) {
+                nameBadge.textContent = 'Selected: ' + file.name + ' (' + (file.size / (1024*1024)).toFixed(2) + ' MB)';
+                nameBadge.classList.remove('d-none');
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropZone = document.getElementById('dragDropZone');
+        if (dropZone) {
+            ['dragenter', 'dragover'].forEach(function(eventName) {
+                dropZone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+            ['dragleave', 'drop'].forEach(function(eventName) {
+                dropZone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+            dropZone.addEventListener('drop', function(e) {
+                var dt = e.dataTransfer;
+                var files = dt.files;
+                if (files.length) {
+                    var fileInput = document.getElementById('sourceFileInput');
+                    fileInput.files = files;
+                    handleFileSelect(fileInput);
+                }
+            }, false);
+        }
+    });
 </script>
 
 @endsection

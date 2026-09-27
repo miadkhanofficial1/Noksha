@@ -35,6 +35,10 @@ class ContestEntry extends Model
         'client_feedback',
         'likes_count',
         'is_winner',
+        'handover_files',
+        'handover_notes',
+        'handover_submitted_at',
+        'handover_status',
     ];
 
     /**
@@ -48,6 +52,8 @@ class ContestEntry extends Model
             'client_rating' => 'integer',
             'likes_count' => 'integer',
             'is_winner' => 'boolean',
+            'handover_files' => 'array',
+            'handover_submitted_at' => 'datetime',
         ];
     }
 
@@ -89,5 +95,49 @@ class ContestEntry extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Check if entry handover source files are pending submission.
+     */
+    public function isHandoverPending(): bool
+    {
+        return $this->handover_status === 'pending';
+    }
+
+    /**
+     * Check if entry handover source files have been submitted.
+     */
+    public function isHandoverSubmitted(): bool
+    {
+        return $this->handover_status === 'submitted';
+    }
+
+    /**
+     * Check if revision has been requested on handover.
+     */
+    public function isHandoverRevisionRequested(): bool
+    {
+        return $this->handover_status === 'revision_requested';
+    }
+
+    /**
+     * Check if handover is approved by client.
+     */
+    public function isHandoverApproved(): bool
+    {
+        return $this->handover_status === 'approved';
+    }
+
+    /**
+     * Get primary handover file record if uploaded.
+     */
+    public function getPrimaryHandoverFile(): ?array
+    {
+        if (is_array($this->handover_files) && !empty($this->handover_files)) {
+            return $this->handover_files[0] ?? null;
+        }
+
+        return null;
     }
 }
