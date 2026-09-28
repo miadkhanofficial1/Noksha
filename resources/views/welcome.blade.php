@@ -910,11 +910,17 @@
                                     {{ $resource->title }}
                                 </h5>
                                 <div class="d-flex align-items-center gap-1 extra-small text-muted mb-2">
-                                    <span>by <strong class="text-dark">{{ $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</strong></span>
-                                    @if($resource->owner && $resource->owner->isVerifiedCreator())
-                                        <span class="text-emerald-500" title="Verified Creator">
-                                            <i class="bi bi-patch-check-fill" style="font-size: 0.85rem;"></i>
-                                        </span>
+                                    @if($resource->owner)
+                                        <a href="{{ route('user.profile', $resource->owner->username ?? $resource->owner->id) }}" class="text-decoration-none text-muted d-inline-flex align-items-center gap-1 hover-primary" title="View {{ $resource->owner->name }}'s Profile">
+                                            <span>by <strong class="text-dark">{{ $resource->owner->name }}</strong></span>
+                                            @if($resource->owner && $resource->owner->isVerifiedCreator())
+                                                <span class="text-emerald-500" title="Verified Creator">
+                                                    <i class="bi bi-patch-check-fill" style="font-size: 0.85rem;"></i>
+                                                </span>
+                                            @endif
+                                        </a>
+                                    @else
+                                        <span>by <strong class="text-dark">Noksha Creator</strong></span>
                                     @endif
                                 </div>
                                 <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">

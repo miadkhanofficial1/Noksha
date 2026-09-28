@@ -100,4 +100,12 @@ class Resource extends Model
     {
         return $this->hasMany(Cart::class, 'resource_id');
     }
+
+    /**
+     * Wishlist entries for this resource.
+     */
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class, 'resource_id');
+    }
 }

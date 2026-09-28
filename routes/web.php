@@ -14,9 +14,12 @@ use App\Http\Controllers\ContestController;
 use App\Http\Controllers\ContestSubmissionController;
 use App\Http\Controllers\ContestHandoverController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileSettingsController;
+use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ReviewController;
@@ -62,6 +65,9 @@ Route::get('/seller/demo', function () {
 Route::get('/contests', [ContestController::class, 'index'])->name('contests.index');
 Route::post('/contests/entries/{entry}/like', [ContestSubmissionController::class, 'toggleLike'])->name('contests.entries.like');
 Route::get('/contests/{contest:slug}', [ContestController::class, 'show'])->where('contest', '^(?!create$).*')->name('contests.show');
+
+// Public User / Designer Portfolio & Profile Route (/u/{username})
+Route::get('/u/{username}', [PublicProfileController::class, 'show'])->name('user.profile');
 
 
 
@@ -126,6 +132,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
     Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
     Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
+
+    // User Profile Settings Hub Routes
+    Route::get('/settings/profile', [ProfileSettingsController::class, 'edit'])->name('settings.profile');
+    Route::put('/settings/profile', [ProfileSettingsController::class, 'updateProfile'])->name('settings.profile.update');
+    Route::put('/settings/password', [ProfileSettingsController::class, 'updatePassword'])->name('settings.password.update');
+
+    // Follow / Unfollow User Route (Realtime AJAX)
+    Route::post('/u/{user}/follow', [FollowController::class, 'toggle'])->name('user.follow.toggle');
+    Route::post('/u/{user}/follow/toggle', [FollowController::class, 'toggle'])->name('user.follow');
 
     // Contributor Identity Verification Routes (Apply to Become Contributor)
     Route::get('/contributor/apply', [SellerVerificationController::class, 'create'])->name('contributor.apply');

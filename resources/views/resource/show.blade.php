@@ -165,7 +165,7 @@
                     </span>
                     @if(isset($resource) && $resource->owner)
                         <span class="text-secondary small ms-1 d-inline-flex align-items-center gap-1">
-                            by <strong class="text-dark">{{ $resource->owner->name }}</strong>
+                            by <a href="{{ route('user.profile', $resource->owner->username ?? $resource->owner->id) }}" class="text-dark fw-bold text-decoration-none hover-primary">{{ $resource->owner->name }}</a>
                             @if($resource->owner->isVerifiedCreator())
                                 <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);" title="Verified Creator">
                                     <i class="bi bi-patch-check-fill text-emerald-500"></i> Verified
@@ -492,12 +492,22 @@
                     <!-- Seller Profile Card -->
                     <div class="card seller-card-figma p-4">
                         <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 56px; height: 56px;">
-                                {{ strtoupper(substr(isset($resource) && $resource->owner ? $resource->owner->name : 'N', 0, 1)) }}
-                            </div>
+                            <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="text-decoration-none">
+                                @if(isset($resource) && $resource->owner && $resource->owner->avatar)
+                                    <img src="{{ asset('storage/' . $resource->owner->avatar) }}" alt="{{ $resource->owner->name }}" class="rounded-circle border" style="width: 56px; height: 56px; object-fit: cover;">
+                                @else
+                                    <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 56px; height: 56px;">
+                                        {{ strtoupper(substr(isset($resource) && $resource->owner ? $resource->owner->name : 'N', 0, 1)) }}
+                                    </div>
+                                @endif
+                            </a>
                             <div>
                                 <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                                    <h6 class="fw-bold text-dark mb-0">{{ isset($resource) && $resource->owner ? $resource->owner->name : 'Noksha Creator' }}</h6>
+                                    <h6 class="fw-bold text-dark mb-0">
+                                        <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="text-dark text-decoration-none hover-primary">
+                                            {{ isset($resource) && $resource->owner ? $resource->owner->name : 'Noksha Creator' }}
+                                        </a>
+                                    </h6>
                                     @if(isset($resource) && $resource->owner && $resource->owner->isVerifiedCreator())
                                         <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);" title="Verified Creator">
                                             <i class="bi bi-patch-check-fill text-emerald-500"></i> Verified
@@ -521,8 +531,8 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('seller.demo') }}" class="btn btn-outline-secondary rounded-pill w-100 fw-bold btn-sm">
-                            <i class="bi bi-shop me-1"></i> View Seller Storefront
+                        <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="btn btn-outline-secondary rounded-pill w-100 fw-bold btn-sm">
+                            <i class="bi bi-person-circle me-1"></i> View Creator Profile
                         </a>
                     </div>
 

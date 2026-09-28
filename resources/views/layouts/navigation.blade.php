@@ -227,9 +227,13 @@
                     <!-- User Profile Sleek Dropdown (Consolidates Dashboard, Verify Email, Settings, Logout) -->
                     <div class="dropdown">
                         <button class="user-avatar-btn dropdown-toggle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ $user->name }}">
-                            <span class="user-avatar-initial">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                            </span>
+                            @if($user->avatar)
+                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover;">
+                            @else
+                                <span class="user-avatar-initial">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </span>
+                            @endif
                             <span class="fw-semibold small text-dark d-none d-md-inline" style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 {{ $user->name }}
                             </span>
@@ -307,6 +311,20 @@
                             <li>
                                 <a class="dropdown-item small py-2 fw-semibold" href="{{ route('wishlist.index') }}">
                                     <i class="bi bi-heart me-2 text-danger"></i> {{ __('marketplace.wishlist') }}
+                                </a>
+                            </li>
+
+                            <!-- My Public Profile -->
+                            <li>
+                                <a class="dropdown-item small py-2 fw-semibold" href="{{ route('user.profile', $user->username ?? $user->id) }}">
+                                    <i class="bi bi-person-badge-fill me-2 text-primary"></i> My Public Profile
+                                </a>
+                            </li>
+
+                            <!-- Profile Settings -->
+                            <li>
+                                <a class="dropdown-item small py-2 fw-semibold" href="{{ route('settings.profile') }}">
+                                    <i class="bi bi-gear-fill me-2 text-secondary"></i> Profile Settings
                                 </a>
                             </li>
 
@@ -423,6 +441,14 @@
 
                     <a class="nav-link-custom text-secondary" href="{{ route('orders.index') }}">
                         <i class="bi bi-receipt me-2 text-success"></i> {{ __('marketplace.orders') }}
+                    </a>
+
+                    <a class="nav-link-custom text-primary" href="{{ route('user.profile', $user->username ?? $user->id) }}">
+                        <i class="bi bi-person-badge-fill me-2"></i> My Public Profile
+                    </a>
+
+                    <a class="nav-link-custom text-secondary" href="{{ route('settings.profile') }}">
+                        <i class="bi bi-gear-fill me-2 text-secondary"></i> Profile Settings
                     </a>
 
                     <form action="{{ route('logout') }}" method="POST" class="mt-2">

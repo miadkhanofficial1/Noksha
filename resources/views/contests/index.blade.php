@@ -388,15 +388,19 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="avatar-placeholder rounded-circle bg-primary bg-opacity-10 text-primary fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                {{ strtoupper(substr($creator->name, 0, 1)) }}
-                                            </div>
+                                        <a href="{{ route('user.profile', $creator->username ?? $creator->id) }}" class="d-flex align-items-center gap-3 text-decoration-none text-dark" title="View {{ $creator->name }}'s Profile">
+                                            @if($creator->avatar)
+                                                <img src="{{ asset('storage/' . $creator->avatar) }}" alt="{{ $creator->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                            @else
+                                                <div class="avatar-placeholder rounded-circle bg-primary bg-opacity-10 text-primary fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    {{ strtoupper(substr($creator->name, 0, 1)) }}
+                                                </div>
+                                            @endif
                                             <div>
-                                                <div class="fw-bold text-dark mb-0">{{ $creator->name }}</div>
-                                                <div class="extra-small text-muted">@ {{ $creator->username ?? Str::slug($creator->name) }}</div>
+                                                <div class="fw-bold text-dark mb-0 hover-primary">{{ $creator->name }}</div>
+                                                <div class="extra-small text-muted font-monospace">&#64;{{ $creator->username ?? Str::slug($creator->name) }}</div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td>
                                         <span class="badge bg-warning bg-opacity-15 text-dark fw-bold rounded-pill px-3 py-1 extra-small">

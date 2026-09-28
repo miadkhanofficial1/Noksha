@@ -200,7 +200,11 @@
                     <div class="d-flex flex-wrap align-items-center gap-4 text-white text-opacity-80 small font-monospace">
                         <div class="d-flex align-items-center gap-1.5">
                             <i class="bi bi-person-circle text-warning fs-6"></i>
-                            <span>Organized by <strong>{{ $contest->organizer ? $contest->organizer->name : 'Noksha Official' }}</strong></span>
+                            @if($contest->organizer)
+                                <span>Organized by <a href="{{ route('user.profile', $contest->organizer->username ?? $contest->organizer->id) }}" class="text-white fw-bold text-decoration-underline hover-warning">{{ $contest->organizer->name }}</a></span>
+                            @else
+                                <span>Organized by <strong>Noksha Official</strong></span>
+                            @endif
                         </div>
                         <div>
                             <i class="bi bi-images text-warning me-1"></i>
@@ -306,7 +310,7 @@
                         <div>
                             <h6 class="fw-bold text-dark mb-0">Handover Management Console</h6>
                             <span class="extra-small text-muted">
-                                Winner: <strong class="text-dark">{{ $winnerUser ? ($winnerUser->username ? '@'.$winnerUser->username : $winnerUser->name) : 'Winning Designer' }}</strong> • Prize Bounty: <strong class="text-success font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</strong>
+                                Winner: @if($winnerUser)<a href="{{ route('user.profile', $winnerUser->username ?? $winnerUser->id) }}" class="text-decoration-none text-dark hover-primary fw-bold">{{ $winnerUser->username ? '@'.$winnerUser->username : $winnerUser->name }}</a>@else<strong>Winning Designer</strong>@endif • Prize Bounty: <strong class="text-success font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</strong>
                             </span>
                         </div>
                     </div>
@@ -530,7 +534,20 @@
                                             
                                             <!-- Creator & Time -->
                                             <div class="d-flex align-items-center gap-2 extra-small text-muted mb-2">
-                                                <span>by <strong>{{ $entry->user ? $entry->user->name : 'Contributor' }}</strong></span>
+                                                @if($entry->user)
+                                                    <a href="{{ route('user.profile', $entry->user->username ?? $entry->user->id) }}" class="text-decoration-none text-dark d-inline-flex align-items-center gap-1.5 hover-primary" title="View {{ $entry->user->name }}'s Profile">
+                                                        @if($entry->user->avatar)
+                                                            <img src="{{ asset('storage/' . $entry->user->avatar) }}" alt="{{ $entry->user->name }}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover;">
+                                                        @else
+                                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; font-size: 0.65rem;">
+                                                                {{ strtoupper(substr($entry->user->name, 0, 1)) }}
+                                                            </div>
+                                                        @endif
+                                                        <span>by <strong class="text-dark">{{ $entry->user->name }}</strong></span>
+                                                    </a>
+                                                @else
+                                                    <span>by <strong>Contributor</strong></span>
+                                                @endif
                                                 <span>•</span>
                                                 <span>{{ $entry->created_at->diffForHumans() }}</span>
                                             </div>

@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,7 +29,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'status',
         'avatar',
+        'cover_image',
+        'headline',
         'bio',
+        'skills',
+        'social_links',
+        'is_available',
         'trust_score',
         'is_verified',
         'is_admin',
@@ -60,6 +67,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_verified' => 'boolean',
             'is_admin' => 'boolean',
             'is_contributor' => 'boolean',
+            'is_available' => 'boolean',
+            'skills' => 'array',
+            'social_links' => 'array',
             'balance' => 'float',
             'kyc_rejected_at' => 'datetime',
             'trust_score' => 'float',
@@ -230,11 +240,19 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * User's resource reviews.
+     * User's resource reviews submitted by this user.
      */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'user_id');
+    }
+
+    /**
+     * Customer reviews received on this user's marketplace resources.
+     */
+    public function receivedReviews(): HasManyThrough
+    {
+        return $this->hasManyThrough(Review::class, Resource::class, 'user_id', 'resource_id');
     }
 
     /**
@@ -327,5 +345,64 @@ class User extends Authenticatable implements MustVerifyEmail
             'description' => $description,
             'status' => 'completed',
         ]);
+    }
+
+    /**
+     * Users following this user.
+     */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_follows', 'following_id', 'follower_id')->withTimestamps();
+    }
+
+    /**
+     * Users this user is following.
+     */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_follows', 'follower_id', 'following_id')->withTimestamps();
+    }
+
+    /**
+     * Check if this user is following another user.
+     */
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    /**
+     * Get avatar URL or default fallback.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar)) {
+            return asset('storage/' . $this->avatar);
+        }
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=6366f1&color=fff';
+    }
+
+    /**
+     * Get cover image URL or default fallback.
+     */
+    public function getCoverUrlAttribute(): ?string
+    {
+        if ($this->cover_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->cover_image)) {
+            return asset('storage/' . $this->cover_image);
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve the model for a bound value (supports both id and username).
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field) {
+            return parent::resolveRouteBinding($value, $field);
+        }
+
+        return $this->where('username', $value)->orWhere('id', $value)->first()
+            ?? abort(404, 'User not found.');
     }
 }
