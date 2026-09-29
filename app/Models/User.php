@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,6 +15,23 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes;
+
+    /**
+     * The "booted" method of the model.
+     * Auto-initializes central Wallet and AI Credits for newly created users.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->wallet()->firstOrCreate([], [
+                'balance' => $user->balance ?? 0.00,
+            ]);
+
+            $user->aiCredit()->firstOrCreate([], [
+                'credits' => 5, // Grant 5 free starter credits
+            ]);
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -119,6 +137,70 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isProAuthor(): bool
     {
         return $this->isContributor();
+    }
+
+    /**
+     * Get user AI generation / edit credits balance.
+     */
+    public function getCreditsAttribute(): int
+    {
+        return $this->aiCredit?->credits ?? 5;
+    }
+
+    /**
+     * User's central BDT cash wallet.
+     */
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class, 'user_id');
+    }
+
+    /**
+     * Ensure the user has an initialized Wallet (0.00 balance if missing).
+     */
+    public function getWalletAttribute(): Wallet
+    {
+        if ($this->relationLoaded('wallet') && $this->getRelation('wallet')) {
+            return $this->getRelation('wallet');
+        }
+
+        $wallet = $this->wallet()->first();
+        if (!$wallet && $this->exists) {
+            $wallet = $this->wallet()->create([
+                'balance' => $this->attributes['balance'] ?? 0.00,
+            ]);
+            $this->setRelation('wallet', $wallet);
+        }
+
+        return $wallet ?? new Wallet(['user_id' => $this->id, 'balance' => 0.00]);
+    }
+
+    /**
+     * User's AI generation credit account.
+     */
+    public function aiCredit(): HasOne
+    {
+        return $this->hasOne(AiCredit::class, 'user_id');
+    }
+
+    /**
+     * Ensure the user has an initialized AiCredit account (5 free starter credits if missing).
+     */
+    public function getAiCreditAttribute(): AiCredit
+    {
+        if ($this->relationLoaded('aiCredit') && $this->getRelation('aiCredit')) {
+            return $this->getRelation('aiCredit');
+        }
+
+        $credit = $this->aiCredit()->first();
+        if (!$credit && $this->exists) {
+            $credit = $this->aiCredit()->create([
+                'credits' => 5, // Grant 5 free starter credits
+            ]);
+            $this->setRelation('aiCredit', $credit);
+        }
+
+        return $credit ?? new AiCredit(['user_id' => $this->id, 'credits' => 5]);
     }
 
     /**
@@ -335,7 +417,13 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->increment('balance', $amount);
         $freshBalance = (float) $this->fresh()->balance;
 
+        $wallet = $this->wallet;
+        if ($wallet) {
+            $wallet->update(['balance' => $freshBalance]);
+        }
+
         return WalletTransaction::create([
+            'wallet_id' => $wallet?->id,
             'user_id' => $this->id,
             'type' => 'credit',
             'amount' => $amount,
@@ -369,6 +457,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isFollowing(User $user): bool
     {
         return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    /**
+     * Payout / withdrawal requests by this seller.
+     */
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class, 'user_id')->latest();
     }
 
     /**

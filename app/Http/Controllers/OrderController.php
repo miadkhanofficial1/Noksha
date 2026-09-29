@@ -58,8 +58,8 @@ class OrderController extends Controller
      */
     public function download(Resource $resource): StreamedResponse|RedirectResponse
     {
-        // Free resources are instantly downloadable; Paid resources require completed purchase
-        $hasPurchased = !$resource->is_paid || Order::where('user_id', auth()->id())
+        // Free resources are instantly downloadable; Paid resources require completed purchase or Admin role
+        $hasPurchased = auth()->user()?->isAdmin() || !$resource->is_paid || Order::where('user_id', auth()->id())
             ->where('payment_status', 'completed')
             ->whereHas('items', function ($query) use ($resource) {
                 $query->where('resource_id', $resource->id);

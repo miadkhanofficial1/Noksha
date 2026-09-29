@@ -7,9 +7,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\AiEditorController;
 use App\Http\Controllers\BuyerDashboardController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContestController;
 use App\Http\Controllers\ContestSubmissionController;
 use App\Http\Controllers\ContestHandoverController;
@@ -18,6 +20,8 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\NotificationController;
+use App\Models\Resource;
+use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\ProfileSettingsController;
 use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\OrderController;
@@ -30,10 +34,14 @@ use App\Http\Controllers\AdminVerificationController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminContestController;
 use App\Http\Controllers\AdminPayoutController;
+use App\Http\Controllers\AdminFinanceController;
 use App\Http\Controllers\AdminLogController;
+use App\Http\Controllers\AdminSystemController;
+use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +76,13 @@ Route::get('/contests/{contest:slug}', [ContestController::class, 'show'])->wher
 
 // Public User / Designer Portfolio & Profile Route (/u/{username})
 Route::get('/u/{username}', [PublicProfileController::class, 'show'])->name('user.profile');
+
+// Marketplace Templates / Catalog Route (Alias for resources.index)
+Route::get('/templates', [SearchController::class, 'index'])->name('resources.index');
+
+// Public Support & Contact Us Routes
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 
 
@@ -196,6 +211,23 @@ Route::middleware('auth')->group(function () {
     // Admin: Broadcast history page
     Route::get('/admin/broadcast-history', [NotificationController::class, 'broadcastHistory'])->name('admin.broadcastHistory')->middleware('admin');
 
+    // AI Template Customizer Workspace Routes
+    Route::get('/templates/{id}/ai-edit', [AiEditorController::class, 'edit'])->name('templates.ai-edit');
+    Route::post('/templates/{id}/ai-generate', [AiEditorController::class, 'generate'])->name('templates.ai-generate');
+    Route::post('/templates/ai-edit/deduct-credit', [AiEditorController::class, 'deductCredit'])->name('templates.ai-edit.deduct');
+
+    // Central Wallet & AI Credit Management Routes
+    Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
+    Route::post('/wallet/buy-credits', [WalletController::class, 'buyCredits'])->name('wallet.buy-credits');
+    Route::post('/wallet/deposit', [WalletController::class, 'deposit'])->name('wallet.deposit');
+
+    // Seller Earnings & Withdrawal Management Routes
+    Route::get('/seller/payouts', [PayoutController::class, 'index'])->name('seller.payouts.index');
+    Route::post('/seller/payouts/withdraw', [PayoutController::class, 'requestWithdrawal'])->name('seller.payouts.withdraw');
+
+    // Direct Template Purchase with Wallet Balance
+    Route::post('/resource/{resource}/buy', [CheckoutController::class, 'buyWithWallet'])->name('resource.buy-wallet');
+
     // Seller Identity Verification Routes
     Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
     Route::post('/seller/verification', [SellerVerificationController::class, 'store'])->name('seller.verification.store');
@@ -243,11 +275,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/contests/{contest}/submissions', [AdminContestController::class, 'submissions'])->name('contests.submissions');
         Route::post('/contests/{contest}/winner', [AdminContestController::class, 'selectWinner'])->name('contests.winner');
 
-        // 5. Financials & Payouts
-        Route::get('/payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
+        // 5. Financials, Analytics & Payouts Engine
+        Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
+        Route::post('/finance/withdrawals/{id}/approve', [AdminFinanceController::class, 'approveWithdrawal'])->name('finance.approveWithdrawal');
+        Route::post('/finance/withdrawals/{id}/reject', [AdminFinanceController::class, 'rejectWithdrawal'])->name('finance.rejectWithdrawal');
+        Route::get('/payouts', [AdminFinanceController::class, 'index'])->name('payouts.index');
 
         // 6. Live System Logs
         Route::get('/logs', [AdminLogController::class, 'index'])->name('logs.index');
         Route::post('/logs/clear', [AdminLogController::class, 'clear'])->name('logs.clear');
+
+        // 7. System Maintenance & Factory Reset (Super Admin Only)
+        Route::post('/system/purge', [AdminSystemController::class, 'purgeAllData'])->name('system.purge');
+
+        // 8. Customer Support Inquiries & Messages
+        Route::get('/messages', [AdminMessageController::class, 'index'])->name('messages.index');
+        Route::patch('/messages/{id}/status', [AdminMessageController::class, 'updateStatus'])->name('messages.updateStatus');
+        Route::delete('/messages/{id}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
     });
 });

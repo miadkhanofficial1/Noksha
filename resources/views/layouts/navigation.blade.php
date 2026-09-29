@@ -8,14 +8,38 @@
     $recentNotifs = $recentNotifs ?? (auth()->check() ? auth()->user()->notifications()->latest()->take(10)->get() : collect());
 @endphp
 
+<style>
+    .wallet-credit-badge {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        transition: all 0.2s ease;
+    }
+    .wallet-credit-badge:hover {
+        background: #FFFFFF;
+        border-color: #8B5CF6;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.15) !important;
+    }
+    .dark .wallet-credit-badge,
+    [data-bs-theme="dark"] .wallet-credit-badge {
+        background: #0F172A;
+        border-color: #334155;
+    }
+    .dark .wallet-credit-badge:hover,
+    [data-bs-theme="dark"] .wallet-credit-badge:hover {
+        background: #1E293B;
+        border-color: #A78BFA;
+    }
+</style>
+
 <header class="noksha-header sticky-top py-2 py-lg-2.5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-100">
         <nav class="d-flex align-items-center justify-content-between flex-nowrap w-100" aria-label="Main Navigation">
 
             <!-- ========================================================= -->
-            <!-- 1. LEFT SECTION: BRAND LOGO + CORE DESKTOP NAV LINKS      -->
+            <!-- 1. LEFT SECTION: BRAND LOGO                               -->
             <!-- ========================================================= -->
-            <div class="d-flex align-items-center gap-3 gap-xl-4 flex-shrink-0">
+            <div class="d-flex align-items-center flex-shrink-0">
                 <!-- Brand Logo -->
                 <a class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0" href="{{ route('home') }}" aria-label="Noksha" style="height: 40px; max-height: 40px;">
                     <img src="{{ asset('images/logo.png') }}" 
@@ -27,46 +51,23 @@
                         Noksha
                     </span>
                 </a>
-
-                <!-- Core Desktop Navigation Links -->
-                <div class="d-none d-lg-flex align-items-center gap-1 ms-2">
-                    <a class="nav-link-custom {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                        <i class="bi bi-house-door me-1.5 text-secondary"></i> {{ __('app.home') }}
-                    </a>
-
-                    <a class="nav-link-custom text-secondary" href="{{ route('home') }}#templates">
-                        <i class="bi bi-grid me-1.5 text-secondary"></i> {{ __('app.templates') }}
-                    </a>
-
-                    <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
-                        <i class="bi bi-trophy-fill me-1.5 text-warning"></i> {{ __('app.contests') }}
-                    </a>
-
-                    @auth
-                        <a class="nav-link-custom {{ request()->routeIs('dashboard') || request()->routeIs('buyer.dashboard') || request()->routeIs('seller.dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="bi bi-speedometer2 me-1.5 text-primary"></i> {{ __('app.dashboard') ?? 'Dashboard' }}
-                        </a>
-                    @endauth
-                </div>
             </div>
 
             <!-- ========================================================= -->
-            <!-- 2. CENTER SECTION: COMPACT SEARCH BAR                     -->
+            <!-- 2. CENTER SECTION: TEMPLATES, CONTESTS, CONTACT US        -->
             <!-- ========================================================= -->
-            <div class="nav-search-container d-none d-md-flex align-items-center mx-2 mx-xl-3 flex-grow-1 max-w-xs">
-                <form action="{{ route('search.index') }}" method="GET" class="w-100 m-0" role="search">
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent border-0 text-muted ps-0 pe-2">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input name="q" 
-                               value="{{ request('q') }}" 
-                               class="form-control ps-0" 
-                               type="search" 
-                               placeholder="{{ __('app.search') }}..." 
-                               aria-label="Search templates">
-                    </div>
-                </form>
+            <div class="d-none d-lg-flex align-items-center gap-2 mx-auto">
+                <a class="nav-link-custom {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
+                    <i class="bi bi-grid me-1.5 text-secondary"></i> Templates
+                </a>
+
+                <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
+                    <i class="bi bi-trophy-fill me-1.5 text-warning"></i> Contests
+                </a>
+
+                <a class="nav-link-custom {{ request()->routeIs('contact.*') ? 'active' : '' }}" href="{{ route('contact.index') }}">
+                    <i class="bi bi-headset me-1.5 text-primary"></i> Contact Us
+                </a>
             </div>
 
             <!-- ========================================================= -->
@@ -93,17 +94,36 @@
 
                 @guest
                     <!-- Guest Authentication Actions -->
-                    <a href="{{ route('login') }}" class="btn btn-outline-secondary btn-sm px-3 py-1.5 rounded-pill fw-semibold">
-                        {{ __('auth.login') }}
+                    <a href="{{ route('login') }}" class="btn btn-outline-secondary btn-sm px-3.5 py-1.5 rounded-pill fw-semibold">
+                        Sign In
                     </a>
                     <a href="{{ route('register') }}" class="btn btn-noksha btn-sm px-3.5 py-1.5 rounded-pill fw-bold shadow-sm">
-                        {{ __('auth.register') }}
+                        Register
                     </a>
                 @else
                     @php
                         $unreadCount = $unreadCount ?? (auth()->check() ? auth()->user()->unreadNotifications()->count() : 0);
                         $recentNotifs = $recentNotifs ?? (auth()->check() ? auth()->user()->notifications()->latest()->take(10)->get() : collect());
                     @endphp
+
+                    <!-- Clickable Wallet & AI Credit Pill Badge -->
+                    <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-none d-sm-inline-flex align-items-center gap-2 text-decoration-none px-3 py-1.5 rounded-pill shadow-sm" title="View Wallet & Credit Balance">
+                        <div class="d-flex align-items-center gap-1 font-monospace fw-extrabold text-success small">
+                            <i class="bi bi-wallet2 text-success"></i>
+                            <span>৳ {{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
+                        </div>
+                        <span class="text-muted opacity-50" style="font-size: 0.75rem;">|</span>
+                        <div class="d-flex align-items-center gap-1 font-monospace fw-bold extra-small" style="color: #F59E0B;">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i>
+                            <span id="navbar-credit-count" class="navbar-credit-count">
+                                @if(auth()->user()->isAdmin())
+                                    ⚡ Unlimited Credits
+                                @else
+                                    ⚡ {{ auth()->user()->aiCredit?->credits ?? 0 }} Credits
+                                @endif
+                            </span>
+                        </div>
+                    </a>
 
                     <!-- Notification Bell Dropdown -->
                     <div class="dropdown" id="notifDropdown">
@@ -275,6 +295,28 @@
                                         <i class="bi bi-shield-lock-fill me-2 text-primary"></i> {{ __('dashboard.admin_dashboard') }}
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold d-flex align-items-center justify-content-between" href="{{ route('admin.finance.index') }}">
+                                        <span><i class="bi bi-cash-stack me-2 text-primary"></i> Finance & Payouts</span>
+                                        @php
+                                            $pendingPayoutCount = \App\Models\Withdrawal::where('status', 'pending')->count();
+                                        @endphp
+                                        @if($pendingPayoutCount > 0)
+                                            <span class="badge rounded-pill bg-danger text-white extra-small px-1.5 py-0.5">{{ $pendingPayoutCount }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold d-flex align-items-center justify-content-between" href="{{ route('admin.messages.index') }}">
+                                        <span><i class="bi bi-envelope-paper-fill me-2 text-primary"></i> Support Messages</span>
+                                        @php
+                                            $unreadMessagesCount = \App\Models\ContactMessage::where('status', 'unread')->count();
+                                        @endphp
+                                        @if($unreadMessagesCount > 0)
+                                            <span class="badge rounded-pill bg-danger text-white extra-small px-1.5 py-0.5">{{ $unreadMessagesCount }}</span>
+                                        @endif
+                                    </a>
+                                </li>
                                 <li><hr class="dropdown-divider my-1"></li>
                             @endif
 
@@ -304,6 +346,20 @@
                             <li>
                                 <a class="dropdown-item small py-2 fw-semibold" href="{{ route('orders.index') }}">
                                     <i class="bi bi-receipt me-2 text-success"></i> {{ __('marketplace.orders') }}
+                                </a>
+                            </li>
+
+                            <!-- Central Wallet & AI Credits -->
+                            <li>
+                                <a class="dropdown-item small py-2 fw-semibold" href="{{ route('wallet.index') }}">
+                                    <i class="bi bi-wallet2 me-2 text-purple-500"></i> Central Wallet & Credits
+                                </a>
+                            </li>
+
+                            <!-- Seller Earnings & Payouts (for all creators/contributors) -->
+                            <li>
+                                <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.payouts.index') }}">
+                                    <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
                                 </a>
                             </li>
 
@@ -376,20 +432,40 @@
                 </div>
             </form>
 
+            @auth
+                <!-- Mobile Wallet & Credit Pill Card -->
+                <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-flex align-items-center justify-content-between text-decoration-none px-3 py-2.5 rounded-3 mb-3 border shadow-sm" title="View Wallet & Credit Balance">
+                    <div class="d-flex align-items-center gap-2 font-monospace fw-bold text-success small">
+                        <i class="bi bi-wallet2 fs-6"></i>
+                        <span>৳ {{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1.5 font-monospace fw-bold small" style="color: #F59E0B;">
+                        <i class="bi bi-lightning-charge-fill text-warning"></i>
+                        <span class="navbar-credit-count">
+                            @if(auth()->user()->isAdmin())
+                                ⚡ Unlimited Credits
+                            @else
+                                ⚡ {{ auth()->user()->aiCredit?->credits ?? 0 }} Credits
+                            @endif
+                        </span>
+                    </div>
+                </a>
+            @endauth
+
             <!-- Mobile Core Navigation Links -->
             <div class="d-flex flex-column gap-1 mb-3">
-                <a class="nav-link-custom {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                    <i class="bi bi-house-door me-2 text-secondary"></i> {{ __('app.home') }}
-                </a>
-                <a class="nav-link-custom text-secondary" href="{{ route('home') }}#templates">
-                    <i class="bi bi-grid me-2 text-secondary"></i> {{ __('app.templates') }}
+                <a class="nav-link-custom {{ request()->routeIs('resources.*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
+                    <i class="bi bi-grid me-2 text-secondary"></i> Templates
                 </a>
                 <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
-                    <i class="bi bi-trophy-fill me-2 text-warning"></i> {{ __('app.contests') }}
+                    <i class="bi bi-trophy-fill me-2 text-warning"></i> Contests
+                </a>
+                <a class="nav-link-custom {{ request()->routeIs('contact.*') ? 'active' : '' }}" href="{{ route('contact.index') }}">
+                    <i class="bi bi-envelope-fill me-2 text-info"></i> Contact Us
                 </a>
                 @auth
                     <a class="nav-link-custom {{ request()->routeIs('dashboard') || request()->routeIs('buyer.dashboard') || request()->routeIs('seller.dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="bi bi-speedometer2 me-2 text-primary"></i> {{ __('app.dashboard') ?? 'Dashboard' }}
+                        <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
                     </a>
                 @endauth
             </div>
@@ -426,6 +502,24 @@
                     @if(in_array($user->role, ['admin', 'super_admin']))
                         <a class="nav-link-custom text-primary fw-bold" href="{{ route('admin.dashboard') }}">
                             <i class="bi bi-shield-lock-fill me-2"></i> {{ __('dashboard.admin_dashboard') }}
+                        </a>
+                        <a class="nav-link-custom text-primary d-flex align-items-center justify-content-between" href="{{ route('admin.finance.index') }}">
+                            <span><i class="bi bi-cash-stack me-2"></i> Finance & Payouts</span>
+                            @php
+                                $pendingPayoutCount = \App\Models\Withdrawal::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingPayoutCount > 0)
+                                <span class="badge rounded-pill bg-danger text-white px-2 py-0.5">{{ $pendingPayoutCount }}</span>
+                            @endif
+                        </a>
+                        <a class="nav-link-custom text-primary d-flex align-items-center justify-content-between" href="{{ route('admin.messages.index') }}">
+                            <span><i class="bi bi-envelope-paper-fill me-2"></i> Support Messages</span>
+                            @php
+                                $unreadMessagesCount = \App\Models\ContactMessage::where('status', 'unread')->count();
+                            @endphp
+                            @if($unreadMessagesCount > 0)
+                                <span class="badge rounded-pill bg-danger text-white px-2 py-0.5">{{ $unreadMessagesCount }}</span>
+                            @endif
                         </a>
                     @endif
 

@@ -119,6 +119,24 @@
         color: #5A3DE0 !important;
     }
 
+    .btn-ai-quick-edit {
+        background: linear-gradient(135deg, #1E1B4B 0%, #4338CA 50%, #7C3AED 100%);
+        color: #FFFFFF !important;
+        border: 1.5px solid rgba(167, 139, 250, 0.45) !important;
+        box-shadow: 0 8px 25px -4px rgba(124, 58, 237, 0.4);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-ai-quick-edit:hover {
+        background: linear-gradient(135deg, #312E81 0%, #4F46E5 50%, #8B5CF6 100%);
+        transform: translateY(-2px) scale(1.015);
+        box-shadow: 0 14px 30px -4px rgba(124, 58, 237, 0.6);
+        border-color: rgba(196, 181, 253, 0.8) !important;
+        color: #FFFFFF !important;
+    }
+
     /* Template Cards for Related Section */
     .template-card-figma {
         border-radius: 1.5rem !important;
@@ -457,17 +475,49 @@
                         <!-- Main Action Buttons -->
                         <div class="d-grid gap-2.5 mb-4">
                             @if(isset($hasPurchased) && $hasPurchased)
+                                <div class="p-2.5 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 text-center mb-1">
+                                    <span class="text-success extra-small fw-bold">
+                                        <i class="bi bi-patch-check-fill me-1"></i> License Owned & Unlocked
+                                    </span>
+                                </div>
                                 <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold">
                                     <i class="bi bi-cloud-arrow-down-fill me-2"></i> Download Asset Now
                                 </a>
                             @else
-                                <form action="{{ route('cart.store', $resource->id ?? 1) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold w-100">
-                                        <i class="bi bi-cart-plus-fill me-2"></i> Add to Cart — {{ isset($resource) && $resource->is_paid && $resource->price > 0 ? '৳' . number_format($resource->price, 2) : 'Free' }}
+                                @if(isset($resource) && $resource->is_paid && $resource->price > 0)
+                                    <!-- Buy Template Direct with Wallet -->
+                                    <button type="button" onclick="handleBuyTemplate()" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                                        <i class="bi bi-wallet2"></i>
+                                        <span>Buy Template — ৳{{ number_format($resource->price, 2) }}</span>
                                     </button>
-                                </form>
+
+                                    <!-- Add to Cart Alternative -->
+                                    <form action="{{ route('cart.store', $resource->id ?? 1) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-slate rounded-pill py-2.5 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 extra-small">
+                                            <i class="bi bi-cart-plus"></i>
+                                            <span>Add to Cart</span>
+                                        </button>
+                                    </form>
+                                @else
+                                    <!-- Free Download Direct -->
+                                    <form action="{{ route('resource.buy-wallet', $resource->id ?? 1) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold w-100">
+                                            <i class="bi bi-cloud-arrow-down-fill me-2"></i> Download Free Asset
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
+
+                            <!-- AI Quick Edit Action Trigger -->
+                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="btn btn-ai-quick-edit btn-lg rounded-pill py-3 fw-bold text-decoration-none d-flex align-items-center justify-content-center gap-2" title="Customize this template instantly with AI">
+                                <i class="bi bi-magic fs-5 text-warning"></i>
+                                <span>AI Quick Edit</span>
+                                <span class="badge rounded-pill bg-black bg-opacity-30 text-warning border border-warning border-opacity-30 px-2.5 py-0.5 extra-small ms-1">
+                                    ⚡ 1 Credit
+                                </span>
+                            </a>
 
                             @if(isset($resource) && $resource->demo_link)
                                 <a href="{{ $resource->demo_link }}" target="_blank" class="btn btn-outline-purple btn-lg rounded-pill py-3 fw-bold">
@@ -681,6 +731,122 @@ function switchPreview(gradClass, titleText) {
     document.querySelectorAll('.thumb-card').forEach(t => t.classList.remove('active'));
     event.currentTarget.classList.add('active');
 }
+
+function handleBuyTemplate() {
+    @guest
+        window.location.href = "{{ route('login') }}";
+        return;
+    @else
+        const userBalance = {{ auth()->check() ? (float)(auth()->user()->wallet->balance ?? 0) : 0 }};
+        const templatePrice = {{ (float)($resource->price ?? 0) }};
+
+        if (userBalance < templatePrice) {
+            const modalEl = document.getElementById('insufficientBalanceModal');
+            if (window.bootstrap && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            } else {
+                alert(`Insufficient wallet balance. You need ৳${(templatePrice - userBalance).toFixed(2)} more. Please recharge your wallet.`);
+                window.location.href = "{{ route('wallet.index') }}";
+            }
+        } else {
+            const modalEl = document.getElementById('confirmPurchaseModal');
+            if (window.bootstrap && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            } else {
+                if (confirm(`Confirm purchase of "{{ $resource->title }}" for ৳${templatePrice.toFixed(2)} using your wallet?`)) {
+                    document.getElementById('walletPurchaseForm').submit();
+                }
+            }
+        }
+    @endguest
+}
 </script>
+
+<!-- MODAL: Insufficient Wallet Balance Prompt -->
+<div class="modal fade" id="insufficientBalanceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+        <div class="modal-content border-0 shadow-lg" style="background: #0B1120; border: 1.5px solid rgba(239, 68, 68, 0.35) !important; border-radius: 1.5rem; color: #F8FAFC;">
+            <div class="modal-body p-4 text-center">
+                <div style="width: 64px; height: 64px; border-radius: 1.25rem; background: rgba(239, 68, 68, 0.15); color: #F87171; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; border: 1px solid rgba(239, 68, 68, 0.35);">
+                    <i class="bi bi-wallet-fill fs-2 text-danger"></i>
+                </div>
+                
+                <div class="d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill mb-2" 
+                     style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5;">
+                    <span class="extra-small fw-extrabold font-monospace text-uppercase tracking-wider">
+                        Shortfall: ৳{{ number_format(max(0, ($resource->price ?? 0) - (auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0)), 2) }}
+                    </span>
+                </div>
+
+                <h3 class="h5 fw-extrabold text-white mb-2">Insufficient Wallet Balance</h3>
+                <p class="text-slate-400 extra-small mb-4" style="line-height: 1.6;">
+                    This premium design costs <strong class="text-white">৳{{ number_format($resource->price ?? 0, 2) }}</strong>. Your current available wallet balance is <strong class="text-slate-300">৳{{ number_format(auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0, 2) }}</strong>. Please top up your wallet to complete this purchase.
+                </p>
+
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ route('wallet.index') }}" class="btn btn-purple-cta py-2.5 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>Recharge Wallet & Add Funds</span>
+                    </a>
+                    <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-400 extra-small" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Confirm Template Purchase with Wallet -->
+<div class="modal fade" id="confirmPurchaseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+        <div class="modal-content border-0 shadow-lg" style="background: #0B1120; border: 1.5px solid rgba(124, 58, 237, 0.4) !important; border-radius: 1.5rem; color: #F8FAFC;">
+            <div class="modal-body p-4 text-center">
+                <div style="width: 64px; height: 64px; border-radius: 1.25rem; background: rgba(124, 58, 237, 0.2); color: #C4B5FD; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; border: 1px solid rgba(124, 58, 237, 0.4);">
+                    <i class="bi bi-bag-check-fill fs-2 text-warning"></i>
+                </div>
+                
+                <h3 class="h5 fw-extrabold text-white mb-1">Confirm Instant Purchase</h3>
+                <p class="text-slate-400 extra-small mb-3">
+                    Unlock full commercial license and instant digital source file download.
+                </p>
+
+                <div class="p-3 rounded-3 mb-4 text-start" style="background: #070B12; border: 1px solid #1E293B;">
+                    <div class="d-flex justify-content-between extra-small text-slate-400 mb-1.5">
+                        <span>Asset:</span>
+                        <strong class="text-white text-truncate ms-2" style="max-width: 220px;">{{ $resource->title }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between extra-small text-slate-400 mb-1.5">
+                        <span>Template Price:</span>
+                        <strong class="text-white font-monospace">৳{{ number_format($resource->price ?? 0, 2) }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between extra-small text-slate-400 mb-1.5">
+                        <span>Your Current Balance:</span>
+                        <strong class="text-emerald-400 font-monospace">৳{{ number_format(auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0, 2) }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between extra-small text-slate-400 pt-2 border-top border-slate-800">
+                        <span>Balance After Purchase:</span>
+                        <strong class="text-purple-300 font-monospace">
+                            ৳{{ number_format(max(0, (auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0) - ($resource->price ?? 0)), 2) }}
+                        </strong>
+                    </div>
+                </div>
+
+                <form id="walletPurchaseForm" action="{{ route('resource.buy-wallet', $resource->id) }}" method="POST">
+                    @csrf
+                    <div class="d-flex flex-column gap-2">
+                        <button type="submit" class="btn btn-purple-cta py-2.5 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Confirm & Unlock Files</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-400 extra-small" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection

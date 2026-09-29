@@ -18,6 +18,9 @@
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+
     <!-- Tailwind CSS CDN (Guarantees all admin styling renders reliably) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -96,6 +99,8 @@
         $pendingResourcesCount = \App\Models\Resource::where('status', 'pending')->count();
         $pendingKycCount = \App\Models\SellerVerification::where('status', 'pending')->count();
         $pendingContestsCount = \App\Models\Contest::where('status', 'pending_approval')->count();
+        $unreadMessagesCount = \App\Models\ContactMessage::where('status', 'unread')->count();
+        $pendingPayoutsCount = \App\Models\Withdrawal::where('status', 'pending')->count();
         $currentRoute = request()->route() ? request()->route()->getName() : '';
     @endphp
 
@@ -188,17 +193,36 @@
                     </div>
                 </a>
 
+                <!-- Customer Support Messages Inbox -->
+                <a href="{{ route('admin.messages.index') }}"
+                   class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all duration-200 text-gray-300 hover:text-white hover:bg-gray-800/60 {{ str_starts_with($currentRoute, 'admin.messages') ? 'active' : '' }}">
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-chat-left-dots-fill text-indigo-400 text-base"></i>
+                        <span>Support Messages</span>
+                    </div>
+                    @if($unreadMessagesCount > 0)
+                        <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                            {{ $unreadMessagesCount }}
+                        </span>
+                    @endif
+                </a>
+
                 <div class="px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
                     Finance & Operations
                 </div>
 
                 <!-- Financials & Payouts -->
-                <a href="{{ route('admin.payouts.index') }}"
-                   class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all duration-200 text-gray-300 hover:text-white hover:bg-gray-800/60 {{ str_starts_with($currentRoute, 'admin.payouts') ? 'active' : '' }}">
+                <a href="{{ route('admin.finance.index') }}"
+                   class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all duration-200 text-gray-300 hover:text-white hover:bg-gray-800/60 {{ (str_starts_with($currentRoute, 'admin.finance') || str_starts_with($currentRoute, 'admin.payouts')) ? 'active' : '' }}">
                     <div class="flex items-center gap-3">
                         <i class="bi bi-cash-stack text-teal-400 text-base"></i>
                         <span>Financials & Payouts</span>
                     </div>
+                    @if($pendingPayoutsCount > 0)
+                        <span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                            {{ $pendingPayoutsCount }}
+                        </span>
+                    @endif
                 </a>
 
                 <!-- Live System Logs -->
@@ -208,6 +232,16 @@
                         <i class="bi bi-terminal-fill text-purple-400 text-base"></i>
                         <span>Live System Logs</span>
                     </div>
+                </a>
+
+                <!-- Factory Reset / Danger Zone Shortcut -->
+                <a href="{{ route('admin.dashboard') }}#danger-zone"
+                   class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all duration-200 text-rose-400 hover:text-rose-300 hover:bg-rose-950/30">
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-radioactive text-rose-500 text-base"></i>
+                        <span>Factory Reset</span>
+                    </div>
+                    <span class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">Danger</span>
                 </a>
             </div>
 

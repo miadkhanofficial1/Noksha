@@ -12,9 +12,48 @@
     }
 
     .search-hero-box {
-        background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+        background: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.16) 0%, rgba(15, 23, 42, 0.95) 60%), #020617;
+        border: 1px solid rgba(148, 163, 184, 0.15);
         border-radius: 1.75rem;
         color: #ffffff;
+        box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .recent-search-chip {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        color: #94A3B8;
+        font-size: 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .recent-search-chip:hover {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(99, 102, 241, 0.4) !important;
+        color: #FFFFFF !important;
+        transform: translateY(-1px);
+    }
+
+    .popular-tag-chip {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        color: #E2E8F0;
+        border-radius: 50rem;
+        padding: 0.3rem 0.85rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+    }
+
+    .popular-tag-chip:hover {
+        background: rgba(99, 102, 241, 0.25);
+        border-color: rgba(99, 102, 241, 0.5);
+        color: #FFFFFF;
+        transform: translateY(-1px);
     }
 
     .search-input-group {
@@ -88,47 +127,64 @@
         </nav>
 
         <!-- LARGE SEARCH HERO BOX -->
-        <div class="search-hero-box p-4 p-md-5 mb-5 shadow-lg">
-            <div class="text-center mb-4" style="max-width: 680px; margin: 0 auto;">
-                <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fw-extrabold extra-small text-uppercase mb-2">
-                    <i class="bi bi-magic me-1"></i> Local Keyword AI Auto-Tag Engine
-                </span>
-                <h2 class="display-6 fw-extrabold text-white mb-2">Search Marketplace Assets</h2>
-                <p class="text-white text-opacity-80 small mb-0">Discover UI kits, Figma design systems, vectors, and templates indexed with smart local keywords.</p>
-            </div>
+        <div class="search-hero-box p-4 p-md-5 mb-5 shadow-lg position-relative overflow-hidden">
+            <!-- Gentle Indigo Glow -->
+            <div style="position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 680px; height: 260px; background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(16, 185, 129, 0.05) 50%, transparent 70%); pointer-events: none; z-index: 0;"></div>
 
-            <!-- SEARCH BAR FORM -->
-            <form action="{{ route('search.index') }}" method="GET" class="mb-4" style="max-width: 680px; margin: 0 auto;">
-                <div class="search-input-group d-flex align-items-center">
-                    <i class="bi bi-search text-muted fs-5 me-2"></i>
-                    <input type="text" name="q" value="{{ $queryStr }}" class="form-control border-0 bg-transparent text-dark shadow-none ps-0" placeholder="Search by title, tag (e.g. #fintech, #ui), category, or seller..." aria-label="Search">
-                    <button type="submit" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                        Search Assets
-                    </button>
+            <div class="position-relative z-1">
+                <div class="text-center mb-4" style="max-width: 680px; margin: 0 auto;">
+                    <span class="badge rounded-pill px-3 py-1.5 fw-bold extra-small text-uppercase mb-2.5 d-inline-flex align-items-center gap-1.5"
+                          style="background: rgba(99, 102, 241, 0.12); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.25);">
+                        <i class="bi bi-magic text-indigo-400"></i>
+                        <span class="text-indigo-300">Local Keyword AI Auto-Tag Engine</span>
+                    </span>
+                    <h2 class="display-6 fw-extrabold text-white mb-2">Search Marketplace Assets</h2>
+                    <p class="text-white text-opacity-80 small mb-0">Discover UI kits, Figma design systems, vectors, and templates indexed with smart local keywords.</p>
                 </div>
-            </form>
 
-            <!-- CATEGORY CHIPS & POPULAR TAGS -->
-            <div class="d-flex flex-wrap align-items-center justify-content-center gap-2" style="max-width: 780px; margin: 0 auto;">
-                <span class="extra-small fw-bold text-white text-opacity-75 text-uppercase me-2"><i class="bi bi-tags-fill me-1 text-warning"></i>Popular Tags:</span>
-                @foreach($popularTags as $pt)
-                    <a href="{{ route('search.index', ['tag' => $pt]) }}" class="badge bg-white bg-opacity-15 text-white text-decoration-none rounded-pill px-3 py-1.5 extra-small fw-semibold border border-white border-opacity-25">
-                        #{{ $pt }}
-                    </a>
-                @endforeach
-            </div>
+                <!-- SEARCH BAR FORM -->
+                <form action="{{ route('search.index') }}" method="GET" class="mb-4" style="max-width: 680px; margin: 0 auto;">
+                    <div class="search-input-group d-flex align-items-center">
+                        <i class="bi bi-search text-muted fs-5 me-2"></i>
+                        <input type="text" name="q" value="{{ $queryStr }}" class="form-control border-0 bg-transparent text-dark shadow-none ps-0" placeholder="Search by title, tag (e.g. #fintech, #ui-kit), category, or seller..." aria-label="Search">
+                        <button type="submit" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                            Search Assets
+                        </button>
+                    </div>
+                </form>
 
-            <!-- RECENT SEARCHES SESSION PILLS -->
-            @if(isset($recentSearches) && count($recentSearches) > 0)
-                <div class="mt-3 text-center">
-                    <span class="extra-small text-white text-opacity-60 me-2"><i class="bi bi-clock-history me-1"></i>Recent Searches:</span>
-                    @foreach($recentSearches as $rs)
-                        <a href="{{ route('search.index', ['q' => $rs]) }}" class="extra-small text-white text-opacity-80 text-decoration-underline me-2.5">
-                            {{ $rs }}
+                <!-- CATEGORY CHIPS & POPULAR TAGS -->
+                @php
+                    $dedupedPopularTags = collect($popularTags)->map(function($t) {
+                        return strtolower(trim(str_replace(['#', '_', ' '], ['', '-', '-'], (string)$t), '-'));
+                    })->unique()->filter()->values();
+                @endphp
+                <div class="d-flex flex-wrap align-items-center justify-content-center gap-2" style="max-width: 820px; margin: 0 auto;">
+                    <span class="extra-small fw-bold text-slate-400 text-uppercase d-inline-flex align-items-center me-1">
+                        <i class="bi bi-tags-fill me-1.5 text-warning"></i>Popular Tags:
+                    </span>
+                    @foreach($dedupedPopularTags as $pt)
+                        <a href="{{ route('search.index', ['tag' => $pt]) }}" class="popular-tag-chip text-decoration-none extra-small fw-semibold">
+                            #{{ $pt }}
                         </a>
                     @endforeach
                 </div>
-            @endif
+
+                <!-- RECENT SEARCHES SESSION PILLS -->
+                @if(isset($recentSearches) && count($recentSearches) > 0)
+                    <div class="mt-3.5 d-flex flex-wrap align-items-center justify-content-center gap-2">
+                        <span class="extra-small text-slate-400 d-inline-flex align-items-center me-1">
+                            <i class="bi bi-clock-history me-1.5 text-slate-500"></i>Recent Searches:
+                        </span>
+                        @foreach($recentSearches as $rs)
+                            <a href="{{ route('search.index', ['q' => $rs]) }}" 
+                               class="recent-search-chip text-decoration-none px-2.5 py-1 rounded-md text-xs d-inline-flex align-items-center gap-1 font-monospace">
+                                <span>{{ $rs }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
         </div>
 
         <!-- FILTER & SORT CONTROLS BAR -->

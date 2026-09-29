@@ -188,7 +188,7 @@ class ResourceController extends Controller
                 ->get();
 
             if (auth()->check()) {
-                $hasPurchased = !$resource->is_paid || Order::where('user_id', auth()->id())
+                $hasPurchased = auth()->user()->isAdmin() || !$resource->is_paid || Order::where('user_id', auth()->id())
                     ->where('payment_status', 'completed')
                     ->whereHas('items', function ($query) use ($resource) {
                         $query->where('resource_id', $resource->id);

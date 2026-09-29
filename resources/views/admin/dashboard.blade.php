@@ -383,6 +383,100 @@
         </div>
     </div>
 
+    <!-- DANGER ZONE: 1-CLICK SYSTEM PURGE & FACTORY RESET (SUPER ADMIN ONLY) -->
+    <div id="danger-zone" x-data="{ openPurgeModal: false, confirmPhrase: '' }" class="bg-rose-950/20 border border-rose-900/50 rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                        <i class="bi bi-shield-slash-fill me-1"></i> Danger Zone
+                    </span>
+                    <span class="text-xs font-mono text-rose-400/80">Super Admin Only</span>
+                </div>
+                <h3 class="text-lg font-black text-rose-200">System Purge & Factory Reset</h3>
+                <p class="text-xs text-rose-300/70 max-w-2xl leading-relaxed">
+                    Wipe all marketplace resources, reviews, contests, transactions, and non-admin users in 1 click.
+                </p>
+            </div>
+            <div class="flex-shrink-0">
+                <button type="button"
+                        @click="openPurgeModal = true; confirmPhrase = ''"
+                        class="px-5 py-2.5 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-950/50 flex items-center gap-2 transition-all transform hover:scale-[1.02] cursor-pointer">
+                    <i class="bi bi-radioactive"></i>
+                    <span>Factory Reset System</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Alpine.js Confirmation Modal -->
+        <div x-show="openPurgeModal"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+             style="display: none;"
+             @keydown.escape.window="openPurgeModal = false">
+            <div class="bg-gray-900 border border-rose-800/80 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative"
+                 @click.away="openPurgeModal = false">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between pb-3 border-b border-rose-900/40 mb-4">
+                    <div class="flex items-center gap-2 text-rose-400">
+                        <i class="bi bi-exclamation-octagon-fill text-xl text-rose-500"></i>
+                        <h4 class="font-extrabold text-sm text-white uppercase tracking-wider">Confirm Factory System Purge</h4>
+                    </div>
+                    <button type="button" @click="openPurgeModal = false" class="text-gray-400 hover:text-white cursor-pointer">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form method="POST" action="{{ route('admin.system.purge') }}">
+                    @csrf
+                    <div class="space-y-3 mb-5">
+                        <div class="p-3.5 rounded-xl bg-rose-950/40 border border-rose-800/40 text-xs text-rose-200 leading-relaxed">
+                            <strong class="text-rose-400 flex items-center gap-1.5 mb-1">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Warning: This action cannot be undone!
+                            </strong>
+                            Wipe all marketplace resources, reviews, contests, transactions, and non-admin users in 1 click. Your Super Admin account will remain preserved.
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1.5">
+                                Type <span class="font-mono text-rose-400 font-bold">RESET-NOKSHA</span> to confirm:
+                            </label>
+                            <input type="text"
+                                   name="confirm_phrase"
+                                   x-model="confirmPhrase"
+                                   placeholder="RESET-NOKSHA"
+                                   required
+                                   autocomplete="off"
+                                   class="w-full px-3.5 py-2.5 rounded-xl text-sm font-mono bg-gray-950 border border-rose-800/60 text-white placeholder-gray-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500">
+                        </div>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-gray-800">
+                        <button type="button"
+                                @click="openPurgeModal = false"
+                                class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-800 transition cursor-pointer">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                :disabled="confirmPhrase !== 'RESET-NOKSHA'"
+                                :class="confirmPhrase === 'RESET-NOKSHA' ? 'bg-rose-600 hover:bg-rose-700 text-white cursor-pointer' : 'bg-rose-950 text-rose-600/50 cursor-not-allowed border border-rose-900/30'"
+                                class="px-5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all">
+                            <i class="bi bi-trash3-fill"></i>
+                            <span>Purge All Data Now</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- REJECTION MODAL (For rejecting resources with prompt reason) -->

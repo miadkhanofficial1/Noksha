@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WalletTransaction extends Model
+class Withdrawal extends Model
 {
     use HasFactory;
 
@@ -15,7 +15,7 @@ class WalletTransaction extends Model
      *
      * @var string
      */
-    protected $table = 'wallet_transactions';
+    protected $table = 'withdrawals';
 
     /**
      * The attributes that are mass assignable.
@@ -23,16 +23,12 @@ class WalletTransaction extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'wallet_id',
         'user_id',
-        'type',
         'amount',
-        'credits_transacted',
-        'balance_after',
-        'reference_type',
-        'reference_id',
-        'description',
+        'payment_method',
+        'account_details',
         'status',
+        'note',
     ];
 
     /**
@@ -44,21 +40,13 @@ class WalletTransaction extends Model
     {
         return [
             'amount' => 'float',
-            'balance_after' => 'float',
-            'credits_transacted' => 'integer',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
 
     /**
-     * Associated wallet.
-     */
-    public function wallet(): BelongsTo
-    {
-        return $this->belongsTo(Wallet::class, 'wallet_id');
-    }
-
-    /**
-     * Associated user account.
+     * The seller / user who requested the withdrawal.
      */
     public function user(): BelongsTo
     {

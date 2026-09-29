@@ -74,13 +74,20 @@ class SearchController extends Controller
         $categories = Category::all();
         $recentSearches = session('recent_searches', ['Mobile UI', 'Figma', 'Fintech', 'Logo', 'Vector']);
 
-        // Popular Tags Cloud
+        // Popular Tags Cloud (Normalized & Deduplicated)
         $allTags = Resource::where('status', 'approved')->pluck('tags')->flatten()->filter()->toArray();
-        $tagCounts = array_count_values(array_map('strtolower', $allTags));
-        arsort($tagCounts);
-        $popularTags = array_slice(array_keys($tagCounts), 0, 14);
+        $normalizedTagMap = [];
+        foreach ($allTags as $rawTag) {
+            $cleaned = trim((string)$rawTag);
+            if (empty($cleaned)) continue;
+            $canonical = strtolower(trim(str_replace(['#', '_', ' '], ['', '-', '-'], $cleaned), '-'));
+            if (empty($canonical)) continue;
+            $normalizedTagMap[$canonical] = ($normalizedTagMap[$canonical] ?? 0) + 1;
+        }
+        arsort($normalizedTagMap);
+        $popularTags = array_slice(array_keys($normalizedTagMap), 0, 10);
         if (empty($popularTags)) {
-            $popularTags = ['ui', 'fintech', 'mobile', 'dashboard', 'figma', 'interface', 'web', 'logo', 'social', 'vector'];
+            $popularTags = ['ui-kit', 'fintech', 'mobile', 'dashboard', 'figma', 'interface', 'web', 'logo', 'social', 'vector'];
         }
 
         return view('search.index', compact(
