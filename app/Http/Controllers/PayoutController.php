@@ -41,8 +41,8 @@ class PayoutController extends Controller
 
         $totalGrossSales = max($orderSales, $calculatedGross);
 
-        // 2. Net Available Balance from linked Wallet
-        $availableBalance = (float) ($wallet->balance ?? 0.00);
+        // 2. Net Available Royalties Balance (Strict Seller Earnings Only, excluding buyer deposits)
+        $availableBalance = (float) ($user->earnings_balance);
 
         // 3. Pending Withdrawal Sum
         $pendingWithdrawals = (float) Withdrawal::where('user_id', $user->id)
@@ -60,10 +60,12 @@ class PayoutController extends Controller
             ->paginate(10);
 
         $minThreshold = self::MIN_WITHDRAWAL_AMOUNT;
+        $shoppingBalance = (float) ($user->wallet_balance);
 
         return view('seller.payouts', compact(
             'totalGrossSales',
             'availableBalance',
+            'shoppingBalance',
             'pendingWithdrawals',
             'completedPayouts',
             'withdrawals',
@@ -92,18 +94,21 @@ class PayoutController extends Controller
         ]);
 
         $user = auth()->user();
-        $wallet = $user->wallet;
+        $wallet = $user->wallet ?? \App\Models\Wallet::firstOrCreate(['user_id' => $user->id], ['balance' => 0.00, 'earnings_balance' => 0.00]);
         $amount = (float) $validated['amount'];
+        $availableEarnings = (float) $user->earnings_balance;
 
-        // Ensure sufficient available balance
-        if ($wallet->balance < $amount) {
-            return back()->with('error', "Insufficient wallet balance. You requested ৳" . number_format($amount, 2) . ", but your available balance is ৳" . number_format($wallet->balance, 2) . ".");
+        // Ensure sufficient available seller royalties balance
+        if ($availableEarnings < $amount) {
+            return back()->with('error', "Insufficient seller earnings balance. You requested ৳" . number_format($amount, 2) . ", but your available royalty earnings balance is ৳" . number_format($availableEarnings, 2) . ". Note: Deposited buyer wallet funds cannot be withdrawn via creator cashout.");
         }
 
-        // Deduct from wallet balance
-        $wallet->decrement('balance', $amount);
-        if (Schema::hasColumn('users', 'balance')) {
-            $user->update(['balance' => $wallet->balance]);
+        // Deduct from seller earnings balance
+        if (Schema::hasColumn('users', 'earnings_balance')) {
+            $user->decrement('earnings_balance', $amount);
+        }
+        if (Schema::hasColumn('wallets', 'earnings_balance')) {
+            $wallet->decrement('earnings_balance', $amount);
         }
 
         // Create Withdrawal record
@@ -130,7 +135,7 @@ class PayoutController extends Controller
             'type' => 'withdrawal',
             'amount' => $amount,
             'credits_transacted' => 0,
-            'balance_after' => $wallet->balance,
+            'balance_after' => $user->fresh()->earnings_balance,
             'description' => "Payout request #WTH-{$withdrawal->id} via {$methodLabel} ({$validated['account_details']})",
             'status' => 'pending',
         ]);

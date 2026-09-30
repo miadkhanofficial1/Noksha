@@ -28,7 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ]);
 
             $user->aiCredit()->firstOrCreate([], [
-                'credits' => 5, // Grant 5 free starter credits
+                'credits' => 0, // Initial AI credits: 0
             ]);
         });
     }
@@ -58,7 +58,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_admin',
         'is_contributor',
         'balance',
+        'ai_credits',
         'contributor_status',
+        'active_mode',
+        'nid_or_passport_number',
+        'portfolio_link',
+        'kyc_document_path',
+        'contributor_bio',
+        'earnings_balance',
         'kyc_rejected_at',
         'kyc_rejection_reason',
     ];
@@ -89,10 +96,28 @@ class User extends Authenticatable implements MustVerifyEmail
             'skills' => 'array',
             'social_links' => 'array',
             'balance' => 'float',
+            'earnings_balance' => 'float',
+            'ai_credits' => 'integer',
             'kyc_rejected_at' => 'datetime',
             'trust_score' => 'float',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get deposited buyer wallet balance (used for purchases & tokens, not cashout).
+     */
+    public function getWalletBalanceAttribute(): float
+    {
+        return (float) ($this->wallet?->balance ?? $this->attributes['balance'] ?? 0.00);
+    }
+
+    /**
+     * Get seller royalties balance (available for payout/withdrawal).
+     */
+    public function getEarningsBalanceAttribute(): float
+    {
+        return (float) ($this->attributes['earnings_balance'] ?? $this->wallet?->earnings_balance ?? 0.00);
     }
 
     /**
@@ -116,11 +141,31 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isContributor(): bool
     {
-        return $this->isAdmin()
-            || (bool) $this->is_contributor
-            || $this->contributor_status === 'approved'
-            || (bool) $this->is_verified
-            || $this->role === 'seller';
+        return $this->isAdmin() || $this->contributor_status === 'approved';
+    }
+
+    /**
+     * Check if user is an approved contributor.
+     */
+    public function isApprovedContributor(): bool
+    {
+        return $this->isAdmin() || $this->contributor_status === 'approved';
+    }
+
+    /**
+     * Check if user is in seller / contributor studio mode.
+     */
+    public function isSellerMode(): bool
+    {
+        return $this->isContributor() && ($this->active_mode === 'seller' || $this->isAdmin());
+    }
+
+    /**
+     * Check if user is in buyer mode.
+     */
+    public function isBuyerMode(): bool
+    {
+        return !$this->isSellerMode();
     }
 
     /**
@@ -144,7 +189,21 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getCreditsAttribute(): int
     {
-        return $this->aiCredit?->credits ?? 5;
+        if (isset($this->attributes['ai_credits']) && $this->attributes['ai_credits'] > 0) {
+            return (int) $this->attributes['ai_credits'];
+        }
+        return (int) ($this->aiCredit?->credits ?? $this->attributes['ai_credits'] ?? 0);
+    }
+
+    /**
+     * Get user AI generation / edit credits balance (ai_credits alias).
+     */
+    public function getAiCreditsAttribute(): int
+    {
+        if (isset($this->attributes['ai_credits']) && $this->attributes['ai_credits'] > 0) {
+            return (int) $this->attributes['ai_credits'];
+        }
+        return (int) ($this->aiCredit?->credits ?? $this->attributes['ai_credits'] ?? 0);
     }
 
     /**
@@ -184,7 +243,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Ensure the user has an initialized AiCredit account (5 free starter credits if missing).
+     * Ensure the user has an initialized AiCredit account (initial 0 credits).
      */
     public function getAiCreditAttribute(): AiCredit
     {
@@ -194,13 +253,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $credit = $this->aiCredit()->first();
         if (!$credit && $this->exists) {
+            $initialCredits = isset($this->attributes['ai_credits']) ? (int) $this->attributes['ai_credits'] : 0;
             $credit = $this->aiCredit()->create([
-                'credits' => 5, // Grant 5 free starter credits
+                'credits' => $initialCredits,
             ]);
             $this->setRelation('aiCredit', $credit);
         }
 
-        return $credit ?? new AiCredit(['user_id' => $this->id, 'credits' => 5]);
+        return $credit ?? new AiCredit(['user_id' => $this->id, 'credits' => 0]);
     }
 
     /**
@@ -311,6 +371,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resources(): HasMany
     {
         return $this->hasMany(Resource::class, 'user_id');
+    }
+
+    /**
+     * User's uploaded design templates (alias for resources).
+     */
+    public function templates(): HasMany
+    {
+        return $this->hasMany(Template::class, 'user_id');
     }
 
     /**

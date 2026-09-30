@@ -432,7 +432,7 @@
                             <div class="extra-small text-slate-400">Admin Unlimited Access</div>
                         @else
                             <div class="d-flex align-items-baseline gap-1 mb-1 font-monospace">
-                                <span class="display-6 fw-extrabold text-warning">{{ number_format($aiCredit->credits) }}</span>
+                                <span class="display-6 fw-extrabold text-warning">{{ number_format(auth()->user()->ai_credits ?? $aiCredit->credits ?? 0) }}</span>
                                 <span class="fs-6 text-slate-400 fw-semibold">Tokens</span>
                             </div>
                             <div class="extra-small text-slate-400">1 Token = 1 High-Res AI Graphic Customization</div>

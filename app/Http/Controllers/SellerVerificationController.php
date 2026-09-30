@@ -44,49 +44,62 @@ class SellerVerificationController extends Controller
 
         // 2. Strict Anti-Fraud Validation Rules
         $rules = [
-            'full_name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:30'],
-            'id_number' => ['required', 'string', 'max:100'],
+            'full_name' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'id_number' => ['nullable', 'string', 'max:100'],
+            'nid_or_passport_number' => ['nullable', 'string', 'max:100'],
             'portfolio_link' => ['required', 'url', 'max:255'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'country' => ['nullable', 'string', 'max:100'],
             'document_type' => ['nullable', 'in:nid,passport,driving_license'],
             'document_file' => [
-                $existing && $existing->document_file ? 'nullable' : 'required',
+                $existing && ($existing->document_file || auth()->user()->kyc_document_path) ? 'nullable' : 'required_without:kyc_document',
+                'nullable',
+                'file',
+                'mimes:jpeg,png,jpg,pdf',
+                'max:10240'
+            ],
+            'kyc_document' => [
+                'nullable',
                 'file',
                 'mimes:jpeg,png,jpg,pdf',
                 'max:10240'
             ],
             'selfie_file' => [
-                $existing && $existing->selfie_file ? 'nullable' : 'required',
+                'nullable',
                 'file',
                 'mimes:jpeg,png,jpg',
                 'max:5120'
             ],
-            'agreement' => ['required', 'accepted'],
+            'contributor_bio' => ['nullable', 'string', 'max:1000'],
+            'agreement' => ['nullable'],
         ];
 
         $messages = [
-            'full_name.required' => 'Full legal name is required as stated on your government ID.',
-            'phone.required' => 'Phone or WhatsApp number is required.',
-            'id_number.required' => 'National ID or Passport number is required.',
             'portfolio_link.required' => 'Portfolio link (Behance, Dribbble, or personal site) is required.',
             'portfolio_link.url' => 'Please enter a valid portfolio URL.',
-            'document_file.required' => 'Government ID or Passport scan is required.',
-            'selfie_file.required' => 'Face selfie holding the NID card is required for identity verification.',
-            'agreement.accepted' => 'You must accept the contributor guidelines and copyright terms.',
+            'document_file.required_without' => 'Government ID or Passport document is required.',
         ];
 
         $validated = $request->validate($rules, $messages);
 
+        $idNumber = $validated['nid_or_passport_number'] ?? $validated['id_number'] ?? $request->input('nid_or_passport_number') ?? $request->input('id_number');
+        if (empty($idNumber)) {
+            return back()->withErrors(['nid_or_passport_number' => 'National ID or Passport number is required.'])->withInput();
+        }
+
+        $fullName = $validated['full_name'] ?? auth()->user()->name;
+        $phone = $validated['phone'] ?? auth()->user()->phone ?? 'N/A';
         $docType = $validated['document_type'] ?? 'nid';
         $country = $validated['country'] ?? 'Bangladesh';
         $dob = $validated['date_of_birth'] ?? now()->subYears(22)->format('Y-m-d');
 
         // File uploads handling via Laravel Storage (public disk)
-        $docPath = $existing ? $existing->document_file : null;
+        $docPath = $existing ? ($existing->document_file ?? auth()->user()->kyc_document_path) : auth()->user()->kyc_document_path;
         if ($request->hasFile('document_file')) {
             $docPath = $request->file('document_file')->store('verifications/ids', 'public');
+        } elseif ($request->hasFile('kyc_document')) {
+            $docPath = $request->file('kyc_document')->store('verifications/ids', 'public');
         } elseif ($request->hasFile('id_file')) {
             $docPath = $request->file('id_file')->store('verifications/ids', 'public');
         }
@@ -97,18 +110,18 @@ class SellerVerificationController extends Controller
         }
 
         // Formatted admin notes combining portfolio and ID number
-        $adminNotes = "ID/Passport: {$validated['id_number']} | Portfolio: {$validated['portfolio_link']}";
+        $adminNotes = "ID/Passport: {$idNumber} | Portfolio: {$validated['portfolio_link']}";
 
         // Save or Update Verification Record
         SellerVerification::updateOrCreate(
             ['user_id' => auth()->id()],
             [
-                'full_name' => $validated['full_name'],
+                'full_name' => $fullName,
                 'date_of_birth' => $dob,
                 'country' => $country,
                 'id_type' => $docType,
                 'document_type' => $docType,
-                'id_number' => $validated['id_number'],
+                'id_number' => $idNumber,
                 'portfolio_link' => $validated['portfolio_link'],
                 'id_file_path' => $docPath,
                 'document_file' => $docPath,
@@ -126,9 +139,13 @@ class SellerVerificationController extends Controller
         // Update user: contributor_status to pending and clear previous rejection cooldown
         $userUpdates = [
             'contributor_status' => 'pending',
+            'nid_or_passport_number' => $idNumber,
+            'portfolio_link' => $validated['portfolio_link'],
+            'kyc_document_path' => $docPath,
+            'contributor_bio' => $request->input('contributor_bio') ?? $request->input('bio'),
             'kyc_rejected_at' => null,
             'kyc_rejection_reason' => null,
-            'phone' => $validated['phone'],
+            'phone' => $phone,
         ];
         auth()->user()->update($userUpdates);
 

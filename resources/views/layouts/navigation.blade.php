@@ -77,20 +77,6 @@
 
                 
 
-                <!-- Dark / Light Theme Toggle Button -->
-                <button type="button" 
-                        class="nav-action-btn theme-toggle-btn" 
-                        aria-label="Toggle dark/light mode" 
-                        title="Toggle dark/light theme">
-                    <!-- Sun SVG Icon (shown in dark mode) -->
-                    <svg class="theme-icon-sun text-warning" style="display: none; width: 1.15rem; height: 1.15rem;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
-                    </svg>
-                    <!-- Moon SVG Icon (shown in light mode) -->
-                    <svg class="theme-icon-moon text-secondary" style="width: 1.15rem; height: 1.15rem;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
 
                 @guest
                     <!-- Guest Authentication Actions -->
@@ -119,7 +105,7 @@
                                 @if(auth()->user()->isAdmin())
                                     ⚡ Unlimited Credits
                                 @else
-                                    ⚡ {{ auth()->user()->aiCredit?->credits ?? 0 }} Credits
+                                    ⚡ {{ auth()->user()->ai_credits ?? 0 }} Credits
                                 @endif
                             </span>
                         </div>
@@ -263,16 +249,72 @@
                             <!-- User Header Card -->
                             <li class="px-3 py-2 border-bottom mb-1">
                                 <div class="fw-bold small text-dark text-truncate">{{ $user->name }}</div>
-                                <div class="text-muted extra-small d-flex align-items-center gap-1.5 mt-0.5">
+                                <div class="text-muted extra-small d-flex align-items-center gap-1.5 mt-0.5 flex-wrap">
                                     <span>&#64;{{ $user->username }}</span>
                                     <span>•</span>
-                                    @if($user->isContributor())
-                                        <span class="badge bg-success bg-opacity-10 text-success extra-small">Contributor ✓</span>
+                                    @if($user->contributor_status === 'approved')
+                                        <span class="badge bg-success bg-opacity-10 text-success extra-small d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-shield-fill-check text-success"></i> Verified Contributor
+                                        </span>
+                                    @elseif($user->contributor_status === 'pending')
+                                        <span class="badge bg-warning bg-opacity-15 text-warning-emphasis extra-small d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-clock-history text-warning"></i> Verification Pending
+                                        </span>
+                                    @elseif($user->contributor_status === 'rejected')
+                                        <span class="badge bg-danger bg-opacity-10 text-danger extra-small d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-x-circle-fill"></i> KYC Declined
+                                        </span>
                                     @else
                                         <span class="badge bg-primary bg-opacity-10 text-primary extra-small">Buyer</span>
                                     @endif
                                 </div>
                             </li>
+
+                            <!-- Contributor Mode Switcher / KYC Status Actions -->
+                            @if($user->contributor_status === 'approved')
+                                <li class="px-2 py-1">
+                                    <form action="{{ route('user.switch-mode') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <input type="hidden" name="mode" value="{{ $user->active_mode === 'seller' ? 'buyer' : 'seller' }}">
+                                        <button type="submit" class="dropdown-item py-2 rounded-3 d-flex align-items-center justify-content-between text-decoration-none border-0 {{ $user->active_mode === 'seller' ? 'bg-success bg-opacity-10 text-success fw-bold' : 'bg-primary bg-opacity-10 text-primary fw-bold' }}" title="Click to switch dashboard mode">
+                                            <span class="d-inline-flex align-items-center gap-2 small">
+                                                <i class="bi bi-arrow-left-right"></i>
+                                                @if($user->active_mode === 'seller')
+                                                    <span>Switch to Buyer Mode</span>
+                                                @else
+                                                    <span>Switch to Contributor Mode</span>
+                                                @endif
+                                            </span>
+                                            <span class="badge {{ $user->active_mode === 'seller' ? 'bg-success text-white' : 'bg-primary text-white' }} extra-small px-2 py-0.5">
+                                                {{ $user->active_mode === 'seller' ? 'Seller Active' : 'Buyer Active' }}
+                                            </span>
+                                        </button>
+                                    </form>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                            @elseif($user->contributor_status === 'pending')
+                                <li class="px-2 py-1">
+                                    <div class="p-2 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-25 d-flex align-items-center gap-2">
+                                        <i class="bi bi-hourglass-split text-warning fs-6 shrink-0"></i>
+                                        <div class="lh-1">
+                                            <div class="extra-small fw-bold text-dark">Contributor Application Pending Verification</div>
+                                            <span class="text-muted" style="font-size: 0.68rem;">Admin review in progress</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                            @else
+                                <li class="px-2 py-1">
+                                    <a class="dropdown-item py-2 bg-primary bg-opacity-10 text-primary fw-semibold rounded-3 d-flex align-items-center gap-2" href="{{ route('contributor.apply') }}">
+                                        <i class="bi bi-award-fill text-primary fs-6 shrink-0"></i>
+                                        <div class="lh-1">
+                                            <div class="extra-small fw-bold">Become a Contributor</div>
+                                            <span class="text-muted" style="font-size: 0.68rem;">Apply with KYC to sell designs</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                            @endif
 
                             <!-- Unverified Email Alert Banner (Collapsed inside dropdown) -->
                             @if(! $user->hasVerifiedEmail())
@@ -323,15 +365,28 @@
                             <!-- Dashboard Link -->
                             <li>
                                 <a class="dropdown-item small py-2 fw-semibold" href="{{ route('dashboard') }}">
-                                    <i class="bi bi-speedometer2 me-2 text-primary"></i> {{ __('app.dashboard') ?? 'Dashboard' }}
+                                    <i class="bi bi-speedometer2 me-2 text-primary"></i> {{ $user->isApprovedContributor() ? __('app.dashboard') : 'Dashboard (Buyer View)' }}
                                 </a>
                             </li>
 
-                            <!-- Contributor / Creator Action -->
-                            @if($user->isContributor())
+                            @if($user->isApprovedContributor())
+                                <!-- Creator Studio / Upload Asset (Approved Contributors Only) -->
                                 <li>
-                                    <a class="dropdown-item small py-2 fw-semibold" href="{{ route('dashboard', ['tab' => 'upload']) }}">
-                                        <i class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i> {{ __('dashboard.upload') }}
+                                    <a class="dropdown-item small py-2 fw-semibold text-amber-500" href="{{ route('dashboard', ['tab' => 'upload']) }}">
+                                        <i class="bi bi-cloud-arrow-up-fill me-2 text-amber-500"></i> Creator Studio (Upload Asset)
+                                    </a>
+                                </li>
+
+                                <!-- Seller Earnings & Payouts (Approved Contributors Only) -->
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.payouts.index') }}">
+                                        <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
+                                    </a>
+                                </li>
+                            @elseif($user->contributor_status === 'pending')
+                                <li>
+                                    <a class="dropdown-item small py-2 text-warning-emphasis fw-semibold" href="{{ route('dashboard', ['tab' => 'upload']) }}">
+                                        <i class="bi bi-hourglass-split me-2 text-warning"></i> Contributor KYC (Pending)
                                     </a>
                                 </li>
                             @else
@@ -342,10 +397,10 @@
                                 </li>
                             @endif
 
-                            <!-- Orders / Purchased Downloads -->
+                            <!-- Order Records / Invoices -->
                             <li>
                                 <a class="dropdown-item small py-2 fw-semibold" href="{{ route('orders.index') }}">
-                                    <i class="bi bi-receipt me-2 text-success"></i> {{ __('marketplace.orders') }}
+                                    <i class="bi bi-receipt me-2 text-success"></i> Order Records & Downloads
                                 </a>
                             </li>
 
@@ -356,24 +411,10 @@
                                 </a>
                             </li>
 
-                            <!-- Seller Earnings & Payouts (for all creators/contributors) -->
-                            <li>
-                                <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.payouts.index') }}">
-                                    <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
-                                </a>
-                            </li>
-
-                            <!-- Wishlist -->
+                            <!-- Saved Wishlist -->
                             <li>
                                 <a class="dropdown-item small py-2 fw-semibold" href="{{ route('wishlist.index') }}">
-                                    <i class="bi bi-heart me-2 text-danger"></i> {{ __('marketplace.wishlist') }}
-                                </a>
-                            </li>
-
-                            <!-- My Public Profile -->
-                            <li>
-                                <a class="dropdown-item small py-2 fw-semibold" href="{{ route('user.profile', $user->username ?? $user->id) }}">
-                                    <i class="bi bi-person-badge-fill me-2 text-primary"></i> My Public Profile
+                                    <i class="bi bi-heart me-2 text-danger"></i> Saved Wishlist
                                 </a>
                             </li>
 
@@ -445,7 +486,7 @@
                             @if(auth()->user()->isAdmin())
                                 ⚡ Unlimited Credits
                             @else
-                                ⚡ {{ auth()->user()->aiCredit?->credits ?? 0 }} Credits
+                                ⚡ {{ auth()->user()->ai_credits ?? 0 }} Credits
                             @endif
                         </span>
                     </div>
@@ -472,18 +513,6 @@
 
             
 
-            <!-- Mobile Dark / Light Theme Toggle -->
-            <div class="d-flex align-items-center justify-content-between p-2.5 bg-light rounded-3 mb-3">
-                <span class="small fw-semibold text-muted">Theme</span>
-                <button type="button" class="nav-action-btn theme-toggle-btn" aria-label="Toggle dark mode">
-                    <svg class="theme-icon-sun text-warning" style="display: none; width: 1.15rem; height: 1.15rem;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
-                    </svg>
-                    <svg class="theme-icon-moon text-secondary" style="width: 1.15rem; height: 1.15rem;" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                </button>
-            </div>
 
             @auth
                 <!-- Mobile Unverified Email Notice -->
@@ -523,13 +552,31 @@
                         </a>
                     @endif
 
-                    @if($user->isContributor())
+                    @if($user->isApprovedContributor())
+                        <form action="{{ route('user.switch-mode') }}" method="POST" class="mb-2">
+                            @csrf
+                            <input type="hidden" name="mode" value="{{ $user->active_mode === 'seller' ? 'buyer' : 'seller' }}">
+                            <button type="submit" class="btn btn-sm w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-between {{ $user->active_mode === 'seller' ? 'btn-outline-success' : 'btn-outline-primary' }}">
+                                <span><i class="bi bi-arrow-left-right me-1.5"></i> {{ $user->active_mode === 'seller' ? 'Switch to Buyer Mode' : 'Switch to Contributor Mode' }}</span>
+                                <span class="badge {{ $user->active_mode === 'seller' ? 'bg-success text-white' : 'bg-primary text-white' }} extra-small">
+                                    {{ $user->active_mode === 'seller' ? 'Seller' : 'Buyer' }}
+                                </span>
+                            </button>
+                        </form>
                         <a class="nav-link-custom text-primary" href="{{ route('dashboard', ['tab' => 'upload']) }}">
-                            <i class="bi bi-cloud-arrow-up-fill me-2"></i> {{ __('dashboard.upload') }}
+                            <i class="bi bi-cloud-arrow-up-fill me-2 text-amber-500"></i> Creator Studio (Upload)
                         </a>
+                        <a class="nav-link-custom text-success" href="{{ route('seller.payouts.index') }}">
+                            <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
+                        </a>
+                    @elseif($user->contributor_status === 'pending')
+                        <div class="p-2.5 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-3 mb-2 d-flex align-items-center gap-2">
+                            <i class="bi bi-hourglass-split text-warning"></i>
+                            <span class="extra-small fw-bold text-dark">Contributor Application Pending Verification</span>
+                        </div>
                     @else
-                        <a class="nav-link-custom text-primary" href="{{ route('contributor.apply') }}">
-                            <i class="bi bi-award-fill me-2"></i> Become a Contributor
+                        <a class="nav-link-custom text-primary fw-bold" href="{{ route('contributor.apply') }}">
+                            <i class="bi bi-award-fill me-2 text-warning"></i> Become a Contributor
                         </a>
                     @endif
 

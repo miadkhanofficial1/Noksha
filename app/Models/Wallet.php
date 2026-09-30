@@ -26,6 +26,7 @@ class Wallet extends Model
     protected $fillable = [
         'user_id',
         'balance',
+        'earnings_balance',
     ];
 
     /**
@@ -37,6 +38,7 @@ class Wallet extends Model
     {
         return [
             'balance' => 'float',
+            'earnings_balance' => 'float',
         ];
     }
 

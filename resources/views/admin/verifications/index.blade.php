@@ -231,35 +231,72 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light text-muted extra-small text-uppercase tracking-wider">
                             <tr>
-                                <th class="ps-4">Seller Account</th>
-                                <th>Document Type</th>
+                                <th class="ps-4">Applicant</th>
+                                <th>NID / Passport</th>
+                                <th>Portfolio Link</th>
+                                <th>KYC Document</th>
                                 <th>Submitted Date</th>
                                 <th>Status</th>
-                                <th>Country</th>
                                 <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($verifications as $item)
                                 <tr>
-                                    <!-- Seller Account -->
+                                    <!-- Applicant -->
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center gap-3">
                                             <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; font-size: 1.1rem;">
-                                                {{ strtoupper(substr($item->full_name ?? ($item->user ? $item->user->name : 'S'), 0, 1)) }}
+                                                {{ strtoupper(substr($item->full_name ?? ($item->user ? $item->user->name : 'C'), 0, 1)) }}
                                             </div>
                                             <div>
                                                 <div class="fw-bold text-dark fs-6">{{ $item->full_name }}</div>
                                                 <div class="extra-small text-muted">{{ $item->user ? $item->user->email : 'N/A' }}</div>
+                                                @if($item->user && $item->user->phone)
+                                                    <div class="extra-small text-secondary font-monospace">{{ $item->user->phone }}</div>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>
 
-                                    <!-- Document Type -->
+                                    <!-- NID / Passport -->
                                     <td>
-                                        <span class="badge bg-light text-primary border rounded-pill px-3 py-1.5 fw-semibold text-uppercase">
-                                            <i class="bi bi-file-earmark-person me-1"></i> {{ $item->document_type ?? 'NID' }}
+                                        <div class="font-monospace fw-bold small text-dark">
+                                            {{ $item->id_number ?? $item->user?->nid_or_passport_number ?? 'N/A' }}
+                                        </div>
+                                        <span class="badge bg-light text-primary border rounded-pill px-2 py-0.5 extra-small text-uppercase">
+                                            {{ $item->document_type ?? 'NID' }}
                                         </span>
+                                    </td>
+
+                                    <!-- Portfolio Link -->
+                                    <td>
+                                        @php
+                                            $portfolio = $item->portfolio_link ?? $item->user?->portfolio_link;
+                                        @endphp
+                                        @if($portfolio)
+                                            <a href="{{ $portfolio }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 extra-small fw-bold d-inline-flex align-items-center gap-1">
+                                                <i class="bi bi-box-arrow-up-right"></i>
+                                                <span>{{ Str::limit(str_replace(['https://', 'http://', 'www.'], '', $portfolio), 20) }}</span>
+                                            </a>
+                                        @else
+                                            <span class="text-muted extra-small">None provided</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- KYC Document -->
+                                    <td>
+                                        @php
+                                            $doc = $item->document_file ?? $item->user?->kyc_document_path;
+                                        @endphp
+                                        @if($doc)
+                                            <a href="{{ asset('storage/' . $doc) }}" target="_blank" download class="btn btn-sm btn-light border rounded-pill px-2.5 py-1 extra-small fw-bold text-dark d-inline-flex align-items-center gap-1">
+                                                <i class="bi bi-file-earmark-arrow-down-fill text-success"></i>
+                                                <span>Download ID</span>
+                                            </a>
+                                        @else
+                                            <span class="badge bg-light text-muted border rounded-pill px-2 py-1 extra-small">No file</span>
+                                        @endif
                                     </td>
 
                                     <!-- Submitted Date -->
@@ -282,11 +319,6 @@
                                                 <i class="bi bi-x-circle-fill me-1"></i> Rejected
                                             </span>
                                         @endif
-                                    </td>
-
-                                    <!-- Country -->
-                                    <td class="fw-semibold text-dark small">
-                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $item->country }}
                                     </td>
 
                                     <!-- Actions -->

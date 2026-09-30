@@ -103,6 +103,28 @@
     <div class="container py-2" style="max-width: 900px;">
         
 
+        <!-- Session Alerts -->
+        @if (session('warning'))
+            <div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 mb-4 border-start border-warning border-4 text-warning-emphasis d-flex align-items-center gap-2" style="background-color: rgba(245, 158, 11, 0.1);">
+                <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
+                <div class="small fw-semibold">{{ session('warning') }}</div>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger border-0 shadow-sm rounded-4 p-3 mb-4 border-start border-danger border-4 text-danger d-flex align-items-center gap-2" style="background-color: rgba(239, 68, 68, 0.1);">
+                <i class="bi bi-x-circle-fill fs-5 text-danger"></i>
+                <div class="small fw-semibold">{{ session('error') }}</div>
+            </div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success border-0 shadow-sm rounded-4 p-3 mb-4 border-start border-success border-4 text-success d-flex align-items-center gap-2" style="background-color: rgba(16, 185, 129, 0.1);">
+                <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                <div class="small fw-semibold">{{ session('success') }}</div>
+            </div>
+        @endif
+
         <!-- Validation Error Summary -->
         @if (isset($errors) && $errors->any())
             <div class="alert alert-danger border-0 shadow-sm rounded-4 p-4 mb-4 bg-white text-danger border-start border-danger border-4">

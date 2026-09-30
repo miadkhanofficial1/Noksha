@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'contributor' => \App\Http\Middleware\EnsureApprovedContributor::class,
+            'EnsureApprovedContributor' => \App\Http\Middleware\EnsureApprovedContributor::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

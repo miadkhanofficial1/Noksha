@@ -114,11 +114,13 @@ class DashboardController extends Controller
 
         // Active mode (seller or buyer)
         $tabParam = $request->query('tab');
-        $defaultMode = ($isUserAdmin || $isUserContributor) ? 'seller' : 'buyer';
-        if (in_array($tabParam, ['upload', 'designs', 'wallet'])) {
+        $isApproved = ($isUserAdmin || $isUserContributor);
+        $defaultMode = $isApproved ? ($user->active_mode ?? 'seller') : 'buyer';
+        if (in_array($tabParam, ['upload', 'designs', 'wallet']) && $isApproved) {
             $initialMode = 'seller';
         } else {
-            $initialMode = $request->query('mode', $defaultMode);
+            $requestedMode = $request->query('mode', $defaultMode);
+            $initialMode = ($requestedMode === 'seller' && $isApproved) ? 'seller' : 'buyer';
         }
 
         return view('dashboard', compact(
@@ -241,5 +243,28 @@ class DashboardController extends Controller
 
         return redirect()->to(route('dashboard') . '#designs')
             ->with('success', 'Design deleted successfully from your portfolio.');
+    }
+
+    /**
+     * Switch user active mode between Buyer and Seller/Contributor.
+     */
+    public function switchMode(Request $request): RedirectResponse
+    {
+        $user = auth()->user();
+
+        if (!$user->isApprovedContributor()) {
+            return redirect()->route('contributor.apply')
+                ->with('error', 'Please apply and get approved as a verified Contributor before accessing Contributor Mode.');
+        }
+
+        $targetMode = $request->input('mode');
+        if (!in_array($targetMode, ['buyer', 'seller'])) {
+            $targetMode = ($user->active_mode === 'seller') ? 'buyer' : 'seller';
+        }
+
+        $user->update(['active_mode' => $targetMode]);
+
+        $modeLabel = ($targetMode === 'seller') ? 'Contributor Mode' : 'Buyer Mode';
+        return redirect()->back()->with('success', "Switched to {$modeLabel} successfully.");
     }
 }

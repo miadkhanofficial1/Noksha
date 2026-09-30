@@ -35,6 +35,11 @@ class ResourceController extends Controller
             abort(403, 'Your account has been suspended. Please contact support for assistance.');
         }
 
+        if (!$user || !$user->isApprovedContributor()) {
+            return redirect()->route('contributor.apply')
+                ->with('error', 'Contributor KYC verification required. Please apply to unlock Creator Studio and upload privileges.');
+        }
+
         // Strict Server-Side Validation
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],

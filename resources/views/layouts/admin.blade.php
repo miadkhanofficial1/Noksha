@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,19 +54,10 @@
         }
     </script>
 
-    <!-- Anti-flicker Dark/Light Theme Script -->
+    <!-- Permanent Dark Mode -->
     <script>
-        (function() {
-            try {
-                const savedTheme = localStorage.getItem('admin_theme') || localStorage.getItem('theme');
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            } catch (e) {}
-        })();
+        try { localStorage.removeItem('admin_theme'); localStorage.removeItem('theme'); } catch(e) {}
+        document.documentElement.classList.add('dark');
     </script>
 
     <style>
@@ -93,7 +84,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-[#080B11] text-gray-900 dark:text-gray-100 min-h-screen font-sans antialiased flex flex-col transition-colors duration-200">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col">
 
     @php
         $pendingResourcesCount = \App\Models\Resource::where('status', 'pending')->count();
@@ -314,14 +305,6 @@
                         <span class="font-mono text-[11px] text-gray-500 dark:text-gray-400">PHP {{ PHP_VERSION }}</span>
                     </div>
 
-                    <!-- Theme Switcher Toggle -->
-                    <button id="admin-theme-toggle"
-                            type="button"
-                            title="Toggle Light/Dark Theme"
-                            class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <i id="theme-icon-sun" class="bi bi-sun-fill text-amber-500 hidden text-base"></i>
-                        <i id="theme-icon-moon" class="bi bi-moon-stars-fill text-indigo-400 hidden text-base"></i>
-                    </button>
 
                     <!-- Admin Profile Quick Dropdown -->
                     <div class="relative" id="profile-dropdown-container">
@@ -421,37 +404,6 @@
     <!-- UI Interaction Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Theme toggle
-            const html = document.documentElement;
-            const themeToggleBtn = document.getElementById('admin-theme-toggle');
-            const sunIcon = document.getElementById('theme-icon-sun');
-            const moonIcon = document.getElementById('theme-icon-moon');
-
-            function updateThemeIcons() {
-                if (html.classList.contains('dark')) {
-                    sunIcon.classList.remove('hidden');
-                    moonIcon.classList.add('hidden');
-                } else {
-                    sunIcon.classList.add('hidden');
-                    moonIcon.classList.remove('hidden');
-                }
-            }
-            updateThemeIcons();
-
-            if (themeToggleBtn) {
-                themeToggleBtn.addEventListener('click', function() {
-                    if (html.classList.contains('dark')) {
-                        html.classList.remove('dark');
-                        localStorage.setItem('admin_theme', 'light');
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        html.classList.add('dark');
-                        localStorage.setItem('admin_theme', 'dark');
-                        localStorage.setItem('theme', 'dark');
-                    }
-                    updateThemeIcons();
-                });
-            }
 
             // Mobile sidebar toggle
             const mobileBtn = document.getElementById('mobile-toggle-btn');

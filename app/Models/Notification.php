@@ -21,10 +21,63 @@ class Notification extends Model
         'message',
         'type',
         'action_url',
+        'data',
         'is_read',
         'is_seen',
         'read_at',
     ];
+
+    /**
+     * The "booted" method of the model.
+     * Automatically maps Laravel notification payload data into display fields.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Notification $notification) {
+            $payload = null;
+            if (isset($notification->attributes['data'])) {
+                if (is_string($notification->attributes['data'])) {
+                    $payload = json_decode($notification->attributes['data'], true);
+                } elseif (is_array($notification->attributes['data'])) {
+                    $payload = $notification->attributes['data'];
+                }
+            }
+
+            if (is_array($payload)) {
+                if (empty($notification->title) && !empty($payload['title'])) {
+                    $notification->title = $payload['title'];
+                }
+                if (empty($notification->message)) {
+                    $prize = $payload['prize'] ?? '';
+                    $category = $payload['category'] ?? '';
+                    $notification->message = $payload['message']
+                        ?? ($prize ? "Bounty: {$prize}" . ($category ? " • Category: {$category}" : '') : 'New design contest launched!');
+                }
+                if (empty($notification->type) || str_contains($notification->type, '\\')) {
+                    $notification->type = $payload['type'] ?? 'contest';
+                }
+                if (empty($notification->action_url) && !empty($payload['url'])) {
+                    $notification->action_url = $payload['url'];
+                }
+            }
+
+            // Defaults for display consistency
+            if (empty($notification->title)) {
+                $notification->title = 'New Notification';
+            }
+            if (!isset($notification->message)) {
+                $notification->message = '';
+            }
+            if (empty($notification->type) || str_contains($notification->type, '\\')) {
+                $notification->type = 'system';
+            }
+
+            // Prevent string UUID from conflicting with MySQL auto-increment primary key
+            if (isset($notification->attributes['id']) && !is_numeric($notification->attributes['id'])) {
+                unset($notification->attributes['id']);
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -37,6 +90,7 @@ class Notification extends Model
             'is_read' => 'boolean',
             'is_seen' => 'boolean',
             'read_at' => 'datetime',
+            'data' => 'array',
         ];
     }
 

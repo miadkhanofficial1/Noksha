@@ -32,7 +32,7 @@ return new class extends Migration
             });
         }
 
-        // 3. Initialize wallets and ai_credits for existing users (grant 5 free starter credits)
+        // 3. Initialize wallets and ai_credits for existing users (initial 0 credits)
         $existingUsers = DB::table('users')->get();
         foreach ($existingUsers as $u) {
             if (!DB::table('wallets')->where('user_id', $u->id)->exists()) {
@@ -47,7 +47,7 @@ return new class extends Migration
             if (!DB::table('ai_credits')->where('user_id', $u->id)->exists()) {
                 DB::table('ai_credits')->insert([
                     'user_id' => $u->id,
-                    'credits' => 5,
+                    'credits' => 0,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

@@ -77,6 +77,9 @@ class AdminVerificationController extends Controller
             $verification->user->update([
                 'is_verified' => true,
                 'contributor_status' => 'approved',
+                'role' => 'contributor',
+                'active_mode' => 'seller',
+                'is_contributor' => true,
             ]);
 
             \App\Models\Notification::send(
@@ -108,12 +111,17 @@ class AdminVerificationController extends Controller
             'reviewed_at' => now(),
             'admin_note' => $note,
             'admin_notes' => $note,
+            'rejection_reason' => $note,
+            'rejected_at' => now(),
         ]);
 
         if ($verification->user) {
             $verification->user->update([
                 'is_verified' => false,
                 'contributor_status' => 'rejected',
+                'active_mode' => 'buyer',
+                'kyc_rejected_at' => now(),
+                'kyc_rejection_reason' => $note,
             ]);
 
             \App\Models\Notification::send(

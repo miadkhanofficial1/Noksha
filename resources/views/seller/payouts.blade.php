@@ -235,15 +235,35 @@
         </div>
 
         <!-- ========================================================= -->
+        <!-- BALANCE PROTECTION INFO BANNER                            -->
+        <!-- ========================================================= -->
+        <div class="mb-4 p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i class="bi bi-shield-lock-fill fs-5"></i>
+                </div>
+                <div>
+                    <div class="small fw-bold text-white">Strict Balance Protection Active</div>
+                    <div class="extra-small text-slate-400">
+                        Withdrawals are strictly paid out from your <strong>Seller Royalties Balance (৳{{ number_format($availableBalance, 2) }})</strong>. Deposited buyer shopping funds (৳{{ number_format($shoppingBalance, 2) }}) cannot be cashed out.
+                    </div>
+                </div>
+            </div>
+            <a href="{{ route('wallet.index') }}" class="btn btn-sm btn-outline-slate text-nowrap extra-small">
+                <span>View Central Wallet</span> &rarr;
+            </a>
+        </div>
+
+        <!-- ========================================================= -->
         <!-- TOP 4 FINANCIAL METRIC CARDS                              -->
         <!-- ========================================================= -->
         <div class="row g-3 mb-4">
             
-            <!-- Card 1: Available Balance -->
+            <!-- Card 1: Available Royalty Balance -->
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="stat-metric-card text-emerald-400 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="extra-small font-monospace text-slate-400 text-uppercase fw-bold">Available to Cashout</span>
+                        <span class="extra-small font-monospace text-slate-400 text-uppercase fw-bold">Royalties to Cashout</span>
                         <div class="p-1.5 rounded-3 bg-emerald-500 bg-opacity-15 text-emerald-400 border border-emerald-500 border-opacity-30">
                             <i class="bi bi-wallet-fill"></i>
                         </div>
@@ -253,7 +273,7 @@
                     </div>
                     <div class="extra-small text-slate-400 d-flex align-items-center gap-1">
                         <i class="bi bi-shield-check text-emerald-400"></i>
-                        <span>Immediate disbursement ready</span>
+                        <span>Seller earnings balance</span>
                     </div>
                 </div>
             </div>

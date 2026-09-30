@@ -60,6 +60,14 @@ class Contest extends Model
     }
 
     /**
+     * Get prize bounty alias for prize_amount.
+     */
+    public function getPrizeBountyAttribute(): float
+    {
+        return (float) ($this->prize_amount ?? 0);
+    }
+
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void

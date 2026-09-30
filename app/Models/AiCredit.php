@@ -40,6 +40,18 @@ class AiCredit extends Model
     }
 
     /**
+     * Boot model to synchronize user ai_credits column.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (AiCredit $aiCredit) {
+            if ($aiCredit->user_id) {
+                User::where('id', $aiCredit->user_id)->update(['ai_credits' => $aiCredit->credits]);
+            }
+        });
+    }
+
+    /**
      * Associated user account.
      */
     public function user(): BelongsTo

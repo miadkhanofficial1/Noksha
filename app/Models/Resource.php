@@ -54,6 +54,25 @@ class Resource extends Model
     }
 
     /**
+     * Get thumbnail URL accessor.
+     */
+    public function getThumbnailUrlAttribute(): string
+    {
+        if ($this->preview_image) {
+            return asset('storage/' . $this->preview_image);
+        }
+        return asset('images/logo.png');
+    }
+
+    /**
+     * Get downloads count accessor.
+     */
+    public function getDownloadsCountAttribute(): int
+    {
+        return (int) $this->downloads;
+    }
+
+    /**
      * Resource owner (creator/designer).
      */
     public function owner(): BelongsTo
@@ -107,5 +126,22 @@ class Resource extends Model
     public function wishlists(): HasMany
     {
         return $this->hasMany(Wishlist::class, 'resource_id');
+    }
+
+    /**
+     * Get average review rating.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        $avg = $this->reviews()->avg('rating');
+        return $avg ? round((float) $avg, 1) : 5.0;
+    }
+
+    /**
+     * Get count of reviews.
+     */
+    public function getReviewsCountAttribute(): int
+    {
+        return (int) $this->reviews()->count();
     }
 }

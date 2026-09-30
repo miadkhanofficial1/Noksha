@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,23 +19,36 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Dark / Light Theme Anti-Flicker Script (Executes before CSS render) -->
+    <!-- Permanent Dark Mode -->
     <script>
-        (function() {
-            try {
-                const savedTheme = localStorage.getItem('theme');
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
+        try { localStorage.removeItem('theme'); } catch(e) {}
+        document.documentElement.classList.add('dark');
+    </script>
+
+    <!-- Tailwind CSS CDN (Guarantees modern utility classes render reliably) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        noksha: {
+                            primary: '#4F46E5',
+                            secondary: '#7C3AED',
+                            accent: '#06B6D4',
+                            dark: '#0F172A',
+                            surface: '#1E293B',
+                            light: '#F8FAFC',
+                        }
+                    }
                 }
-            } catch (e) {}
-        })();
+            }
+        }
     </script>
 
     <!-- Vite Assets -->
-    @vite(['resources/scss/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
 
     <style>
         .lang-switcher-pill {
@@ -85,7 +98,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-[#0B0F19] dark:text-gray-100 min-h-screen d-flex flex-column transition-colors duration-300">
+<body class="bg-slate-950 text-slate-100 min-h-screen d-flex flex-column">
 
     <!-- INITIAL PRELOADER / SPLASH SCREEN -->
     @include('partials.preloader')
@@ -294,34 +307,9 @@
         </div>
     </div>
 
-    <!-- GLOBAL UX & THEME SCRIPTS -->
+    <!-- GLOBAL UX SCRIPTS -->
     <script>
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            try {
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            } catch (e) {}
-            updateThemeIcons();
-        }
-
-        function updateThemeIcons() {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.querySelectorAll('.theme-icon-sun').forEach(el => {
-                el.style.display = isDark ? 'block' : 'none';
-            });
-            document.querySelectorAll('.theme-icon-moon').forEach(el => {
-                el.style.display = isDark ? 'none' : 'block';
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Theme Icons State
-            updateThemeIcons();
-
-            // Bind click to all theme toggle buttons
-            document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-                btn.addEventListener('click', toggleTheme);
-            });
 
             // Auto-hide toasts after 6 seconds
             document.querySelectorAll('.toast').forEach(t => {

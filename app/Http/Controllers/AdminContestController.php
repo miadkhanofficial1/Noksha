@@ -96,6 +96,12 @@ class AdminContestController extends Controller
             );
         }
 
+        // Broadcast contest launch to all other users
+        $recipients = User::where('id', '!=', $contest->user_id)->get();
+        if ($recipients->isNotEmpty()) {
+            \Illuminate\Support\Facades\Notification::send($recipients, new \App\Notifications\NewContestLaunchedNotification($contest));
+        }
+
         return redirect()->back()
             ->with('success', "🏆 Contest \"{$contest->title}\" approved and published as ACTIVE with Guaranteed Prize Pool!");
     }
@@ -147,7 +153,7 @@ class AdminContestController extends Controller
         $deadline = now()->addDays((int) $validated['deadline_days']);
         $categoryId = Category::where('name', 'like', "%{$validated['category']}%")->value('id');
 
-        Contest::create([
+        $contest = Contest::create([
             'user_id' => auth()->id(),
             'title' => $validated['title'],
             'slug' => $slug,
@@ -164,6 +170,12 @@ class AdminContestController extends Controller
             'end_date' => $deadline,
             'deadline' => $deadline,
         ]);
+
+        // Broadcast contest launch to all other users
+        $recipients = User::where('id', '!=', auth()->id())->get();
+        if ($recipients->isNotEmpty()) {
+            \Illuminate\Support\Facades\Notification::send($recipients, new \App\Notifications\NewContestLaunchedNotification($contest));
+        }
 
         return redirect()->back()
             ->with('success', '🏆 Official Noksha Contest has been created and published instantly!');

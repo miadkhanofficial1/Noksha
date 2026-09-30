@@ -43,9 +43,12 @@ class RegisterController extends Controller
             'email' => strtolower($request->email),
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role' => 'user', // Default role = user (Buyer & Contributor)
+            'role' => 'buyer', // Default role = buyer
+            'contributor_status' => 'none',
+            'active_mode' => 'buyer',
             'trust_score' => 100.00,
             'is_verified' => false,
+            'ai_credits' => 0,
         ]);
 
         event(new Registered($user));

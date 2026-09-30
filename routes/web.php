@@ -41,6 +41,7 @@ use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
@@ -76,9 +77,13 @@ Route::get('/contests/{contest:slug}', [ContestController::class, 'show'])->wher
 
 // Public User / Designer Portfolio & Profile Route (/u/{username})
 Route::get('/u/{username}', [PublicProfileController::class, 'show'])->name('user.profile');
+Route::get('/creator/{username?}', [PublicProfileController::class, 'show'])->name('creator.profile');
+Route::get('/author/{username?}', [PublicProfileController::class, 'show'])->name('author.show');
 
-// Marketplace Templates / Catalog Route (Alias for resources.index)
-Route::get('/templates', [SearchController::class, 'index'])->name('resources.index');
+// Marketplace Templates / Catalog Routes
+Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
+Route::get('/resources', [TemplateController::class, 'index'])->name('resources.index');
+Route::get('/templates/{id}', [TemplateController::class, 'show'])->name('templates.show');
 
 // Public Support & Contact Us Routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
@@ -134,19 +139,29 @@ Route::middleware('auth')->group(function () {
     Route::post('/otp/send', [OtpController::class, 'send'])->name('otp.send');
     Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
 
-    // Seller Asset Upload Routes (Unified into Dashboard Top-Tabs)
-    Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
-    Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
+    // Mode Switcher (Buyer <-> Contributor/Seller)
+    Route::post('/user/mode/switch', [DashboardController::class, 'switchMode'])->name('user.switch-mode');
+
+    // Seller & Creator Management Routes (Strictly Restricted to Approved Contributors)
+    Route::middleware('EnsureApprovedContributor')->group(function () {
+        Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
+        Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
+        Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
+        Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
+        Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
+        Route::get('/seller/payouts', [PayoutController::class, 'index'])->name('seller.payouts.index');
+        Route::post('/seller/payouts/withdraw', [PayoutController::class, 'requestWithdrawal'])->name('seller.payouts.withdraw');
+    });
     Route::redirect('/contributor/upload', '/dashboard?tab=upload');
     Route::redirect('/seller/upload', '/dashboard?tab=upload');
     Route::redirect('/upload', '/dashboard?tab=upload');
+    Route::redirect('/creator/upload', '/dashboard?tab=upload');
+    Route::redirect('/creator/studio', '/dashboard?tab=upload');
+    Route::redirect('/creator/dashboard', '/seller/dashboard');
 
     // Unified User & Contributor Dashboard Route (/dashboard)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/buyer/dashboard', [DashboardController::class, 'index'])->name('buyer.dashboard');
-    Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
-    Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
-    Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
+    Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
 
     // User Profile Settings Hub Routes
     Route::get('/settings/profile', [ProfileSettingsController::class, 'edit'])->name('settings.profile');
@@ -159,6 +174,7 @@ Route::middleware('auth')->group(function () {
 
     // Contributor Identity Verification Routes (Apply to Become Contributor)
     Route::get('/contributor/apply', [SellerVerificationController::class, 'create'])->name('contributor.apply');
+    Route::post('/contributor/apply', [SellerVerificationController::class, 'store'])->name('contributor.store');
     Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
     Route::post('/seller/verification', [SellerVerificationController::class, 'store'])->name('seller.verification.store');
 
@@ -220,10 +236,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
     Route::post('/wallet/buy-credits', [WalletController::class, 'buyCredits'])->name('wallet.buy-credits');
     Route::post('/wallet/deposit', [WalletController::class, 'deposit'])->name('wallet.deposit');
-
-    // Seller Earnings & Withdrawal Management Routes
-    Route::get('/seller/payouts', [PayoutController::class, 'index'])->name('seller.payouts.index');
-    Route::post('/seller/payouts/withdraw', [PayoutController::class, 'requestWithdrawal'])->name('seller.payouts.withdraw');
 
     // Direct Template Purchase with Wallet Balance
     Route::post('/resource/{resource}/buy', [CheckoutController::class, 'buyWithWallet'])->name('resource.buy-wallet');

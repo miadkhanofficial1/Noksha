@@ -14,13 +14,17 @@ class PublicProfileController extends Controller
      * @param string $username
      * @return \Illuminate\View\View
      */
-    public function show(string $username)
+    public function show(?string $username = null)
     {
-        // Find user by username handle (or fallback to ID if numeric)
-        $user = User::where('username', $username)->first();
+        if (!$username) {
+            $user = Auth::user() ?? User::where('role', 'seller')->orWhere('is_contributor', true)->first() ?? User::first();
+        } else {
+            // Find user by username handle (or fallback to ID if numeric)
+            $user = User::where('username', $username)->first();
 
-        if (!$user && is_numeric($username)) {
-            $user = User::find($username);
+            if (!$user && is_numeric($username)) {
+                $user = User::find($username);
+            }
         }
 
         if (!$user) {

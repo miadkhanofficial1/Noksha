@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->decimal('trust_score', 5, 2)->default(100.00);
             $table->boolean('is_verified')->default(false);
+            $table->integer('ai_credits')->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

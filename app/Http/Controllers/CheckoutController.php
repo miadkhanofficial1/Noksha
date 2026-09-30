@@ -124,10 +124,10 @@ class CheckoutController extends Controller
                     $commission = round($itemPrice * 0.15, 2);
                     $sellerEarnings = round($itemPrice - $commission, 2);
 
-                    $sellerWallet = $seller->wallet;
-                    $sellerWallet->increment('balance', $sellerEarnings);
-                    if (Schema::hasColumn('users', 'balance')) {
-                        $seller->update(['balance' => $sellerWallet->balance]);
+                    $sellerWallet = $seller->wallet ?? \App\Models\Wallet::firstOrCreate(['user_id' => $seller->id], ['balance' => 0.00, 'earnings_balance' => 0.00]);
+                    $sellerWallet->increment('earnings_balance', $sellerEarnings);
+                    if (Schema::hasColumn('users', 'earnings_balance')) {
+                        $seller->increment('earnings_balance', $sellerEarnings);
                     }
 
                     WalletTransaction::create([
@@ -136,8 +136,8 @@ class CheckoutController extends Controller
                         'type' => 'template_sale',
                         'amount' => $sellerEarnings,
                         'credits_transacted' => 0,
-                        'balance_after' => $sellerWallet->balance,
-                        'description' => "Template sale: {$item->resource->title} (৳{$sellerEarnings} net after 15% platform commission)",
+                        'balance_after' => $sellerWallet->earnings_balance,
+                        'description' => "Template sale: {$item->resource->title} (৳{$sellerEarnings} net royalties after 15% platform commission)",
                         'status' => 'completed',
                     ]);
 
@@ -271,10 +271,10 @@ class CheckoutController extends Controller
         $sellerEarnings = round($price - $commission, 2);
 
         if ($seller && $seller->id !== $buyer->id) {
-            $sellerWallet = $seller->wallet;
-            $sellerWallet->increment('balance', $sellerEarnings);
-            if (Schema::hasColumn('users', 'balance')) {
-                $seller->update(['balance' => $sellerWallet->balance]);
+            $sellerWallet = $seller->wallet ?? \App\Models\Wallet::firstOrCreate(['user_id' => $seller->id], ['balance' => 0.00, 'earnings_balance' => 0.00]);
+            $sellerWallet->increment('earnings_balance', $sellerEarnings);
+            if (Schema::hasColumn('users', 'earnings_balance')) {
+                $seller->increment('earnings_balance', $sellerEarnings);
             }
 
             // Log seller's transaction
@@ -284,8 +284,8 @@ class CheckoutController extends Controller
                 'type' => 'template_sale',
                 'amount' => $sellerEarnings,
                 'credits_transacted' => 0,
-                'balance_after' => $sellerWallet->balance,
-                'description' => "Template sale: {$resource->title} (৳{$sellerEarnings} net after 15% platform commission)",
+                'balance_after' => $sellerWallet->earnings_balance,
+                'description' => "Template sale: {$resource->title} (৳{$sellerEarnings} net royalties after 15% platform commission)",
                 'status' => 'completed',
             ]);
 

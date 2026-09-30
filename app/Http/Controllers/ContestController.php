@@ -161,6 +161,12 @@ class ContestController extends Controller
             'deadline' => $deadline,
         ]);
 
+        // Dispatch new contest launched notification to all other users
+        $recipients = User::where('id', '!=', auth()->id())->get();
+        if ($recipients->isNotEmpty()) {
+            \Illuminate\Support\Facades\Notification::send($recipients, new \App\Notifications\NewContestLaunchedNotification($contest));
+        }
+
         if ($isAdmin) {
             return redirect()->route('contests.show', $contest->slug)
                 ->with('success', '🏆 Official Noksha Contest has been created and published instantly!');

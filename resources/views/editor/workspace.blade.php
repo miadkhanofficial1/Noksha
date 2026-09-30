@@ -440,7 +440,7 @@
                        class="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill bg-slate-900 border border-slate-800 text-slate-300 small font-monospace text-decoration-none hover-border-purple"
                        title="Your available AI generation credits • Click to buy more">
                         <span class="text-slate-400 extra-small">Balance:</span>
-                        <strong class="text-white" id="userCreditDisplay">{{ $userCredits ?? auth()->user()->aiCredit?->credits ?? 0 }}</strong>
+                        <strong class="text-white" id="userCreditDisplay">{{ $userCredits ?? auth()->user()->ai_credits ?? 0 }}</strong>
                         <span class="text-warning extra-small">⚡</span>
                         <i class="bi bi-plus-circle-fill text-purple-400 ms-1 extra-small" title="Recharge credits"></i>
                     </a>

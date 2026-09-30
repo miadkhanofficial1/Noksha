@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Fintech Mobile App UI Kit - Noksha')
+@section('title', (isset($resource) ? $resource->title : 'Digital Asset') . ' - Noksha')
 
 @section('content')
 
@@ -167,7 +167,7 @@
             <ol class="breadcrumb small fw-semibold text-muted mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-primary"><i class="bi bi-house-door me-1"></i>Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('home') }}#templates" class="text-decoration-none text-primary">{{ isset($resource) && $resource->category ? $resource->category->name : 'Templates' }}</a></li>
-                <li class="breadcrumb-item active text-dark" aria-current="page">{{ isset($resource) ? $resource->title : 'Fintech Mobile App UI Kit' }}</li>
+                <li class="breadcrumb-item active text-dark" aria-current="page">{{ isset($resource) ? $resource->title : 'Digital Asset' }}</li>
             </ol>
         </nav>
 
@@ -193,10 +193,10 @@
                     @endif
                 </div>
                 <h1 class="display-5 fw-extrabold text-dark mb-2">
-                    {{ isset($resource) ? $resource->title : 'Fintech Mobile App UI Kit' }}
+                    {{ isset($resource) ? $resource->title : 'Digital Asset' }}
                 </h1>
                 <p class="fs-6 text-secondary mb-0">
-                    {{ isset($resource) ? Str::limit($resource->description, 180) : 'Complete financial management mobile UI design system with vector components.' }}
+                    {{ isset($resource) ? Str::limit($resource->description, 180) : 'High quality design asset for modern creative projects.' }}
                 </p>
             </div>
             

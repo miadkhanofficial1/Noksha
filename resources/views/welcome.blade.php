@@ -683,12 +683,21 @@
                     <a href="#templates" class="btn btn-cta-primary btn-lg rounded-pill px-4 py-3 fw-bold shadow-sm">
                         <i class="bi bi-grid-3x3-gap-fill me-2"></i> {{ __('marketplace.explore_templates') }}
                     </a>
-                    <a href="{{ route('resource.demo') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
-                        <i class="bi bi-eye-fill me-2"></i> View Demo Resource
-                    </a>
-                    <a href="{{ route('register') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
-                        <i class="bi bi-bag-plus-fill me-2"></i> {{ __('marketplace.become_seller') }}
-                    </a>
+                    @guest
+                        <a href="{{ route('register') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
+                            <i class="bi bi-patch-check-fill me-2"></i> {{ __('dashboard.become_contributor_btn') ?? 'Become a Contributor' }}
+                        </a>
+                    @else
+                        @if(auth()->user()->isContributor())
+                            <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i> Upload Asset
+                            </a>
+                        @else
+                            <a href="{{ route('contributor.apply') }}" class="btn btn-cta-secondary btn-lg rounded-pill px-4 py-3 fw-bold">
+                                <i class="bi bi-patch-check-fill me-2"></i> {{ __('dashboard.become_contributor_btn') ?? 'Become a Contributor' }}
+                            </a>
+                        @endif
+                    @endguest
                 </div>
 
 
@@ -696,15 +705,15 @@
                 <div class="pt-4 border-top border-white border-opacity-20">
                     <div class="row g-3 text-center text-lg-start">
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="10" data-suffix="K+">0K+</div>
+                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="{{ $templatesStat['target'] ?? $templatesCount }}" data-suffix="{{ $templatesStat['suffix'] ?? '' }}">{{ $formattedTemplatesCount ?? $templatesCount }}</div>
                             <div class="small text-white text-opacity-80 fw-semibold">Templates</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="2" data-suffix="K+">0K+</div>
+                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="{{ $creatorsStat['target'] ?? $creatorsCount }}" data-suffix="{{ $creatorsStat['suffix'] ?? '' }}">{{ $formattedCreatorsCount ?? $creatorsCount }}</div>
                             <div class="small text-white text-opacity-80 fw-semibold">Creators</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="50" data-suffix="K+">0K+</div>
+                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="{{ $downloadsStat['target'] ?? $downloadsCount }}" data-suffix="{{ $downloadsStat['suffix'] ?? '' }}">{{ $formattedDownloadsCount ?? $downloadsCount }}</div>
                             <div class="small text-white text-opacity-80 fw-semibold">Downloads</div>
                         </div>
                     </div>
@@ -901,7 +910,7 @@
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
                                     <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                        <i class="bi bi-star-fill text-warning me-1"></i>4.9 ({{ 45 + ($resource->id * 7) % 150 }})
+                                        <i class="bi bi-star-fill text-warning me-1"></i>{{ $resource->average_rating ?? '5.0' }} ({{ $resource->reviews_count ?? $resource->reviews->count() }})
                                     </span>
                                     <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($resource->downloads) }} downloads</span>
                                 </div>

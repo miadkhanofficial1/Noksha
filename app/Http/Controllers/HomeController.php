@@ -34,14 +34,68 @@ class HomeController extends Controller
             $query->where('status', 'approved');
         }])->get();
 
-        // 4. Statistics count
+        // 4. Statistics counts (Real-time database-driven with smart base counters)
+        $realTemplates = class_exists(\App\Models\Template::class)
+            ? \App\Models\Template::count()
+            : Resource::count();
+
+        $realCreators = \App\Models\User::where(function ($query) {
+            $query->where('role', 'seller')
+                ->orWhere('role', 'contributor')
+                ->orWhere('is_contributor', true)
+                ->orWhere('contributor_status', 'approved')
+                ->orWhereHas('resources');
+        })->count();
+
+        $realDownloads = (int) (Resource::sum('downloads') ?: 0);
+        if (class_exists(\App\Models\OrderItem::class)) {
+            $realDownloads += \App\Models\OrderItem::count();
+        }
+
+        // Dynamic real-time statistics counts from database
+        $templatesCount = $realTemplates;
+        $creatorsCount = $realCreators;
+        $downloadsCount = $realDownloads;
+
+        // Smart K+ / M+ formatter for counters
+        $formatStat = function (int $number) {
+            if ($number >= 1000000) {
+                $val = round($number / 1000000, 1);
+                $display = ($val == floor($val) ? (int)$val : $val) . 'M+';
+                return ['display' => $display, 'target' => $val, 'suffix' => 'M+'];
+            }
+            if ($number >= 1000) {
+                $val = round($number / 1000, 1);
+                $display = ($val == floor($val) ? (int)$val : $val) . 'K+';
+                return ['display' => $display, 'target' => $val, 'suffix' => 'K+'];
+            }
+            return ['display' => number_format($number), 'target' => $number, 'suffix' => ''];
+        };
+
+        $templatesStat = $formatStat($templatesCount);
+        $creatorsStat = $formatStat($creatorsCount);
+        $downloadsStat = $formatStat($downloadsCount);
+
+        $formattedTemplatesCount = $templatesStat['display'];
+        $formattedCreatorsCount = $creatorsStat['display'];
+        $formattedDownloadsCount = $downloadsStat['display'];
+
         $totalApprovedCount = Resource::where('status', 'approved')->count();
 
         return view('welcome', compact(
             'resources',
             'trendingResources',
             'categories',
-            'totalApprovedCount'
+            'totalApprovedCount',
+            'templatesCount',
+            'creatorsCount',
+            'downloadsCount',
+            'templatesStat',
+            'creatorsStat',
+            'downloadsStat',
+            'formattedTemplatesCount',
+            'formattedCreatorsCount',
+            'formattedDownloadsCount'
         ));
     }
 }

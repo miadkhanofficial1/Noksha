@@ -1,6 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Noksha Studio (Pro Verified Author) - Noksha')
+@php
+    $user = $user ?? $seller ?? auth()->user() ?? \App\Models\User::where('role', 'seller')->orWhere('is_contributor', true)->first() ?? \App\Models\User::first();
+    $isOwnProfile = auth()->check() && $user && auth()->id() === $user->id;
+    $isFollowing = auth()->check() && $user ? auth()->user()->isFollowing($user) : false;
+    $followersCount = $user ? $user->followers()->count() : 0;
+    $totalResourcesCount = $user ? $user->templates()->where('status', 'approved')->count() : 0;
+    $totalDownloadsCount = $user ? (int) $user->templates()->sum('downloads') : 0;
+
+    $categories = $categories ?? \App\Models\Category::all();
+    $selectedCategory = request()->query('category');
+
+    $templatesQuery = $user ? $user->templates()->where('status', 'approved')->with('category') : \App\Models\Template::where('status', 'approved')->with('category');
+    if ($selectedCategory) {
+        $templatesQuery->where('category_id', $selectedCategory);
+    }
+    $templates = $templatesQuery->latest()->paginate(12)->withQueryString();
+@endphp
+
+@section('title', ($user->name ?? 'Creator') . ' - Noksha Author Portfolio')
 
 @section('content')
 
@@ -102,56 +120,44 @@
     }
 
     .btn-outline-purple {
-        background: rgba(108, 76, 241, 0.05);
-        color: #6C4CF1 !important;
-        border: 1.5px solid rgba(108, 76, 241, 0.3) !important;
+        border: 2px solid #6C4CF1;
+        color: #6C4CF1;
+        background: transparent;
         font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.25s ease;
     }
 
     .btn-outline-purple:hover {
-        background: rgba(108, 76, 241, 0.12);
-        border-color: #6C4CF1 !important;
-        transform: translateY(-2px);
-        color: #5A3DE0 !important;
+        background: rgba(108, 76, 241, 0.08);
+        color: #5A3DE0;
+        border-color: #5A3DE0;
     }
 
-    /* Template Cards Grid */
+    /* Figma Template Cards */
     .template-card-figma {
-        border-radius: 1.5rem !important;
+        border-radius: 1.25rem !important;
         border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 12px 35px -10px rgba(108, 76, 241, 0.1) !important;
-        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.08) !important;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
         overflow: hidden;
         background: #ffffff;
     }
 
     .template-card-figma:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
-        border-color: rgba(108, 76, 241, 0.35) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px -10px rgba(108, 76, 241, 0.22) !important;
+        border-color: rgba(108, 76, 241, 0.3) !important;
     }
-
-    .template-preview-area {
-        height: 220px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .card-grad-1 { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
-    .card-grad-2 { background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); }
-    .card-grad-3 { background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%); }
-    .card-grad-4 { background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%); }
-    .card-grad-5 { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
-    .card-grad-6 { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%); }
 </style>
 
-<!-- SELLER COVER BANNER -->
+<!-- HERO COVER BANNER -->
 <section class="seller-cover-banner">
     <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
-        <span class="badge bg-white bg-opacity-20 text-white backdrop-blur border border-white border-opacity-30 rounded-pill px-3 py-1.5 small fw-bold">
-            <i class="bi bi-camera-fill me-1"></i> Studio Verification Certified
-        </span>
+        @if($user && $user->isContributor())
+            <span class="badge bg-white bg-opacity-20 text-white backdrop-blur border border-white border-opacity-30 rounded-pill px-3 py-1.5 small fw-bold">
+                <i class="bi bi-patch-check-fill me-1"></i> Verified Creator Studio
+            </span>
+        @endif
     </div>
 </section>
 
@@ -166,30 +172,37 @@
                     
                     <!-- Circular Avatar -->
                     <div class="seller-avatar-wrapper">
-                        <div class="seller-avatar-img d-flex align-items-center justify-content-center text-primary fs-1 fw-bold">
-                            <i class="bi bi-person-circle"></i>
-                        </div>
+                        @if($user && $user->avatar)
+                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="seller-avatar-img">
+                        @else
+                            <div class="seller-avatar-img d-flex align-items-center justify-content-center text-primary fs-1 fw-bold bg-white">
+                                {{ strtoupper(substr($user->name ?? 'C', 0, 1)) }}
+                            </div>
+                        @endif
                         <div class="seller-online-badge" title="Online now"></div>
                     </div>
 
                     <!-- Name & Badges -->
                     <div class="pb-1">
                         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1.5">
-                            <h2 class="fw-extrabold text-dark mb-0">{{ $seller->name ?? 'Miad Khan' }}</h2>
-                            <span class="badge rounded-pill px-3 py-1 fw-bold small text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);">
-                                <i class="bi bi-patch-check-fill text-emerald-500 me-1"></i> Verified Creator
-                            </span>
-                            <span class="badge rounded-pill px-3 py-1 fw-bold small text-amber-700 bg-amber-50 border border-amber-300 shadow-sm" style="box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);">
-                                <i class="bi bi-award-fill text-amber-500 me-1"></i> Pro Author
-                            </span>
+                            <h2 class="fw-extrabold text-dark mb-0">{{ $user->name ?? 'Creator' }}</h2>
+                            @if($user && $user->isContributor())
+                                <span class="badge rounded-pill px-3 py-1 fw-bold small text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm">
+                                    <i class="bi bi-patch-check-fill text-emerald-500 me-1"></i> Verified Creator
+                                </span>
+                            @endif
+                            @if($user && $user->isAdmin())
+                                <span class="badge rounded-pill px-3 py-1 fw-bold small text-purple-700 bg-purple-50 border border-purple-300 shadow-sm">
+                                    <i class="bi bi-shield-lock-fill text-purple-500 me-1"></i> Admin
+                                </span>
+                            @endif
                         </div>
                         <p class="text-secondary fw-semibold mb-2">
-                            Senior UI/UX Design Systems Architect & Top Rated Asset Creator
+                            {{ $user->headline ?? 'Digital Creator & Template Designer' }}
                         </p>
                         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-3 small text-muted">
-                            <span><i class="bi bi-geo-alt-fill text-primary me-1"></i> Dhaka, Bangladesh</span>
-                            <span><i class="bi bi-calendar3 me-1"></i> Member since Jan 2025</span>
-                            <span class="text-warning fw-bold"><i class="bi bi-star-fill me-1"></i> 4.98 (1,420 Reviews)</span>
+                            <span><i class="bi bi-geo-alt-fill text-primary me-1"></i> {{ $user->location ?? 'Bangladesh' }}</span>
+                            <span><i class="bi bi-calendar3 me-1"></i> Member since {{ $user && $user->created_at ? $user->created_at->format('M Y') : 'Recent' }}</span>
                         </div>
                     </div>
 
@@ -199,12 +212,28 @@
             <!-- Right: Action Buttons (Follow / Contact) -->
             <div class="col-12 col-md-5 col-lg-4 text-center text-md-end">
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-end gap-2.5">
-                    <button type="button" id="followBtn" onclick="toggleFollow()" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                        <i class="bi bi-person-plus-fill me-1.5"></i> Follow Author
-                    </button>
-                    <button type="button" onclick="alert('Contact Form Modal Opening...')" class="btn btn-outline-purple rounded-pill px-4 py-2.5 fw-bold">
-                        <i class="bi bi-chat-dots-fill me-1.5"></i> Contact Seller
-                    </button>
+                    @if($isOwnProfile)
+                        <a href="{{ route('settings.profile') }}" class="btn btn-outline-purple rounded-pill px-4 py-2.5 fw-bold">
+                            <i class="bi bi-gear-fill me-1.5"></i> Edit Profile
+                        </a>
+                        <a href="{{ route('dashboard') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                            <i class="bi bi-speedometer2 me-1.5"></i> Dashboard
+                        </a>
+                    @else
+                        @auth
+                            <button type="button" id="followBtn" onclick="toggleFollow('{{ $user->username ?? $user->id }}')" class="btn {{ $isFollowing ? 'btn-success' : 'btn-purple-cta' }} rounded-pill px-4 py-2.5 fw-bold">
+                                <i class="bi {{ $isFollowing ? 'bi-check-lg' : 'bi-person-plus-fill' }} me-1.5" id="followBtnIcon"></i>
+                                <span id="followBtnText">{{ $isFollowing ? 'Following' : 'Follow Author' }}</span>
+                            </button>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                                <i class="bi bi-person-plus-fill me-1.5"></i> Follow Author
+                            </a>
+                        @endauth
+                        <a href="{{ route('contact.index') }}" class="btn btn-outline-purple rounded-pill px-4 py-2.5 fw-bold">
+                            <i class="bi bi-chat-dots-fill me-1.5"></i> Contact Seller
+                        </a>
+                    @endif
                 </div>
             </div>
 
@@ -215,19 +244,23 @@
             <div class="col-12 col-lg-8">
                 <!-- Bio -->
                 <p class="text-secondary lh-lg mb-3">
-                    Passionate UI/UX designer & design systems architect based in Dhaka, Bangladesh. Specializing in high-performance Figma UI kits, vector brand guidelines, mobile app systems, and modern isometric 3D icons.
+                    {{ $user->bio ?? 'Creative digital designer and template author on Noksha Marketplace.' }}
                 </p>
 
                 <!-- Skills Chips -->
-                <div class="d-flex flex-wrap gap-2">
-                    <span class="seller-skill-chip"><i class="bi bi-layers-fill"></i> Figma</span>
-                    <span class="seller-skill-chip"><i class="bi bi-grid-3x3-gap-fill"></i> UI/UX Design</span>
-                    <span class="seller-skill-chip"><i class="bi bi-palette-fill"></i> Design Systems</span>
-                    <span class="seller-skill-chip"><i class="bi bi-vector-pen"></i> Vector Illustration</span>
-                    <span class="seller-skill-chip"><i class="bi bi-stars"></i> Iconography</span>
-                    <span class="seller-skill-chip"><i class="bi bi-moon-stars-fill"></i> Dark Mode</span>
-                    <span class="seller-skill-chip"><i class="bi bi-briefcase-fill"></i> Branding</span>
-                </div>
+                @if(!empty($user->skills) && is_array($user->skills))
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($user->skills as $skill)
+                            <span class="seller-skill-chip"><i class="bi bi-check2-circle"></i> {{ $skill }}</span>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="seller-skill-chip"><i class="bi bi-layers-fill"></i> Figma</span>
+                        <span class="seller-skill-chip"><i class="bi bi-grid-3x3-gap-fill"></i> UI/UX Design</span>
+                        <span class="seller-skill-chip"><i class="bi bi-vector-pen"></i> Vector Graphics</span>
+                    </div>
+                @endif
             </div>
 
             <!-- Stat Counters Box (Glassmorphism) -->
@@ -235,15 +268,15 @@
                 <div class="glass-stat-box p-3.5">
                     <div class="row g-2 text-center">
                         <div class="col-4">
-                            <div class="fw-extrabold fs-4 text-dark mb-0" id="followerCount">12.4K</div>
+                            <div class="fw-extrabold fs-4 text-dark mb-0" id="followerCount">{{ number_format($followersCount) }}</div>
                             <div class="extra-small text-muted fw-semibold">Followers</div>
                         </div>
                         <div class="col-4 border-start border-end">
-                            <div class="fw-extrabold fs-4 text-dark mb-0">142</div>
+                            <div class="fw-extrabold fs-4 text-dark mb-0">{{ number_format($totalResourcesCount) }}</div>
                             <div class="extra-small text-muted fw-semibold">Resources</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-4 text-dark mb-0">45.8K</div>
+                            <div class="fw-extrabold fs-4 text-dark mb-0">{{ number_format($totalDownloadsCount) }}</div>
                             <div class="extra-small text-muted fw-semibold">Downloads</div>
                         </div>
                     </div>
@@ -253,7 +286,7 @@
     </div>
 </section>
 
-<!-- PORTFOLIO GRID SECTION (6 DEMO RESOURCES) -->
+<!-- PORTFOLIO GRID SECTION -->
 <section class="py-5 py-lg-6" style="background-color: #F8F7FF;">
     <div class="container">
         
@@ -263,222 +296,113 @@
                 <span class="badge px-3 py-1 rounded-pill text-uppercase fw-bold small mb-1" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1;">
                     Author Portfolio
                 </span>
-                <h3 class="fw-extrabold text-dark mb-0">Created Resources <span class="text-primary"></span></h3>
+                <h3 class="fw-extrabold text-dark mb-0">Created Resources</h3>
             </div>
 
             <!-- Category Filter Tabs -->
             <div class="d-flex align-items-center gap-2 overflow-x-auto pb-1">
-                <button type="button" class="btn btn-purple-cta rounded-pill btn-sm px-3.5 py-1.5">All Assets (142)</button>
-                <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3.5 py-1.5">UI Kits (58)</button>
-                <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3.5 py-1.5">Vectors (34)</button>
-                <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3.5 py-1.5">Social (26)</button>
-                <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3.5 py-1.5">3D (24)</button>
+                <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" class="btn {{ empty($selectedCategory) ? 'btn-purple-cta' : 'btn-outline-secondary' }} rounded-pill btn-sm px-3.5 py-1.5 text-nowrap">
+                    All Assets ({{ $totalResourcesCount }})
+                </a>
+                @foreach($categories as $category)
+                    @php
+                        $catCount = $user ? $user->templates()->where('status', 'approved')->where('category_id', $category->id)->count() : 0;
+                    @endphp
+                    @if($catCount > 0 || empty($user))
+                        <a href="{{ request()->fullUrlWithQuery(['category' => $category->id]) }}" class="btn {{ (string)$selectedCategory === (string)$category->id ? 'btn-purple-cta' : 'btn-outline-secondary' }} rounded-pill btn-sm px-3.5 py-1.5 text-nowrap">
+                            {{ $category->name }} ({{ $catCount }})
+                        </a>
+                    @endif
+                @endforeach
             </div>
         </div>
 
-        <!-- 6 Demo Resources Grid -->
+        <!-- Created Resources Grid -->
         <div class="row g-4">
-            
-            <!-- Card 1 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-1 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            UI Kit
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (128)
+            @forelse($templates as $template)
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 template-card-figma">
+                        <div class="template-preview-area p-0 overflow-hidden position-relative" style="height: 220px; background-color: #0F172A;">
+                            <img src="{{ $template->thumbnail_url }}" alt="{{ $template->title }}" class="w-100 h-100 object-fit-cover" onerror="this.src='{{ asset('images/logo.png') }}'">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                                {{ $template->category?->name ?? 'Design' }}
                             </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.4k</span>
                         </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">Fintech Mobile App UI Kit</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">50+ iOS & Android screens with dark and light mode vector components.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-dark fs-5">৳499</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
+                                <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>5.0
+                                </span>
+                                <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($template->downloads) }}</span>
+                            </div>
+                            <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="{{ $template->title }}">{{ $template->title }}</h5>
+                            <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">{{ Str::limit($template->description ?? 'Creative digital design asset published on Noksha.', 90) }}</p>
+                            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                                <span class="fw-extrabold text-dark fs-5">{{ $template->price == 0 ? 'Free' : '৳' . number_format($template->price, 2) }}</span>
+                                <a href="{{ route('templates.show', $template->id) }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-2 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                            <polyline points="2 17 12 22 22 17"></polyline>
-                            <polyline points="2 12 12 17 22 12"></polyline>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            Vector
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.8 (94)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>2.8k</span>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 rounded-4 bg-white shadow-sm border mx-auto" style="max-width: 540px;">
+                        <div class="w-16 h-16 rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center fs-2" style="width: 64px; height: 64px; margin: 0 auto;">
+                            <i class="bi bi-folder2-open"></i>
                         </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">Corporate Business Flyer</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">Print-ready A4 vector layout for corporate brand presentations.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-success fs-5">Free</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
-                        </div>
+                        <h4 class="fw-bold text-dark mb-2">No creations published yet</h4>
+                        <p class="text-muted small mb-4">Upload your first design asset to start showcasing your portfolio and earning royalties.</p>
+                        @if($isOwnProfile || auth()->check())
+                            <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                                <i class="bi bi-cloud-arrow-up-fill me-1.5"></i> Upload New Asset
+                            </a>
+                        @endif
                     </div>
                 </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-3 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            Social Media
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>5.0 (210)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>3.1k</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">Instagram Post & Story Bundle</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">30 minimalist social media layouts for agency marketing.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-dark fs-5">৳299</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-4 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            3D Mockup
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (67)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>950</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">3D Isometric Tech Icons</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">High-res transparent PNG & Blender 3D source files included.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-dark fs-5">৳199</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-5 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            Branding
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.7 (112)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>1.9k</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">Minimalist Agency Logo Kit</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">Fully editable vector logotypes with font pairing guidelines.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-success fs-5">Free</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 6 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-6 p-4 d-flex align-items-center justify-content-center text-white">
-                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                            <line x1="9" y1="21" x2="9" y2="9"></line>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            SaaS System
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (88)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>820</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">SaaS Web Admin System</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">Complete admin dashboard UI component library with charts.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-dark fs-5">৳299</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @endforelse
         </div>
+
+        @if($templates->hasPages())
+            <div class="d-flex justify-content-center mt-5">
+                {{ $templates->links() }}
+            </div>
+        @endif
+
     </div>
 </section>
 
 <!-- INTERACTIVE FOLLOW BUTTON TOGGLE SCRIPT -->
 <script>
-let isFollowing = false;
-function toggleFollow() {
+function toggleFollow(userId) {
     const followBtn = document.getElementById('followBtn');
     const followerCount = document.getElementById('followerCount');
-    
-    if (!isFollowing) {
-        isFollowing = true;
-        followBtn.innerHTML = '<i class="bi bi-check-lg me-1.5"></i> Following';
-        followBtn.className = 'btn btn-success rounded-pill px-4 py-2.5 fw-bold';
-        followerCount.textContent = '12.4K+';
-    } else {
-        isFollowing = false;
-        followBtn.innerHTML = '<i class="bi bi-person-plus-fill me-1.5"></i> Follow Author';
-        followBtn.className = 'btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold';
-        followerCount.textContent = '12.4K';
-    }
+    const followBtnText = document.getElementById('followBtnText');
+    const followBtnIcon = document.getElementById('followBtnIcon');
+
+    fetch('/u/' + userId + '/follow', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.following) {
+            followBtn.className = 'btn btn-success rounded-pill px-4 py-2.5 fw-bold';
+            followBtnText.textContent = 'Following';
+            followBtnIcon.className = 'bi bi-check-lg me-1.5';
+        } else {
+            followBtn.className = 'btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold';
+            followBtnText.textContent = 'Follow Author';
+            followBtnIcon.className = 'bi bi-person-plus-fill me-1.5';
+        }
+        if (data.followers_count !== undefined) {
+            followerCount.textContent = data.followers_count;
+        }
+    })
+    .catch(() => {});
 }
 </script>
 
