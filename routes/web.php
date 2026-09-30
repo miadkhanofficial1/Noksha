@@ -13,10 +13,13 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ContestController;
+use App\Http\Controllers\ContestEntryController;
 use App\Http\Controllers\ContestSubmissionController;
 use App\Http\Controllers\ContestHandoverController;
+use App\Http\Controllers\CreatorDirectoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LegalController;
@@ -86,9 +89,17 @@ Route::get('/templates', [TemplateController::class, 'index'])->name('templates.
 Route::get('/resources', [TemplateController::class, 'index'])->name('resources.index');
 Route::get('/templates/{id}', [TemplateController::class, 'show'])->name('templates.show');
 
+// Verified Creator Directory & Discovery Routes
+Route::get('/creators', [CreatorDirectoryController::class, 'index'])->name('creators.index');
+
 // Public Support & Contact Us Routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::get('/contact-us', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// FAQ & Knowledge Help Center Routes
+Route::get('/help', [HelpCenterController::class, 'index'])->name('help.index');
+Route::get('/faq', [HelpCenterController::class, 'index'])->name('faq.index');
 
 // Legal, Trust & Licensing Policy Routes
 Route::get('/licenses', [LegalController::class, 'licenses'])->name('legal.licenses');
@@ -212,11 +223,18 @@ Route::middleware('auth')->group(function () {
     // Freelancer-Style Contest Hub Routes
     Route::get('/contests/create', [ContestController::class, 'create'])->name('contests.create');
     Route::post('/contests', [ContestController::class, 'store'])->name('contests.store');
-    Route::post('/contests/{contest}/submit', [ContestSubmissionController::class, 'store'])->name('contests.submit');
+
+    // Contest Entry Submission Routes
+    Route::get('/contests/{contest}/submit', [ContestEntryController::class, 'create'])->name('contests.entries.create');
+    Route::post('/contests/{contest}/submit', [ContestEntryController::class, 'store'])->name('contests.entries.store');
+    Route::post('/contests/{contest}/entries', [ContestEntryController::class, 'store'])->name('contests.submit');
+
+    // Contest Winner Selection, Handover & Escrow Release Routes
     Route::post('/contests/{contest}/entries/{entry}/rate', [ContestController::class, 'rateEntry'])->name('contests.entries.rate');
     Route::post('/contests/{contest}/award/{entry}', [ContestHandoverController::class, 'awardWinner'])->name('contests.award');
     Route::post('/contests/{contest}/entries/{entry}/award', [ContestHandoverController::class, 'awardWinner'])->name('contests.entries.award');
-    Route::post('/contests/{contest}/handover/upload', [ContestHandoverController::class, 'uploadSourceFiles'])->name('contests.handover.upload');
+    Route::get('/contests/{contest}/handover', [ContestHandoverController::class, 'show'])->name('contests.handover.show');
+    Route::post('/contests/{contest}/handover/upload', [ContestHandoverController::class, 'uploadFiles'])->name('contests.handover.upload');
     Route::get('/contests/{contest}/handover/download', [ContestHandoverController::class, 'downloadHandoverFiles'])->name('contests.handover.download');
     Route::post('/contests/{contest}/handover/release', [ContestHandoverController::class, 'releaseEscrow'])->name('contests.handover.release');
     Route::post('/contests/{contest}/handover/revision', [ContestHandoverController::class, 'requestRevision'])->name('contests.handover.revision');

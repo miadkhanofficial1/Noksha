@@ -8,12 +8,66 @@ use App\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContestHandoverController extends Controller
 {
+    /**
+     * Display the Contest Handover & Escrow Workspace.
+     * Authorized strictly for: Contest Buyer/Organizer, Winning Designer, or Admin.
+     */
+    public function show(Contest $contest): View|RedirectResponse
+    {
+        $user = auth()->user();
+
+        // 1. Locate winning entry
+        $entry = $contest->winningEntry ?? ContestEntry::where('contest_id', $contest->id)->where('is_winner', true)->first();
+        if (!$entry) {
+            return redirect()->route('contests.show', $contest->slug ?: $contest->id)
+                ->with('error', 'This contest does not currently have an awarded winner.');
+        }
+
+        // 2. Strict authorization: Buyer, Winner, or Admin
+        $isBuyer = ($contest->user_id && $contest->user_id === $user->id);
+        $isWinner = ($entry->user_id === $user->id);
+        $isAdmin = $user->isAdmin();
+
+        if (!$isBuyer && !$isWinner && !$isAdmin) {
+            abort(403, 'Access denied. The handover workspace is restricted to the contest organizer and winning designer.');
+        }
+
+        $winner = $entry->user;
+        $buyer = $contest->user;
+        $prizeBounty = (float) ($contest->prize_bounty ?: $contest->prize_amount ?: 0);
+        $handoverFiles = is_array($entry->handover_files) ? $entry->handover_files : [];
+        $latestFile = !empty($handoverFiles) ? end($handoverFiles) : null;
+
+        return view('contests.handover', compact(
+            'contest',
+            'entry',
+            'winner',
+            'buyer',
+            'isBuyer',
+            'isWinner',
+            'isAdmin',
+            'prizeBounty',
+            'handoverFiles',
+            'latestFile'
+        ));
+    }
+
+    /**
+     * Upload protected source files (alias for routes expecting uploadFiles).
+     */
+    public function uploadFiles(Request $request, Contest $contest): RedirectResponse
+    {
+        return $this->uploadSourceFiles($request, $contest);
+    }
+
     /**
      * Award an entry as the WINNER of the contest (Organizer / Buyer action).
      * Transitions contest from 'active'/'judging' to 'handover' status.
@@ -150,7 +204,7 @@ class ContestHandoverController extends Controller
             );
         }
 
-        return redirect()->route('contests.show', $contest->slug)
+        return redirect()->route('contests.handover.show', $contest->slug ?: $contest->id)
             ->with('success', '📁 Source files uploaded securely to private storage! The organizer has been notified to review and release escrow.');
     }
 
@@ -247,18 +301,26 @@ class ContestHandoverController extends Controller
                 'contest_escrow',
                 $contest->id
             );
+
+            // Also increment seller earnings_balance if column exists so seller payout sees it
+            if (Schema::hasColumn('users', 'earnings_balance')) {
+                $winner->increment('earnings_balance', $prizeAmount);
+            }
+            if ($winner->wallet && Schema::hasColumn('wallets', 'earnings_balance')) {
+                $winner->wallet->increment('earnings_balance', $prizeAmount);
+            }
         });
 
         // 5. Notify winning designer
         Notification::send(
             $winner->id,
             '💰 Escrow Funds Released!',
-            "Escrow funds released! ৳" . number_format($prizeAmount, 2) . " has been added to your balance.",
+            "Escrow funds released! ৳" . number_format($prizeAmount, 2) . " has been added to your withdrawable earnings balance.",
             'success',
-            route('dashboard') . '#wallet'
+            route('seller.payouts.index')
         );
 
-        return redirect()->route('contests.show', $contest->slug)
+        return redirect()->route('contests.handover.show', $contest->slug ?: $contest->id)
             ->with('success', "🎉 Escrow funds of ৳" . number_format($prizeAmount, 2) . " have been released to {$winner->name}! Contest completed successfully.");
     }
 

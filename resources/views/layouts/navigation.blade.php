@@ -61,6 +61,10 @@
                     <i class="bi bi-grid me-1.5 text-secondary"></i> Templates
                 </a>
 
+                <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
+                    <i class="bi bi-people-fill me-1.5 text-indigo-400"></i> Creators
+                </a>
+
                 <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
                     <i class="bi bi-trophy-fill me-1.5 text-warning"></i> Contests
                 </a>
@@ -497,6 +501,9 @@
             <div class="d-flex flex-column gap-1 mb-3">
                 <a class="nav-link-custom {{ request()->routeIs('resources.*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
                     <i class="bi bi-grid me-2 text-secondary"></i> Templates
+                </a>
+                <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
+                    <i class="bi bi-people-fill me-2 text-indigo-400"></i> Creators
                 </a>
                 <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
                     <i class="bi bi-trophy-fill me-2 text-warning"></i> Contests

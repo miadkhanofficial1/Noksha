@@ -253,6 +253,26 @@
                                     <i class="bi bi-star-fill text-warning me-1"></i> You are the Organizer
                                 </span>
                             </div>
+                        @else
+                            <div class="mt-3 pt-3 border-top border-white border-opacity-20">
+                                @if($contest->status === 'active')
+                                    @if(auth()->check() && $contest->hasUserEntered(auth()->id()))
+                                        <span class="badge bg-success bg-opacity-25 text-white rounded-pill px-3 py-1.5 extra-small fw-bold">
+                                            <i class="bi bi-check2-circle me-1"></i> Entry Submitted
+                                        </span>
+                                    @else
+                                        <a href="{{ route('contests.entries.create', $contest->slug ?: $contest->id) }}" class="btn btn-warning rounded-pill px-3 py-2 fw-extrabold extra-small text-dark shadow w-100 d-inline-flex align-items-center justify-content-center gap-1.5">
+                                            <i class="bi bi-pencil-square"></i>
+                                            <span>Submit Your Design Entry</span>
+                                        </a>
+                                    @endif
+                                @elseif(in_array($contest->status, ['handover', 'completed']))
+                                    <a href="{{ route('contests.handover.show', $contest->slug ?: $contest->id) }}" class="btn btn-light rounded-pill px-3 py-2 fw-extrabold extra-small text-dark shadow w-100 d-inline-flex align-items-center justify-content-center gap-1.5">
+                                        <i class="bi bi-shield-lock text-warning"></i>
+                                        <span>Open Handover Workspace</span>
+                                    </a>
+                                @endif
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -271,7 +291,12 @@
                         <span class="extra-small text-muted">Contest submissions are locked. Escrow funds will be released upon buyer file verification.</span>
                     </div>
                 </div>
-                <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 extra-small fw-bold">Handover Stage</span>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ route('contests.handover.show', $contest->slug ?: $contest->id) }}" class="btn btn-sm btn-dark rounded-pill px-3 py-1.5 extra-small fw-bold text-white shadow-sm">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Open Handover Workspace
+                    </a>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 extra-small fw-bold">Handover Stage</span>
+                </div>
             </div>
         @elseif($contest->status === 'completed')
             <div class="alert border-0 rounded-4 px-4 py-3 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3 shadow-sm text-dark" style="background-color: #ecfdf5; border-left: 4px solid #10b981 !important;">
@@ -284,7 +309,12 @@
                         <span class="extra-small text-muted">All design assets verified and ৳{{ number_format($contest->prize_amount, 0) }} escrow prize disbursed.</span>
                     </div>
                 </div>
-                <span class="badge bg-success rounded-pill px-3 py-1.5 extra-small fw-bold text-white">Completed</span>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ route('contests.handover.show', $contest->slug ?: $contest->id) }}" class="btn btn-sm btn-success rounded-pill px-3 py-1.5 extra-small fw-bold text-white shadow-sm">
+                        <i class="bi bi-file-earmark-check me-1"></i> View Handover Workspace
+                    </a>
+                    <span class="badge bg-success rounded-pill px-3 py-1.5 extra-small fw-bold text-white">Completed</span>
+                </div>
             </div>
         @endif
 
@@ -337,6 +367,9 @@
                         @if($isAdmin)
                             <span class="badge bg-dark text-white rounded-pill px-2.5 py-1 extra-small fw-bold">Admin Oversight</span>
                         @endif
+                        <a href="{{ route('contests.handover.show', $contest->slug ?: $contest->id) }}" class="btn btn-purple-cta btn-sm rounded-pill px-3 py-1.5 extra-small fw-bold shadow-sm">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Open Dedicated Workspace
+                        </a>
                     </div>
                 </div>
 
@@ -688,8 +721,16 @@
                                     @endif
                                 </div>
                             @else
+                                <!-- Direct link to Dedicated Full Submit Page -->
+                                <a href="{{ route('contests.entries.create', $contest->slug ?: $contest->id) }}" class="btn btn-warning rounded-pill w-100 py-2.5 fw-extrabold extra-small text-dark shadow-sm mb-3 d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Submit Your Design Entry</span>
+                                </a>
+
+                                <div class="text-center my-2 text-muted extra-small">or submit via quick form below:</div>
+
                                 <!-- Eligible Contributor Submission Form -->
-                                <form action="{{ route('contests.submit', $contest->slug) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('contests.entries.store', $contest->slug ?: $contest->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
 
                                     <!-- Concept Title -->

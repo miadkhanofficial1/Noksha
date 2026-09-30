@@ -30,6 +30,7 @@
                 <h6 class="text-uppercase fw-bold text-white mb-3 tracking-wider extra-small font-monospace">Marketplace</h6>
                 <ul class="list-unstyled text-slate-400 small d-grid gap-2">
                     <li><a href="{{ route('templates.index') }}" class="text-slate-400 text-decoration-none hover-text-white transition">All Templates</a></li>
+                    <li><a href="{{ route('creators.index') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Top Creators</a></li>
                     <li><a href="{{ route('contests.index') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Design Contests</a></li>
                     <li><a href="{{ route('wallet.index') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Central Wallet</a></li>
                     <li><a href="{{ route('contributor.apply') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Become a Contributor</a></li>
@@ -71,6 +72,12 @@
             <div class="col-lg-3 col-md-6">
                 <h6 class="text-uppercase fw-bold text-white mb-3 tracking-wider extra-small font-monospace">Help & Support</h6>
                 <p class="text-slate-400 small mb-2">
+                    <a href="{{ route('help.index') }}" class="text-slate-300 hover-text-white text-decoration-none d-inline-flex align-items-center gap-1.5 transition">
+                        <i class="bi bi-question-circle-fill text-indigo-400"></i>
+                        <span>Help Center & FAQ</span>
+                    </a>
+                </p>
+                <p class="text-slate-400 small mb-2">
                     <a href="{{ route('contact.index') }}" class="text-indigo-400 text-decoration-none fw-semibold d-inline-flex align-items-center gap-1">
                         <i class="bi bi-envelope-fill me-1"></i> Contact Support Desk &rarr;
                     </a>
@@ -99,6 +106,8 @@
                 <a href="{{ route('legal.privacy') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Privacy Policy</a>
                 <span>•</span>
                 <a href="{{ route('legal.refunds') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Refunds & Escrow</a>
+                <span>•</span>
+                <a href="{{ route('help.index') }}" class="text-slate-400 text-decoration-none hover-text-white transition">Help & FAQ</a>
             </div>
         </div>
     </div>
