@@ -19,6 +19,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationController;
 use App\Models\Resource;
 use App\Http\Controllers\PayoutController;
@@ -88,6 +89,12 @@ Route::get('/templates/{id}', [TemplateController::class, 'show'])->name('templa
 // Public Support & Contact Us Routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Legal, Trust & Licensing Policy Routes
+Route::get('/licenses', [LegalController::class, 'licenses'])->name('legal.licenses');
+Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
+Route::get('/refund-policy', [LegalController::class, 'refunds'])->name('legal.refunds');
 
 
 
