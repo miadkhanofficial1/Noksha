@@ -1,4 +1,4 @@
-FROM php:8.2-cli-alpine
+FROM php:8.4-cli-alpine
 
 # Install git, unzip and system tools
 RUN apk add --no-cache curl git unzip bash nodejs npm
@@ -16,7 +16,7 @@ COPY . .
 
 # Build frontend assets and vendor dependencies
 RUN npm install && npm run build
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Create storage symlink and permissions
 RUN php artisan storage:link || true
