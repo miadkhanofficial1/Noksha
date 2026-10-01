@@ -89,50 +89,31 @@ class WatermarkService
 
     /**
      * Stamping repeated diagonal semi-transparent TTF watermark across the entire canvas.
+     * Subtle, elegant, ultra-transparent (10%-12% opacity) at 45-degree angle with generous spacing.
      */
     protected static function applyTtfWatermark($image, int $width, int $height, string $text, string $fontPath): void
     {
-        $fontSize = max(14, (int) round($width / 40));
-        $angle = 32;
+        $fontSize = max(11, (int) round($width / 52));
+        $angle = 45; // Clean 45-degree diagonal angle
 
-        // Semi-transparent colors
-        // Alpha range in GD: 0 (opaque) to 127 (completely transparent)
-        $shadowColor = imagecolorallocatealpha($image, 15, 23, 42, 85); // Dark slate with alpha
-        $textColor = imagecolorallocatealpha($image, 255, 255, 255, 55);  // Translucent white
+        // Semi-transparent colors (GD Alpha range: 0=opaque, 127=transparent)
+        // 114 / 127 = ~90% transparent -> 10% opacity
+        $shadowColor = imagecolorallocatealpha($image, 15, 23, 42, 118); // Ultra-faint slate shadow (7% opacity)
+        $textColor = imagecolorallocatealpha($image, 255, 255, 255, 114); // Ultra-faint white text (10% opacity)
 
-        // Grid spacing based on image dimensions
-        $stepX = max(260, (int) round($width / 3.5));
-        $stepY = max(180, (int) round($height / 4.5));
+        // Generous line spacing & reduced pattern density
+        $stepX = max(420, (int) round($width / 2.2));
+        $stepY = max(320, (int) round($height / 2.4));
+
+        $cleanWatermark = "NOKSHA PREVIEW • CONTEST ENTRY";
 
         for ($y = -$height; $y < ($height * 2); $y += $stepY) {
             for ($x = -$width; $x < ($width * 2); $x += $stepX) {
-                // Subtle shadow for legibility over both dark and light artworks
-                @imagettftext($image, $fontSize, $angle, $x + 2, $y + 2, $shadowColor, $fontPath, $text);
-                @imagettftext($image, $fontSize, $angle, $x, $y, $textColor, $fontPath, $text);
+                // Faint slate shadow and white overlay
+                @imagettftext($image, $fontSize, $angle, $x + 1, $y + 1, $shadowColor, $fontPath, $cleanWatermark);
+                @imagettftext($image, $fontSize, $angle, $x, $y, $textColor, $fontPath, $cleanWatermark);
             }
         }
-
-        // Center prominent safety seal / badge
-        $centerBoxW = min((int)($width * 0.85), 650);
-        $centerBoxH = (int) round($fontSize * 3.2);
-        $centerX = (int) round(($width - $centerBoxW) / 2);
-        $centerY = (int) round(($height - $centerBoxH) / 2);
-
-        $badgeBg = imagecolorallocatealpha($image, 15, 23, 42, 60); // 50% dark translucent bar
-        $badgeBorder = imagecolorallocatealpha($image, 255, 255, 255, 70);
-        $badgeText = imagecolorallocatealpha($image, 255, 255, 255, 30);
-
-        imagefilledrectangle($image, $centerX, $centerY, $centerX + $centerBoxW, $centerY + $centerBoxH, $badgeBg);
-        imagerectangle($image, $centerX, $centerY, $centerX + $centerBoxW, $centerY + $centerBoxH, $badgeBorder);
-
-        $badgeTitle = "NOKSHA CONTEST ENTRY • STRICTLY FOR PREVIEW ONLY";
-        $badgeFontSize = max(12, (int) round($fontSize * 0.8));
-        $bbox = @imagettfbbox($badgeFontSize, 0, $fontPath, $badgeTitle);
-        $textW = $bbox ? abs($bbox[4] - $bbox[0]) : (strlen($badgeTitle) * 9);
-        $textX = (int) round($centerX + (($centerBoxW - $textW) / 2));
-        $textY = (int) round($centerY + ($centerBoxH / 2) + ($badgeFontSize / 2));
-
-        @imagettftext($image, $badgeFontSize, 0, $textX, $textY, $badgeText, $fontPath, $badgeTitle);
     }
 
     /**
@@ -140,16 +121,17 @@ class WatermarkService
      */
     protected static function applyBasicWatermark($image, int $width, int $height, string $text): void
     {
-        $textColor = imagecolorallocatealpha($image, 255, 255, 255, 60);
-        $shadowColor = imagecolorallocatealpha($image, 0, 0, 0, 80);
+        // 10% opacity in GD
+        $textColor = imagecolorallocatealpha($image, 255, 255, 255, 114);
+        $shadowColor = imagecolorallocatealpha($image, 0, 0, 0, 120);
 
-        $stepX = 220;
-        $stepY = 120;
+        $stepX = max(380, (int) round($width / 2));
+        $stepY = max(260, (int) round($height / 2));
 
-        for ($y = 20; $y < $height; $y += $stepY) {
-            for ($x = 20; $x < $width; $x += $stepX) {
-                imagestring($image, 5, $x + 1, $y + 1, $text, $shadowColor);
-                imagestring($image, 5, $x, $y, $text, $textColor);
+        for ($y = 40; $y < $height; $y += $stepY) {
+            for ($x = 40; $x < $width; $x += $stepX) {
+                imagestring($image, 4, $x + 1, $y + 1, "NOKSHA PREVIEW", $shadowColor);
+                imagestring($image, 4, $x, $y, "NOKSHA PREVIEW", $textColor);
             }
         }
     }

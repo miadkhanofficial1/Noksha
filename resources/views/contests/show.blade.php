@@ -96,6 +96,17 @@
         opacity: 1;
     }
 
+    /* Subtle, elegant, ultra-transparent 45-degree watermark overlay */
+    .watermark-overlay-subtle {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        user-select: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Ctext x='210' y='210' transform='rotate(-45 210 210)' fill='%23ffffff' fill-opacity='0.10' stroke='%2394a3b8' stroke-opacity='0.08' stroke-width='0.5' font-family='Plus Jakarta Sans, sans-serif' font-size='12' font-weight='500' letter-spacing='0.25em' text-anchor='middle'%3ENOKSHA PREVIEW • CONTEST ENTRY%3C/text%3E%3C/svg%3E");
+        background-repeat: repeat;
+        z-index: 4;
+    }
+
     .btn-like {
         transition: all 0.2s ease;
         border-radius: 9999px;
@@ -535,6 +546,9 @@
                                     <div class="entry-preview-box" onclick="openLightbox('{{ asset('storage/' . $entry->watermarked_preview_image) }}', '{{ addslashes($entry->title) }}', '{{ addslashes($entry->user->name ?? 'Designer') }}')">
                                         <img src="{{ asset('storage/' . $entry->watermarked_preview_image) }}" alt="{{ $entry->title }}" loading="lazy">
                                         
+                                        <!-- Subtle Elegant Watermark Deterrent Overlay -->
+                                        <div class="watermark-overlay-subtle"></div>
+
                                         <!-- Overlay -->
                                         <div class="zoom-overlay">
                                             <span class="btn btn-light btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm extra-small">
@@ -721,14 +735,6 @@
                                     @endif
                                 </div>
                             @else
-                                <!-- Direct link to Dedicated Full Submit Page -->
-                                <a href="{{ route('contests.entries.create', $contest->slug ?: $contest->id) }}" class="btn btn-warning rounded-pill w-100 py-2.5 fw-extrabold extra-small text-dark shadow-sm mb-3 d-flex align-items-center justify-content-center gap-2">
-                                    <i class="bi bi-pencil-square"></i>
-                                    <span>Submit Your Design Entry</span>
-                                </a>
-
-                                <div class="text-center my-2 text-muted extra-small">or submit via quick form below:</div>
-
                                 <!-- Eligible Contributor Submission Form -->
                                 <form action="{{ route('contests.entries.store', $contest->slug ?: $contest->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
@@ -844,9 +850,12 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 text-center">
-                <img id="lightboxImage" src="" alt="Enlarged Preview" class="img-fluid rounded-3" style="max-height: 80vh; object-fit: contain;">
+                <div class="position-relative d-inline-block rounded-3 overflow-hidden shadow-2xl">
+                    <img id="lightboxImage" src="" alt="Enlarged Preview" class="img-fluid rounded-3" style="max-height: 80vh; object-fit: contain;">
+                    <div class="watermark-overlay-subtle"></div>
+                </div>
                 <div class="mt-2 text-white text-opacity-50 extra-small font-monospace">
-                    Protected by Noksha Diagonal Preview Seal
+                    Protected by Noksha Subtle Preview Watermark
                 </div>
             </div>
         </div>

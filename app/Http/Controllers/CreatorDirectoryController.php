@@ -17,6 +17,11 @@ class CreatorDirectoryController extends Controller
         $activeSpecialty = trim($request->input('specialty', 'all'));
 
         $query = User::query()
+            // Strictly exclude admin and superadmin accounts from public creator discovery
+            ->where('is_admin', false)
+            ->where('role', '!=', 'admin')
+            ->where('role', '!=', 'superadmin')
+            ->where('role', '!=', 'super_admin')
             ->where(function ($q) {
                 $q->whereIn('role', ['contributor', 'seller'])
                   ->orWhere('contributor_status', 'approved')

@@ -3,6 +3,18 @@
 @section('title', 'Submit Entry: ' . $contest->title . ' - Noksha')
 
 @section('content')
+<style>
+    .watermark-overlay-subtle {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        user-select: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Ctext x='210' y='210' transform='rotate(-45 210 210)' fill='%23ffffff' fill-opacity='0.10' stroke='%2394a3b8' stroke-opacity='0.08' stroke-width='0.5' font-family='Plus Jakarta Sans, sans-serif' font-size='12' font-weight='500' letter-spacing='0.25em' text-anchor='middle'%3ENOKSHA PREVIEW • CONTEST ENTRY%3C/text%3E%3C/svg%3E");
+        background-repeat: repeat;
+        z-index: 5;
+    }
+</style>
+
 <div class="min-h-screen bg-slate-950 text-slate-200 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto space-y-8">
         
@@ -173,7 +185,10 @@
 
                         <!-- Preview State -->
                         <div id="imagePreviewContainer" class="hidden relative z-10 space-y-3">
-                            <img id="imagePreview" src="" alt="Preview" class="max-h-80 mx-auto rounded-xl shadow-lg border border-slate-700 object-contain">
+                            <div class="relative inline-block mx-auto rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                                <img id="imagePreview" src="" alt="Preview" class="max-h-80 mx-auto object-contain block">
+                                <div class="watermark-overlay-subtle"></div>
+                            </div>
                             <div class="flex items-center justify-center gap-2">
                                 <span id="fileName" class="text-xs font-mono text-slate-300 font-semibold truncate max-w-xs"></span>
                                 <span id="fileSize" class="text-xs font-mono text-slate-500"></span>
@@ -188,9 +203,9 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         </div>
                         <div class="text-xs space-y-1">
-                            <span class="font-bold text-slate-200">Automatic Watermark Protection</span>
+                            <span class="font-bold text-slate-200">Subtle Watermark Protection</span>
                             <p class="text-slate-400 leading-relaxed">
-                                Your clean source artwork will be securely stored in protected storage. Noksha automatically stamps a high-contrast diagonal watermark across the public gallery preview to prevent unauthorized client usage before prize award.
+                                Your clean source artwork will be securely stored in protected storage. Noksha automatically stamps a subtle, ultra-transparent diagonal watermark (10% opacity) across the public preview to protect your intellectual property while keeping your artwork fully crisp and legible to the client and judges.
                             </p>
                         </div>
                     </div>
