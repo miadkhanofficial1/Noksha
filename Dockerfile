@@ -1,7 +1,7 @@
 FROM php:8.4-cli-alpine
 
 # Install git, unzip and system tools
-RUN apk add --no-cache curl git unzip bash nodejs npm
+RUN apk add --no-cache curl git unzip bash nodejs npm ca-certificates
 
 # Install PHP extensions using official pre-compiled installer script
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
