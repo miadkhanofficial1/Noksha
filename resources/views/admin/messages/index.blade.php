@@ -8,8 +8,10 @@
 <div x-data="{
     activeModal: false,
     selectedMsg: null,
+    replyText: '',
     viewMessage(msg) {
         this.selectedMsg = msg;
+        this.replyText = '';
         this.activeModal = true;
     }
 }" class="space-y-6">
@@ -351,7 +353,7 @@
          style="display: none;"
          @keydown.escape.window="activeModal = false">
         
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative space-y-4"
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative space-y-4 max-h-[92vh] overflow-y-auto"
              @click.away="activeModal = false">
             
             <!-- Modal Header -->
@@ -398,15 +400,60 @@
             <!-- Message Body -->
             <div>
                 <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Full Message Body</label>
-                <div class="p-4 rounded-xl bg-gray-950 border border-gray-800 text-xs text-gray-200 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap font-sans select-text"
+                <div class="p-4 rounded-xl bg-gray-950 border border-gray-800 text-xs text-gray-200 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap font-sans select-text"
                      x-text="selectedMsg?.message">
                 </div>
             </div>
 
-            <!-- Action Controls -->
+            <!-- Dual-Channel Support Reply Interface (Email + In-App Notification) -->
+            <form method="POST" :action="'/admin/messages/' + selectedMsg?.id + '/reply'" class="space-y-3 pt-3 border-t border-gray-800">
+                @csrf
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <label for="admin_reply_message" class="block text-[11px] font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="bi bi-reply-fill text-brand-400 text-sm"></i> Official Dual-Channel Reply
+                    </label>
+                    <div class="flex items-center gap-2 text-[10px] text-gray-400">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                            <i class="bi bi-envelope-at-fill"></i> Email Dispatch
+                        </span>
+                        <template x-if="selectedMsg?.is_registered">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <i class="bi bi-bell-fill"></i> In-App Notification
+                            </span>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <textarea id="admin_reply_message"
+                              name="admin_reply_message"
+                              rows="4"
+                              x-model="replyText"
+                              required
+                              placeholder="Type your official administrative response here... It will be emailed to the sender and delivered as an in-app database notification if they are a registered user."
+                              class="w-full p-3.5 rounded-xl bg-gray-950 border border-gray-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-xs text-gray-200 placeholder-gray-500 leading-relaxed font-sans transition resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <!-- Secondary Mailto Direct Client Link -->
+                    <a :href="'mailto:' + selectedMsg?.email + '?subject=' + encodeURIComponent('Re: ' + (selectedMsg?.subject || 'Support Inquiry') + ' - Noksha Support')"
+                       class="text-[11px] text-gray-400 hover:text-gray-200 transition flex items-center gap-1">
+                        <i class="bi bi-box-arrow-up-right text-[10px]"></i> Open in Native Email App
+                    </a>
+
+                    <!-- Submit Official Reply Button -->
+                    <button type="submit"
+                            :disabled="!replyText || replyText.trim().length < 3"
+                            class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed text-white flex items-center gap-2 transition shadow-lg shadow-brand-950/40 cursor-pointer">
+                        <i class="bi bi-send-fill text-xs"></i>
+                        <span>Send Official Reply</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick Status & Management Controls -->
             <div class="pt-3 border-t border-gray-800 flex flex-wrap items-center justify-between gap-2">
-                
-                <!-- Quick Status Changers -->
+                <span class="text-[11px] font-semibold text-gray-500">Quick Actions:</span>
                 <div class="flex items-center gap-1.5">
                     
                     <!-- Mark Read Form -->
@@ -439,14 +486,6 @@
                     </form>
 
                 </div>
-
-                <!-- Direct Mailto Button -->
-                <a :href="'mailto:' + selectedMsg?.email + '?subject=' + encodeURIComponent('Re: ' + (selectedMsg?.subject || 'Support Inquiry') + ' - Noksha Support')"
-                   class="px-4 py-2 rounded-xl text-xs font-extrabold bg-brand-600 hover:bg-brand-700 text-white flex items-center gap-1.5 transition shadow-lg shadow-brand-950/40">
-                    <i class="bi bi-reply-fill text-sm"></i>
-                    <span>Direct Reply via Email</span>
-                </a>
-
             </div>
 
         </div>

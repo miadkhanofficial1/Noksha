@@ -6,8 +6,11 @@ use App\Models\Category;
 use App\Models\Contest;
 use App\Models\ContestEntry;
 use App\Models\Notification;
+use App\Models\User;
+use App\Notifications\NewContestLaunchedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -99,7 +102,7 @@ class AdminContestController extends Controller
         // Broadcast contest launch to all other users
         $recipients = User::where('id', '!=', $contest->user_id)->get();
         if ($recipients->isNotEmpty()) {
-            \Illuminate\Support\Facades\Notification::send($recipients, new \App\Notifications\NewContestLaunchedNotification($contest));
+            NotificationFacade::send($recipients, new NewContestLaunchedNotification($contest));
         }
 
         return redirect()->back()
@@ -174,7 +177,7 @@ class AdminContestController extends Controller
         // Broadcast contest launch to all other users
         $recipients = User::where('id', '!=', auth()->id())->get();
         if ($recipients->isNotEmpty()) {
-            \Illuminate\Support\Facades\Notification::send($recipients, new \App\Notifications\NewContestLaunchedNotification($contest));
+            NotificationFacade::send($recipients, new NewContestLaunchedNotification($contest));
         }
 
         return redirect()->back()

@@ -82,10 +82,15 @@ class HomeController extends Controller
 
         $totalApprovedCount = Resource::where('status', 'approved')->count();
 
+        $heroShowcase = $trendingResources->first() ?? $resources->first();
+        $aiShowcase = $resources->skip(1)->first() ?? $resources->first();
+
         return view('welcome', compact(
             'resources',
             'trendingResources',
             'categories',
+            'heroShowcase',
+            'aiShowcase',
             'totalApprovedCount',
             'templatesCount',
             'creatorsCount',

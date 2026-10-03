@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SupportReplyMail;
 use App\Models\ContactMessage;
+use App\Models\User;
+use App\Notifications\SupportReplyNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class AdminMessageController extends Controller
@@ -150,5 +155,86 @@ class AdminMessageController extends Controller
 
         return redirect()->back()
             ->with('success', 'Support message deleted successfully.');
+    }
+
+    /**
+     * Dispatch official dual-channel support response (Email + In-App Notification).
+     */
+    public function reply(Request|int|string $request, int|string|null $id = null): JsonResponse|RedirectResponse
+    {
+        $this->checkAdminAuthorization();
+
+        if ($request instanceof Request) {
+            $messageId = $id;
+            $req = $request;
+        } else {
+            $messageId = $request;
+            $req = request();
+        }
+
+        $validated = $req->validate([
+            'admin_reply_message' => ['required', 'string', 'min:3', 'max:5000'],
+        ]);
+
+        $replyMessage = trim($validated['admin_reply_message']);
+        $inquiry = ContactMessage::findOrFail($messageId);
+
+        // 1. Mark inquiry as replied
+        $inquiry->update([
+            'status' => 'replied',
+        ]);
+
+        // 2. Resolve user account (via user_id relation or email lookup)
+        $user = $inquiry->user;
+        if (!$user && !empty($inquiry->email)) {
+            $user = User::where('email', $inquiry->email)->first();
+            if ($user && !$inquiry->user_id) {
+                $inquiry->update(['user_id' => $user->id]);
+            }
+        }
+
+        $channelsNotified = [];
+
+        // 3. Channel 1: In-App Database Notification (for registered users)
+        if ($user) {
+            try {
+                $user->notify(new SupportReplyNotification($inquiry, $replyMessage));
+                $channelsNotified[] = 'In-App Notification';
+            } catch (\Throwable $e) {
+                Log::warning('In-app SupportReplyNotification failed: ' . $e->getMessage(), [
+                    'inquiry_id' => $inquiry->id,
+                    'user_id' => $user->id,
+                ]);
+            }
+        }
+
+        // 4. Channel 2: Email (Mailable) with graceful fallback
+        if (!empty($inquiry->email)) {
+            try {
+                Mail::to($inquiry->email)->send(new SupportReplyMail($inquiry, $replyMessage));
+                $channelsNotified[] = 'Email (' . $inquiry->email . ')';
+            } catch (\Throwable $e) {
+                Log::warning('SupportReplyMail delivery failed: ' . $e->getMessage(), [
+                    'inquiry_id' => $inquiry->id,
+                    'recipient' => $inquiry->email,
+                ]);
+            }
+        }
+
+        $notificationSummary = !empty($channelsNotified)
+            ? 'via ' . implode(' and ', $channelsNotified)
+            : 'and marked as Replied';
+
+        $successMsg = 'Official support reply dispatched successfully ' . $notificationSummary . '.';
+
+        if ($req->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMsg,
+                'status'  => 'replied',
+            ]);
+        }
+
+        return redirect()->back()->with('success', $successMsg);
     }
 }

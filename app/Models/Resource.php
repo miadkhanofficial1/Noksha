@@ -133,8 +133,22 @@ class Resource extends Model
      */
     public function getAverageRatingAttribute(): float
     {
-        $avg = $this->reviews()->avg('rating');
-        return $avg ? round((float) $avg, 1) : 5.0;
+        if (isset($this->attributes['reviews_avg_rating'])) {
+            return round((float) $this->attributes['reviews_avg_rating'], 1);
+        }
+        if (isset($this->attributes['average_rating'])) {
+            return (float) $this->attributes['average_rating'];
+        }
+        if ($this->relationLoaded('reviews')) {
+            $avg = $this->reviews->avg('rating');
+            return $avg ? round((float) $avg, 1) : 5.0;
+        }
+        try {
+            $avg = $this->reviews()->avg('rating');
+            return $avg ? round((float) $avg, 1) : 5.0;
+        } catch (\Throwable) {
+            return 5.0;
+        }
     }
 
     /**
@@ -142,6 +156,16 @@ class Resource extends Model
      */
     public function getReviewsCountAttribute(): int
     {
-        return (int) $this->reviews()->count();
+        if (isset($this->attributes['reviews_count'])) {
+            return (int) $this->attributes['reviews_count'];
+        }
+        if ($this->relationLoaded('reviews')) {
+            return $this->reviews->count();
+        }
+        try {
+            return (int) $this->reviews()->count();
+        } catch (\Throwable) {
+            return 0;
+        }
     }
 }

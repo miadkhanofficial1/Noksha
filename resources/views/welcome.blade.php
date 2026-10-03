@@ -720,84 +720,134 @@
                 </div>
             </div>
 
-            <!-- Right Column: Floating Glass Mockup Illustration Card -->
+            <!-- Right Column: Dynamic Asset Showcase / Glass Illustration Card -->
             <div class="col-lg-5">
                 <div class="position-relative animate-float">
-                    <!-- Glassmorphism Container Card -->
-                    <div class="p-4 rounded-4 glass-mockup-card">
-                        
-                        <!-- Studio Header Bar -->
-                        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-white border-opacity-20">
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle bg-danger" style="width: 10px; height: 10px;"></div>
-                                <div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
-                                <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
-                                <span class="small fw-semibold text-white ms-2">Noksha Studio Canvas v2.4</span>
-                            </div>
-                            <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 small border border-white border-opacity-25 animate-badge-float">
-                                <i class="bi bi-stars text-warning me-1"></i> AI Powered
-                            </span>
-                        </div>
-
-                        <!-- Canvas Workspace Mockup -->
-                        <div class="bg-white bg-opacity-20 rounded-3 p-3 mb-3 border border-white border-opacity-20 hero-canvas-workspace">
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="p-3 bg-white text-primary rounded-3 shadow-sm d-flex align-items-center justify-content-center hero-tool-icon" style="width: 52px; height: 52px;">
-                                    <i class="bi bi-layers-fill fs-3"></i>
+                    @if(isset($heroShowcase) && $heroShowcase)
+                        <!-- Glassmorphism Container Card -->
+                        <div class="p-4 rounded-4 glass-mockup-card">
+                            
+                            <!-- Studio Header Bar -->
+                            <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-white border-opacity-20">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-danger" style="width: 10px; height: 10px;"></div>
+                                    <div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
+                                    <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
+                                    <span class="small fw-semibold text-white ms-2 text-truncate" style="max-width: 180px;">{{ $heroShowcase->title }}</span>
                                 </div>
-                                <div class="flex-grow-1">
-                                    <div class="h6 fw-bold text-white mb-0">E-Commerce Brand Kit.fig</div>
-                                    <div class="small text-white text-opacity-75">Figma UI Kit & Vector Presets</div>
+                                <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 small border border-white border-opacity-25 animate-badge-float">
+                                    <i class="bi bi-patch-check-fill text-warning me-1"></i> Featured Asset
+                                </span>
+                            </div>
+
+                            <!-- Canvas Workspace Showcase -->
+                            <div class="bg-white bg-opacity-20 rounded-3 p-3 mb-3 border border-white border-opacity-20 hero-canvas-workspace">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    @if($heroShowcase->preview_image)
+                                        <img src="{{ asset('storage/' . $heroShowcase->preview_image) }}" alt="{{ $heroShowcase->title }}" class="rounded-3 shadow-sm object-fit-cover" style="width: 52px; height: 52px;">
+                                    @else
+                                        <div class="p-3 bg-white text-primary rounded-3 shadow-sm d-flex align-items-center justify-content-center hero-tool-icon" style="width: 52px; height: 52px;">
+                                            <i class="bi bi-layers-fill fs-3"></i>
+                                        </div>
+                                    @endif
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <a href="{{ route('resource.show', $heroShowcase->slug ?? $heroShowcase->id) }}" class="h6 fw-bold text-white mb-0 text-decoration-none d-block text-truncate hover-underline">
+                                            {{ $heroShowcase->title }}
+                                        </a>
+                                        <div class="small text-white text-opacity-75 text-truncate">
+                                            {{ $heroShowcase->category?->name ?? 'Design Asset' }} • by {{ $heroShowcase->owner?->name ?? 'Noksha Creator' }}
+                                        </div>
+                                    </div>
+                                    @if($heroShowcase->status === 'approved')
+                                        <span class="badge bg-success text-white rounded-pill px-2.5 py-1 animate-badge-float">Verified</span>
+                                    @endif
                                 </div>
-                                <span class="badge bg-success text-white rounded-pill px-2.5 py-1 animate-badge-float">Verified</span>
-                            </div>
 
-                            <!-- Design Tool Badges -->
-                            <div class="d-flex flex-wrap gap-2">
-                                <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#Figma</span>
-                                <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#Photoshop</span>
-                                <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#Illustrator</span>
-                                <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#SVG</span>
-                            </div>
-                        </div>
-
-                        <!-- Glass Mini Cards -->
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
-                                    <div class="small text-white text-opacity-75 mb-1">Rating</div>
-                                    <div class="fw-bold fs-5 text-warning"><i class="bi bi-star-fill me-1"></i> 4.9 / 5.0</div>
+                                <!-- Dynamic Asset Tags / Format Badges -->
+                                <div class="d-flex flex-wrap gap-2">
+                                    @if(!empty($heroShowcase->tags) && is_array($heroShowcase->tags))
+                                        @foreach(array_slice($heroShowcase->tags, 0, 4) as $tag)
+                                            <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ ltrim($tag, '#') }}</span>
+                                        @endforeach
+                                    @elseif(!empty($heroShowcase->file_type))
+                                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ strtoupper($heroShowcase->file_type) }}</span>
+                                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ $heroShowcase->category?->name ?? 'Design' }}</span>
+                                    @else
+                                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ $heroShowcase->category?->name ?? 'Design' }}</span>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
-                                    <div class="small text-white text-opacity-75 mb-1">Downloads</div>
-                                    <div class="fw-bold fs-5"><i class="bi bi-download me-1"></i> 12.8K</div>
+
+                            <!-- Glass Mini Cards -->
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
+                                        <div class="small text-white text-opacity-75 mb-1">Price</div>
+                                        <div class="fw-bold fs-5 text-white">
+                                            @if($heroShowcase->is_paid && $heroShowcase->price > 0)
+                                                ৳{{ number_format($heroShowcase->price, 2) }}
+                                            @else
+                                                <span class="text-white">Free</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
+                                        <div class="small text-white text-opacity-75 mb-1">Downloads</div>
+                                        <div class="fw-bold fs-5"><i class="bi bi-download me-1"></i> {{ number_format($heroShowcase->downloads ?? 0) }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Decorative Floating Badges with Depth -->
-                    <div class="position-absolute top-0 end-0 translate-middle-y me-n2 mt-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(4deg);">
-                        <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
-                            <i class="bi bi-lightning-charge-fill"></i>
+                        <!-- Decorative Floating Badges with Real Context -->
+                        <div class="position-absolute top-0 end-0 translate-middle-y me-n2 mt-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(4deg);">
+                            <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold small mb-0">{{ $heroShowcase->is_paid ? 'Commercial License' : 'Free Download' }}</div>
+                                <div class="text-muted extra-small">Instant Digital Delivery</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="fw-bold small mb-0">Instant Download</div>
-                            <div class="text-muted extra-small">Commercial License</div>
-                        </div>
-                    </div>
 
-                    <div class="position-absolute bottom-0 start-0 translate-middle-y ms-n2 mb-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(-3deg);">
-                        <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
-                            <i class="bi bi-shield-check"></i>
+                        <div class="position-absolute bottom-0 start-0 translate-middle-y ms-n2 mb-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(-3deg);">
+                            <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold small mb-0">100% Quality Checked</div>
+                                <div class="text-muted extra-small">Admin Verified Asset</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="fw-bold small mb-0">100% Quality Check</div>
-                            <div class="text-muted extra-small">Top Creator Guarantee</div>
+                    @else
+                        <!-- Production Clean Empty State (When 0 assets exist) -->
+                        <div class="p-4 p-md-5 rounded-4 glass-mockup-card text-center py-5">
+                            <div class="p-3 bg-white bg-opacity-10 text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                <i class="bi bi-palette2 fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold text-white mb-2">Bangladeshi Creator Marketplace</h5>
+                            <p class="small text-white text-opacity-80 mb-4 px-2" style="max-width: 380px; margin: 0 auto;">
+                                Be the first creator to upload and publish design assets on Noksha.
+                            </p>
+                            @guest
+                                <a href="{{ route('register') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                                    <i class="bi bi-person-plus-fill me-1"></i> Join Creator Community
+                                </a>
+                            @else
+                                @if(auth()->user()->isContributor())
+                                    <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                                        <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload First Template
+                                    </a>
+                                @else
+                                    <a href="{{ route('contributor.apply') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                                        <i class="bi bi-patch-check-fill me-1"></i> Become a Contributor
+                                    </a>
+                                @endif
+                            @endguest
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -910,7 +960,7 @@
                             <div class="card-body p-4 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
                                     <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                        <i class="bi bi-star-fill text-warning me-1"></i>{{ $resource->average_rating ?? '5.0' }} ({{ $resource->reviews_count ?? $resource->reviews->count() }})
+                                        <i class="bi bi-star-fill text-warning me-1"></i>{{ $resource->average_rating ?? '5.0' }} ({{ $resource->reviews_count ?? ($resource->relationLoaded('reviews') ? $resource->reviews->count() : 0) }})
                                     </span>
                                     <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($resource->downloads) }} downloads</span>
                                 </div>
@@ -1064,9 +1114,61 @@
             </p>
         </div>
 
-        <!-- Cards Layout -->
+        <!-- Dynamic Trending Cards Layout -->
         <div class="row g-4 mb-5">
-            </div>
+            @if(isset($trendingResources) && $trendingResources->count() > 0)
+                @foreach($trendingResources as $trending)
+                    @php
+                        $tCat = $trending->category?->name ?? 'Design';
+                        $tGrad = 'card-grad-' . (($loop->index % 4) + 1);
+                    @endphp
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100 template-card-figma border-0 shadow-sm">
+                            <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 220px; background: #1E1B4B;">
+                                @if($trending->preview_image)
+                                    <img src="{{ asset('storage/' . $trending->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $trending->title }}">
+                                @else
+                                    <div class="w-100 h-100 {{ $tGrad }} p-4 d-flex align-items-center justify-content-center text-white">
+                                        <i class="bi bi-fire fs-1 opacity-75"></i>
+                                    </div>
+                                @endif
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-danger rounded-pill px-2.5 py-1 shadow-sm">
+                                        <i class="bi bi-fire me-1"></i> #{{ $loop->iteration }} Trending
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body p-3.5 d-flex flex-column">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="badge bg-light text-primary border">{{ $tCat }}</span>
+                                    <span class="small text-muted"><i class="bi bi-download me-1"></i> {{ number_format($trending->downloads) }}</span>
+                                </div>
+                                <h6 class="fw-bold text-dark text-truncate mb-2">
+                                    <a href="{{ route('resource.show', $trending->slug ?? $trending->id) }}" class="text-dark text-decoration-none hover-underline">
+                                        {{ $trending->title }}
+                                    </a>
+                                </h6>
+                                <div class="small text-muted mb-3">by {{ $trending->owner?->name ?? 'Creator' }}</div>
+                                <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
+                                    <span class="fw-extrabold {{ $trending->is_paid && $trending->price > 0 ? 'text-dark' : 'text-success' }}">
+                                        {{ $trending->is_paid && $trending->price > 0 ? '৳' . number_format($trending->price, 2) : 'Free' }}
+                                    </span>
+                                    <a href="{{ route('resource.show', $trending->slug ?? $trending->id) }}" class="btn btn-sm btn-purple-cta rounded-pill px-3">
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="col-12 text-center py-4">
+                    <div class="p-4 bg-white rounded-4 shadow-sm border d-inline-block px-5 py-4">
+                        <i class="bi bi-graph-up-arrow text-primary fs-3 d-block mb-2"></i>
+                        <span class="text-secondary small fw-medium">Trending templates will automatically appear here based on community downloads and views.</span>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Bottom AI Recommendation Strip -->
@@ -1133,41 +1235,91 @@
                 </div>
             </div>
 
-            <!-- Feature Card Visualization -->
+            <!-- Dynamic AI Feature Showcase Card -->
             <div class="col-lg-6">
-                <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm">
-                    <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-primary rounded-pill px-3 py-2">AI Simulation</span>
-                            <span class="fw-semibold text-dark">Metadata Extractor</span>
-                        </div>
-                        <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
-                    </div>
-
-                    <div class="bg-light p-3 rounded-3 mb-3 border">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-secondary text-white rounded p-3 text-center" style="width: 60px; height: 60px;">
-                                <i class="bi bi-file-earmark-image fs-3"></i>
+                @if(isset($aiShowcase) && $aiShowcase)
+                    <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm">
+                        <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary rounded-pill px-3 py-2">AI Engine</span>
+                                <span class="fw-semibold text-dark">Live Metadata Extractor</span>
                             </div>
-                            <div>
-                                <h6 class="fw-bold mb-1">Corporate_Flyer_Template.psd</h6>
-                                <span class="badge bg-secondary text-light">Photoshop CS6+</span>
-                                <span class="badge bg-dark text-light">300 DPI</span>
+                            <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+
+                        <div class="bg-light p-3 rounded-3 mb-3 border">
+                            <div class="d-flex align-items-center gap-3">
+                                @if($aiShowcase->preview_image)
+                                    <img src="{{ asset('storage/' . $aiShowcase->preview_image) }}" alt="{{ $aiShowcase->title }}" class="rounded shadow-sm object-fit-cover" style="width: 60px; height: 60px;">
+                                @else
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded p-3 text-center d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <i class="bi bi-file-earmark-code fs-3"></i>
+                                    </div>
+                                @endif
+                                <div class="overflow-hidden flex-grow-1">
+                                    <h6 class="fw-bold mb-1 text-dark text-truncate">{{ $aiShowcase->title }}</h6>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-secondary text-light">{{ strtoupper($aiShowcase->file_type ?? 'Vector') }}</span>
+                                        <span class="badge bg-dark text-light">{{ $aiShowcase->category?->name ?? 'Design' }}</span>
+                                        @if($aiShowcase->is_paid && $aiShowcase->price > 0)
+                                            <span class="badge bg-primary text-light">৳{{ number_format($aiShowcase->price, 2) }}</span>
+                                        @else
+                                            <span class="badge bg-success text-light">Free</span>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted">Extracted AI Keywords:</label>
-                        <div class="d-flex flex-wrap gap-1">
-                            <span class="badge bg-light text-dark border">#corporate</span>
-                            <span class="badge bg-light text-dark border">#business</span>
-                            <span class="badge bg-light text-dark border">#minimalist</span>
-                            <span class="badge bg-light text-dark border">#gradient-blue</span>
-                            <span class="badge bg-light text-dark border">#a4-print</span>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Extracted AI Keywords & Tags:</label>
+                            <div class="d-flex flex-wrap gap-1">
+                                @if(!empty($aiShowcase->tags) && is_array($aiShowcase->tags))
+                                    @foreach(array_slice($aiShowcase->tags, 0, 6) as $tag)
+                                        <span class="badge bg-light text-dark border">#{{ ltrim($tag, '#') }}</span>
+                                    @endforeach
+                                @else
+                                    <span class="badge bg-light text-dark border">#{{ strtolower($aiShowcase->category?->name ?? 'design') }}</span>
+                                    <span class="badge bg-light text-dark border">#{{ strtolower($aiShowcase->file_type ?? 'vector') }}</span>
+                                    <span class="badge bg-light text-dark border">#marketplace</span>
+                                    <span class="badge bg-light text-dark border">#bangladesh</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-top d-flex align-items-center justify-content-between">
+                            <span class="small text-muted">Uploaded by <strong class="text-dark">{{ $aiShowcase->owner?->name ?? 'Noksha Creator' }}</strong></span>
+                            <a href="{{ route('resource.show', $aiShowcase->slug ?? $aiShowcase->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                Inspect Asset <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm text-center py-5">
+                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-cpu fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">Automated AI Metadata Extractor</h5>
+                        <p class="small text-muted mb-4" style="max-width: 420px; margin: 0 auto;">
+                            No items published yet. Be the first to upload Photoshop, Figma, or Illustrator assets to experience automated metadata extraction, smart tagging, and instant moderation!
+                        </p>
+                        @auth
+                            @if(auth()->user()->isContributor())
+                                <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload Asset to Test
+                                </a>
+                            @else
+                                <a href="{{ route('contributor.apply') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                                    <i class="bi bi-patch-check-fill me-1"></i> Become a Contributor
+                                </a>
+                            @endif
+                        @else
+                            <a href="{{ route('register') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
+                                <i class="bi bi-person-plus-fill me-1"></i> Join as Creator
+                            </a>
+                        @endauth
+                    </div>
+                @endif
             </div>
         </div>
     </div>

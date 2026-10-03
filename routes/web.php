@@ -380,6 +380,8 @@ Route::middleware('auth')->group(function () {
         // 8. Customer Support Inquiries & Messages
         Route::get('/messages', [AdminMessageController::class, 'index'])->name('messages.index');
         Route::patch('/messages/{id}/status', [AdminMessageController::class, 'updateStatus'])->name('messages.updateStatus');
+        Route::post('/messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('messages.reply');
+        Route::post('/support-messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('support-messages.reply');
         Route::delete('/messages/{id}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
     });
 });
