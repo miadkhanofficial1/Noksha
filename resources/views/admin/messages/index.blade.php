@@ -16,31 +16,6 @@
     }
 }" class="space-y-6">
 
-    <!-- Flash Alerts -->
-    @if(session('success'))
-        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i class="bi bi-check-circle-fill text-emerald-400 fs-5"></i>
-                <span>{{ session('success') }}</span>
-            </div>
-            <button type="button" @click="$el.parentElement.remove()" class="text-emerald-400 hover:text-white">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i class="bi bi-exclamation-triangle-fill text-rose-400 fs-5"></i>
-                <span>{{ session('error') }}</span>
-            </div>
-            <button type="button" @click="$el.parentElement.remove()" class="text-rose-400 hover:text-white">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
     <!-- 1. TOP STAT METRICS -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         

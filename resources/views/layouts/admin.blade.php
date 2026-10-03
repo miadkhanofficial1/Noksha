@@ -349,7 +349,17 @@
                             <i class="bi bi-check-circle-fill text-emerald-600 dark:text-emerald-400 text-lg"></i>
                             <span>{{ session('success') }}</span>
                         </div>
-                        <button type="button" onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400">
+                        <button type="button" onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 cursor-pointer">
+                            <i class="bi bi-x-lg text-xs"></i>
+                        </button>
+                    </div>
+                @elseif(session('status'))
+                    <div class="p-3.5 mb-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-2.5">
+                            <i class="bi bi-check-circle-fill text-emerald-600 dark:text-emerald-400 text-lg"></i>
+                            <span>{{ session('status') }}</span>
+                        </div>
+                        <button type="button" onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 cursor-pointer">
                             <i class="bi bi-x-lg text-xs"></i>
                         </button>
                     </div>
@@ -361,7 +371,7 @@
                             <i class="bi bi-exclamation-triangle-fill text-amber-600 dark:text-amber-400 text-lg"></i>
                             <span>{{ session('warning') }}</span>
                         </div>
-                        <button type="button" onclick="this.parentElement.remove()" class="text-amber-600 hover:text-amber-800 dark:text-amber-400">
+                        <button type="button" onclick="this.parentElement.remove()" class="text-amber-600 hover:text-amber-800 dark:text-amber-400 cursor-pointer">
                             <i class="bi bi-x-lg text-xs"></i>
                         </button>
                     </div>
@@ -373,7 +383,7 @@
                             <i class="bi bi-x-circle-fill text-rose-600 dark:text-rose-400 text-lg"></i>
                             <span>{{ session('error') }}</span>
                         </div>
-                        <button type="button" onclick="this.parentElement.remove()" class="text-rose-600 hover:text-rose-800 dark:text-rose-400">
+                        <button type="button" onclick="this.parentElement.remove()" class="text-rose-600 hover:text-rose-800 dark:text-rose-400 cursor-pointer">
                             <i class="bi bi-x-lg text-xs"></i>
                         </button>
                     </div>

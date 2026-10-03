@@ -16,43 +16,6 @@
     }
 }" class="space-y-8">
 
-    <!-- Flash Notifications -->
-    @if(session('success'))
-        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center justify-between shadow-lg shadow-emerald-500/5">
-            <div class="flex items-center gap-3">
-                <i class="bi bi-check-circle-fill text-emerald-400 text-lg"></i>
-                <span class="font-medium">{{ session('success') }}</span>
-            </div>
-            <button type="button" @click="$el.parentElement.remove()" class="text-emerald-400/80 hover:text-white transition-colors">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
-    @if(session('info'))
-        <div class="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 text-sm flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i class="bi bi-info-circle-fill text-sky-400 text-lg"></i>
-                <span class="font-medium">{{ session('info') }}</span>
-            </div>
-            <button type="button" @click="$el.parentElement.remove()" class="text-sky-400/80 hover:text-white transition-colors">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i class="bi bi-exclamation-triangle-fill text-rose-400 text-lg"></i>
-                <span class="font-medium">{{ session('error') }}</span>
-            </div>
-            <button type="button" @click="$el.parentElement.remove()" class="text-rose-400/80 hover:text-white transition-colors">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    @endif
-
     <!-- 1. TOP METRICS GRID (4 PRIMARY STAT CARDS) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
