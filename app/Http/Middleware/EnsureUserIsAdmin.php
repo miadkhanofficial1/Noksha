@@ -19,8 +19,8 @@ class EnsureUserIsAdmin
             return redirect()->route('login')->with('warning', 'Please log in to access administrative pages.');
         }
 
-        $userRole = auth()->user()->role ?? 'user';
-        if (!in_array($userRole, ['admin', 'super_admin'])) {
+        $user = auth()->user();
+        if (!$user->isAdmin() && !in_array($user->role ?? 'user', ['admin', 'super_admin'])) {
             abort(403, 'Unauthorized access. Super Admin privileges required.');
         }
 

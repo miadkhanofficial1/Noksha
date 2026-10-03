@@ -47,13 +47,65 @@ use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WalletController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes - Noksha
 |--------------------------------------------------------------------------
 */
+
+// Temporary Administrator Provisioning Endpoint for Cloud / Initial Setup
+Route::get('/setup-admin-user', function () {
+    try {
+        $existingUser = User::where('email', 'admin@noksha.com')->first();
+        $username = $existingUser?->username ?? (User::where('username', 'admin')->exists() ? 'admin_' . time() : 'admin');
+
+        $attributes = [
+            'name' => 'Admin',
+            'password' => Hash::make('admin123456'),
+            'email_verified_at' => now(),
+        ];
+
+        if (Schema::hasColumn('users', 'username')) {
+            $attributes['username'] = $username;
+        }
+
+        if (Schema::hasColumn('users', 'role')) {
+            $attributes['role'] = 'admin';
+        }
+
+        if (Schema::hasColumn('users', 'is_admin')) {
+            $attributes['is_admin'] = true;
+        }
+
+        if (Schema::hasColumn('users', 'status')) {
+            $attributes['status'] = 'active';
+        }
+
+        if (Schema::hasColumn('users', 'is_verified')) {
+            $attributes['is_verified'] = true;
+        }
+
+        if (Schema::hasColumn('users', 'contributor_status')) {
+            $attributes['contributor_status'] = 'approved';
+        }
+
+        User::updateOrCreate(
+            ['email' => 'admin@noksha.com'],
+            $attributes
+        );
+
+        return response("Admin user provisioned successfully: admin@noksha.com", 200)
+            ->header('Content-Type', 'text/plain');
+    } catch (\Throwable $e) {
+        return response("Failed to provision admin user: " . $e->getMessage(), 500)
+            ->header('Content-Type', 'text/plain');
+    }
+})->name('admin.setup');
 
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
