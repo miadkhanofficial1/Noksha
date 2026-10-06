@@ -48,6 +48,7 @@ use App\Http\Controllers\SellerVerificationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WalletController;
 use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
@@ -384,4 +385,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/support-messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('support-messages.reply');
         Route::delete('/messages/{id}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
     });
+});
+
+Route::get('/run-noksha-seed', function () {
+    Artisan::call('db:seed', ['--force' => true]);
+    return response('Seeding completed successfully!<br><pre>' . e(Artisan::output()) . '</pre>');
 });
