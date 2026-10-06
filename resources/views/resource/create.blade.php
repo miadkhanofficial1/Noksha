@@ -233,7 +233,10 @@
                     {{ __('upload.hero_subtitle') }}
                 </p>
             </div>
-            <div>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-light rounded-pill px-3.5 py-1.5 fw-bold shadow-sm extra-small" data-bs-toggle="modal" data-bs-target="#uploadGuidelinesModalBS">
+                    <i class="bi bi-book-half me-1"></i> Upload Guidelines
+                </button>
                 <a href="{{ route('seller.dashboard') }}" class="btn btn-light rounded-pill px-3.5 py-1.5 fw-bold text-primary shadow-sm extra-small">
                     <i class="bi bi-speedometer2 me-1"></i> {{ __('upload.back_dashboard') }}
                 </a>
@@ -708,5 +711,91 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTagCounter(document.getElementById('tagsInput'));
 });
 </script>
+
+<!-- UPLOAD GUIDELINES MODAL (BOOTSTRAP) -->
+<div class="modal fade" id="uploadGuidelinesModalBS" tabindex="-1" aria-labelledby="uploadGuidelinesModalBSLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark text-white border border-secondary border-opacity-25 rounded-4 shadow-2xl overflow-hidden">
+            <div class="modal-header border-bottom border-secondary border-opacity-25 bg-black bg-opacity-40 py-3 px-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25">
+                        <i class="bi bi-book-half fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold text-white mb-0" id="uploadGuidelinesModalBSLabel">Noksha Creator Upload Guidelines</h5>
+                        <p class="text-secondary extra-small mb-0">Follow our quality and licensing rules to ensure rapid asset approval</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 bg-dark">
+                <div class="d-flex flex-column gap-3">
+                    <!-- Rule 1: Cover Preview -->
+                    <div class="p-3 rounded-3 bg-black bg-opacity-40 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
+                        <div class="p-2 rounded-3 bg-purple bg-opacity-20 text-purple border border-purple border-opacity-25 flex-shrink-0" style="color: #a855f7;">
+                            <i class="bi bi-image fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-white mb-1 small">1. High-Resolution Cover Preview</h6>
+                            <p class="text-secondary extra-small mb-0 leading-relaxed">
+                                Upload a clean, high-resolution preview image in <strong>16:9</strong> or <strong>4:3</strong> aspect ratio. Supported formats are <strong>JPG, PNG, or WEBP</strong> (Max file size: <strong>5MB</strong>). Avoid pixelated imagery, external watermarks, or intrusive text overlays.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Rule 2: Source File Packing -->
+                    <div class="p-3 rounded-3 bg-black bg-opacity-40 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
+                        <div class="p-2 rounded-3 bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 flex-shrink-0">
+                            <i class="bi bi-file-earmark-zip fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-white mb-1 small">2. Clean Source Package (.ZIP)</h6>
+                            <p class="text-secondary extra-small mb-0 leading-relaxed">
+                                All downloadable asset packages must strictly be packed into a clean <strong>.ZIP archive</strong> (Max 100MB). Include well-structured raw vector and design files: <strong>Figma (.fig), Adobe Photoshop (.psd), Illustrator (.ai), EPS, SVG</strong>, alongside font license documentation and readme notes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Rule 3: Category & Tags -->
+                    <div class="p-3 rounded-3 bg-black bg-opacity-40 border border-secondary border-opacity-25 d-flex align-items-start gap-3">
+                        <div class="p-2 rounded-3 bg-success bg-opacity-20 text-success border border-success border-opacity-25 flex-shrink-0">
+                            <i class="bi bi-tags fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-white mb-1 small">3. Relevant Categories & Keyword Tags</h6>
+                            <p class="text-secondary extra-small mb-0 leading-relaxed">
+                                Select the most precise marketplace category (UI Kit, Mockups, Templates, Graphics, etc.). Provide at least <strong>3 to 5 comma-separated tags</strong> (e.g., <em>dashboard, dark mode, fintech, responsive</em>) to optimize discoverability on marketplace search engines.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Rule 4: IP Rights -->
+                    <div class="p-3 rounded-3 bg-black bg-opacity-40 border border-danger border-opacity-40 d-flex align-items-start gap-3">
+                        <div class="p-2 rounded-3 bg-danger bg-opacity-20 text-danger border border-danger border-opacity-25 flex-shrink-0">
+                            <i class="bi bi-shield-x fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-danger mb-1 small">4. 100% Original Intellectual Property</h6>
+                            <p class="text-secondary extra-small mb-0 leading-relaxed">
+                                You must hold full ownership and intellectual property rights for every file uploaded. The upload of ripped designs, freeware without commercial re-distribution rights, or copyright-infringing content is strictly prohibited and results in <strong>immediate and permanent account suspension</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25 bg-black bg-opacity-40 py-3 px-4 d-flex justify-content-between align-items-center flex-wrap">
+                <span class="text-secondary extra-small">Noksha Creator Standards v2026.1</span>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ route('guidelines.download-pdf') }}" target="_blank" class="btn btn-primary rounded-pill px-3.5 py-1.5 extra-small fw-bold">
+                        <i class="bi bi-download me-1"></i> Download PDF Guidelines
+                    </a>
+                    <button type="button" class="btn btn-secondary rounded-pill px-3.5 py-1.5 extra-small" data-bs-dismiss="modal">
+                        Got it, Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection

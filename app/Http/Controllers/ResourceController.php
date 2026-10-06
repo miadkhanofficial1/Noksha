@@ -235,4 +235,30 @@ class ResourceController extends Controller
 
         abort(404, 'Design resource not found.');
     }
+
+    /**
+     * Download or stream the official Noksha Creator Upload Guidelines (PDF / Printable HTML).
+     */
+    public function downloadGuidelines()
+    {
+        $data = [
+            'appName' => 'Noksha Digital Marketplace',
+            'title' => 'Noksha Creator Upload Guidelines & Submission Standards',
+            'version' => '2026.1',
+            'date' => now()->format('F d, Y'),
+        ];
+
+        // If DomPDF package is installed in environment
+        if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.guidelines', $data);
+            return $pdf->download('Noksha-Creator-Upload-Guidelines.pdf');
+        }
+
+        // Clean, printable, self-contained HTML/PDF response
+        return response()->view('pdf.guidelines', $data, 200, [
+            'Content-Type' => 'text/html; charset=UTF-8',
+            'Content-Disposition' => 'inline; filename="Noksha-Creator-Upload-Guidelines.html"',
+        ]);
+    }
 }
+
