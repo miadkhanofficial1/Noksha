@@ -854,11 +854,9 @@
                                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Category <span class="text-rose-400">*</span></label>
                                         <select name="category_id" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:border-indigo-500 focus:outline-none" required>
                                             <option value="">Select Category</option>
-                                            @if(isset($categories))
-                                                @foreach($categories as $cat)
-                                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                                @endforeach
-                                            @endif
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 

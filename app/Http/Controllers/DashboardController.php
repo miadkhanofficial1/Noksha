@@ -94,7 +94,30 @@ class DashboardController extends Controller
         $avgRating = $sellerReviews->avg('rating') ? number_format($sellerReviews->avg('rating'), 1) : '5.0';
         $totalReviews = $sellerReviews->count();
 
-        // Categories for embedded upload form
+        // Categories for embedded upload form (auto-seed if empty)
+        if (Category::count() === 0) {
+            $defaultCategories = [
+                ['name' => 'Graphics', 'slug' => 'graphics', 'icon' => 'bi-palette'],
+                ['name' => 'UI Kit', 'slug' => 'ui-kit', 'icon' => 'bi-layers-fill'],
+                ['name' => 'Mockups', 'slug' => 'mockups', 'icon' => 'bi-box'],
+                ['name' => 'Templates', 'slug' => 'templates', 'icon' => 'bi-window'],
+                ['name' => 'Illustrations', 'slug' => 'illustrations', 'icon' => 'bi-stars'],
+                ['name' => 'Icons', 'slug' => 'icons', 'icon' => 'bi-vector-pen'],
+                ['name' => 'Fonts', 'slug' => 'fonts', 'icon' => 'bi-fonts'],
+            ];
+            $now = now();
+            foreach ($defaultCategories as $cat) {
+                Category::updateOrCreate(
+                    ['slug' => $cat['slug']],
+                    [
+                        'name' => $cat['name'],
+                        'icon' => $cat['icon'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]
+                );
+            }
+        }
         $categories = Category::all();
 
         // Top Performing AI Tags
