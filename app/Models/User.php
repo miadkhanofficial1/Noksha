@@ -540,10 +540,24 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAvatarUrlAttribute(): string
     {
-        if ($this->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar)) {
+        if (empty($this->avatar)) {
+            return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=6366f1&color=fff';
+        }
+
+        if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+            return $this->avatar;
+        }
+
+        $disk = config('filesystems.default', 'public');
+        if ($disk === 's3') {
+            return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->avatar);
+        }
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar)) {
             return asset('storage/' . $this->avatar);
         }
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=6366f1&color=fff';
+
+        return \Illuminate\Support\Facades\Storage::disk($disk)->url($this->avatar);
     }
 
     /**
@@ -551,10 +565,24 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getCoverUrlAttribute(): ?string
     {
-        if ($this->cover_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->cover_image)) {
+        if (empty($this->cover_image)) {
+            return null;
+        }
+
+        if (str_starts_with($this->cover_image, 'http://') || str_starts_with($this->cover_image, 'https://')) {
+            return $this->cover_image;
+        }
+
+        $disk = config('filesystems.default', 'public');
+        if ($disk === 's3') {
+            return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->cover_image);
+        }
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->cover_image)) {
             return asset('storage/' . $this->cover_image);
         }
-        return null;
+
+        return \Illuminate\Support\Facades\Storage::disk($disk)->url($this->cover_image);
     }
 
     /**

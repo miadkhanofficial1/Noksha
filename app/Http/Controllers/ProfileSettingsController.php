@@ -59,21 +59,23 @@ class ProfileSettingsController extends Controller
             'cover_image.max' => 'Cover image must not exceed 5MB.',
         ]);
 
+        $disk = config('filesystems.default', 'public');
+
         // Process avatar upload
         if ($request->hasFile('avatar')) {
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            if ($user->avatar && Storage::disk($disk)->exists($user->avatar)) {
+                Storage::disk($disk)->delete($user->avatar);
             }
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $avatarPath = $request->file('avatar')->store('avatars', ['disk' => $disk, 'visibility' => 'public']);
             $user->avatar = $avatarPath;
         }
 
         // Process cover image upload
         if ($request->hasFile('cover_image')) {
-            if ($user->cover_image && Storage::disk('public')->exists($user->cover_image)) {
-                Storage::disk('public')->delete($user->cover_image);
+            if ($user->cover_image && Storage::disk($disk)->exists($user->cover_image)) {
+                Storage::disk($disk)->delete($user->cover_image);
             }
-            $coverPath = $request->file('cover_image')->store('covers', 'public');
+            $coverPath = $request->file('cover_image')->store('covers', ['disk' => $disk, 'visibility' => 'public']);
             $user->cover_image = $coverPath;
         }
 

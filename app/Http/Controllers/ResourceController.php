@@ -76,8 +76,9 @@ class ResourceController extends Controller
         ]);
 
         // Process File Storage
-        $previewPath = $request->file('preview_image')->store('previews', 'public');
-        $filePath = $request->file('resource_file')->store('resources', 'public');
+        $disk = config('filesystems.default', 'public');
+        $previewPath = $request->file('preview_image')->store('previews', ['disk' => $disk, 'visibility' => 'public']);
+        $filePath = $request->file('resource_file')->store('resources', ['disk' => $disk, 'visibility' => 'public']);
 
         // Process File Extensions
         $extensionsSelected = $request->input('extensions');

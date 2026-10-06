@@ -54,14 +54,28 @@ class Resource extends Model
     }
 
     /**
-     * Get thumbnail URL accessor.
+     * Get thumbnail URL accessor (supports S3, local storage, or external URL).
      */
     public function getThumbnailUrlAttribute(): string
     {
-        if ($this->preview_image) {
+        if (empty($this->preview_image)) {
+            return asset('images/logo.png');
+        }
+
+        if (str_starts_with($this->preview_image, 'http://') || str_starts_with($this->preview_image, 'https://')) {
+            return $this->preview_image;
+        }
+
+        $disk = config('filesystems.default', 'public');
+        if ($disk === 's3') {
+            return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->preview_image);
+        }
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->preview_image)) {
             return asset('storage/' . $this->preview_image);
         }
-        return asset('images/logo.png');
+
+        return \Illuminate\Support\Facades\Storage::disk($disk)->url($this->preview_image);
     }
 
     /**
