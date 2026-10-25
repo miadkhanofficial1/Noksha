@@ -789,7 +789,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="{{ route('guidelines.download-pdf') }}" target="_blank" class="btn btn-primary rounded-pill px-3.5 py-1.5 extra-small fw-bold">
                         <i class="bi bi-download me-1"></i> Download PDF Guidelines
                     </a>
-                    <button type="button" class="btn btn-secondary rounded-pill px-3.5 py-1.5 extra-small" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-secondary rounded-pill px-3.5 py-1.5 extra-small" data-bs-dismiss="modal" onclick="try{localStorage.setItem('noksha_guidelines_seen','true');}catch(e){}">
                         Got it, Close
                     </button>
                 </div>

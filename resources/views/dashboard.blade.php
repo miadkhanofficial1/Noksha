@@ -1179,27 +1179,74 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function getGuidelinesModal() {
+    return document.getElementById('guidelinesModal') || document.getElementById('uploadGuidelinesModal');
+}
+
 function openUploadGuidelinesModal() {
-    var modal = document.getElementById('uploadGuidelinesModal');
+    var modal = getGuidelinesModal();
     if (modal) {
         modal.classList.remove('hidden');
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
 }
 
-function closeUploadGuidelinesModal() {
-    var modal = document.getElementById('uploadGuidelinesModal');
+function closeUploadGuidelinesModal(e) {
+    // If event is passed from backdrop, only close if clicked on backdrop itself
+    if (e && e.target && e.currentTarget && e.target !== e.currentTarget) {
+        return;
+    }
+    var modal = getGuidelinesModal();
     if (modal) {
         modal.classList.add('hidden');
-        document.body.style.overflow = '';
+        modal.style.display = 'none';
+    }
+    document.body.style.overflow = '';
+    try {
+        localStorage.setItem('noksha_guidelines_seen', 'true');
+    } catch (err) {
+        // Fallback for sandboxed storage
     }
 }
+
+// Keyboard 'Escape' & Backdrop Click Dismissal
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+        closeUploadGuidelinesModal();
+    }
+});
+
+// Ensure modal is hidden on initial load if seen or by default
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = getGuidelinesModal();
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+
+        var xBtn = document.getElementById('closeGuidelinesXBtn');
+        if (xBtn) {
+            xBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeUploadGuidelinesModal();
+            });
+        }
+        var gotItBtn = document.getElementById('closeGuidelinesGotItBtn');
+        if (gotItBtn) {
+            gotItBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeUploadGuidelinesModal();
+            });
+        }
+    }
+});
 </script>
 
 <!-- ======================================================== -->
 <!-- UPLOAD GUIDELINES MODAL POPUP (DARK THEMED)              -->
 <!-- ======================================================== -->
-<div id="uploadGuidelinesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-300">
+<div id="guidelinesModal" data-modal="uploadGuidelinesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-300" style="display: none;" onclick="closeUploadGuidelinesModal(event)">
     <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
         <!-- Modal Header -->
         <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
@@ -1212,7 +1259,7 @@ function closeUploadGuidelinesModal() {
                     <p class="text-xs text-slate-400 mb-0">Follow our quality and licensing rules to ensure rapid asset approval</p>
                 </div>
             </div>
-            <button type="button" onclick="closeUploadGuidelinesModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition-colors cursor-pointer">
+            <button type="button" id="closeGuidelinesXBtn" onclick="closeUploadGuidelinesModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 flex items-center justify-center transition-colors cursor-pointer" aria-label="Close modal">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
@@ -1280,7 +1327,7 @@ function closeUploadGuidelinesModal() {
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     <span>Download PDF Guidelines</span>
                 </a>
-                <button type="button" onclick="closeUploadGuidelinesModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors cursor-pointer">
+                <button type="button" id="closeGuidelinesGotItBtn" onclick="closeUploadGuidelinesModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors cursor-pointer">
                     Got it, Close
                 </button>
             </div>
@@ -1288,4 +1335,3 @@ function closeUploadGuidelinesModal() {
     </div>
 </div>
 @endsection
-
