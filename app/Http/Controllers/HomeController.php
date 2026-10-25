@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Resource;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -34,28 +36,31 @@ class HomeController extends Controller
             $query->where('status', 'approved');
         }])->get();
 
-        // 4. Statistics counts (Real-time database-driven with smart base counters)
-        $realTemplates = class_exists(\App\Models\Template::class)
-            ? \App\Models\Template::count()
-            : Resource::count();
-
-        $realCreators = \App\Models\User::where(function ($query) {
-            $query->where('role', 'seller')
-                ->orWhere('role', 'contributor')
-                ->orWhere('is_contributor', true)
-                ->orWhere('contributor_status', 'approved')
-                ->orWhereHas('resources');
-        })->count();
-
-        $realDownloads = (int) (Resource::sum('downloads') ?: 0);
-        if (class_exists(\App\Models\OrderItem::class)) {
-            $realDownloads += \App\Models\OrderItem::count();
+        // 4. Statistics counts (Real-time database-driven strictly synchronized with Admin HQ)
+        $templatesQuery = Resource::where('status', 'approved');
+        if (Schema::hasColumn('resources', 'is_active')) {
+            $templatesQuery->where('is_active', true);
         }
+        $templatesCount = $templatesQuery->count();
 
-        // Dynamic real-time statistics counts from database
-        $templatesCount = $realTemplates;
-        $creatorsCount = $realCreators;
-        $downloadsCount = $realDownloads;
+        // Strictly filter for approved sellers/creators matching Admin User Hub schema
+        // Excludes admins, buyers, and general users
+        $creatorsQuery = User::where('is_admin', false)
+            ->whereNotIn('role', ['admin', 'super_admin', 'buyer', 'user'])
+            ->where(function ($query) {
+                $query->where('role', 'seller')
+                    ->orWhere('role', 'creator')
+                    ->orWhere('is_contributor', true);
+            })
+            ->where('status', '!=', 'suspended');
+        $creatorsCount = $creatorsQuery->count();
+
+        $downloadsCount = (int) (Resource::where('status', 'approved')->sum('downloads') ?: 0);
+        if (class_exists(\App\Models\OrderItem::class)) {
+            $downloadsCount += \App\Models\OrderItem::whereHas('order', function ($q) {
+                $q->where('payment_status', 'completed');
+            })->count();
+        }
 
         // Smart K+ / M+ formatter for counters
         $formatStat = function (int $number) {
@@ -80,7 +85,7 @@ class HomeController extends Controller
         $formattedCreatorsCount = $creatorsStat['display'];
         $formattedDownloadsCount = $downloadsStat['display'];
 
-        $totalApprovedCount = Resource::where('status', 'approved')->count();
+        $totalApprovedCount = $templatesCount;
 
         $heroShowcase = $trendingResources->first() ?? $resources->first();
         $aiShowcase = $resources->skip(1)->first() ?? $resources->first();

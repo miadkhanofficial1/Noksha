@@ -392,3 +392,40 @@ Route::get('/run-noksha-seed', function () {
     Artisan::call('db:seed', ['--force' => true]);
     return response('Seeding completed successfully!<br><pre>' . e(Artisan::output()) . '</pre>');
 });
+
+
+Route::get('/setup-demo-assets', function () {
+    try {
+        // 1. Ensure categories exist
+        (new \Database\Seeders\CategorySeeder())->run();
+
+        // 2. Provision verified seller & sample assets
+        (new \Database\Seeders\AssetSeeder())->run();
+
+        $templatesCount = \App\Models\Resource::where('status', 'approved')->count();
+        $creatorsCount = \App\Models\User::where('is_admin', false)
+            ->whereNotIn('role', ['admin', 'super_admin', 'buyer', 'user'])
+            ->where(function ($q) {
+                $q->where('role', 'seller')->orWhere('role', 'creator');
+            })
+            ->where('status', '!=', 'suspended')
+            ->count();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Demo assets and verified creator provisioned successfully!',
+            'metrics' => [
+                'approved_templates' => $templatesCount,
+                'creators' => $creatorsCount,
+                'categories' => \App\Models\Category::count(),
+            ],
+            'timestamp' => now()->toIso8601String(),
+        ], 200, [], JSON_PRETTY_PRINT);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+});

@@ -744,7 +744,7 @@
                             <div class="bg-white bg-opacity-20 rounded-3 p-3 mb-3 border border-white border-opacity-20 hero-canvas-workspace">
                                 <div class="d-flex align-items-center gap-3 mb-3">
                                     @if($heroShowcase->preview_image)
-                                        <img src="{{ asset('storage/' . $heroShowcase->preview_image) }}" alt="{{ $heroShowcase->title }}" class="rounded-3 shadow-sm object-fit-cover" style="width: 52px; height: 52px;">
+                                        <img src="{{ $heroShowcase->thumbnail_url }}" alt="{{ $heroShowcase->title }}" class="rounded-3 shadow-sm object-fit-cover" style="width: 52px; height: 52px;">
                                     @else
                                         <div class="p-3 bg-white text-primary rounded-3 shadow-sm d-flex align-items-center justify-content-center hero-tool-icon" style="width: 52px; height: 52px;">
                                             <i class="bi bi-layers-fill fs-3"></i>
@@ -940,7 +940,7 @@
                             <!-- Preview Area -->
                             <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 240px; background: #1E1B4B;">
                                 @if($resource->preview_image)
-                                    <img src="{{ asset('storage/' . $resource->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $resource->title }}">
+                                    <img src="{{ $resource->thumbnail_url }}" class="w-100 h-100 object-fit-cover" alt="{{ $resource->title }}">
                                 @else
                                     <div class="w-100 h-100 {{ $gradClass }} p-4 d-flex align-items-center justify-content-center text-white">
                                         <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
@@ -1126,7 +1126,7 @@
                         <div class="card h-100 template-card-figma border-0 shadow-sm">
                             <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 220px; background: #1E1B4B;">
                                 @if($trending->preview_image)
-                                    <img src="{{ asset('storage/' . $trending->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $trending->title }}">
+                                    <img src="{{ $trending->thumbnail_url }}" class="w-100 h-100 object-fit-cover" alt="{{ $trending->title }}">
                                 @else
                                     <div class="w-100 h-100 {{ $tGrad }} p-4 d-flex align-items-center justify-content-center text-white">
                                         <i class="bi bi-fire fs-1 opacity-75"></i>
@@ -1250,7 +1250,7 @@
                         <div class="bg-light p-3 rounded-3 mb-3 border">
                             <div class="d-flex align-items-center gap-3">
                                 @if($aiShowcase->preview_image)
-                                    <img src="{{ asset('storage/' . $aiShowcase->preview_image) }}" alt="{{ $aiShowcase->title }}" class="rounded shadow-sm object-fit-cover" style="width: 60px; height: 60px;">
+                                    <img src="{{ $aiShowcase->thumbnail_url }}" alt="{{ $aiShowcase->title }}" class="rounded shadow-sm object-fit-cover" style="width: 60px; height: 60px;">
                                 @else
                                     <div class="bg-primary bg-opacity-10 text-primary rounded p-3 text-center d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                         <i class="bi bi-file-earmark-code fs-3"></i>

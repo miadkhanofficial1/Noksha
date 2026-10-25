@@ -43,8 +43,12 @@ class AdminUserSeeder extends Seeder
             $attributes['is_verified'] = true;
         }
 
+        if (Schema::hasColumn('users', 'is_contributor')) {
+            $attributes['is_contributor'] = false;
+        }
+
         if (Schema::hasColumn('users', 'contributor_status')) {
-            $attributes['contributor_status'] = 'approved';
+            $attributes['contributor_status'] = null;
         }
 
         User::updateOrCreate(
