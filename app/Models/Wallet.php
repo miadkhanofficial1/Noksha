@@ -114,4 +114,28 @@ class Wallet extends Model
     {
         return $this->balance >= $amount;
     }
+
+    /**
+     * Credit creator earnings from a completed service escrow order.
+     */
+    public function creditEarnings(float $amount, string $description = 'Service escrow earnings release', ?string $referenceType = null, ?int $referenceId = null): WalletTransaction
+    {
+        $this->increment('earnings_balance', $amount);
+
+        if ($this->user) {
+            $this->user->update(['earnings_balance' => $this->earnings_balance]);
+        }
+
+        return $this->transactions()->create([
+            'user_id' => $this->user_id,
+            'type' => 'earning',
+            'amount' => $amount,
+            'credits_transacted' => 0,
+            'balance_after' => $this->earnings_balance,
+            'reference_type' => $referenceType,
+            'reference_id' => $referenceId,
+            'description' => $description,
+            'status' => 'completed',
+        ]);
+    }
 }

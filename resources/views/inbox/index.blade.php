@@ -276,9 +276,9 @@
                                 </div>
 
                                 {{-- Order Status Badge & Escrow Actions --}}
-                                <div class="flex items-center gap-2.5">
+                                <div class="flex items-center gap-2.5 flex-wrap justify-end">
                                     @if($activeOrder->status === 'funded_in_progress')
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-2 flex-wrap">
                                             <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
                                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                                                 <span>Funded & In Progress</span>
@@ -288,16 +288,67 @@
                                                     Calculating countdown...
                                                 </div>
                                             @endif
+                                            @if($isSeller)
+                                                <button type="button" onclick="openDeliveryModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all cursor-pointer">
+                                                    📦 Deliver Final Work
+                                                </button>
+                                            @endif
+                                            @if($isBuyer)
+                                                <form action="{{ route('inbox.orders.cancel', $activeOrder->id) }}" method="POST" id="overdueCancelAction" class="hidden inline" onsubmit="return confirm('Cancel this overdue order and process full refund to your balance?');">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition-all cursor-pointer shadow-md shadow-rose-600/20">
+                                                        ⚠️ Request Cancellation & Refund
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    @elseif($activeOrder->status === 'delivered')
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                                                📦 Work Delivered
+                                            </span>
+                                            <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 transition-colors">
+                                                📥 Download Delivery (.ZIP)
+                                            </a>
+                                            @if($isBuyer)
+                                                <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Release escrow funds to creator? 15% platform commission will be deducted.');">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-all cursor-pointer">
+                                                        ✅ Accept & Release Funds
+                                                    </button>
+                                                </form>
+                                                <button type="button" onclick="openRevisionModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer">
+                                                    🔄 Request Revision
+                                                </button>
+                                            @else
+                                                <span class="text-[11px] text-slate-400 italic">
+                                                    Client reviewing (Auto-releases after 3 days)
+                                                </span>
+                                            @endif
                                         </div>
                                     @elseif($activeOrder->status === 'awaiting_payment')
                                         <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
                                             Awaiting Escrow Payment
                                         </span>
                                         @if($isBuyer)
-                                            <a href="{{ route('checkout.index', ['order_id' => $activeOrder->id]) }}" class="px-3.5 py-1 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all">
-                                                💳 Proceed to Secure Escrow Payment
-                                            </a>
+                                            <form action="{{ route('inbox.orders.fund', $activeOrder->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all cursor-pointer">
+                                                    💳 Proceed to Secure Escrow Payment (৳{{ number_format($activeOrder->total_amount, 2) }})
+                                                </button>
+                                            </form>
                                         @endif
+                                    @elseif($activeOrder->status === 'completed')
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                                ✅ Completed & Escrow Released
+                                            </span>
+                                            @if($activeOrder->delivery_archive_path)
+                                                <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 transition-colors">
+                                                    📥 Download Final Files
+                                                </a>
+                                            @endif
+                                        </div>
                                     @elseif($activeOrder->status === 'pending_approval')
                                         <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30">
                                             Pending Creator Approval
@@ -314,21 +365,21 @@
                     @endif
 
                     {{-- 2.3 MESSAGE HISTORY STREAM (SCROLLABLE) --}}
-                    <div id="messageHistoryContainer" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
+                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
-                                $isSystem = $msg->message_type === 'system_notice';
+                                $isSystem = in_array($msg->message_type, ['system_notice', 'order_status']);
                                 $isProposal = $msg->message_type === 'service_proposal';
                             @endphp
 
                             @if($isSystem)
-                                {{-- Centered System Notice --}}
-                                <div class="flex justify-center my-3">
-                                    <div class="px-4 py-1.5 rounded-full text-[11px] font-medium bg-slate-950/80 border border-slate-800 text-slate-400 flex items-center gap-2 shadow-sm">
-                                        <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                {{-- Centered System / Order Status Notice --}}
+                                <div class="flex justify-center my-3" data-msg-id="{{ $msg->id }}">
+                                    <div class="px-4 py-2 rounded-2xl text-xs font-semibold {{ $msg->message_type === 'order_status' ? 'bg-indigo-950/60 border border-indigo-500/30 text-indigo-200' : 'bg-slate-950/80 border border-slate-800 text-slate-400' }} flex items-center gap-2 shadow-sm max-w-lg text-center">
+                                        <svg class="w-4 h-4 {{ $msg->message_type === 'order_status' ? 'text-indigo-400' : 'text-slate-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <span>{{ $msg->body }}</span>
-                                        <span class="text-[9px] text-slate-600 font-mono">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
+                                        <span class="text-[9px] text-slate-500 font-mono shrink-0">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
                                     </div>
                                 </div>
                             @elseif($isProposal)
@@ -394,14 +445,65 @@
                                                 @endif
                                             @elseif($propOrder && $propOrder->status === 'awaiting_payment')
                                                 @if($isBuyer)
-                                                    <a href="{{ route('checkout.index', ['order_id' => $propOrder->id]) }}" class="block w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white text-center shadow-lg shadow-indigo-600/30 transition-all">
-                                                        💳 Proceed to Secure Escrow Payment
-                                                    </a>
+                                                    <form action="{{ route('inbox.orders.fund', $propOrder->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white text-center shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
+                                                            💳 Proceed to Secure Escrow Payment (৳{{ number_format($propOrder->total_amount, 2) }})
+                                                        </button>
+                                                    </form>
                                                 @else
                                                     <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs text-center font-medium">
                                                         Approved &bull; Waiting for client payment
                                                     </div>
                                                 @endif
+                                            @elseif($propOrder && $propOrder->status === 'funded_in_progress')
+                                                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold flex items-center justify-center gap-2">
+                                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                                    <span>Escrow Secured & Project Underway</span>
+                                                </div>
+                                            @elseif($propOrder && $propOrder->status === 'delivered')
+                                                <div class="space-y-2.5">
+                                                    <div class="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs">
+                                                        <div class="font-bold flex items-center gap-1.5 mb-1">
+                                                            <span>📦 Work Delivered by Creator</span>
+                                                        </div>
+                                                        @if($propOrder->delivery_notes)
+                                                            <p class="text-[11px] text-slate-300 italic mb-2">"{{ $propOrder->delivery_notes }}"</p>
+                                                        @endif
+                                                        <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-700 transition-colors">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                                            <span>Download Source Delivery (.ZIP)</span>
+                                                        </a>
+                                                    </div>
+                                                    @if($isBuyer)
+                                                        <div class="flex items-center gap-2">
+                                                            <form action="{{ route('inbox.orders.release', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Accept delivery and release escrow funds to creator?');">
+                                                                @csrf
+                                                                <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all cursor-pointer">
+                                                                    ✅ Accept & Release Funds
+                                                                </button>
+                                                            </form>
+                                                            <button type="button" onclick="openRevisionModal()" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer">
+                                                                🔄 Request Revision
+                                                            </button>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @elseif($propOrder && $propOrder->status === 'completed')
+                                                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
+                                                    🎉 Order Completed & Escrow Released
+                                                    @if($propOrder->delivery_archive_path)
+                                                        <div class="mt-2">
+                                                            <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1 text-xs text-indigo-400 underline hover:text-indigo-300">
+                                                                📥 Download Delivery Archive
+                                                            </a>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @elseif($propOrder && $propOrder->status === 'cancelled')
+                                                <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-center font-bold">
+                                                    ❌ Order Cancelled & Escrow Refunded
+                                                </div>
                                             @elseif($propOrder && $propOrder->isFunded())
                                                 <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
                                                     ✅ Escrow Secured & Project Underway
@@ -625,6 +727,92 @@
 @endif
 
 {{-- ======================================================== --}}
+{{-- 3B. DELIVER WORK MODAL (SELLER ONLY)                    --}}
+{{-- ======================================================== --}}
+@if($activeOrder && $isSeller && $activeOrder->status === 'funded_in_progress')
+<div id="deliveryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
+    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                    📦
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-0">Deliver Final Work</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Upload source ZIP package (AI, PSD, Figma, EPS, etc.)</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeDeliveryModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">&times;</button>
+        </div>
+
+        <form action="{{ route('inbox.orders.deliver', $activeOrder->id) }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Deliverable Package (.ZIP only, Max 200MB) <span class="text-rose-400">*</span></label>
+                <input type="file" name="delivery_file" accept=".zip,application/zip,application/x-zip-compressed" required class="w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 bg-slate-950 border border-slate-800 rounded-xl p-2 cursor-pointer">
+                <p class="text-[10px] text-slate-500 mt-1">Package all project source files, fonts, and documentation into a single .ZIP archive.</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Delivery Notes / Handover Instructions</label>
+                <textarea name="delivery_notes" rows="4" placeholder="Add instructions on how to use the files, software versions, or handover notes..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-800">
+                <button type="button" onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 transition-all cursor-pointer">
+                    🚀 Submit Delivery to Client
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+{{-- ======================================================== --}}
+{{-- 3C. REQUEST REVISION MODAL (BUYER ONLY)                 --}}
+{{-- ======================================================== --}}
+@if($activeOrder && $isBuyer && $activeOrder->status === 'delivered')
+<div id="revisionModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
+    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">
+                    🔄
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-0">Request Revision</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Specify changes or adjustments required for this project</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeRevisionModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">&times;</button>
+        </div>
+
+        <form action="{{ route('inbox.orders.revision', $activeOrder->id) }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Revision Instructions <span class="text-rose-400">*</span></label>
+                <textarea name="revision_notes" rows="4" required placeholder="Clearly describe what changes are needed, referencing specific sections or assets..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-800">
+                <button type="button" onclick="closeRevisionModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all cursor-pointer">
+                    🔄 Submit Revision Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+{{-- ======================================================== --}}
 {{-- 4. INLINE JAVASCRIPT LOGIC & ANTI-BYPASS GUARD           --}}
 {{-- ======================================================== --}}
 <script>
@@ -661,7 +849,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const now = new Date().getTime();
             const distance = deadline - now;
             if (distance < 0) {
-                countdownEl.innerHTML = '<span class="text-rose-400 font-bold">⚠️ Deadline Exceeded</span>';
+                countdownEl.innerHTML = '<span class="text-rose-400 font-bold">⚠️ Delivery Overdue - Late Penalty Protection Active</span>';
+                const overdueBtn = document.getElementById('overdueCancelAction');
+                if (overdueBtn) {
+                    overdueBtn.classList.remove('hidden');
+                }
                 return;
             }
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -702,7 +894,105 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // 5. Lightweight AJAX Polling for Live Inbox Updates (every 4 seconds)
+    if (historyContainer && historyContainer.dataset.pollUrl) {
+        const pollUrl = historyContainer.dataset.pollUrl;
+        let latestMsgId = parseInt(historyContainer.dataset.latestId || '0', 10);
+        const currentOrderStatus = historyContainer.dataset.orderStatus || '';
+
+        function pollNewMessages() {
+            fetch(`${pollUrl}?after_id=${latestMsgId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Poll failed');
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Auto-sync if order status transitioned
+                    if (data.active_order && data.active_order.status !== currentOrderStatus) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    if (data.messages && data.messages.length > 0) {
+                        data.messages.forEach(msg => {
+                            if (!document.querySelector(`[data-msg-id="${msg.id}"]`)) {
+                                appendPolledMessage(msg, historyContainer);
+                            }
+                            if (msg.id > latestMsgId) {
+                                latestMsgId = msg.id;
+                            }
+                        });
+                        historyContainer.scrollTop = historyContainer.scrollHeight;
+                    }
+                }
+            })
+            .catch(() => {});
+        }
+
+        setInterval(pollNewMessages, 4000);
+    }
 });
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function appendPolledMessage(msg, container) {
+    const div = document.createElement('div');
+    div.dataset.msgId = msg.id;
+
+    if (msg.message_type === 'system_notice' || msg.message_type === 'order_status') {
+        const isOrder = msg.message_type === 'order_status';
+        div.className = 'flex justify-center my-3';
+        div.innerHTML = `
+            <div class="px-4 py-2 rounded-2xl text-xs font-semibold ${isOrder ? 'bg-indigo-950/60 border border-indigo-500/30 text-indigo-200' : 'bg-slate-950/80 border border-slate-800 text-slate-400'} flex items-center gap-2 shadow-sm max-w-lg text-center">
+                <span>${escapeHtml(msg.body)}</span>
+                <span class="text-[9px] text-slate-500 font-mono shrink-0">${msg.created_at_human || ''}</span>
+            </div>
+        `;
+    } else {
+        div.className = `flex ${msg.is_me ? 'justify-end' : 'justify-start'} items-end gap-2.5`;
+        let attachmentsHtml = '';
+        if (msg.attachments && msg.attachments.length > 0) {
+            attachmentsHtml = `<div class="mt-2 pt-2 border-t ${msg.is_me ? 'border-indigo-500/40' : 'border-slate-700/60'} space-y-1.5">` +
+                msg.attachments.map(att => `
+                    <a href="${att.url}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl ${msg.is_me ? 'bg-indigo-800/50 hover:bg-indigo-800/70' : 'bg-slate-900/60 hover:bg-slate-900'} transition-colors text-xs text-white">
+                        <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                        <span class="truncate flex-1 font-mono text-[11px]">${escapeHtml(att.file_name)}</span>
+                        <span class="text-[10px] opacity-75 shrink-0">${escapeHtml(att.size || '')}</span>
+                    </a>
+                `).join('') + `</div>`;
+        }
+
+        const avatarHtml = msg.is_me ? '' : `
+            <div class="w-7 h-7 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-300 font-bold shrink-0">
+                ${(msg.sender_name || 'U').substring(0, 1).toUpperCase()}
+            </div>
+        `;
+
+        div.innerHTML = `
+            ${avatarHtml}
+            <div class="max-w-[75%] sm:max-w-md ${msg.is_me ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-2xl rounded-tr-sm' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-2xl rounded-tl-sm'} p-3.5 shadow-lg">
+                ${!msg.is_me ? `<div class="text-[10px] font-bold text-slate-400 mb-1">${escapeHtml(msg.sender_name || 'User')}</div>` : ''}
+                <p class="text-xs leading-relaxed whitespace-pre-wrap break-words mb-1">${escapeHtml(msg.body)}</p>
+                ${attachmentsHtml}
+                <div class="flex justify-end mt-1 text-[9px] ${msg.is_me ? 'text-indigo-200' : 'text-slate-400'}">
+                    ${msg.created_at_human || ''}
+                </div>
+            </div>
+        `;
+    }
+
+    container.appendChild(div);
+}
 
 // Auto-expand textarea as user types
 function autoResizeTextarea(textarea) {
@@ -752,6 +1042,26 @@ function openProposalModal() {
 
 function closeProposalModal() {
     const modal = document.getElementById('proposalModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function openDeliveryModal() {
+    const modal = document.getElementById('deliveryModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeDeliveryModal() {
+    const modal = document.getElementById('deliveryModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function openRevisionModal() {
+    const modal = document.getElementById('revisionModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeRevisionModal() {
+    const modal = document.getElementById('revisionModal');
     if (modal) modal.classList.add('hidden');
 }
 

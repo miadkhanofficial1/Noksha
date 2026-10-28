@@ -247,12 +247,22 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
     Route::get('/inbox/{identifier}', [InboxController::class, 'show'])->name('inbox.show');
+    Route::get('/inbox/{conversation}/poll', [InboxController::class, 'pollMessages'])->name('inbox.poll');
     Route::post('/inbox/{conversation}/messages', [MessageController::class, 'store'])->name('inbox.messages.store');
     Route::post('/inbox/{conversation}/freeze', [InboxController::class, 'freeze'])->name('inbox.freeze');
     Route::post('/inbox/{conversation}/reopen-request', [InboxController::class, 'requestReopen'])->name('inbox.reopen-request');
     Route::post('/inbox/{conversation}/reopen-respond', [InboxController::class, 'respondReopen'])->name('inbox.reopen-respond');
     Route::post('/inbox/{conversation}/service-proposal', [InboxController::class, 'storeServiceProposal'])->name('inbox.service-proposal.store');
+
+    // Escrow Order Pipeline Execution Routes
+    Route::post('/orders/{order}/fund', [InboxController::class, 'fundOrder'])->name('orders.fund');
+    Route::post('/inbox/orders/{order}/fund', [InboxController::class, 'fundOrder'])->name('inbox.orders.fund');
     Route::post('/inbox/orders/{order}/respond', [InboxController::class, 'respondOrderProposal'])->name('inbox.orders.respond');
+    Route::post('/inbox/orders/{order}/deliver', [InboxController::class, 'deliverWork'])->name('inbox.orders.deliver');
+    Route::get('/inbox/orders/{order}/download-delivery', [InboxController::class, 'downloadDelivery'])->name('inbox.orders.download-delivery');
+    Route::post('/inbox/orders/{order}/release', [InboxController::class, 'releaseEscrow'])->name('inbox.orders.release');
+    Route::post('/inbox/orders/{order}/revision', [InboxController::class, 'requestRevision'])->name('inbox.orders.revision');
+    Route::post('/inbox/orders/{order}/cancel', [InboxController::class, 'cancelOrder'])->name('inbox.orders.cancel');
 
     // Follow / Unfollow User Route (Realtime AJAX)
     Route::post('/u/{user}/follow', [FollowController::class, 'toggle'])->name('user.follow.toggle');
