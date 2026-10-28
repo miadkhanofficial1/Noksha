@@ -16,11 +16,11 @@
                 <button type="button" onclick="this.parentElement.remove()" class="text-emerald-400 hover:text-emerald-200 text-sm">&times;</button>
             </div>
         @endif
-        @if(session('error') || $errors->any())
+        @if(session('error') || (isset($errors) && $errors->any()))
             <div class="pointer-events-auto flex items-center justify-between gap-3 p-4 rounded-2xl bg-rose-950/90 border border-rose-500/40 text-rose-200 shadow-2xl backdrop-blur-xl animate-fade-in">
                 <div class="flex items-center gap-3">
                     <svg class="w-5 h-5 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    <span class="text-xs font-semibold">{{ session('error') ?? $errors->first() }}</span>
+                    <span class="text-xs font-semibold">{{ session('error') ?? ($errors->first() ?? '') }}</span>
                 </div>
                 <button type="button" onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-200 text-sm">&times;</button>
             </div>
@@ -185,9 +185,23 @@
                                     <h2 class="text-sm font-bold text-white mb-0">
                                         {{ $isSupportThread ? 'Official Platform Notice' : ($counterpart->name ?? 'Counterpart') }}
                                     </h2>
-                                    @if($counterpart && $counterpart->username)
-                                        <a href="{{ route('creator.show', $counterpart->username) }}" target="_blank" class="text-[11px] text-slate-400 hover:text-indigo-400 transition-colors">
-                                            &#64;{{ $counterpart->username }}
+                                    @if($counterpart && ($counterpart->username || $counterpart->id))
+                                        @php
+                                            $counterpartTarget = $counterpart->username ?? $counterpart->id;
+                                            if (\Illuminate\Support\Facades\Route::has('creator.show')) {
+                                                $counterpartProfileUrl = route('creator.show', $counterpartTarget);
+                                            } elseif (\Illuminate\Support\Facades\Route::has('creators.show')) {
+                                                $counterpartProfileUrl = route('creators.show', $counterpartTarget);
+                                            } elseif (\Illuminate\Support\Facades\Route::has('creator.profile')) {
+                                                $counterpartProfileUrl = route('creator.profile', $counterpartTarget);
+                                            } elseif (\Illuminate\Support\Facades\Route::has('user.profile')) {
+                                                $counterpartProfileUrl = route('user.profile', $counterpartTarget);
+                                            } else {
+                                                $counterpartProfileUrl = url('/creator/' . $counterpartTarget);
+                                            }
+                                        @endphp
+                                        <a href="{{ $counterpartProfileUrl }}" target="_blank" class="text-[11px] text-slate-400 hover:text-indigo-400 transition-colors">
+                                            &#64;{{ $counterpart->username ?? $counterpart->name }}
                                         </a>
                                     @endif
                                 </div>
@@ -637,7 +651,7 @@
                         <p class="text-xs text-slate-400 max-w-sm mb-4 leading-relaxed">
                             Select a thread from the left sidebar to resume messaging, or visit a creator's public profile to send a direct project inquiry.
                         </p>
-                        <a href="{{ route('creators.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/25">
+                        <a href="{{ \Illuminate\Support\Facades\Route::has('creators.index') ? route('creators.index') : url('/creators') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/25">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             <span>Browse Verified Creators</span>
                         </a>
@@ -729,7 +743,7 @@
 {{-- ======================================================== --}}
 {{-- 3B. DELIVER WORK MODAL (SELLER ONLY)                    --}}
 {{-- ======================================================== --}}
-@if($activeOrder && $isSeller && $activeOrder->status === 'funded_in_progress')
+@if(isset($activeOrder) && $activeOrder && !empty($isSeller) && $activeOrder->status === 'funded_in_progress')
 <div id="deliveryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
     <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
@@ -775,7 +789,7 @@
 {{-- ======================================================== --}}
 {{-- 3C. REQUEST REVISION MODAL (BUYER ONLY)                 --}}
 {{-- ======================================================== --}}
-@if($activeOrder && $isBuyer && $activeOrder->status === 'delivered')
+@if(isset($activeOrder) && $activeOrder && !empty($isBuyer) && $activeOrder->status === 'delivered')
 <div id="revisionModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
     <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
