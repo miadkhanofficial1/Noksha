@@ -386,11 +386,11 @@
                             </a>
                         @endauth
 
-                        <!-- Contact / Hire Button -->
-                        <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#contactModal">
+                        <!-- Send Message Button -->
+                        <a href="{{ route('inbox.show', $user->id) }}" class="btn btn-outline-dark rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
                             <i class="bi bi-chat-dots-fill text-primary"></i>
-                            <span>Contact & Hire</span>
-                        </button>
+                            <span>Send Message</span>
+                        </a>
                     @endif
                 </div>
             </div>
@@ -997,6 +997,10 @@
                 </p>
 
                 <div class="d-grid gap-2">
+                    <a href="{{ route('inbox.show', $user->id) }}" class="btn btn-purple-cta rounded-pill py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-chat-dots-fill"></i>
+                        <span>Start Chat on Noksha</span>
+                    </a>
                     <a href="mailto:{{ $user->email }}?subject=Project%20Inquiry%20from%20Noksha%20Community" class="btn btn-purple-cta rounded-pill py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2">
                         <i class="bi bi-envelope-fill"></i>
                         <span>Send Email to {{ $user->email }}</span>

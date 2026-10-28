@@ -43,6 +43,8 @@ use App\Http\Controllers\AdminLogController;
 use App\Http\Controllers\AdminSystemController;
 use App\Http\Controllers\AdminMessageController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\InboxController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
 use App\Http\Controllers\TemplateController;
@@ -239,6 +241,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/profile', [ProfileSettingsController::class, 'edit'])->name('settings.profile');
     Route::put('/settings/profile', [ProfileSettingsController::class, 'updateProfile'])->name('settings.profile.update');
     Route::put('/settings/password', [ProfileSettingsController::class, 'updatePassword'])->name('settings.password.update');
+
+    // ==========================================
+    // NOKSHA REAL-TIME ESCROW INBOX & MESSAGING
+    // ==========================================
+    Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
+    Route::get('/inbox/{identifier}', [InboxController::class, 'show'])->name('inbox.show');
+    Route::post('/inbox/{conversation}/messages', [MessageController::class, 'store'])->name('inbox.messages.store');
+    Route::post('/inbox/{conversation}/freeze', [InboxController::class, 'freeze'])->name('inbox.freeze');
+    Route::post('/inbox/{conversation}/reopen-request', [InboxController::class, 'requestReopen'])->name('inbox.reopen-request');
+    Route::post('/inbox/{conversation}/reopen-respond', [InboxController::class, 'respondReopen'])->name('inbox.reopen-respond');
+    Route::post('/inbox/{conversation}/service-proposal', [InboxController::class, 'storeServiceProposal'])->name('inbox.service-proposal.store');
+    Route::post('/inbox/orders/{order}/respond', [InboxController::class, 'respondOrderProposal'])->name('inbox.orders.respond');
 
     // Follow / Unfollow User Route (Realtime AJAX)
     Route::post('/u/{user}/follow', [FollowController::class, 'toggle'])->name('user.follow.toggle');

@@ -230,8 +230,8 @@
                                 <i class="bi bi-person-plus-fill me-1.5"></i> Follow Author
                             </a>
                         @endauth
-                        <a href="{{ route('contact.index') }}" class="btn btn-outline-purple rounded-pill px-4 py-2.5 fw-bold">
-                            <i class="bi bi-chat-dots-fill me-1.5"></i> Contact Seller
+                        <a href="{{ route('inbox.show', $user->id) }}" class="btn btn-outline-purple rounded-pill px-4 py-2.5 fw-bold">
+                            <i class="bi bi-chat-dots-fill me-1.5"></i> Send Message
                         </a>
                     @endif
                 </div>
