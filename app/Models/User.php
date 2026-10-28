@@ -597,4 +597,79 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->where('username', $value)->orWhere('id', $value)->first()
             ?? abort(404, 'User not found.');
     }
+
+    /**
+     * Check if user is a seller or creator.
+     */
+    public function isSellerOrCreator(): bool
+    {
+        return in_array($this->role, ['seller', 'creator']) || $this->isContributor() || $this->isApprovedContributor();
+    }
+
+    /**
+     * Conversations where user is the buyer.
+     */
+    public function buyerConversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'buyer_id');
+    }
+
+    /**
+     * Conversations where user is the seller.
+     */
+    public function sellerConversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class, 'seller_id');
+    }
+
+    /**
+     * Query for all conversations where user is buyer or seller.
+     */
+    public function conversations()
+    {
+        return Conversation::where(function ($query) {
+            $query->where('buyer_id', $this->id)
+                  ->orWhere('seller_id', $this->id);
+        });
+    }
+
+    /**
+     * Accessor for all conversations where user is buyer or seller.
+     */
+    public function getConversationsAttribute()
+    {
+        return $this->conversations()->latest('last_message_at')->get();
+    }
+
+    /**
+     * Creative services listed by this creator.
+     */
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class, 'user_id');
+    }
+
+    /**
+     * Messages sent by this user.
+     */
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Service orders where user is the client buyer.
+     */
+    public function buyerServiceOrders(): HasMany
+    {
+        return $this->hasMany(ServiceOrder::class, 'buyer_id');
+    }
+
+    /**
+     * Service orders where user is the delivering seller.
+     */
+    public function sellerServiceOrders(): HasMany
+    {
+        return $this->hasMany(ServiceOrder::class, 'seller_id');
+    }
 }
