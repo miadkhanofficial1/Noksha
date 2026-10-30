@@ -664,7 +664,7 @@
 {{-- 3. PROPOSE / PICK SERVICE MODAL (DARK THEME)             --}}
 {{-- ======================================================== --}}
 @if($activeConversation && !$activeConversation->is_frozen)
-<div id="proposalModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeProposalModal()">
+<div id="serviceProposalModal" data-modal="service-proposal" data-service-modal class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
     <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
         <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
@@ -677,7 +677,7 @@
                     <p class="text-[11px] text-slate-400 mb-0">Minimum service threshold ৳600.00 BDT</p>
                 </div>
             </div>
-            <button type="button" onclick="closeProposalModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">&times;</button>
+            <button type="button" onclick="handleModalClose()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm cursor-pointer" title="Close">&times;</button>
         </div>
 
         <form action="{{ route('inbox.service-proposal.store', $activeConversation->id) }}" method="POST" class="p-6 space-y-4">
@@ -724,7 +724,7 @@
             </div>
 
             <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-800">
-                <button type="button" onclick="closeProposalModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 transition-colors">
+                <button type="button" id="cancelProposalBtn" onclick="handleModalClose()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer">
                     Cancel
                 </button>
                 <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
@@ -948,6 +948,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setInterval(pollNewMessages, 4000);
     }
+
+    // 6. Global Escape key listener to dismiss open modals
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+            const proposalModal = document.getElementById('serviceProposalModal') || document.getElementById('proposalModal') || document.querySelector('[data-service-modal]');
+            if (proposalModal && (!proposalModal.classList.contains('hidden') || proposalModal.style.display === 'flex')) {
+                handleModalClose();
+            }
+            const deliveryModal = document.getElementById('deliveryModal');
+            if (deliveryModal && !deliveryModal.classList.contains('hidden')) {
+                closeDeliveryModal();
+            }
+            const revisionModal = document.getElementById('revisionModal');
+            if (revisionModal && !revisionModal.classList.contains('hidden')) {
+                closeRevisionModal();
+            }
+        }
+    });
 });
 
 function escapeHtml(str) {
@@ -1046,13 +1064,34 @@ function clearAttachment() {
 
 // Modal open/close
 function openProposalModal() {
-    const modal = document.getElementById('proposalModal');
-    if (modal) modal.classList.remove('hidden');
+    window._modalOpenedInChat = true;
+    const modal = document.getElementById('serviceProposalModal') || document.getElementById('proposalModal') || document.querySelector('[data-service-modal]') || document.querySelector('[data-modal="service-proposal"]');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+    }
+}
+
+function handleModalClose() {
+    const modal = document.getElementById('serviceProposalModal') || document.querySelector('[data-service-modal]') || document.getElementById('proposalModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+    // Fallback if modal overlay was the primary view:
+    const chatContainer = document.getElementById('messageHistoryContainer');
+    if (!window._modalOpenedInChat || !chatContainer) {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = "{{ url()->previous() }}";
+        }
+    }
+    window._modalOpenedInChat = false;
 }
 
 function closeProposalModal() {
-    const modal = document.getElementById('proposalModal');
-    if (modal) modal.classList.add('hidden');
+    handleModalClose();
 }
 
 function openDeliveryModal() {
