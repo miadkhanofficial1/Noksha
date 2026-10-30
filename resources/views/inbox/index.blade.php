@@ -185,23 +185,19 @@
                                     <h2 class="text-sm font-bold text-white mb-0">
                                         {{ $isSupportThread ? 'Official Platform Notice' : ($counterpart->name ?? 'Counterpart') }}
                                     </h2>
-                                    @if($counterpart && ($counterpart->username || $counterpart->id))
+                                    @if($counterpart && $counterpart->username)
                                         @php
-                                            $counterpartTarget = $counterpart->username ?? $counterpart->id;
+                                            $creatorUrl = '#';
                                             if (\Illuminate\Support\Facades\Route::has('creator.show')) {
-                                                $counterpartProfileUrl = route('creator.show', $counterpartTarget);
+                                                $creatorUrl = route('creator.show', $counterpart->username);
                                             } elseif (\Illuminate\Support\Facades\Route::has('creators.show')) {
-                                                $counterpartProfileUrl = route('creators.show', $counterpartTarget);
-                                            } elseif (\Illuminate\Support\Facades\Route::has('creator.profile')) {
-                                                $counterpartProfileUrl = route('creator.profile', $counterpartTarget);
-                                            } elseif (\Illuminate\Support\Facades\Route::has('user.profile')) {
-                                                $counterpartProfileUrl = route('user.profile', $counterpartTarget);
+                                                $creatorUrl = route('creators.show', $counterpart->username);
                                             } else {
-                                                $counterpartProfileUrl = url('/creator/' . $counterpartTarget);
+                                                $creatorUrl = url('/creator/' . $counterpart->username);
                                             }
                                         @endphp
-                                        <a href="{{ $counterpartProfileUrl }}" target="_blank" class="text-[11px] text-slate-400 hover:text-indigo-400 transition-colors">
-                                            &#64;{{ $counterpart->username ?? $counterpart->name }}
+                                        <a href="{{ $creatorUrl }}" target="_blank" class="text-[11px] text-gray-400 hover:text-white">
+                                            &#64;{{ $counterpart->username }}
                                         </a>
                                     @endif
                                 </div>
