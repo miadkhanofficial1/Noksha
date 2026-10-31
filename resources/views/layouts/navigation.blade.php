@@ -57,7 +57,7 @@
             <!-- ========================================================= -->
             <!-- 2. CENTER SECTION: TEMPLATES, CONTESTS, CONTACT US        -->
             <!-- ========================================================= -->
-            <div class="d-none d-lg-flex align-items-center gap-2 mx-auto">
+            <div class="d-none d-xl-flex align-items-center gap-2 mx-auto">
                 <a class="nav-link-custom {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
                     <i class="bi bi-grid me-1.5 text-secondary"></i> Templates
                 </a>
@@ -78,7 +78,76 @@
             <!-- ========================================================= -->
             <!-- 3. RIGHT SECTION: LANGUAGE, ACTIONS & USER PROFILE        -->
             <!-- ========================================================= -->
-            <div class="d-flex align-items-center gap-2 gap-sm-2.5 flex-shrink-0 flex-nowrap">
+            <div class="d-flex align-items-center gap-1.5 gap-sm-2 flex-shrink-0 flex-nowrap">
+
+                <!-- Compact Navigation Dropdown (Visible on viewports below 1200px / standard or smaller screens) -->
+                <div class="dropdown d-xl-none" id="compactNavDropdown">
+                    <button class="nav-action-btn position-relative" 
+                            type="button" 
+                            id="compactNavBtn" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false" 
+                            title="Explore Noksha">
+                        <svg class="text-secondary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end sleek-dropdown-menu mt-2 p-2 shadow-xl border" style="width: 260px;">
+                        <div class="px-2.5 py-1.5 mb-1 border-bottom d-flex align-items-center justify-content-between">
+                            <span class="extra-small fw-bold text-uppercase tracking-wider text-muted">Explore Noksha</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary extra-small px-2 py-0.5">Quick Menu</span>
+                        </div>
+                        <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('resources.index') }}">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: rgba(100, 116, 139, 0.12); color: #64748B;">
+                                <i class="bi bi-grid-fill small"></i>
+                            </div>
+                            <div>
+                                <div class="small fw-semibold">Templates</div>
+                                <div class="extra-small text-muted" style="font-size: 0.68rem;">UI Kits, Vectors, Graphics</div>
+                            </div>
+                        </a>
+                        <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->routeIs('creators.*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('creators.index') }}">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: rgba(99, 102, 241, 0.12); color: #6366F1;">
+                                <i class="bi bi-people-fill small"></i>
+                            </div>
+                            <div>
+                                <div class="small fw-semibold">Creators</div>
+                                <div class="extra-small text-muted" style="font-size: 0.68rem;">Hire Verified Designers</div>
+                            </div>
+                        </a>
+                        <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->routeIs('contests.*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('contests.index') }}">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: rgba(245, 158, 11, 0.12); color: #F59E0B;">
+                                <i class="bi bi-trophy-fill small"></i>
+                            </div>
+                            <div>
+                                <div class="small fw-semibold">Contests</div>
+                                <div class="extra-small text-muted" style="font-size: 0.68rem;">Design Challenges & Prizes</div>
+                            </div>
+                        </a>
+                        <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->routeIs('contact.*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('contact.index') }}">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: rgba(59, 130, 246, 0.12); color: #3B82F6;">
+                                <i class="bi bi-headset small"></i>
+                            </div>
+                            <div>
+                                <div class="small fw-semibold">Contact Us</div>
+                                <div class="extra-small text-muted" style="font-size: 0.68rem;">Get in touch with Noksha</div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider my-1"></div>
+                        <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->is('support*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('contact.index') }}">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: rgba(16, 185, 129, 0.12); color: #10B981;">
+                                <i class="bi bi-life-preserver small"></i>
+                            </div>
+                            <div>
+                                <div class="small fw-semibold">Support Desk</div>
+                                <div class="extra-small text-muted" style="font-size: 0.68rem;">Help Center & Resolution</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
 
                 
 
@@ -98,22 +167,11 @@
     $inboxUnreadCount = $user ? $user->unreadMessagesCount() : 0;
                     @endphp
 
-                    <!-- Clickable Wallet & AI Credit Pill Badge -->
-                    <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-none d-sm-inline-flex align-items-center gap-2 text-decoration-none px-3 py-1.5 rounded-pill shadow-sm" title="View Wallet & Credit Balance">
+                    <!-- Clickable Wallet Pill Badge (Pure BDT Escrow Balance) -->
+                    <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-none d-sm-inline-flex align-items-center gap-1.5 text-decoration-none px-2.5 py-1.5 rounded-pill shadow-sm" title="View Wallet Balance">
                         <div class="d-flex align-items-center gap-1 font-monospace fw-extrabold text-success small">
                             <i class="bi bi-wallet2 text-success"></i>
                             <span>৳ {{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
-                        </div>
-                        <span class="text-muted opacity-50" style="font-size: 0.75rem;">|</span>
-                        <div class="d-flex align-items-center gap-1 font-monospace fw-bold extra-small" style="color: #F59E0B;">
-                            <i class="bi bi-lightning-charge-fill text-warning"></i>
-                            <span id="navbar-credit-count" class="navbar-credit-count">
-                                @if(auth()->user()->isAdmin())
-                                    ⚡ Unlimited Credits
-                                @else
-                                    ⚡ {{ auth()->user()->ai_credits ?? 0 }} Credits
-                                @endif
-                            </span>
                         </div>
                     </a>
 
@@ -433,10 +491,10 @@
                                 </a>
                             </li>
 
-                            <!-- Central Wallet & AI Credits -->
+                            <!-- Central Wallet & Balance -->
                             <li>
                                 <a class="dropdown-item small py-2 fw-semibold" href="{{ route('wallet.index') }}">
-                                    <i class="bi bi-wallet2 me-2 text-purple-500"></i> Central Wallet & Credits
+                                    <i class="bi bi-wallet2 me-2 text-purple-500"></i> Central Wallet & Balance
                                 </a>
                             </li>
 
@@ -503,22 +561,13 @@
             </form>
 
             @auth
-                <!-- Mobile Wallet & Credit Pill Card -->
-                <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-flex align-items-center justify-content-between text-decoration-none px-3 py-2.5 rounded-3 mb-3 border shadow-sm" title="View Wallet & Credit Balance">
+                <!-- Mobile Wallet Card -->
+                <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-flex align-items-center justify-content-between text-decoration-none px-3 py-2.5 rounded-3 mb-3 border shadow-sm" title="View Wallet Balance">
                     <div class="d-flex align-items-center gap-2 font-monospace fw-bold text-success small">
                         <i class="bi bi-wallet2 fs-6"></i>
                         <span>৳ {{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
                     </div>
-                    <div class="d-flex align-items-center gap-1.5 font-monospace fw-bold small" style="color: #F59E0B;">
-                        <i class="bi bi-lightning-charge-fill text-warning"></i>
-                        <span class="navbar-credit-count">
-                            @if(auth()->user()->isAdmin())
-                                ⚡ Unlimited Credits
-                            @else
-                                ⚡ {{ auth()->user()->ai_credits ?? 0 }} Credits
-                            @endif
-                        </span>
-                    </div>
+                    <span class="extra-small text-muted font-monospace">Central Wallet</span>
                 </a>
             @endauth
 

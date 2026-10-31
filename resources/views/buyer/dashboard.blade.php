@@ -132,7 +132,7 @@
                         </div>
                     </div>
                     <p class="fs-6 text-white text-opacity-90 mb-0" style="max-width: 580px;">
-                        Manage your digital downloads, view order receipts, explore saved wishlist templates, and discover AI-recommended design assets.
+                        Manage your digital downloads, view order receipts, explore saved wishlist templates, and discover featured creator design assets.
                     </p>
                 </div>
                 

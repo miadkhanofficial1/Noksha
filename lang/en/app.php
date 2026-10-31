@@ -2,11 +2,11 @@
 
 return [
     'app_name' => 'Noksha',
-    'app_tagline' => 'AI-Powered Digital Graphics Template Marketplace',
+    'app_tagline' => 'Digital Graphics & Creator Marketplace',
     'home' => 'Home',
     'search' => 'Search',
     'templates' => 'Templates',
-    'ai_tools' => 'AI Tools',
+    'ai_tools' => 'Design Tools',
     'categories' => 'Categories',
     'dashboard' => 'Dashboard',
     'contests' => 'Contests',

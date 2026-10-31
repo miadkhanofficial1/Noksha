@@ -594,8 +594,8 @@
             }
         }
 
-        /* AI Features Section */
-        #ai-features {
+        /* Creator Features Section */
+        #ai-features, #creator-features {
             background-color: #0F172A !important;
 
             h2, h5, h6 {
@@ -649,11 +649,6 @@
         <div class="row align-items-center g-5">
             <!-- Left Column: Bilingual Headline & Search -->
             <div class="col-lg-7 text-center text-lg-start">
-                <!-- AI Badge with Floating Motion -->
-                <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1.5 rounded-pill bg-white bg-opacity-20 backdrop-blur text-white mb-4 border border-white border-opacity-30 shadow-sm animate-badge-float">
-                    <span class="badge bg-white text-primary rounded-pill px-2.5 py-1 small fw-bold">AI 2.0</span>
-                    <span class="small fw-semibold">Next-Gen Intelligent Design Hub</span>
-                </div>
 
                 <!-- Bilingual Headline -->
                 <h1 class="display-3 fw-extrabold text-white mb-3 tracking-tight lh-sm">
@@ -1098,7 +1093,7 @@
 </section>
 
 
-<!-- TRENDING RESOURCES + AI RECOMMENDATION SECTION (DYNAMIC DATABASE TRENDING) -->
+<!-- TRENDING RESOURCES & FEATURED SPOTLIGHT (DYNAMIC DATABASE TRENDING) -->
 <section id="trending" class="py-5 py-lg-6 reveal-on-scroll" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8F5FF 100%);">
     <div class="container py-3">
         <!-- Section Header -->
@@ -1110,7 +1105,7 @@
                 Trending Resources <span class="text-primary"></span>
             </h2>
             <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
-                AI-selected high-performing assets loved by creators.
+                Curated high-performing assets loved by creators and creative teams.
             </p>
         </div>
 
@@ -1171,19 +1166,19 @@
             @endif
         </div>
 
-        <!-- Bottom AI Recommendation Strip -->
+        <!-- Bottom Featured Recommendation Strip -->
         <div class="p-4 ai-strip-box d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 reveal-on-scroll">
             <div class="d-flex align-items-center gap-3 text-center text-md-start">
                 <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-                    <i class="bi bi-robot fs-3 text-primary"></i>
+                    <i class="bi bi-palette-fill fs-3 text-primary"></i>
                 </div>
                 <div>
-                    <h5 class="fw-bold text-dark mb-1">Smart Recommendation Engine</h5>
-                    <p class="text-secondary small mb-0">Personalized suggestions based on creator trends.</p>
+                    <h5 class="fw-bold text-dark mb-1">Looking for custom project specifications?</h5>
+                    <p class="text-secondary small mb-0">Discover creator-crafted design systems, vector kits, and branding packages curated for professional design teams.</p>
                 </div>
             </div>
             <a href="#trending" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold shadow-sm text-nowrap">
-                <i class="bi bi-stars me-1 text-warning"></i> Explore AI Picks
+                <i class="bi bi-stars me-1 text-warning"></i> Explore Featured Picks
             </a>
         </div>
 
@@ -1191,15 +1186,15 @@
 </section>
 
 
-<!-- AI FEATURES SPOTLIGHT -->
-<section id="ai-features" class="py-5 bg-light reveal-on-scroll">
+<!-- CREATOR CAPABILITIES SPOTLIGHT -->
+<section id="creator-features" class="py-5 bg-light reveal-on-scroll">
     <div class="container py-4">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <span class="noksha-badge mb-2">Smart Intelligence</span>
-                <h2 class="display-6 fw-bold text-dark mb-3">AI-Driven Capabilities built for Designers</h2>
+                <span class="noksha-badge mb-2">Creator Marketplace</span>
+                <h2 class="display-6 fw-bold text-dark mb-3">Designed for Creators & Creative Professionals</h2>
                 <p class="text-secondary mb-4">
-                    Noksha integrates computer vision and natural language processing directly into the marketplace lifecycle to save hours of manual metadata management.
+                    Noksha empowers top designers, illustrators, and digital artists across Bangladesh to publish bespoke design assets, templates, and creative toolkits with automated verification and instant payouts.
                 </p>
 
                 <div class="d-flex flex-column gap-3">
@@ -1208,8 +1203,8 @@
                             <i class="bi bi-tags-fill fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1">Automated Tag Generation</h5>
-                            <p class="small text-muted mb-0">AI automatically scans template previews upon upload to infer precise tags, software compatibility, and colors.</p>
+                            <h5 class="fw-bold mb-1">Smart Asset Organization</h5>
+                            <p class="small text-muted mb-0">Every template is automatically organized by category, software compatibility (.FIG, .PSD, .AI), and licensing terms.</p>
                         </div>
                     </div>
 
@@ -1218,8 +1213,8 @@
                             <i class="bi bi-search-heart fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1">Prompt-to-Asset Search</h5>
-                            <p class="small text-muted mb-0">Search templates using natural prompts like "modern tech flyer with dark cyan accents" to get relevant matches.</p>
+                            <h5 class="fw-bold mb-1">Semantic Category Search</h5>
+                            <p class="small text-muted mb-0">Quickly discover templates, vector packs, and design systems using curated keywords and precise filters.</p>
                         </div>
                     </div>
 
@@ -1228,21 +1223,21 @@
                             <i class="bi bi-sliders fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1">Dynamic Preview Variations</h5>
-                            <p class="small text-muted mb-0">Generate intelligent color palette previews and layout variations before downloading source files.</p>
+                            <h5 class="fw-bold mb-1">Verified Source Deliverables</h5>
+                            <p class="small text-muted mb-0">Inspect layered previews, editable source components, and file formats before securing your commercial license.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Dynamic AI Feature Showcase Card -->
+            <!-- Dynamic Creator Feature Showcase Card -->
             <div class="col-lg-6">
                 @if(isset($aiShowcase) && $aiShowcase)
                     <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm">
                         <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-primary rounded-pill px-3 py-2">AI Engine</span>
-                                <span class="fw-semibold text-dark">Live Metadata Extractor</span>
+                                <span class="badge bg-primary rounded-pill px-3 py-2">Creator Spotlight</span>
+                                <span class="fw-semibold text-dark">Verified Asset Showcase</span>
                             </div>
                             <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
                         </div>
@@ -1272,7 +1267,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Extracted AI Keywords & Tags:</label>
+                            <label class="form-label small fw-bold text-muted">Asset Tags & Specifications:</label>
                             <div class="d-flex flex-wrap gap-1">
                                 @if(!empty($aiShowcase->tags) && is_array($aiShowcase->tags))
                                     @foreach(array_slice($aiShowcase->tags, 0, 6) as $tag)
@@ -1297,11 +1292,11 @@
                 @else
                     <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm text-center py-5">
                         <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <i class="bi bi-cpu fs-2"></i>
+                            <i class="bi bi-brush fs-2"></i>
                         </div>
-                        <h5 class="fw-bold text-dark mb-2">Automated AI Metadata Extractor</h5>
+                        <h5 class="fw-bold text-dark mb-2">Bespoke Creator Showcase</h5>
                         <p class="small text-muted mb-4" style="max-width: 420px; margin: 0 auto;">
-                            No items published yet. Be the first to upload Photoshop, Figma, or Illustrator assets to experience automated metadata extraction, smart tagging, and instant moderation!
+                            No items published yet. Be the first to upload Photoshop, Figma, or Illustrator assets to showcase your creative work to buyers worldwide!
                         </p>
                         @auth
                             @if(auth()->user()->isContributor())

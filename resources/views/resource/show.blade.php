@@ -265,10 +265,10 @@
                     </div>
                 </div>
 
-                <!-- AI-Generated Tags -->
+                <!-- Asset Tags -->
                 <div class="mb-5 p-4 rounded-4 bg-light border">
                     <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-                        <i class="bi bi-robot text-primary"></i> AI Tags & Metadata
+                        <i class="bi bi-tags-fill text-primary"></i> Asset Tags & Metadata
                     </h6>
                     <div class="d-flex flex-wrap gap-2">
                         @if(isset($resource) && !empty($resource->tags))
@@ -510,13 +510,10 @@
                                 @endif
                             @endif
 
-                            <!-- AI Quick Edit Action Trigger -->
-                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="btn btn-ai-quick-edit btn-lg rounded-pill py-3 fw-bold text-decoration-none d-flex align-items-center justify-content-center gap-2" title="Customize this template instantly with AI">
-                                <i class="bi bi-magic fs-5 text-warning"></i>
-                                <span>AI Quick Edit</span>
-                                <span class="badge rounded-pill bg-black bg-opacity-30 text-warning border border-warning border-opacity-30 px-2.5 py-0.5 extra-small ms-1">
-                                    ⚡ 1 Credit
-                                </span>
+                            <!-- Studio Quick Customize Action Trigger -->
+                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="btn btn-ai-quick-edit btn-lg rounded-pill py-3 fw-bold text-decoration-none d-flex align-items-center justify-content-center gap-2" title="Customize this template in the web editor">
+                                <i class="bi bi-palette2 fs-5 text-warning"></i>
+                                <span>Studio Quick Edit</span>
                             </a>
 
                             @if(isset($resource) && $resource->demo_link)

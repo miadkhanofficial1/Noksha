@@ -136,7 +136,7 @@
                     <span class="badge rounded-pill px-3 py-1.5 fw-bold extra-small text-uppercase mb-2.5 d-inline-flex align-items-center gap-1.5"
                           style="background: rgba(99, 102, 241, 0.12); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.25);">
                         <i class="bi bi-magic text-indigo-400"></i>
-                        <span class="text-indigo-300">Local Keyword AI Auto-Tag Engine</span>
+                        <span class="text-indigo-300">Curated Keyword & Tag Directory</span>
                     </span>
                     <h2 class="display-6 fw-extrabold text-white mb-2">Search Marketplace Assets</h2>
                     <p class="text-white text-opacity-80 small mb-0">Discover UI kits, Figma design systems, vectors, and templates indexed with smart local keywords.</p>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'AI Template Customizer - ' . ($resource->title ?? 'Workspace') . ' - Noksha')
+@section('title', 'Template Studio Customizer - ' . ($resource->title ?? 'Workspace') . ' - Noksha')
 
 @section('content')
 <style>
@@ -402,7 +402,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge rounded-pill px-2.5 py-1 extra-small fw-bold" 
                           style="background: rgba(124, 58, 237, 0.2); color: #C4B5FD; border: 1px solid rgba(124, 58, 237, 0.35);">
-                        <i class="bi bi-magic me-1 text-warning"></i> AI Customizer
+                        <i class="bi bi-palette2 me-1 text-warning"></i> Studio Customizer
                     </span>
                     <h1 class="h6 mb-0 fw-bold text-white text-truncate" style="max-width: 320px;" title="{{ $resource->title }}">
                         {{ $resource->title }}
@@ -839,9 +839,9 @@
                  style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5;">
                 <span class="extra-small fw-extrabold font-monospace text-uppercase tracking-wider">⚡ 0 Credits Remaining</span>
             </div>
-            <h3 class="h5 fw-extrabold text-white mb-1.5">Out of AI Credits</h3>
+            <h3 class="h5 fw-extrabold text-white mb-1.5">Out of Studio Credits</h3>
             <p class="text-slate-400 extra-small mx-auto mb-0" style="max-width: 380px; line-height: 1.6;">
-                Each customized AI variation requires <strong>1 generation credit</strong>. Recharge your credit pack to continue synthesizing high-resolution designs.
+                Each customized variation requires <strong>1 customization credit</strong>. Recharge your credit pack to continue creating high-resolution designs.
             </p>
         </div>
 

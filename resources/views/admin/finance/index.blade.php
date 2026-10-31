@@ -65,7 +65,7 @@
         <!-- Total AI Credit Sales -->
         <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-5 border border-amber-500/30 dark:border-amber-500/30 bg-amber-500/[0.02] shadow-sm relative overflow-hidden group hover:border-amber-500/60 transition-all">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold text-amber-500 dark:text-amber-400 uppercase tracking-wider">AI Token Bundle Sales</span>
+                <span class="text-xs font-semibold text-amber-500 dark:text-amber-400 uppercase tracking-wider">Credit Bundle Sales</span>
                 <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
                     <i class="bi bi-lightning-charge-fill text-lg"></i>
                 </div>

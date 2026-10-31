@@ -344,27 +344,27 @@
             @else
                 {{-- BUYER-CENTRIC STAT CARDS (Strict Buyer View, Zero Seller Metrics) --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 dash-metrics-grid">
-                    <!-- Buyer Card 1: Available AI Credits -->
+                    <!-- Buyer Card 1: Available Wallet Balance -->
                     <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-5 shadow-lg backdrop-blur-sm flex flex-col justify-between hover:border-slate-700 transition duration-200">
                         <div>
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Available AI Credits</span>
+                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Escrow Wallet Balance</span>
                                 <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
                                     <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                     </svg>
                                 </div>
                             </div>
                             <div class="text-3xl font-extrabold text-white tracking-tight my-2">
-                                {{ number_format(auth()->user()->ai_credits ?? (auth()->user()->aiCredit?->credits ?? 0)) }}
+                                ৳{{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}
                             </div>
                         </div>
                         <div class="pt-3 border-t border-slate-800/80 mt-auto flex items-center justify-between">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0"></span>
-                                AI Generation Tokens
+                                Secured Funds
                             </span>
-                            <a href="{{ route('wallet.index') }}" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline">Recharge</a>
+                            <a href="{{ route('wallet.index') }}" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline">Add Funds</a>
                         </div>
                     </div>
 

@@ -312,9 +312,9 @@
                     </span>
                     <span class="extra-small text-slate-400 font-monospace">Realtime Balance Engine</span>
                 </div>
-                <h1 class="display-6 fw-extrabold text-white mb-1">Billing, Wallet & AI Store</h1>
+                <h1 class="display-6 fw-extrabold text-white mb-1">Billing, Wallet & Balance</h1>
                 <p class="text-slate-400 small mb-0" style="max-width: 620px;">
-                    Manage your central BDT wallet funds, purchase instant AI customizer token bundles, and audit your complete ledger.
+                    Manage your central BDT escrow wallet funds, acquire design customization credits, and audit your complete ledger.
                 </p>
             </div>
 
@@ -414,14 +414,14 @@
                 </div>
             </div>
 
-            <!-- Card 2: Available AI Credits -->
+            <!-- Card 2: Available Studio Credits -->
             <div class="col-12 col-md-4">
                 <div class="metric-stat-card">
                     <div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400">Available AI Tokens</span>
+                            <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400">Available Studio Credits</span>
                             <div class="metric-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">
-                                <i class="bi bi-lightning-charge-fill"></i>
+                                <i class="bi bi-palette2"></i>
                             </div>
                         </div>
                         @if(auth()->user()->isAdmin())
@@ -433,9 +433,9 @@
                         @else
                             <div class="d-flex align-items-baseline gap-1 mb-1 font-monospace">
                                 <span class="display-6 fw-extrabold text-warning">{{ number_format(auth()->user()->ai_credits ?? $aiCredit->credits ?? 0) }}</span>
-                                <span class="fs-6 text-slate-400 fw-semibold">Tokens</span>
+                                <span class="fs-6 text-slate-400 fw-semibold">Credits</span>
                             </div>
-                            <div class="extra-small text-slate-400">1 Token = 1 High-Res AI Graphic Customization</div>
+                            <div class="extra-small text-slate-400">1 Credit = 1 Web Studio Customization</div>
                         @endif
                     </div>
                     <div class="pt-3 mt-3 border-top border-slate-800 d-flex align-items-center justify-content-between">
@@ -460,19 +460,19 @@
                 </div>
             </div>
 
-            <!-- Card 3: Total AI Generations / Edits Performed -->
+            <!-- Card 3: Total Studio Generations / Edits Performed -->
             <div class="col-12 col-md-4">
                 <div class="metric-stat-card">
                     <div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400">AI Graphics Synthesized</span>
+                            <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400">Custom Graphics Created</span>
                             <div class="metric-icon-box" style="background: rgba(124, 58, 237, 0.15); color: #A78BFA;">
-                                <i class="bi bi-magic"></i>
+                                <i class="bi bi-brush"></i>
                             </div>
                         </div>
                         <div class="d-flex align-items-baseline gap-1 mb-1 font-monospace">
                             <span class="display-6 fw-extrabold text-purple-400">{{ number_format($totalGenerations) }}</span>
-                            <span class="fs-6 text-slate-400 fw-semibold">Generations</span>
+                            <span class="fs-6 text-slate-400 fw-semibold">Exports</span>
                         </div>
                         <div class="extra-small text-slate-400">Completed template customizations</div>
                     </div>
@@ -495,9 +495,9 @@
             <div class="text-center mb-4">
                 <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small mb-2"
                       style="background: rgba(124, 58, 237, 0.15); color: #C4B5FD; border: 1px solid rgba(124, 58, 237, 0.3);">
-                    <i class="bi bi-stars me-1 text-warning"></i> AI Credit Bundles
+                    <i class="bi bi-stars me-1 text-warning"></i> Studio Credit Bundles
                 </span>
-                <h2 class="h3 fw-extrabold text-white mb-1">Select an AI Generation Package</h2>
+                <h2 class="h3 fw-extrabold text-white mb-1">Select a Customization Package</h2>
                 <p class="text-slate-400 extra-small mx-auto mb-0" style="max-width: 520px;">
                     Tokens are deducted instantly from your central wallet balance upon purchase and never expire.
                 </p>
@@ -545,7 +545,7 @@
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between text-slate-300 small">
                                         <span class="fw-bold text-warning font-monospace">
-                                            <i class="bi bi-lightning-charge-fill me-0.5"></i> {{ $pack['credits'] }} AI Credits
+                                            <i class="bi bi-palette2 me-0.5"></i> {{ $pack['credits'] }} Studio Credits
                                         </span>
                                         <span class="extra-small text-slate-400 font-monospace">
                                             (৳{{ $pack['rate'] }} / edit)
@@ -856,7 +856,7 @@
                     </div>
                     <h5 class="fw-bold text-white mb-1">No Transactions Recorded Yet</h5>
                     <p class="text-slate-400 extra-small mb-3">
-                        Recharge funds or purchase an AI credit bundle to start building your ledger history.
+                        Recharge funds or purchase a studio credit bundle to start building your ledger history.
                     </p>
                     <a href="#depositSection" class="btn btn-emerald-recharge btn-sm px-3.5 py-1.5 rounded-pill">
                         <i class="bi bi-plus-circle me-1"></i> Add Funds

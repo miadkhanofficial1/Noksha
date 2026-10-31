@@ -129,7 +129,7 @@
             </span>
             <h1 class="fw-extrabold text-white mb-2 display-6">How Can We Help You?</h1>
             <p class="text-slate-400 small mx-auto" style="max-width: 560px; color: #94A3B8;">
-                Have questions about design assets, contest escrow payouts, copyright claims, or AI credits? Our team is here to assist.
+                Have questions about design assets, contest escrow payouts, copyright claims, or bespoke commissions? Our team is here to assist.
             </p>
         </div>
 
@@ -176,18 +176,18 @@
                 </div>
             </div>
 
-            <!-- Card 2: AI Assistance -->
+            <!-- Card 2: Creator Services -->
             <div class="col-12 col-md-4">
                 <div class="support-info-card">
                     <div class="support-icon-box" style="background: rgba(59, 130, 246, 0.15); color: #60A5FA;">
-                        <i class="bi bi-cpu-fill"></i>
+                        <i class="bi bi-palette-fill"></i>
                     </div>
-                    <h5 class="fw-bold text-white mb-1.5">AI Customizer Help</h5>
+                    <h5 class="fw-bold text-white mb-1.5">Creative Customization</h5>
                     <p class="text-slate-400 extra-small mb-3" style="color: #94A3B8;">
-                        Assistance with AI template vector generators, credit top-ups, and commercial licensing.
+                        Assistance with bespoke creator commissions, service proposals, and commercial licensing.
                     </p>
                     <span class="badge rounded-pill px-2.5 py-1 extra-small fw-semibold" style="background: rgba(59, 130, 246, 0.2); color: #93C5FD;">
-                        <i class="bi bi-lightning-charge-fill me-1"></i> Instant AI Guidance
+                        <i class="bi bi-shield-check me-1"></i> Verified Creative Support
                     </span>
                 </div>
             </div>
@@ -259,7 +259,7 @@
                         <select name="subject" id="selectSubject" class="form-select form-control-dark @error('subject') is-invalid @enderror" required>
                             <option value="" disabled {{ old('subject') ? '' : 'selected' }}>Select an inquiry topic...</option>
                             <option value="General Inquiry" {{ old('subject') === 'General Inquiry' ? 'selected' : '' }}>General Inquiry & Platform Assistance</option>
-                            <option value="AI Credits & Customizer" {{ old('subject') === 'AI Credits & Customizer' ? 'selected' : '' }}>AI Credits & Customizer Assistance</option>
+                            <option value="Creator Services & Customization" {{ old('subject') === 'Creator Services & Customization' ? 'selected' : '' }}>Creative Services & Bespoke Customization</option>
                             <option value="Design Contests & Escrow" {{ old('subject') === 'Design Contests & Escrow' ? 'selected' : '' }}>Design Contests, Bounties & Escrow Releases</option>
                             <option value="Copyright & Intellectual Property" {{ old('subject') === 'Copyright & Intellectual Property' ? 'selected' : '' }}>Copyright & Intellectual Property Infringement</option>
                             <option value="Billing & Payouts" {{ old('subject') === 'Billing & Payouts' ? 'selected' : '' }}>Billing, Wallets & Contributor Payouts</option>

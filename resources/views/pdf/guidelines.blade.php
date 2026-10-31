@@ -232,7 +232,7 @@
     <div class="section-card">
         <div class="section-header">
             <div class="section-num">3</div>
-            <h2 class="section-title">Category Selection & AI Search Tags</h2>
+            <h2 class="section-title">Category Selection & Search Tags</h2>
         </div>
         <p>Proper classification ensures buyers and clients quickly locate and purchase your digital products.</p>
         <ul class="checklist">

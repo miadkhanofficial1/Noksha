@@ -36,8 +36,8 @@ return [
     'submit_entry' => 'Submit Entry',
     'winning_entry' => 'Winning Design Entry',
     'leaderboard' => 'Top 10 Creator Leaderboard',
-    'tag_cloud' => 'Popular AI Indexed Tags',
-    'ai_auto_tag' => 'Smart AI Auto Tag',
+    'tag_cloud' => 'Popular Design Tags',
+    'ai_auto_tag' => 'Smart Asset Tagging',
     'filter_by' => 'Filter By',
     'all_categories' => 'All Categories',
 ];
