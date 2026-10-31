@@ -164,7 +164,7 @@
             {{-- ======================================================== --}}
             {{-- 2. RIGHT COLUMN: ACTIVE CHAT VIEWPORT                    --}}
             {{-- ======================================================== --}}
-            <main class="flex-1 flex flex-col bg-slate-900/60 overflow-hidden relative h-full max-h-full min-h-0">
+            <main class="flex-1 flex flex-col h-[calc(100vh-80px)] overflow-hidden bg-slate-900/60 relative min-h-0">
                 
                 @if($activeConversation)
                     @php
@@ -417,7 +417,7 @@
                     @endif
 
                     {{-- 2.3 MESSAGE HISTORY STREAM (SCROLLABLE) --}}
-                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
+                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
@@ -623,7 +623,7 @@
                     </div>
 
                     {{-- 2.4 CHAT INPUT AREA --}}
-                    <footer class="p-3 sm:p-4 border-t border-slate-800/80 bg-slate-950/70 shrink-0">
+                    <footer class="flex-shrink-0 bg-[#0F172A] border-t border-slate-800 p-3 sticky bottom-0 z-20">
                         @if($isSupportThread)
                             <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 text-center text-xs text-slate-400 font-medium">
                                 🔒 This is an official system notice. Replies are disabled.

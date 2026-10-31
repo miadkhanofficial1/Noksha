@@ -468,8 +468,15 @@ class InboxController extends Controller
         ]);
 
         $file = $request->file('delivery_file');
-        $disk = config('filesystems.default', 's3');
-        $path = $file->store('service_deliveries/' . $order->id, $disk);
+        $disk = config('filesystems.default', 'local');
+
+        // Graceful S3 / Local fallback
+        try {
+            $path = $file->store('service_deliveries/' . $order->id, $disk);
+        } catch (\Throwable $e) {
+            // Fallback to local public disk if S3 adapter class fails
+            $path = $file->store('service_deliveries/' . $order->id, 'public');
+        }
         $notes = trim((string) $request->input('delivery_notes', ''));
 
         $order->update([
@@ -497,7 +504,7 @@ class InboxController extends Controller
         ]);
 
         return redirect()->route('inbox.show', $order->conversation_id)
-            ->with('success', 'Final work package delivered successfully! Client notified for review.');
+            ->with('success', 'Work delivered successfully! Client has been notified.');
     }
 
     /**
@@ -515,14 +522,22 @@ class InboxController extends Controller
             abort(404, 'Delivery archive not found for this order.');
         }
 
-        $disk = config('filesystems.default', 's3');
+        $disk = config('filesystems.default', 'local');
         $filename = 'Noksha-Delivery-' . $order->order_number . '.zip';
 
         if (Storage::disk($disk)->exists($order->delivery_archive_path)) {
             return Storage::disk($disk)->download($order->delivery_archive_path, $filename);
         }
 
-        return redirect(Storage::disk($disk)->url($order->delivery_archive_path));
+        if (Storage::disk('public')->exists($order->delivery_archive_path)) {
+            return Storage::disk('public')->download($order->delivery_archive_path, $filename);
+        }
+
+        if (Storage::disk('local')->exists($order->delivery_archive_path)) {
+            return Storage::disk('local')->download($order->delivery_archive_path, $filename);
+        }
+
+        return redirect(Storage::disk('public')->url($order->delivery_archive_path));
     }
 
     /**
