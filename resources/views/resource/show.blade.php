@@ -488,7 +488,7 @@
                                     <!-- Buy Template Direct with Wallet -->
                                     <button type="button" onclick="handleBuyTemplate()" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm">
                                         <i class="bi bi-wallet2"></i>
-                                        <span>Buy Template — ৳{{ number_format($resource->price, 2) }}</span>
+                                        <span>Buy Now / Download — ৳{{ number_format($resource->price, 2) }}</span>
                                     </button>
 
                                     <!-- Add to Cart Alternative -->
@@ -776,8 +776,11 @@ function handleBuyTemplate() {
                 </div>
 
                 <h3 class="h5 fw-extrabold text-white mb-2">Insufficient Wallet Balance</h3>
+                <p class="text-slate-300 extra-small mb-3" style="line-height: 1.6;">
+                    Insufficient Wallet Balance. Please deposit funds to continue.
+                </p>
                 <p class="text-slate-400 extra-small mb-4" style="line-height: 1.6;">
-                    This premium design costs <strong class="text-white">৳{{ number_format($resource->price ?? 0, 2) }}</strong>. Your current available wallet balance is <strong class="text-slate-300">৳{{ number_format(auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0, 2) }}</strong>. Please top up your wallet to complete this purchase.
+                    This premium design costs <strong class="text-white">৳{{ number_format($resource->price ?? 0, 2) }}</strong>. Your current available wallet balance is <strong class="text-slate-300">৳{{ number_format(auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0, 2) }}</strong>.
                 </p>
 
                 <div class="d-flex flex-column gap-2">

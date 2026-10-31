@@ -335,10 +335,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/templates/{id}/ai-generate', [AiEditorController::class, 'generate'])->name('templates.ai-generate');
     Route::post('/templates/ai-edit/deduct-credit', [AiEditorController::class, 'deductCredit'])->name('templates.ai-edit.deduct');
 
-    // Central Wallet & AI Credit Management Routes
+    // Central Wallet & Financial Hub Routes
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
     Route::post('/wallet/buy-credits', [WalletController::class, 'buyCredits'])->name('wallet.buy-credits');
     Route::post('/wallet/deposit', [WalletController::class, 'deposit'])->name('wallet.deposit');
+    Route::post('/wallet/withdraw', [WalletController::class, 'withdraw'])->name('wallet.withdraw');
 
     // Direct Template Purchase with Wallet Balance
     Route::post('/resource/{resource}/buy', [CheckoutController::class, 'buyWithWallet'])->name('resource.buy-wallet');
