@@ -3,7 +3,24 @@
 @section('title', ($activeConversation && $counterpart ? 'Chat with ' . $counterpart->name : 'Inbox') . ' - Noksha')
 
 @section('content')
-<div class="bg-slate-950 min-h-[calc(100vh-4.5rem)] text-slate-200 flex flex-col font-sans antialiased">
+<style>
+    /* Strict Viewport Clamp for Inbox */
+    footer, .site-footer {
+        display: none !important;
+    }
+    html, body {
+        overflow: hidden !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+    }
+    main {
+        overflow: hidden !important;
+        height: calc(100vh - 80px) !important;
+        max-height: calc(100vh - 80px) !important;
+    }
+</style>
+
+<div class="bg-slate-950 text-slate-200 flex flex-col font-sans antialiased h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
     
     {{-- ALERT TOAST CONTAINER (Client-side & Session) --}}
     <div id="toastContainer" class="fixed top-20 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-md w-full">
@@ -28,13 +45,13 @@
     </div>
 
     {{-- MAIN INBOX CONTAINER --}}
-    <div class="container-fluid max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-4 flex-1 flex flex-col">
-        <div class="bg-slate-900/90 border border-slate-800/80 rounded-3xl shadow-2xl overflow-hidden flex-1 flex flex-col lg:flex-row h-[calc(100vh-7rem)] min-h-[620px] backdrop-blur-xl">
+    <div class="container-fluid max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-2 flex-1 flex flex-col h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
+        <div class="bg-slate-900/90 border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden flex-1 flex flex-col lg:flex-row h-full max-h-full backdrop-blur-xl min-h-0">
 
             {{-- ======================================================== --}}
             {{-- 1. LEFT COLUMN: CONVERSATIONS SIDEBAR                    --}}
             {{-- ======================================================== --}}
-            <aside id="chatSidebar" class="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-slate-800/80 flex flex-col bg-slate-950/40 shrink-0">
+            <aside id="chatSidebar" class="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-slate-800/80 flex flex-col bg-slate-950/40 shrink-0 h-full max-h-full overflow-hidden min-h-0">
                 
                 {{-- Sidebar Header --}}
                 <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
@@ -59,7 +76,7 @@
                 </div>
 
                 {{-- Thread List (Scrollable) --}}
-                <div id="conversationThreadList" class="flex-1 overflow-y-auto divide-y divide-slate-800/40 scrollbar-thin scrollbar-thumb-slate-800">
+                <div id="conversationThreadList" class="flex-1 overflow-y-auto divide-y divide-slate-800/40 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
                     @forelse($conversations as $conv)
                         @php
                             $convOther = $conv->getOtherParticipant(auth()->user());
@@ -147,7 +164,7 @@
             {{-- ======================================================== --}}
             {{-- 2. RIGHT COLUMN: ACTIVE CHAT VIEWPORT                    --}}
             {{-- ======================================================== --}}
-            <main class="flex-1 flex flex-col bg-slate-900/60 overflow-hidden relative">
+            <main class="flex-1 flex flex-col bg-slate-900/60 overflow-hidden relative h-full max-h-full min-h-0">
                 
                 @if($activeConversation)
                     @php
@@ -400,7 +417,7 @@
                     @endif
 
                     {{-- 2.3 MESSAGE HISTORY STREAM (SCROLLABLE) --}}
-                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 scrollbar-thin scrollbar-thumb-slate-800">
+                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
@@ -410,9 +427,9 @@
 
                             @if($isSystem)
                                 {{-- Centered System / Order Status Notice --}}
-                                <div class="flex justify-center my-3" data-msg-id="{{ $msg->id }}">
-                                    <div class="px-4 py-2 rounded-2xl text-xs font-semibold {{ $msg->message_type === 'order_status' ? 'bg-indigo-950/60 border border-indigo-500/30 text-indigo-200' : 'bg-slate-950/80 border border-slate-800 text-slate-400' }} flex items-center gap-2 shadow-sm max-w-lg text-center">
-                                        <svg class="w-4 h-4 {{ $msg->message_type === 'order_status' ? 'text-indigo-400' : 'text-slate-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <div class="flex justify-center my-1.5" data-msg-id="{{ $msg->id }}">
+                                    <div class="px-3 py-1.5 rounded-xl text-xs font-semibold {{ $msg->message_type === 'order_status' ? 'bg-indigo-950/60 border border-indigo-500/30 text-indigo-200' : 'bg-slate-950/80 border border-slate-800 text-slate-400' }} flex items-center gap-2 shadow-sm max-w-lg text-center">
+                                        <svg class="w-3.5 h-3.5 {{ $msg->message_type === 'order_status' ? 'text-indigo-400' : 'text-slate-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <span>{{ $msg->body }}</span>
                                         <span class="text-[9px] text-slate-500 font-mono shrink-0">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
                                     </div>
@@ -420,13 +437,13 @@
                             @elseif($isProposal)
                                 {{-- In-Chat Service Widget Card --}}
                                 @php $meta = $msg->metadata ?? []; @endphp
-                                <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-3">
-                                    <div class="max-w-md w-full bg-slate-950 border border-indigo-500/30 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
-                                        <div class="absolute -top-12 -right-12 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
+                                <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-1.5">
+                                    <div class="max-w-md w-full bg-slate-950 border border-indigo-500/30 rounded-2xl p-3.5 shadow-xl relative overflow-hidden">
+                                        <div class="absolute -top-12 -right-12 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
                                         
-                                        <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-800/80 mb-3">
+                                        <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-800/80 mb-2">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold text-xs">
+                                                <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold text-xs">
                                                     ৳
                                                 </div>
                                                 <div>
@@ -434,17 +451,17 @@
                                                     <span class="text-[10px] text-slate-400">{{ $meta['order_number'] ?? 'Custom Order' }}</span>
                                                 </div>
                                             </div>
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
                                                 ৳{{ number_format($meta['price'] ?? 600, 2) }}
                                             </span>
                                         </div>
 
-                                        <h5 class="text-sm font-bold text-white mb-1.5">{{ $meta['title'] ?? 'Creative Service Package' }}</h5>
-                                        <p class="text-xs text-slate-400 leading-relaxed mb-3">
+                                        <h5 class="text-xs font-bold text-white mb-1">{{ $meta['title'] ?? 'Creative Service Package' }}</h5>
+                                        <p class="text-[11px] text-slate-400 leading-snug line-clamp-2 mb-2">
                                             {{ $meta['description'] ?? 'Custom design project negotiated via Noksha escrow.' }}
                                         </p>
 
-                                        <div class="flex items-center gap-3 text-[11px] text-slate-400 mb-4 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/60">
+                                        <div class="flex items-center gap-2 text-[10px] text-slate-400 mb-2.5 bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
                                             <span>⏱️ <strong>{{ $meta['duration_days'] ?? 3 }} Days</strong> Delivery</span>
                                             <span>&bull;</span>
                                             <span>🛡️ 100% Escrow Protected</span>
@@ -461,26 +478,26 @@
                                                         <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1">
                                                             @csrf
                                                             <input type="hidden" name="action" value="accept">
-                                                            <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20 cursor-pointer">
+                                                            <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20 cursor-pointer">
                                                                 ✅ Accept Proposal
                                                             </button>
                                                         </form>
                                                         <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Decline this proposal?');">
                                                             @csrf
                                                             <input type="hidden" name="action" value="decline">
-                                                            <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
+                                                            <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
                                                                 ❌ Decline
                                                             </button>
                                                         </form>
                                                     </div>
                                                 @else
-                                                    <div class="space-y-2">
-                                                        <div class="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs text-center font-medium">
+                                                    <div class="space-y-1.5">
+                                                        <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs text-center font-medium">
                                                             ⏳ Waiting for Contributor acceptance...
                                                         </div>
                                                         <form action="{{ route('inbox.orders.cancel', $propOrder->id) }}" method="POST" onsubmit="return confirm('Withdraw this service proposal?');">
                                                             @csrf
-                                                            <button type="submit" class="w-full py-1.5 rounded-xl text-[11px] font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer">
+                                                            <button type="submit" class="w-full py-1 rounded-lg text-[10px] font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer">
                                                                 🗑️ Withdraw Proposal
                                                             </button>
                                                         </form>
@@ -490,30 +507,30 @@
                                                 @if($isBuyer)
                                                     <form action="{{ route('inbox.orders.fund', $propOrder->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white text-center shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
+                                                        <button type="submit" class="w-full py-2 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white text-center shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
                                                             💳 Proceed to Secure Escrow Payment (৳{{ number_format($propOrder->total_amount, 2) }})
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs text-center font-medium">
+                                                    <div class="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs text-center font-medium">
                                                         Approved &bull; Waiting for client payment
                                                     </div>
                                                 @endif
                                             @elseif($propOrder && $propOrder->status === 'funded_in_progress')
-                                                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold flex items-center justify-center gap-2">
+                                                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold flex items-center justify-center gap-2">
                                                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                                                     <span>Escrow Secured & Project Underway</span>
                                                 </div>
                                             @elseif($propOrder && $propOrder->status === 'delivered')
-                                                <div class="space-y-2.5">
-                                                    <div class="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs">
+                                                <div class="space-y-2">
+                                                    <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs">
                                                         <div class="font-bold flex items-center gap-1.5 mb-1">
                                                             <span>📦 Work Delivered by Creator</span>
                                                         </div>
                                                         @if($propOrder->delivery_notes)
-                                                            <p class="text-[11px] text-slate-300 italic mb-2">"{{ $propOrder->delivery_notes }}"</p>
+                                                            <p class="text-[11px] text-slate-300 italic mb-1.5">"{{ $propOrder->delivery_notes }}"</p>
                                                         @endif
-                                                        <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-700 transition-colors">
+                                                        <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-700 transition-colors">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                                             <span>Download Source Delivery (.ZIP)</span>
                                                         </a>
@@ -522,33 +539,33 @@
                                                         <div class="flex items-center gap-2">
                                                             <form action="{{ route('inbox.orders.release', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Accept delivery and release escrow funds to creator?');">
                                                                 @csrf
-                                                                <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all cursor-pointer">
+                                                                <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all cursor-pointer">
                                                                     ✅ Accept & Release Funds
                                                                 </button>
                                                             </form>
-                                                            <button type="button" onclick="openRevisionModal()" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer">
+                                                            <button type="button" onclick="openRevisionModal()" class="flex-1 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer">
                                                                 🔄 Request Revision
                                                             </button>
                                                         </div>
                                                     @endif
                                                 </div>
                                             @elseif($propOrder && $propOrder->status === 'completed')
-                                                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
+                                                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
                                                     🎉 Order Completed & Escrow Released
                                                     @if($propOrder->delivery_archive_path)
-                                                        <div class="mt-2">
-                                                            <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1 text-xs text-indigo-400 underline hover:text-indigo-300">
+                                                        <div class="mt-1.5">
+                                                            <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1 text-[11px] text-indigo-400 underline hover:text-indigo-300">
                                                                 📥 Download Delivery Archive
                                                             </a>
                                                         </div>
                                                     @endif
                                                 </div>
                                             @elseif($propOrder && $propOrder->status === 'cancelled')
-                                                <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-center font-bold">
+                                                <div class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-center font-bold">
                                                     ❌ Order Cancelled & Escrow Refunded
                                                 </div>
                                             @elseif($propOrder && $propOrder->isFunded())
-                                                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
+                                                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
                                                     ✅ Escrow Secured & Project Underway
                                                 </div>
                                             @endif

@@ -4,18 +4,44 @@
 
 @section('content')
 
-<!-- CUSTOM ORDER DETAILS STYLES -->
+<!-- CUSTOM ORDER DETAILS STYLES (DARK THEME) -->
 <style>
     .order-details-bg {
-        background: linear-gradient(180deg, #F8F5FF 0%, #FFFFFF 100%);
+        background: #020617; /* slate-950 */
         min-height: 100vh;
+        color: #F8FAFC;
     }
 
     .order-details-card-figma {
-        background: #ffffff;
+        background: rgba(15, 23, 42, 0.85) !important;
         border-radius: 1.5rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.06) !important;
+        border: 1px solid rgba(148, 163, 184, 0.15) !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .table-order-items {
+        color: #F8FAFC;
+        margin-bottom: 0;
+    }
+
+    .table-order-items th {
+        background: transparent;
+        color: #94A3B8;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        padding: 0.85rem 1rem;
+    }
+
+    .table-order-items td {
+        background: transparent;
+        color: #E2E8F0;
+        font-size: 0.875rem;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+        padding: 1rem;
     }
 
     .btn-purple-cta {
@@ -42,22 +68,22 @@
         
         <!-- BREADCRUMB NAVIGATION -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small fw-semibold text-muted mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-primary"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('orders.index') }}" class="text-decoration-none text-primary">Orders</a></li>
-                <li class="breadcrumb-item active text-dark" aria-current="page">Order #{{ $order->order_number }}</li>
+            <ol class="breadcrumb small fw-semibold text-slate-400 mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('orders.index') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300">Orders</a></li>
+                <li class="breadcrumb-item active text-slate-200" aria-current="page">Order #{{ $order->order_number }}</li>
             </ol>
         </nav>
 
         <!-- PAGE HEADER -->
         <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
-                <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1;">
+                <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">
                     <i class="bi bi-receipt me-1"></i> Receipt Inspector
                 </span>
-                <h2 class="display-6 fw-extrabold text-dark mt-1 mb-0">Order Details</h2>
+                <h2 class="display-6 fw-extrabold text-white mt-1 mb-0">Order Details</h2>
             </div>
-            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary rounded-pill btn-sm px-3.5 fw-bold">
+            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary rounded-pill btn-sm px-3.5 fw-bold text-slate-300" style="border-color: rgba(148, 163, 184, 0.25);">
                 <i class="bi bi-arrow-left me-1"></i> Back to Orders
             </a>
         </div>
@@ -65,31 +91,31 @@
         <!-- MAIN ORDER CARD -->
         <div class="card order-details-card-figma p-4 p-md-5 mb-4">
             <!-- TOP METADATA SUMMARY -->
-            <div class="row g-3 bg-light p-3.5 rounded-4 mb-4 border">
+            <div class="row g-3 p-3.5 rounded-4 mb-4 border border-slate-800" style="background: rgba(11, 17, 32, 0.7);">
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Order Number</div>
-                    <div class="fw-extrabold text-dark font-monospace">#{{ $order->order_number }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Order Number</div>
+                    <div class="fw-extrabold text-white font-monospace">#{{ $order->order_number }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Transaction ID</div>
-                    <div class="fw-bold text-primary font-monospace small">{{ $order->transaction_id ?? 'TXN-Direct' }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Transaction ID</div>
+                    <div class="fw-bold text-indigo-400 font-monospace small">{{ $order->transaction_id ?? 'TXN-Direct' }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Payment Method</div>
-                    <div class="fw-bold text-dark text-capitalize small">{{ $order->payment_method ?? 'bKash' }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Payment Method</div>
+                    <div class="fw-bold text-white text-capitalize small">{{ $order->payment_method ?? 'bKash' }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Order Date</div>
-                    <div class="small text-muted font-monospace">{{ $order->created_at->format('M d, Y') }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Order Date</div>
+                    <div class="small text-slate-400 font-monospace">{{ $order->created_at->format('M d, Y') }}</div>
                 </div>
             </div>
 
             <!-- ITEMS TABLE -->
-            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam text-primary me-2"></i>Purchased Digital Resources</h5>
+            <h5 class="fw-bold text-white mb-3"><i class="bi bi-box-seam text-indigo-400 me-2"></i>Purchased Digital Resources</h5>
             
             <div class="table-responsive mb-4">
-                <table class="table table-hover align-middle mb-0 border rounded-3">
-                    <thead class="bg-light text-uppercase extra-small text-muted fw-bold">
+                <table class="table table-order-items align-middle mb-0 border border-slate-800 rounded-3">
+                    <thead>
                         <tr>
                             <th>Resource Item</th>
                             <th>Category</th>
@@ -105,7 +131,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-3">
-                                            <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 56px; height: 42px; background: #1E1B4B;">
+                                            <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 56px; height: 42px; background: #0B1120; border: 1px solid rgba(148, 163, 184, 0.12);">
                                                 @if($res->preview_image)
                                                     <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $res->title }}">
                                                 @else
@@ -113,23 +139,23 @@
                                                 @endif
                                             </div>
                                             <div>
-                                                <a href="{{ route('resource.show', $res->slug ?? $res->id) }}" class="fw-bold text-dark text-decoration-none small d-block" title="{{ $res->title }}">
+                                                <a href="{{ route('resource.show', $res->slug ?? $res->id) }}" class="fw-bold text-white hover-underline text-decoration-none small d-block" title="{{ $res->title }}">
                                                     {{ $res->title }}
                                                 </a>
-                                                <div class="extra-small text-muted">by {{ $res->owner ? $res->owner->name : 'Noksha Creator' }}</div>
+                                                <div class="extra-small text-slate-400">by {{ $res->owner ? $res->owner->name : 'Noksha Creator' }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2.5 py-1 fw-bold extra-small">
+                                        <span class="badge rounded-pill px-2.5 py-1 fw-bold extra-small" style="background: rgba(99, 102, 241, 0.18); color: #C4B5FD; border: 1px solid rgba(99, 102, 241, 0.3);">
                                             {{ $res->category ? $res->category->name : 'General' }}
                                         </span>
                                     </td>
-                                    <td class="small font-monospace text-uppercase text-muted">
+                                    <td class="small font-monospace text-uppercase text-slate-400">
                                         {{ $res->file_type ?? 'ZIP' }}
                                     </td>
                                     <td>
-                                        <span class="fw-extrabold text-dark small">
+                                        <span class="fw-extrabold text-emerald-400 small font-monospace">
                                             {{ $res->is_paid && $res->price > 0 ? '৳' . number_format($res->price, 2) : 'Free' }}
                                         </span>
                                     </td>
@@ -146,13 +172,13 @@
             </div>
 
             <!-- TOTAL SUMMARY -->
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                <div class="small text-muted">
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-slate-800">
+                <div class="small text-slate-400">
                     <i class="bi bi-patch-check-fill text-success me-1"></i> Order Payment Verified & Completed
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
-                    <span class="small fw-bold text-muted text-uppercase">Total Paid:</span>
-                    <span class="display-6 fw-extrabold text-primary">৳{{ number_format($order->total, 2) }}</span>
+                    <span class="small fw-bold text-slate-400 text-uppercase">Total Paid:</span>
+                    <span class="display-6 fw-extrabold text-emerald-400 font-monospace">৳{{ number_format($order->total, 2) }}</span>
                 </div>
             </div>
         </div>

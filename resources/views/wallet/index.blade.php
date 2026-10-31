@@ -103,22 +103,28 @@
 
     /* Preset Quick Amount Pills */
     .amount-preset-btn {
-        background: #0B1120;
-        border: 1px solid #1E293B;
-        color: #94A3B8;
-        border-radius: 0.75rem;
-        padding: 0.65rem 1.25rem;
+        background: #0F172A !important;
+        border: 1.5px solid #334155 !important;
+        color: #F8FAFC !important;
+        border-radius: 0.65rem;
+        padding: 0.5rem 1.15rem;
         font-size: 0.95rem;
         font-weight: 700;
-        font-family: monospace;
+        font-family: inherit;
+        text-decoration: none !important;
         transition: all 0.2s ease;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.2;
     }
 
-    .amount-preset-btn:hover, .amount-preset-btn.active {
-        background: rgba(16, 185, 129, 0.15) !important;
+    .amount-preset-btn:hover, .amount-preset-btn:focus, .amount-preset-btn.active {
+        background: rgba(16, 185, 129, 0.25) !important;
         border-color: #10B981 !important;
         color: #34D399 !important;
+        text-decoration: none !important;
         transform: translateY(-1px);
     }
 
@@ -261,35 +267,11 @@
     <div class="container position-relative z-1" style="max-width: 1140px;">
 
         <!-- Header -->
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-5">
-            <div>
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small"
-                          style="background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">
-                        <i class="bi bi-wallet2 me-1"></i> Central BDT Finance Hub
-                    </span>
-                    <span class="extra-small text-slate-400 font-monospace">Realtime Balance & Escrow Engine</span>
-                </div>
-                <h1 class="display-6 fw-extrabold text-white mb-1">Central BDT Wallet & Finance Hub</h1>
-                <p class="text-slate-400 small mb-0" style="max-width: 620px;">
-                    Manage your central BDT escrow wallet funds, confirm instant deposits, request creator payouts, and audit your complete financial transaction ledger.
-                </p>
-            </div>
-
-            <!-- Quick Action Shortcuts -->
-            <div class="d-flex align-items-center gap-2">
-                <button type="button" class="btn btn-emerald-recharge d-inline-flex align-items-center gap-2" onclick="openDepositModal()">
-                    <i class="bi bi-plus-circle-fill"></i>
-                    <span>+ Add Funds (bKash / Nagad)</span>
-                </button>
-
-                @if($canWithdraw)
-                    <button type="button" class="btn btn-withdraw-payout d-inline-flex align-items-center gap-2" onclick="openWithdrawalModal()">
-                        <i class="bi bi-arrow-up-circle-fill"></i>
-                        <span>⇪ Request Payout / Withdraw</span>
-                    </button>
-                @endif
-            </div>
+        <div class="mb-4">
+            <h1 class="display-6 fw-extrabold text-white mb-1">Central BDT Wallet</h1>
+            <p class="text-slate-400 small mb-0">
+                Instant deposits, creator payouts, and verified escrow transactions.
+            </p>
         </div>
 
         <!-- Flash Alerts -->
@@ -337,72 +319,47 @@
         @endif
 
         <!-- ========================================================= -->
-        <!-- 1. RESTRUCTURED PRIMARY TOP WALLET SUMMARY CARD           -->
+        <!-- 1. STREAMLINED AVAILABLE WALLET BALANCE CARD             -->
         <!-- ========================================================= -->
-        <div class="balance-hero-card mb-5">
+        <div class="balance-hero-card mb-4">
             <div class="balance-hero-glow-accent"></div>
 
-            <div class="row g-4 align-items-center position-relative z-1">
-                <!-- Balance Details -->
-                <div class="col-12 col-lg-7">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">
-                            <i class="bi bi-wallet2"></i>
-                        </div>
-                        <div>
-                            <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400 d-block">Available Wallet Balance</span>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(16, 185, 129, 0.2); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                    <i class="bi bi-shield-check me-1"></i> Active Escrow Wallet
-                                </span>
-                                @if($canWithdraw && $earningsBalance > 0)
-                                    <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(99, 102, 241, 0.2); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">
-                                        <i class="bi bi-stars me-1"></i> Creator Royalties: ৳{{ number_format($earningsBalance, 2) }}
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 position-relative z-1">
+                <!-- Balance & Status -->
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400">Available Wallet Balance</span>
+                        <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(16, 185, 129, 0.2); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <i class="bi bi-shield-check me-1"></i> Active Escrow Wallet
+                        </span>
+                        @if($canWithdraw && $earningsBalance > 0)
+                            <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(99, 102, 241, 0.2); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">
+                                <i class="bi bi-stars me-1"></i> Creator Royalties: ৳{{ number_format($earningsBalance, 2) }}
+                            </span>
+                        @endif
                     </div>
 
                     <!-- Prominent Balance Amount -->
-                    <div class="d-flex align-items-baseline gap-2 mb-2 font-monospace">
+                    <div class="d-flex align-items-baseline gap-2 font-monospace mb-0">
                         <span class="display-4 fw-extrabold text-emerald-400">৳</span>
                         <span class="display-4 fw-extrabold text-white">{{ number_format($wallet->balance ?? auth()->user()->balance ?? 0, 2) }}</span>
                         <span class="fs-4 fw-bold text-slate-400">BDT</span>
                     </div>
-
-                    <p class="text-slate-400 small mb-0" style="max-width: 580px;">
-                        Liquid funds ready for 1-click template licensing, bespoke creator services, and secure escrow contracts. 100% money-back guarantee with zero transaction fees.
-                    </p>
                 </div>
 
-                <!-- Primary Action Buttons Group -->
-                <div class="col-12 col-lg-5">
-                    <div class="p-4 rounded-4" style="background: rgba(11, 17, 32, 0.7); border: 1px solid rgba(148, 163, 184, 0.12);">
-                        <div class="extra-small text-slate-400 fw-bold text-uppercase tracking-wider mb-3">
-                            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Wallet Operations
-                        </div>
-                        <div class="d-flex flex-column gap-2.5">
-                            <button type="button" class="btn btn-emerald-recharge w-100 d-inline-flex align-items-center justify-content-center gap-2" onclick="openDepositModal()">
-                                <i class="bi bi-plus-circle-fill fs-5"></i>
-                                <span>+ Add Funds (bKash / Nagad)</span>
-                            </button>
+                <!-- Primary Action Buttons -->
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <button type="button" class="btn btn-emerald-recharge d-inline-flex align-items-center justify-content-center gap-2" onclick="openDepositModal()">
+                        <i class="bi bi-plus-circle-fill fs-5"></i>
+                        <span>+ Add Funds (bKash / Nagad)</span>
+                    </button>
 
-                            @if($canWithdraw)
-                                <button type="button" class="btn btn-withdraw-payout w-100 d-inline-flex align-items-center justify-content-center gap-2" onclick="openWithdrawalModal()">
-                                    <i class="bi bi-arrow-up-circle-fill fs-5"></i>
-                                    <span>⇪ Request Payout / Withdraw</span>
-                                </button>
-                            @else
-                                <div class="p-2.5 rounded-3 text-center" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.08);">
-                                    <span class="extra-small text-slate-400">
-                                        <i class="bi bi-info-circle me-1 text-slate-500"></i> Want to sell designs?
-                                        <a href="{{ route('creators.index') }}" class="text-emerald-400 text-decoration-none fw-semibold">Become a Creator</a>
-                                    </span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+                    @if($canWithdraw)
+                        <button type="button" class="btn btn-withdraw-payout d-inline-flex align-items-center justify-content-center gap-2" onclick="openWithdrawalModal()">
+                            <i class="bi bi-arrow-up-circle-fill fs-5"></i>
+                            <span>⇪ Request Payout / Withdraw</span>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -410,41 +367,28 @@
         <!-- ========================================================= -->
         <!-- 2. QUICK DEPOSIT BAR                                      -->
         <!-- ========================================================= -->
-        <div class="wallet-glass-card mb-5">
-            <div class="row g-4 align-items-center">
-                <div class="col-12 col-md-4">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <span class="badge px-2.5 py-1 rounded-pill extra-small fw-bold" style="background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">
-                            <i class="bi bi-flash-fill me-1"></i> Fast Top-Up
-                        </span>
-                    </div>
-                    <h3 class="h5 fw-extrabold text-white mb-1">Quick Deposit Bar</h3>
-                    <p class="text-slate-400 extra-small mb-0">
-                        Select a preset or enter a custom amount to initiate your instant deposit via bKash or Nagad.
-                    </p>
-                </div>
-
-                <div class="col-12 col-md-8">
-                    <div class="d-flex flex-wrap align-items-center justify-content-md-end gap-2.5">
-                        <!-- Presets -->
+        <div class="wallet-glass-card mb-4 py-3 px-4">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <span class="fw-bold text-white small text-uppercase tracking-wider">Quick Deposit:</span>
+                    <div class="d-flex align-items-center gap-2">
                         <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(500)">+৳500</button>
                         <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(1000)">+৳1,000</button>
                         <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(2000)">+৳2,000</button>
-
-                        <!-- Custom Amount Input Group -->
-                        <div class="input-group" style="max-width: 260px;">
-                            <span class="input-group-text bg-slate-900 border-slate-800 text-emerald-400 fw-bold font-monospace">৳</span>
-                            <input type="number" 
-                                   id="quickCustomAmount" 
-                                   class="form-control form-control-wallet font-monospace fw-bold" 
-                                   placeholder="Custom sum..." 
-                                   min="10" 
-                                   step="10">
-                            <button type="button" class="btn btn-emerald-recharge px-3" onclick="startDepositFromCustomInput()">
-                                <i class="bi bi-arrow-right"></i>
-                            </button>
-                        </div>
                     </div>
+                </div>
+
+                <div class="input-group" style="max-width: 280px;">
+                    <span class="input-group-text bg-slate-900 border-slate-800 text-emerald-400 fw-bold font-monospace">৳</span>
+                    <input type="number" 
+                           id="quickCustomAmount" 
+                           class="form-control form-control-wallet font-monospace fw-bold" 
+                           placeholder="Custom amount..." 
+                           min="10" 
+                           step="10">
+                    <button type="button" class="btn btn-emerald-recharge px-3" onclick="startDepositFromCustomInput()" title="Continue to deposit">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
                 </div>
             </div>
         </div>

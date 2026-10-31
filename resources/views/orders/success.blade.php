@@ -4,18 +4,19 @@
 
 @section('content')
 
-<!-- CUSTOM SUCCESS PAGE STYLES -->
+<!-- CUSTOM SUCCESS PAGE STYLES (DARK THEME) -->
 <style>
     .success-bg {
-        background: linear-gradient(180deg, #F8F5FF 0%, #FFFFFF 100%);
+        background: #020617; /* slate-950 */
         min-height: 100vh;
+        color: #F8FAFC;
     }
 
     .success-card-figma {
-        background: #ffffff;
+        background: rgba(15, 23, 42, 0.85) !important;
         border-radius: 1.5rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.15) !important;
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.15) !important;
+        border: 1px solid rgba(148, 163, 184, 0.15) !important;
+        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5) !important;
     }
 
     .check-circle-pulse {
@@ -35,6 +36,31 @@
         0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
         70% { box-shadow: 0 0 0 18px rgba(16, 185, 129, 0); }
         100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .table-success-orders {
+        color: #F8FAFC;
+        margin-bottom: 0;
+    }
+
+    .table-success-orders th {
+        background: transparent;
+        color: #94A3B8;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        padding: 0.85rem 1rem;
+    }
+
+    .table-success-orders td {
+        background: transparent;
+        color: #E2E8F0;
+        font-size: 0.875rem;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+        padding: 1rem;
     }
 
     .btn-purple-cta {
@@ -65,33 +91,33 @@
                 <div class="check-circle-pulse mb-3">
                     <i class="bi bi-check-lg display-4 fw-extrabold"></i>
                 </div>
-                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1.5 fw-bold extra-small text-uppercase mb-2">
+                <span class="badge bg-success bg-opacity-20 text-success rounded-pill px-3 py-1.5 fw-bold extra-small text-uppercase mb-2 border border-success border-opacity-25">
                     <i class="bi bi-patch-check-fill me-1"></i> Instant Digital Delivery Ready
                 </span>
-                <h2 class="display-6 fw-extrabold text-dark mb-2">Order Placed Successfully!</h2>
-                <p class="text-secondary fs-6 mb-0" style="max-width: 520px; margin: 0 auto;">
+                <h2 class="display-6 fw-extrabold text-white mb-2">Order Placed Successfully!</h2>
+                <p class="text-slate-400 fs-6 mb-0" style="max-width: 520px; margin: 0 auto;">
                     Thank you for your purchase. Your payment was verified via {{ strtoupper($order->payment_method ?? 'bKash') }}. You can download your purchased digital resources below immediately.
                 </p>
             </div>
 
             <!-- ORDER METADATA STRIP -->
-            <div class="row g-3 bg-light p-3 rounded-4 mb-4 text-start border">
+            <div class="row g-3 p-3 rounded-4 mb-4 text-start border border-slate-800" style="background: rgba(11, 17, 32, 0.7);">
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Order ID</div>
-                    <div class="fw-extrabold text-dark font-monospace">#{{ $order->order_number }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Order ID</div>
+                    <div class="fw-extrabold text-white font-monospace">#{{ $order->order_number }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Transaction ID</div>
-                    <div class="fw-bold text-primary font-monospace small">{{ $order->transaction_id ?? 'TXN-998271' }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Transaction ID</div>
+                    <div class="fw-bold text-indigo-400 font-monospace small">{{ $order->transaction_id ?? 'TXN-998271' }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Total Paid</div>
-                    <div class="fw-extrabold text-dark">৳{{ number_format($order->total, 2) }}</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Total Paid</div>
+                    <div class="fw-extrabold text-emerald-400 font-monospace">৳{{ number_format($order->total, 2) }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="extra-small text-muted text-uppercase fw-bold">Payment Status</div>
+                    <div class="extra-small text-slate-400 text-uppercase fw-bold">Payment Status</div>
                     <div>
-                        <span class="badge bg-success rounded-pill px-2.5 py-1 extra-small fw-bold">
+                        <span class="badge bg-success bg-opacity-20 text-success rounded-pill px-2.5 py-1 extra-small fw-bold border border-success border-opacity-25">
                             <i class="bi bi-check-circle-fill me-1"></i> Completed
                         </span>
                     </div>
@@ -100,11 +126,11 @@
 
             <!-- PURCHASED RESOURCES TABLE -->
             <div class="text-start mb-4">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-cloud-arrow-down-fill text-primary me-2"></i>Purchased Assets (Ready for Download)</h5>
+                <h5 class="fw-bold text-white mb-3"><i class="bi bi-cloud-arrow-down-fill text-indigo-400 me-2"></i>Purchased Assets (Ready for Download)</h5>
                 
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 border rounded-3">
-                        <thead class="bg-light text-uppercase extra-small text-muted fw-bold">
+                    <table class="table table-success-orders align-middle mb-0 border border-slate-800 rounded-3">
+                        <thead>
                             <tr>
                                 <th>Asset Preview</th>
                                 <th>Resource Title</th>
@@ -118,7 +144,7 @@
                                 @if($res)
                                     <tr>
                                         <td style="width: 70px;">
-                                            <div class="rounded-3 overflow-hidden" style="width: 54px; height: 40px; background: #1E1B4B;">
+                                            <div class="rounded-3 overflow-hidden" style="width: 54px; height: 40px; background: #0B1120; border: 1px solid rgba(148, 163, 184, 0.12);">
                                                 @if($res->preview_image)
                                                     <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $res->title }}">
                                                 @else
@@ -127,10 +153,10 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <h6 class="fw-bold text-dark mb-0 small">{{ $res->title }}</h6>
-                                            <span class="extra-small text-muted">{{ $res->category ? $res->category->name : 'General' }}</span>
+                                            <h6 class="fw-bold text-white mb-0 small">{{ $res->title }}</h6>
+                                            <span class="extra-small text-slate-400">{{ $res->category ? $res->category->name : 'General' }}</span>
                                         </td>
-                                        <td class="small font-monospace text-uppercase text-muted">
+                                        <td class="small font-monospace text-uppercase text-slate-400">
                                             {{ $res->file_type ?? 'ZIP' }}
                                         </td>
                                         <td class="text-end">
@@ -151,7 +177,7 @@
                 <a href="{{ route('home') }}#templates" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
                     <i class="bi bi-shop me-1"></i> Continue Browsing
                 </a>
-                <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2.5 fw-bold">
+                <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2.5 fw-bold text-slate-300" style="border-color: rgba(148, 163, 184, 0.25);">
                     <i class="bi bi-receipt me-1"></i> View Order History
                 </a>
             </div>

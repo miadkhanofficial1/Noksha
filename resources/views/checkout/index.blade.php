@@ -4,51 +4,82 @@
 
 @section('content')
 
-<!-- CUSTOM CHECKOUT FIGMA/DRIBBBLE STYLES -->
+<!-- CUSTOM CHECKOUT STYLES (DARK THEME) -->
 <style>
     .checkout-bg {
-        background: linear-gradient(180deg, #F8F5FF 0%, #FFFFFF 100%);
+        background: #020617; /* slate-950 / #0B0F17 */
         min-height: 100vh;
+        color: #F8FAFC;
     }
 
     .checkout-card-figma {
-        background: #ffffff;
+        background: rgba(15, 23, 42, 0.85) !important;
         border-radius: 1.25rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.06) !important;
+        border: 1px solid rgba(148, 163, 184, 0.15) !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
     }
 
     .glass-summary-card {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(15, 23, 42, 0.9) !important;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
+        border: 1px solid rgba(148, 163, 184, 0.18) !important;
         border-radius: 1.5rem !important;
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.18) !important;
+        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6) !important;
         position: sticky;
         top: 100px;
     }
 
+    .table-checkout {
+        color: #F8FAFC;
+        margin-bottom: 0;
+    }
+
+    .table-checkout th {
+        background: transparent;
+        color: #94A3B8;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        padding: 0.85rem 1rem;
+    }
+
+    .table-checkout td {
+        background: transparent;
+        color: #E2E8F0;
+        font-size: 0.875rem;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+        padding: 1rem;
+    }
+
+    .table-checkout tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
     /* Radio Card Selector for Payment Options */
     .payment-option-card {
-        border: 2px solid rgba(108, 76, 241, 0.15);
+        border: 1.5px solid #1E293B;
         border-radius: 1rem;
         padding: 1rem 1.25rem;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        background: #ffffff;
+        transition: all 0.25s ease;
+        background: #0B1120;
+        color: #F8FAFC;
     }
 
     .payment-option-card:hover {
-        border-color: #6C4CF1;
+        border-color: rgba(99, 102, 241, 0.5);
+        background: #0F172A;
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.2);
     }
 
     .form-check-input:checked + .payment-option-label .payment-option-card {
-        border-color: #6C4CF1 !important;
-        background: rgba(108, 76, 241, 0.04);
-        box-shadow: 0 0 0 4px rgba(108, 76, 241, 0.15);
+        border-color: #6366F1 !important;
+        background: rgba(99, 102, 241, 0.15) !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3) !important;
     }
 
     .btn-purple-cta {
@@ -75,20 +106,20 @@
         
         <!-- BREADCRUMB NAVIGATION -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small fw-semibold text-muted mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-primary"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('cart.index') }}" class="text-decoration-none text-primary">Cart</a></li>
-                <li class="breadcrumb-item active text-dark" aria-current="page">Checkout</li>
+            <ol class="breadcrumb small fw-semibold text-slate-400 mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('cart.index') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300">Cart</a></li>
+                <li class="breadcrumb-item active text-slate-200" aria-current="page">Checkout</li>
             </ol>
         </nav>
 
         <!-- PAGE HEADER -->
         <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
-                <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1;">
+                <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small" style="background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">
                     <i class="bi bi-shield-lock-fill me-1"></i> Secure Digital Checkout
                 </span>
-                <h2 class="display-6 fw-extrabold text-dark mt-1 mb-0">Complete Your Purchase</h2>
+                <h2 class="display-6 fw-extrabold text-white mt-1 mb-0">Complete Your Purchase</h2>
             </div>
         </div>
 
@@ -101,14 +132,14 @@
                     
                     <!-- 1. Selected Resources Items -->
                     <div class="card checkout-card-figma p-4 mb-4">
-                        <h5 class="fw-extrabold text-dark mb-3 pb-2 border-bottom d-flex align-items-center justify-content-between">
-                            <span><i class="bi bi-bag-check text-primary me-2"></i>1. Selected Resources ({{ $cartItems->count() }})</span>
-                            <a href="{{ route('cart.index') }}" class="extra-small fw-bold text-primary text-decoration-none">Edit Cart</a>
+                        <h5 class="fw-extrabold text-white mb-3 pb-2 border-bottom border-slate-800 d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-bag-check text-indigo-400 me-2"></i>1. Selected Resources ({{ $cartItems->count() }})</span>
+                            <a href="{{ route('cart.index') }}" class="extra-small fw-bold text-indigo-400 hover:text-indigo-300 text-decoration-none">Edit Cart</a>
                         </h5>
 
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light text-uppercase extra-small text-muted fw-bold">
+                            <table class="table table-checkout align-middle mb-0">
+                                <thead>
                                     <tr>
                                         <th>Resource Item</th>
                                         <th>Category</th>
@@ -122,7 +153,7 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-3">
-                                                        <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 60px; height: 42px; background: #1E1B4B;">
+                                                        <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 60px; height: 42px; background: #0B1120; border: 1px solid rgba(148, 163, 184, 0.12);">
                                                             @if($res->preview_image)
                                                                 <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $res->title }}">
                                                             @else
@@ -130,18 +161,18 @@
                                                             @endif
                                                         </div>
                                                         <div>
-                                                            <div class="fw-bold text-dark small text-truncate" style="max-width: 260px;">{{ $res->title }}</div>
-                                                            <div class="extra-small text-muted font-monospace">Format: {{ strtoupper($res->file_type ?? 'ZIP') }}</div>
+                                                            <div class="fw-bold text-white small text-truncate" style="max-width: 260px;">{{ $res->title }}</div>
+                                                            <div class="extra-small text-slate-400 font-monospace">Format: {{ strtoupper($res->file_type ?? 'ZIP') }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2.5 py-1 fw-bold extra-small">
+                                                    <span class="badge rounded-pill px-2.5 py-1 fw-bold extra-small" style="background: rgba(99, 102, 241, 0.18); color: #C4B5FD; border: 1px solid rgba(99, 102, 241, 0.3);">
                                                         {{ $res->category ? $res->category->name : 'General' }}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="fw-extrabold text-dark small">
+                                                    <span class="fw-extrabold text-emerald-400 small font-monospace">
                                                         {{ $res->is_paid && $res->price > 0 ? '৳' . number_format($res->price, 2) : 'Free' }}
                                                     </span>
                                                 </td>
@@ -155,8 +186,8 @@
 
                     <!-- 2. Payment Method Options -->
                     <div class="card checkout-card-figma p-4 mb-4">
-                        <h5 class="fw-extrabold text-dark mb-3 pb-2 border-bottom">
-                            <i class="bi bi-credit-card-2-front text-primary me-2"></i>2. Choose Demo Payment Method
+                        <h5 class="fw-extrabold text-white mb-3 pb-2 border-bottom border-slate-800">
+                            <i class="bi bi-credit-card-2-front text-indigo-400 me-2"></i>2. Choose Payment Method
                         </h5>
 
                         <div class="row g-3">
@@ -166,10 +197,10 @@
                                 <label class="payment-option-label w-100" for="pay_bkash">
                                     <div class="payment-option-card text-center">
                                         <div class="p-2 rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px;">
-                                            <i class="bi bi-phone-vibrate fs-4"></i>
+                                            <i class="bi bi-phone-vibrate fs-4" style="color: #EC4899;"></i>
                                         </div>
-                                        <div class="fw-extrabold text-dark small">bKash</div>
-                                        <div class="extra-small text-muted">Mobile Wallet</div>
+                                        <div class="fw-extrabold text-white small">bKash</div>
+                                        <div class="extra-small text-slate-400">Mobile Wallet</div>
                                     </div>
                                 </label>
                             </div>
@@ -180,10 +211,10 @@
                                 <label class="payment-option-label w-100" for="pay_nagad">
                                     <div class="payment-option-card text-center">
                                         <div class="p-2 rounded-circle bg-warning bg-opacity-10 text-warning d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px;">
-                                            <i class="bi bi-wallet2 fs-4 text-warning"></i>
+                                            <i class="bi bi-wallet2 fs-4" style="color: #F97316;"></i>
                                         </div>
-                                        <div class="fw-extrabold text-dark small">Nagad</div>
-                                        <div class="extra-small text-muted">Digital Money</div>
+                                        <div class="fw-extrabold text-white small">Nagad</div>
+                                        <div class="extra-small text-slate-400">Digital Money</div>
                                     </div>
                                 </label>
                             </div>
@@ -194,10 +225,10 @@
                                 <label class="payment-option-label w-100" for="pay_rocket">
                                     <div class="payment-option-card text-center">
                                         <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px;">
-                                            <i class="bi bi-rocket-takeoff fs-4"></i>
+                                            <i class="bi bi-rocket-takeoff fs-4 text-primary"></i>
                                         </div>
-                                        <div class="fw-extrabold text-dark small">Rocket</div>
-                                        <div class="extra-small text-muted">DBBL Mobile</div>
+                                        <div class="fw-extrabold text-white small">Rocket</div>
+                                        <div class="extra-small text-slate-400">DBBL Mobile</div>
                                     </div>
                                 </label>
                             </div>
@@ -210,8 +241,8 @@
                                         <div class="p-2 rounded-circle bg-info bg-opacity-10 text-info d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px;">
                                             <i class="bi bi-credit-card fs-4 text-info"></i>
                                         </div>
-                                        <div class="fw-extrabold text-dark small">Card</div>
-                                        <div class="extra-small text-muted">Visa / MasterCard</div>
+                                        <div class="fw-extrabold text-white small">Card</div>
+                                        <div class="extra-small text-slate-400">Visa / MasterCard</div>
                                     </div>
                                 </label>
                             </div>
@@ -224,8 +255,8 @@
                                         <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px;">
                                             <i class="bi bi-cash-stack fs-4 text-success"></i>
                                         </div>
-                                        <div class="fw-extrabold text-dark small">Cash / Demo</div>
-                                        <div class="extra-small text-muted">Instant Access</div>
+                                        <div class="fw-extrabold text-white small">Instant Demo</div>
+                                        <div class="extra-small text-slate-400">Direct Download</div>
                                     </div>
                                 </label>
                             </div>
@@ -241,21 +272,21 @@
                 <!-- RIGHT COLUMN: STICKY ORDER SUMMARY (4 COLUMNS) -->
                 <div class="col-12 col-lg-4">
                     <div class="card glass-summary-card p-4">
-                        <h5 class="fw-extrabold text-dark mb-3 pb-2 border-bottom">Order Summary</h5>
+                        <h5 class="fw-extrabold text-white mb-3 pb-2 border-bottom border-slate-800">Order Summary</h5>
                         
                         <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="text-muted small">Subtotal</span>
-                            <span class="fw-bold text-dark font-monospace">৳{{ number_format($subtotal, 2) }}</span>
+                            <span class="text-slate-400 small">Subtotal</span>
+                            <span class="fw-bold text-white font-monospace">৳{{ number_format($subtotal, 2) }}</span>
                         </div>
 
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="text-muted small">Instant Delivery</span>
-                            <span class="badge bg-success bg-opacity-10 text-success fw-bold extra-small">Free</span>
+                            <span class="text-slate-400 small">Instant Delivery</span>
+                            <span class="badge bg-success bg-opacity-20 text-success fw-bold extra-small border border-success border-opacity-25">Free</span>
                         </div>
 
-                        <div class="pt-3 border-top d-flex align-items-center justify-content-between mb-4">
-                            <span class="fw-extrabold text-dark fs-5">Total Amount</span>
-                            <span class="display-6 fw-extrabold text-primary">৳{{ number_format($total, 2) }}</span>
+                        <div class="pt-3 border-top border-slate-800 d-flex align-items-center justify-content-between mb-4">
+                            <span class="fw-extrabold text-white fs-5">Total Amount</span>
+                            <span class="display-6 fw-extrabold text-emerald-400 font-monospace">৳{{ number_format($total, 2) }}</span>
                         </div>
 
                         <div class="d-grid gap-2 mb-3">
@@ -264,7 +295,7 @@
                             </button>
                         </div>
 
-                        <div class="extra-small text-muted text-center lh-sm">
+                        <div class="extra-small text-slate-400 text-center lh-sm">
                             <i class="bi bi-lock-fill text-success me-1"></i> By placing an order, you accept Noksha Marketplace Terms and Commercial Rights License.
                         </div>
                     </div>
