@@ -359,10 +359,35 @@
                                                 </a>
                                             @endif
                                         </div>
-                                    @elseif($activeOrder->status === 'pending_approval')
-                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-                                            Pending Creator Approval
-                                        </span>
+                                    @elseif(in_array($activeOrder->status, ['pending_approval', 'pending']))
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30">
+                                                Pending Contributor Acceptance
+                                            </span>
+                                            @if($isSeller)
+                                                <form action="{{ route('inbox.orders.respond', $activeOrder->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="accept">
+                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-all cursor-pointer">
+                                                        ✅ Accept Proposal
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('inbox.orders.respond', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Decline this proposal?');">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="decline">
+                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
+                                                        ❌ Decline
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('inbox.orders.cancel', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Withdraw this proposal?');">
+                                                    @csrf
+                                                    <button type="submit" class="px-2.5 py-1 rounded-xl text-xs font-medium text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer">
+                                                        🗑️ Withdraw Proposal
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     @else
                                         <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 capitalize">
                                             {{ str_replace('_', ' ', $activeOrder->status) }}
@@ -430,17 +455,17 @@
                                             @php
                                                 $propOrder = \App\Models\ServiceOrder::find($meta['order_id']);
                                             @endphp
-                                            @if($propOrder && $propOrder->status === 'pending_approval')
+                                            @if($propOrder && in_array($propOrder->status, ['pending_approval', 'pending']))
                                                 @if($isSeller)
                                                     <div class="flex items-center gap-2">
                                                         <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1">
                                                             @csrf
-                                                            <input type="hidden" name="action" value="approve">
+                                                            <input type="hidden" name="action" value="accept">
                                                             <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20 cursor-pointer">
-                                                                ✅ Approve Request
+                                                                ✅ Accept Proposal
                                                             </button>
                                                         </form>
-                                                        <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1">
+                                                        <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Decline this proposal?');">
                                                             @csrf
                                                             <input type="hidden" name="action" value="decline">
                                                             <button type="submit" class="w-full py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
@@ -449,8 +474,16 @@
                                                         </form>
                                                     </div>
                                                 @else
-                                                    <div class="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs text-center font-medium">
-                                                        ⏳ Waiting for creator approval...
+                                                    <div class="space-y-2">
+                                                        <div class="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs text-center font-medium">
+                                                            ⏳ Waiting for Contributor acceptance...
+                                                        </div>
+                                                        <form action="{{ route('inbox.orders.cancel', $propOrder->id) }}" method="POST" onsubmit="return confirm('Withdraw this service proposal?');">
+                                                            @csrf
+                                                            <button type="submit" class="w-full py-1.5 rounded-xl text-[11px] font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer">
+                                                                🗑️ Withdraw Proposal
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 @endif
                                             @elseif($propOrder && $propOrder->status === 'awaiting_payment')
@@ -664,7 +697,7 @@
 {{-- 3. PROPOSE / PICK SERVICE MODAL (DARK THEME)             --}}
 {{-- ======================================================== --}}
 @if($activeConversation && !$activeConversation->is_frozen)
-<div id="serviceProposalModal" data-modal="service-proposal" data-service-modal class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
+<div id="serviceProposalModal" data-modal="service-proposal" data-service-modal style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
     <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
         <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
@@ -740,7 +773,7 @@
 {{-- 3B. DELIVER WORK MODAL (SELLER ONLY)                    --}}
 {{-- ======================================================== --}}
 @if(isset($activeOrder) && $activeOrder && !empty($isSeller) && $activeOrder->status === 'funded_in_progress')
-<div id="deliveryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
+<div id="deliveryModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
     <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
         <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
@@ -786,7 +819,7 @@
 {{-- 3C. REQUEST REVISION MODAL (BUYER ONLY)                 --}}
 {{-- ======================================================== --}}
 @if(isset($activeOrder) && $activeOrder && !empty($isBuyer) && $activeOrder->status === 'delivered')
-<div id="revisionModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
+<div id="revisionModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
     <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
         <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
@@ -957,11 +990,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 handleModalClose();
             }
             const deliveryModal = document.getElementById('deliveryModal');
-            if (deliveryModal && !deliveryModal.classList.contains('hidden')) {
+            if (deliveryModal && (!deliveryModal.classList.contains('hidden') || deliveryModal.style.display === 'flex')) {
                 closeDeliveryModal();
             }
             const revisionModal = document.getElementById('revisionModal');
-            if (revisionModal && !revisionModal.classList.contains('hidden')) {
+            if (revisionModal && (!revisionModal.classList.contains('hidden') || revisionModal.style.display === 'flex')) {
                 closeRevisionModal();
             }
         }
@@ -1080,6 +1113,7 @@ function openProposalModal() {
     const modal = document.getElementById('serviceProposalModal') || document.getElementById('proposalModal') || document.querySelector('[data-service-modal]') || document.querySelector('[data-modal="service-proposal"]');
     if (modal) {
         modal.classList.remove('hidden');
+        modal.classList.add('flex');
         modal.style.display = 'flex';
     }
 }
@@ -1088,11 +1122,12 @@ function handleModalClose() {
     const modal = document.getElementById('serviceProposalModal') || document.querySelector('[data-service-modal]') || document.getElementById('proposalModal');
     if (modal) {
         modal.classList.add('hidden');
+        modal.classList.remove('flex');
         modal.style.display = 'none';
     }
-    // Fallback if modal overlay was the primary view:
+    // Fallback ONLY if modal overlay was a standalone page with no chat stream:
     const chatContainer = document.getElementById('messageHistoryContainer');
-    if (!window._modalOpenedInChat || !chatContainer) {
+    if (!chatContainer) {
         if (window.history.length > 1) {
             window.history.back();
         } else {
@@ -1108,22 +1143,38 @@ function closeProposalModal() {
 
 function openDeliveryModal() {
     const modal = document.getElementById('deliveryModal');
-    if (modal) modal.classList.remove('hidden');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    }
 }
 
 function closeDeliveryModal() {
     const modal = document.getElementById('deliveryModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
 }
 
 function openRevisionModal() {
     const modal = document.getElementById('revisionModal');
-    if (modal) modal.classList.remove('hidden');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    }
 }
 
 function closeRevisionModal() {
     const modal = document.getElementById('revisionModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
 }
 
 // Pre-fill modal fields when an existing service is picked

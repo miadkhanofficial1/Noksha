@@ -353,8 +353,12 @@ class InboxController extends Controller
             abort(403, 'Only the designated creator can respond to this proposal.');
         }
 
-        if ($action === 'approve') {
+        if ($action === 'approve' || $action === 'accept') {
             $order->update(['status' => 'awaiting_payment']);
+            $order->conversation->update([
+                'active_order_id' => $order->id,
+                'last_message_at' => now(),
+            ]);
 
             Message::create([
                 'conversation_id' => $order->conversation_id,
@@ -364,10 +368,12 @@ class InboxController extends Controller
                 'is_read' => false,
             ]);
 
-            return back()->with('success', 'Proposal accepted! Client can now fund the escrow order.');
+            return redirect()->route('inbox.show', $order->conversation_id)
+                ->with('success', 'Proposal accepted! Client can now fund the escrow order.');
         }
 
         $order->update(['status' => 'declined']);
+        $order->conversation->update(['last_message_at' => now()]);
 
         Message::create([
             'conversation_id' => $order->conversation_id,
@@ -377,7 +383,8 @@ class InboxController extends Controller
             'is_read' => false,
         ]);
 
-        return back()->with('info', 'Proposal declined.');
+        return redirect()->route('inbox.show', $order->conversation_id)
+            ->with('info', 'Proposal declined.');
     }
 
     /**
@@ -620,23 +627,32 @@ class InboxController extends Controller
             abort(403);
         }
 
-        if ($order->isFunded()) {
+        $isFunded = $order->isFunded();
+        if ($isFunded) {
             $order->buyer->wallet->deposit((float) $order->total_amount, "Refund for cancelled service order #{$order->order_number}");
         }
 
         $order->update(['status' => 'cancelled']);
-        $order->conversation->update(['last_message_at' => now()]);
+        if ($order->conversation->active_order_id === $order->id) {
+            $order->conversation->update(['active_order_id' => null, 'last_message_at' => now()]);
+        } else {
+            $order->conversation->update(['last_message_at' => now()]);
+        }
+
+        $noticeBody = $isFunded
+            ? "⚠️ Order Cancelled & Escrow Refunded: ৳" . number_format($order->total_amount, 2) . " returned to client wallet."
+            : "❌ Proposal Withdrawn / Cancelled.";
 
         Message::create([
             'conversation_id' => $order->conversation_id,
             'sender_id' => $user->id,
-            'body' => "⚠️ Order Cancelled & Escrow Refunded: ৳" . number_format($order->total_amount, 2) . " returned to client wallet.",
+            'body' => $noticeBody,
             'message_type' => 'order_status',
             'is_read' => false,
         ]);
 
         return redirect()->route('inbox.show', $order->conversation_id)
-            ->with('info', 'Order cancelled and funds returned to buyer balance.');
+            ->with('info', $isFunded ? 'Order cancelled and funds returned to buyer balance.' : 'Proposal withdrawn.');
     }
 
     /**
