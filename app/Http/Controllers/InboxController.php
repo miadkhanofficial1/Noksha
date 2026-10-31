@@ -249,7 +249,7 @@ class InboxController extends Controller
     /**
      * Propose a custom service or submit an order request from chat.
      */
-    public function storeServiceProposal(Conversation $conversation, Request $request): RedirectResponse
+    public function storeServiceProposal(Conversation $conversation, Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
 
@@ -262,10 +262,10 @@ class InboxController extends Controller
             'description' => 'required|string|max:2000',
             'price' => 'required|numeric|min:600',
             'duration_days' => 'required|integer|min:1|max:90',
-            'service_id' => 'nullable|exists:services,id',
+            'service_id' => 'nullable',
         ]);
 
-        $serviceId = $request->input('service_id');
+        $serviceId = $request->filled('service_id') ? $request->input('service_id') : null;
 
         // If custom service without existing template, create a service entry for the seller
         if (!$serviceId) {
@@ -279,7 +279,10 @@ class InboxController extends Controller
                 'is_active' => true,
             ]);
             $serviceId = $service->id;
+        } else {
+            $service = Service::find($serviceId);
         }
+        $serviceTitle = $service?->title ?? $request->input('title');
 
         $totalAmount = (float) $request->input('price');
         $financials = ServiceOrder::calculateFinancials($totalAmount, 15.00);
@@ -311,13 +314,13 @@ class InboxController extends Controller
         Message::create([
             'conversation_id' => $conversation->id,
             'sender_id' => $user->id,
-            'body' => "Service Proposal: {$order->service->title} (৳" . number_format($order->total_amount, 2) . ")",
+            'body' => "Service Proposal: {$serviceTitle} (৳" . number_format($order->total_amount, 2) . ")",
             'message_type' => 'service_proposal',
             'is_read' => false,
             'metadata' => [
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
-                'title' => $order->service->title,
+                'title' => $serviceTitle,
                 'description' => $request->input('description'),
                 'price' => $order->total_amount,
                 'duration_days' => $request->input('duration_days'),
@@ -325,7 +328,17 @@ class InboxController extends Controller
             ],
         ]);
 
-        return back()->with('success', 'Custom service proposal submitted successfully.');
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Custom service proposal submitted successfully.',
+                'order' => $order,
+                'redirect_url' => route('inbox.show', $conversation->id),
+            ]);
+        }
+
+        return redirect()->route('inbox.show', $conversation->id)
+            ->with('success', 'Custom service proposal submitted successfully.');
     }
 
     /**

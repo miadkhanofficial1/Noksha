@@ -672,4 +672,18 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ServiceOrder::class, 'seller_id');
     }
+
+    /**
+     * Get count of unread messages across all active conversations.
+     */
+    public function unreadMessagesCount(): int
+    {
+        return Message::whereHas('conversation', function ($query) {
+            $query->where('buyer_id', $this->id)
+                  ->orWhere('seller_id', $this->id);
+        })
+        ->where('sender_id', '!=', $this->id)
+        ->where('is_read', false)
+        ->count();
+    }
 }

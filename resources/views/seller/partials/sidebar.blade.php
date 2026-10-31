@@ -51,6 +51,21 @@
                 </a>
             </li>
 
+            <!-- Messages & Inquiries -->
+            <li class="nav-item">
+                <a href="{{ route('inbox.index') }}" 
+                   class="nav-link seller-sidebar-link {{ request()->routeIs('inbox.*') ? 'active' : '' }}">
+                    <i class="bi bi-chat-dots-fill text-primary"></i>
+                    <span>Messages & Inquiries</span>
+                    @php
+                        $sellerUnreadMsgs = auth()->user()->unreadMessagesCount();
+                    @endphp
+                    @if($sellerUnreadMsgs > 0)
+                        <span class="badge bg-primary text-white ms-auto extra-small">{{ $sellerUnreadMsgs }}</span>
+                    @endif
+                </a>
+            </li>
+
             <!-- 2. Upload Design -->
             <li class="nav-item">
                 <a href="{{ route('resource.create') }}" 

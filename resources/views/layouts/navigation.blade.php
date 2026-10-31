@@ -6,6 +6,7 @@
     $notifCount = $notifCount ?? ($user ? \App\Models\Notification::where('user_id', $user->id)->where('is_seen', false)->count() : 0);
     $unreadCount = $unreadCount ?? (auth()->check() ? auth()->user()->unreadNotifications->count() : 0);
     $recentNotifs = $recentNotifs ?? (auth()->check() ? auth()->user()->notifications()->latest()->take(10)->get() : collect());
+    $inboxUnreadCount = $user ? $user->unreadMessagesCount() : 0;
 @endphp
 
 <style>
@@ -94,6 +95,7 @@
                     @php
                         $unreadCount = $unreadCount ?? (auth()->check() ? auth()->user()->unreadNotifications()->count() : 0);
                         $recentNotifs = $recentNotifs ?? (auth()->check() ? auth()->user()->notifications()->latest()->take(10)->get() : collect());
+    $inboxUnreadCount = $user ? $user->unreadMessagesCount() : 0;
                     @endphp
 
                     <!-- Clickable Wallet & AI Credit Pill Badge -->
@@ -217,6 +219,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Inbox / Messages Icon Button -->
+                    <a href="{{ route('inbox.index') }}" class="nav-action-btn position-relative {{ request()->routeIs('inbox.*') ? 'active' : '' }}" title="Messages & Inquiries">
+                        <i class="bi bi-chat-dots-fill text-primary fs-6"></i>
+                        @if($inboxUnreadCount > 0)
+                            <span class="badge-counter bg-primary text-white">{{ $inboxUnreadCount > 9 ? '9+' : $inboxUnreadCount }}</span>
+                        @endif
+                    </a>
 
                     <!-- Wishlist Icon Button -->
                     <a href="{{ route('wishlist.index') }}" class="nav-action-btn" title="{{ __('marketplace.wishlist') }}">
@@ -373,6 +383,21 @@
                                 </a>
                             </li>
 
+                            <!-- Messages & Inquiries Link -->
+                            <li>
+                                <a class="dropdown-item small py-2 fw-semibold d-flex align-items-center justify-content-between {{ request()->routeIs('inbox.*') ? 'active bg-primary bg-opacity-10 text-primary' : '' }}" href="{{ route('inbox.index') }}">
+                                    <span class="d-inline-flex align-items-center gap-2">
+                                        <svg class="w-4 h-4 text-primary shrink-0" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        </svg>
+                                        <span>Messages & Inquiries</span>
+                                    </span>
+                                    @if($inboxUnreadCount > 0)
+                                        <span class="badge rounded-pill bg-primary text-white extra-small px-1.5 py-0.5">{{ $inboxUnreadCount > 9 ? '9+' : $inboxUnreadCount }}</span>
+                                    @endif
+                                </a>
+                            </li>
+
                             @if($user->isApprovedContributor())
                                 <!-- Creator Studio / Upload Asset (Approved Contributors Only) -->
                                 <li>
@@ -514,6 +539,14 @@
                 @auth
                     <a class="nav-link-custom {{ request()->routeIs('dashboard') || request()->routeIs('buyer.dashboard') || request()->routeIs('seller.dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                         <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+                    </a>
+                    <a class="nav-link-custom d-flex align-items-center justify-content-between {{ request()->routeIs('inbox.*') ? 'active' : '' }}" href="{{ route('inbox.index') }}">
+                        <span>
+                            <i class="bi bi-chat-dots-fill me-2 text-primary"></i> Messages & Inquiries
+                        </span>
+                        @if($inboxUnreadCount > 0)
+                            <span class="badge rounded-pill bg-primary text-white extra-small px-2 py-0.5">{{ $inboxUnreadCount }}</span>
+                        @endif
                     </a>
                 @endauth
             </div>

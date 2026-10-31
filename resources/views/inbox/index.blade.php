@@ -156,8 +156,8 @@
                         $activeOrder = $activeConversation->activeOrder;
                         $isFunded = $activeOrder && $activeOrder->isFunded();
                         $isFundedInProgress = $activeOrder && $activeOrder->status === 'funded_in_progress';
-                        $isSeller = auth()->id() === $activeConversation->seller_id;
-                        $isBuyer = auth()->id() === $activeConversation->buyer_id;
+                        $isSeller = (int) auth()->id() === (int) $activeConversation->seller_id;
+                        $isBuyer = (int) auth()->id() === (int) $activeConversation->buyer_id;
                     @endphp
 
                     {{-- 2.1 CHAT HEADER --}}
@@ -680,7 +680,7 @@
             <button type="button" onclick="handleModalClose()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm cursor-pointer" title="Close">&times;</button>
         </div>
 
-        <form action="{{ route('inbox.service-proposal.store', $activeConversation->id) }}" method="POST" class="p-6 space-y-4">
+        <form id="serviceProposalForm" action="{{ route('inbox.service-proposal.store', $activeConversation->id) }}" method="POST" class="p-6 space-y-4">
             @csrf
 
             {{-- Optional: Pick an existing seller service --}}
@@ -727,7 +727,7 @@
                 <button type="button" id="cancelProposalBtn" onclick="handleModalClose()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer">
                     Cancel
                 </button>
-                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
+                <button type="submit" id="submitProposalBtn" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
                     🚀 Dispatch Proposal
                 </button>
             </div>
@@ -966,6 +966,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    // 7. Service Proposal Form Submission Feedback
+    const proposalForm = document.getElementById('serviceProposalForm');
+    if (proposalForm) {
+        proposalForm.addEventListener('submit', function () {
+            const submitBtn = document.getElementById('submitProposalBtn');
+            if (submitBtn) {
+                submitBtn.innerHTML = '🚀 Dispatching Proposal...';
+                setTimeout(() => { submitBtn.disabled = true; }, 10);
+            }
+        });
+    }
 });
 
 function escapeHtml(str) {
