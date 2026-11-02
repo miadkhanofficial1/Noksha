@@ -110,63 +110,47 @@ Route::get('/setup-admin-user', function () {
     }
 })->name('admin.setup');
 
-// Diagnostic Route for Brevo SMTP Handshake Verification
+// Diagnostic Route for Brevo HTTPS REST API Verification (Port 443)
 Route::get('/test-brevo-mail', function (\Illuminate\Http\Request $request, \App\Services\BrevoMailService $brevoMailService) {
     $to = $request->input('to', 'miadkhan.official1@gmail.com');
+    $apiKey = env('BREVO_API_KEY') ?: config('services.brevo.key') ?: env('MAIL_PASSWORD') ?: config('mail.mailers.smtp.password');
+
     $config = [
-        'mailer' => config('mail.default'),
-        'host' => config('mail.mailers.smtp.host'),
-        'port' => config('mail.mailers.smtp.port'),
-        'username' => config('mail.mailers.smtp.username'),
-        'password' => config('mail.mailers.smtp.password') ? '***configured (' . strlen(config('mail.mailers.smtp.password')) . ' chars)***' : 'EMPTY',
-        'from_address' => config('mail.from.address'),
-        'from_name' => config('mail.from.name'),
-        'timeout' => config('mail.mailers.smtp.timeout'),
-        'verify_peer' => config('mail.mailers.smtp.verify_peer'),
+        'mode' => 'Brevo HTTPS REST API (Port 443)',
+        'endpoint' => 'https://api.brevo.com/v3/smtp/email',
+        'api_key_status' => !empty($apiKey) && $apiKey !== 'apnar_brevo_smtp_master_key' ? 'CONFIGURED (' . substr($apiKey, 0, 8) . '...)' : 'MISSING / PLACEHOLDER',
+        'from_address' => config('mail.from.address', 'miadkhan.official1@gmail.com'),
+        'from_name' => config('mail.from.name', 'Noksha Security'),
+        'http_timeout' => '5 seconds',
     ];
 
     $diagnostics = [];
 
-    // Step 1: Raw TCP/SSL Socket Check
-    $socketStart = microtime(true);
-    $errno = 0;
-    $errstr = '';
-    $scheme = config('mail.mailers.smtp.port') == 465 ? 'ssl://' : 'tcp://';
-    $socketUrl = $scheme . config('mail.mailers.smtp.host') . ':' . config('mail.mailers.smtp.port');
-    $context = stream_context_create([
-        'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true,
-        ],
-    ]);
-
-    $fp = @stream_socket_client($socketUrl, $errno, $errstr, 5, STREAM_CLIENT_CONNECT, $context);
-    $socketTime = round((microtime(true) - $socketStart) * 1000, 2);
-
-    if ($fp) {
-        $banner = fgets($fp, 512);
-        fclose($fp);
-        $diagnostics['socket'] = [
-            'status' => 'CONNECTED',
-            'url' => $socketUrl,
-            'latency_ms' => $socketTime,
-            'server_greeting' => trim($banner ?: 'Connected'),
+    // Step 1: Brevo HTTPS REST API Ping over standard Port 443
+    $apiPingStart = microtime(true);
+    try {
+        $pingResponse = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.brevo.com/v3/smtp/email');
+        $apiPingTime = round((microtime(true) - $apiPingStart) * 1000, 2);
+        $diagnostics['api_connectivity'] = [
+            'status' => 'ONLINE (PORT 443 REACHABLE)',
+            'endpoint' => 'https://api.brevo.com/v3/smtp/email',
+            'latency_ms' => $apiPingTime,
+            'http_code' => $pingResponse->status(),
         ];
-    } else {
-        $diagnostics['socket'] = [
-            'status' => 'FAILED',
-            'url' => $socketUrl,
-            'latency_ms' => $socketTime,
-            'errno' => $errno,
-            'error' => $errstr,
+    } catch (\Throwable $e) {
+        $apiPingTime = round((microtime(true) - $apiPingStart) * 1000, 2);
+        $diagnostics['api_connectivity'] = [
+            'status' => 'UNREACHABLE',
+            'endpoint' => 'https://api.brevo.com/v3/smtp/email',
+            'latency_ms' => $apiPingTime,
+            'error' => $e->getMessage(),
         ];
     }
 
-    // Step 2: Full Email Dispatch Attempt via BrevoMailService
+    // Step 2: Live OTP Email Dispatch Attempt via Brevo HTTPS REST API
     $dispatchStart = microtime(true);
     $testOtp = (string) random_int(100000, 999999);
-    $result = $brevoMailService->sendOtpMail($to, $testOtp, 'Noksha Test User');
+    $result = $brevoMailService->sendOtpMail($to, $testOtp, 'Diagnostic Tester');
     $dispatchTime = round((microtime(true) - $dispatchStart) * 1000, 2);
 
     $diagnostics['dispatch'] = [
