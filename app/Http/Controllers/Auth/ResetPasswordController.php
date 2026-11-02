@@ -34,17 +34,26 @@ class ResetPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, string $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        try {
+            $status = Password::reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function ($user, string $password) {
+                    $user->forceFill([
+                        'password' => Hash::make($password),
+                        'remember_token' => Str::random(60),
+                    ])->save();
 
-                event(new PasswordReset($user));
-            }
-        );
+                    event(new PasswordReset($user));
+                }
+            );
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Password reset execution failed: ' . $e->getMessage(), [
+                'email' => $request->email,
+                'exception' => $e,
+            ]);
+
+            return back()->withErrors(['email' => ['Unable to reset password. Please verify the reset link or request a new one.']]);
+        }
 
         return $status === Password::PASSWORD_RESET
             ? redirect()->route('login')->with('status', __($status))
