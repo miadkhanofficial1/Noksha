@@ -178,11 +178,19 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 
-    // Forgot / Reset Password
+    // Modern 6-Digit Email OTP Password Recovery Flow
     Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
     Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
-    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+    Route::get('/password/verify-otp', [ForgotPasswordController::class, 'showVerifyOtp'])->name('password.otp.view');
+    Route::post('/password/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.otp.verify');
+    Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.otp.resend');
+    Route::get('/password/reset-password', [ResetPasswordController::class, 'create'])->name('password.reset.view');
+    Route::post('/password/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+    Route::get('/reset-password/{token}', function () {
+        return redirect()->route('password.request')->withErrors([
+            'email' => 'Password recovery now uses secure 6-digit OTP verification. Please enter your email to receive a code.'
+        ]);
+    })->name('password.reset');
 
     // Google OAuth Placeholder Routes
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
