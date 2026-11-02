@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
 
+        $middleware->redirectTo(
+            guests: '/login',
+            users: \App\Providers\RouteServiceProvider::HOME,
+        );
+
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);

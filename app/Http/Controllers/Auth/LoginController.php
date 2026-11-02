@@ -43,7 +43,26 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'));
+        // Clear any stale intended URLs (e.g. /wallet) so successful login always lands cleanly on Homepage
+        $request->session()->forget('url.intended');
+
+        return $this->authenticated($request, Auth::user())
+            ?: redirect()->route('home')->with('status', 'Welcome back to Noksha!');
+    }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        return redirect()->route('home')->with(
+            'status',
+            'Welcome back, ' . ($user->name ?: 'Member') . '!'
+        );
     }
 
     /**

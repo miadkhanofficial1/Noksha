@@ -101,6 +101,7 @@ class ResetPasswordController extends Controller
             'password_reset_otp_sent_at',
             'password_reset_verified_email',
             'password_reset_verified_at',
+            'url.intended',
         ]);
 
         // Redirect directly to login with success flash message
