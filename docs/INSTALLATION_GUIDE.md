@@ -94,10 +94,12 @@ Access the application in your browser at:
 
 ---
 
-## 3. Demo Admin Credentials
+## 3. Super Administrator Provisioning
 
-| Role | Username / Email | Password | Access URL |
-| :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin@noksha.com` | `password` | `/admin/dashboard` |
-| **Seller** | `seller@noksha.com` | `password` | `/seller/dashboard` |
-| **Buyer** | `buyer@noksha.com` | `password` | `/buyer/dashboard` |
+Run the authoritative database seeder to establish the clean Super Admin baseline:
+
+```bash
+php artisan db:seed
+```
+
+The Super Admin account configured for system administration is `noksha.official1@gmail.com`. Passwords must be securely managed via environment configurations and authorized credential vaults.

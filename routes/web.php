@@ -61,48 +61,12 @@ use Illuminate\Support\Facades\Schema;
 |--------------------------------------------------------------------------
 */
 
-// Temporary Administrator Provisioning Endpoint for Cloud / Initial Setup
+// Authoritative Administrator Provisioning Endpoint for Cloud / Initial Setup
 Route::get('/setup-admin-user', function () {
     try {
-        $existingUser = User::where('email', 'admin@noksha.com')->first();
-        $username = $existingUser?->username ?? (User::where('username', 'admin')->exists() ? 'admin_' . time() : 'admin');
+        Artisan::call('db:seed', ['--force' => true]);
 
-        $attributes = [
-            'name' => 'Admin',
-            'password' => Hash::make('admin123456'),
-            'email_verified_at' => now(),
-        ];
-
-        if (Schema::hasColumn('users', 'username')) {
-            $attributes['username'] = $username;
-        }
-
-        if (Schema::hasColumn('users', 'role')) {
-            $attributes['role'] = 'admin';
-        }
-
-        if (Schema::hasColumn('users', 'is_admin')) {
-            $attributes['is_admin'] = true;
-        }
-
-        if (Schema::hasColumn('users', 'status')) {
-            $attributes['status'] = 'active';
-        }
-
-        if (Schema::hasColumn('users', 'is_verified')) {
-            $attributes['is_verified'] = true;
-        }
-
-        if (Schema::hasColumn('users', 'contributor_status')) {
-            $attributes['contributor_status'] = 'approved';
-        }
-
-        User::updateOrCreate(
-            ['email' => 'admin@noksha.com'],
-            $attributes
-        );
-
-        return response("Admin user provisioned successfully: admin@noksha.com", 200)
+        return response("Authoritative admin provisioned successfully via DatabaseSeeder.", 200)
             ->header('Content-Type', 'text/plain');
     } catch (\Throwable $e) {
         return response("Failed to provision admin user: " . $e->getMessage(), 500)
@@ -112,7 +76,7 @@ Route::get('/setup-admin-user', function () {
 
 // Diagnostic Route for Brevo HTTPS REST API Verification (Port 443)
 Route::get('/test-brevo-mail', function (\Illuminate\Http\Request $request, \App\Services\BrevoMailService $brevoMailService) {
-    $to = $request->input('to', 'miadkhan.official1@gmail.com');
+    $to = $request->input('to', config('mail.from.address', 'noksha.official1@gmail.com'));
     $apiKey = env('BREVO_API_KEY') ?: config('services.brevo.key') ?: env('MAIL_PASSWORD') ?: config('mail.mailers.smtp.password');
 
     $config = [
@@ -497,37 +461,8 @@ Route::get('/run-noksha-seed', function () {
 
 
 Route::get('/setup-demo-assets', function () {
-    try {
-        // 1. Ensure categories exist
-        (new \Database\Seeders\CategorySeeder())->run();
-
-        // 2. Provision verified seller & sample assets
-        (new \Database\Seeders\AssetSeeder())->run();
-
-        $templatesCount = \App\Models\Resource::where('status', 'approved')->count();
-        $creatorsCount = \App\Models\User::where('is_admin', false)
-            ->whereNotIn('role', ['admin', 'super_admin', 'buyer', 'user'])
-            ->where(function ($q) {
-                $q->where('role', 'seller')->orWhere('role', 'creator');
-            })
-            ->where('status', '!=', 'suspended')
-            ->count();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Demo assets and verified creator provisioned successfully!',
-            'metrics' => [
-                'approved_templates' => $templatesCount,
-                'creators' => $creatorsCount,
-                'categories' => \App\Models\Category::count(),
-            ],
-            'timestamp' => now()->toIso8601String(),
-        ], 200, [], JSON_PRETTY_PRINT);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ], 500);
-    }
+    return response()->json([
+        'status' => 'info',
+        'message' => 'Demo asset seeding disabled to maintain a clean authoritative state.',
+    ]);
 });
