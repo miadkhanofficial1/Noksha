@@ -22,11 +22,11 @@ class PasswordResetOtpMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(string $otp, ?User $user = null, int $expiresInMinutes = 15)
+    public function __construct(string $otp, ?User $user = null, int $expiresInMinutes = 15, ?string $recipientName = null)
     {
         $this->otp = $otp;
         $this->user = $user;
-        $this->recipientName = $user && $user->name ? $user->name : 'Noksha Member';
+        $this->recipientName = $recipientName ?? ($user && $user->name ? $user->name : 'Noksha Member');
         $this->expiresInMinutes = $expiresInMinutes;
     }
 

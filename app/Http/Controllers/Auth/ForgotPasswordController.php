@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Console\Commands\SendOtpMailCommand;
 use App\Http\Controllers\Controller;
-use App\Mail\PasswordResetOtpMail;
+use App\Jobs\SendPasswordResetOtpJob;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Schema;
 
 class ForgotPasswordController extends Controller
 {
@@ -25,7 +23,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Generate 6-digit OTP, store in database, and dispatch via Brevo SMTP.
+     * Generate 6-digit OTP, store in database, and dispatch via non-blocking background queue/job.
      */
     public function store(Request $request)
     {
@@ -35,20 +33,17 @@ class ForgotPasswordController extends Controller
 
         $email = strtolower(trim($request->email));
 
-        // 1. Validate user existence
-        $user = User::where('email', $email)->first();
+        // 1. Fast user existence check
+        $user = User::where('email', $email)->select('id', 'name', 'email')->first();
         if (!$user) {
             return back()->withInput()->withErrors([
                 'email' => "We can't find a user with that email address."
             ]);
         }
 
-        // 2. Ensure password_reset_tokens schema is ready
-        $this->ensureSchemaReady();
-
-        // 3. Generate secure 6-digit numeric OTP and hash it
+        // 2. Generate secure 6-digit numeric OTP and cryptographically hash with HMAC-SHA256
         $otp = (string) random_int(100000, 999999);
-        $hashedOtp = Hash::make($otp);
+        $hashedOtp = hash_hmac('sha256', $otp, config('app.key'));
 
         try {
             DB::table('password_reset_tokens')->updateOrInsert(
@@ -70,27 +65,17 @@ class ForgotPasswordController extends Controller
             ]);
         }
 
-        // 4. Dispatch instant HTML email via configured Brevo SMTP (Port 465 SSL)
-        try {
-            Mail::to($user->email)->send(new PasswordResetOtpMail($otp, $user, 15));
-        } catch (\Throwable $e) {
-            Log::error('Password reset OTP email dispatch failed: ' . $e->getMessage(), [
-                'email' => $email,
-                'exception' => $e,
-            ]);
-
-            // Resilient fallback protection for cloud network timeouts
-            return back()->withInput()->withErrors([
-                'email' => 'Unable to dispatch verification code via email server right now. Please verify your connection or try again shortly.'
-            ]);
-        }
-
-        // 5. Store session state and redirect to OTP verification screen
+        // 3. Store session state BEFORE dispatching
         session([
             'password_reset_email' => $email,
             'password_reset_otp_sent_at' => Carbon::now()->timestamp,
         ]);
 
+        // 4. Asynchronous / Non-blocking execution: dispatch mail in background process
+        // Guarantees sub-second response time and prevents freezing on remote SMTP socket
+        $this->dispatchOtpEmailAsync($user->email, $otp, $user->name);
+
+        // 5. Return instant redirect to OTP input screen without client freezing
         return redirect()->route('password.otp.view')->with(
             'status',
             'A 6-digit verification code has been dispatched to your email address.'
@@ -181,8 +166,12 @@ class ForgotPasswordController extends Controller
             ]);
         }
 
-        // Check hash
-        if (!Hash::check($submittedOtp, $record->token)) {
+        // Check hash (supports both HMAC-SHA256 and Bcrypt)
+        $isMatch = str_starts_with($record->token, '$2y$')
+            ? Hash::check($submittedOtp, $record->token)
+            : hash_equals($record->token, hash_hmac('sha256', $submittedOtp, config('app.key')));
+
+        if (!$isMatch) {
             DB::table('password_reset_tokens')->where('email', $email)->increment('attempts');
             $remaining = max(0, 5 - ($record->attempts + 1));
 
@@ -204,7 +193,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Resend a fresh 6-digit OTP code to the user.
+     * Resend a fresh 6-digit OTP code to the user using non-blocking background execution.
      */
     public function resendOtp(Request $request)
     {
@@ -216,7 +205,7 @@ class ForgotPasswordController extends Controller
             ]);
         }
 
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $email)->select('id', 'name', 'email')->first();
         if (!$user) {
             return redirect()->route('password.request')->withErrors([
                 'email' => "We can't find a user with that email address."
@@ -235,7 +224,7 @@ class ForgotPasswordController extends Controller
 
         // Generate new 6-digit OTP
         $otp = (string) random_int(100000, 999999);
-        $hashedOtp = Hash::make($otp);
+        $hashedOtp = hash_hmac('sha256', $otp, config('app.key'));
 
         try {
             DB::table('password_reset_tokens')->updateOrInsert(
@@ -252,26 +241,63 @@ class ForgotPasswordController extends Controller
             return back()->withErrors(['otp' => 'Unable to generate code right now. Please try again shortly.']);
         }
 
-        // Dispatch email via Brevo SMTP inside safe try-catch
-        try {
-            Mail::to($user->email)->send(new PasswordResetOtpMail($otp, $user, 15));
-        } catch (\Throwable $e) {
-            Log::error('Resend OTP email delivery failed: ' . $e->getMessage(), [
-                'email' => $email,
-                'exception' => $e,
-            ]);
-
-            return back()->withErrors([
-                'otp' => 'Unable to dispatch email at this moment. Please check your connection or try again shortly.'
-            ]);
-        }
-
         session([
             'password_reset_email' => $email,
             'password_reset_otp_sent_at' => Carbon::now()->timestamp,
         ]);
 
+        // Asynchronous non-blocking dispatch
+        $this->dispatchOtpEmailAsync($user->email, $otp, $user->name);
+
         return back()->with('status', 'A new 6-digit verification code has been dispatched to your email.');
+    }
+
+    /**
+     * Dispatch OTP email in a non-blocking background execution or isolated try-catch.
+     */
+    protected function dispatchOtpEmailAsync(string $email, string $otp, ?string $name = null): void
+    {
+        // 1. If queue worker is configured (e.g. database, redis, sqs)
+        if (config('queue.default') !== 'sync') {
+            try {
+                SendPasswordResetOtpJob::dispatch($email, $otp, $name, 15);
+                return;
+            } catch (\Throwable $e) {
+                Log::warning('Queue dispatch failed, attempting asynchronous background execution: ' . $e->getMessage());
+            }
+        }
+
+        // 2. Asynchronous non-blocking background process (Render Linux / Windows)
+        try {
+            $phpBinary = PHP_BINARY ?: 'php';
+            $artisan = base_path('artisan');
+            $safeEmail = escapeshellarg($email);
+            $safeOtp = escapeshellarg($otp);
+            $safeName = escapeshellarg($name ?: 'Noksha Member');
+
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                // Windows background execution
+                $cmd = "start /B \"\" \"{$phpBinary}\" \"{$artisan}\" mail:send-otp {$safeEmail} {$safeOtp} --name={$safeName}";
+                pclose(popen($cmd, "r"));
+            } else {
+                // Linux / Render background execution
+                $cmd = "\"{$phpBinary}\" \"{$artisan}\" mail:send-otp {$safeEmail} {$safeOtp} --name={$safeName} > /dev/null 2>&1 &";
+                exec($cmd);
+            }
+            return;
+        } catch (\Throwable $e) {
+            Log::warning('Background process launch failed: ' . $e->getMessage() . '. Falling back to afterResponse.');
+        }
+
+        // 3. Resilient fallback: dispatch after HTTP response finishes
+        try {
+            SendPasswordResetOtpJob::dispatchAfterResponse($email, $otp, $name, 15);
+        } catch (\Throwable $e) {
+            Log::error('All async email dispatch methods failed: ' . $e->getMessage(), [
+                'email' => $email,
+                'exception' => $e,
+            ]);
+        }
     }
 
     /**
@@ -290,34 +316,5 @@ class ForgotPasswordController extends Controller
         }
 
         return $maskedName . '@' . $domain;
-    }
-
-    /**
-     * Ensure password_reset_tokens table and columns exist dynamically.
-     */
-    protected function ensureSchemaReady(): void
-    {
-        try {
-            if (!Schema::hasTable('password_reset_tokens')) {
-                Schema::create('password_reset_tokens', function (Blueprint $table) {
-                    $table->string('email')->primary();
-                    $table->string('token');
-                    $table->timestamp('expires_at')->nullable();
-                    $table->integer('attempts')->default(0);
-                    $table->timestamp('created_at')->nullable();
-                });
-            } else {
-                Schema::table('password_reset_tokens', function (Blueprint $table) {
-                    if (!Schema::hasColumn('password_reset_tokens', 'expires_at')) {
-                        $table->timestamp('expires_at')->nullable()->after('token');
-                    }
-                    if (!Schema::hasColumn('password_reset_tokens', 'attempts')) {
-                        $table->integer('attempts')->default(0)->after('expires_at');
-                    }
-                });
-            }
-        } catch (\Throwable $e) {
-            Log::warning('Password reset table safeguard notice: ' . $e->getMessage());
-        }
     }
 }

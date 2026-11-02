@@ -52,7 +52,7 @@
             @endif
 
             <!-- Request Form -->
-            <form action="{{ route('password.email') }}" method="POST" class="space-y-4">
+            <form action="{{ route('password.email') }}" method="POST" class="space-y-4" data-no-loader id="forgotPasswordForm">
                 @csrf
 
                 <div>
@@ -75,11 +75,27 @@
                 </div>
 
                 <button type="submit" 
+                        id="submitForgotBtn"
                         class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
-                    <span>Send 6-Digit Verification Code</span>
-                    <i class="bi bi-arrow-right"></i>
+                    <span id="submitBtnText">Send 6-Digit Verification Code</span>
+                    <i class="bi bi-arrow-right" id="submitBtnIcon"></i>
                 </button>
             </form>
+
+            <script>
+                document.getElementById('forgotPasswordForm')?.addEventListener('submit', function () {
+                    const btn = document.getElementById('submitForgotBtn');
+                    const text = document.getElementById('submitBtnText');
+                    const icon = document.getElementById('submitBtnIcon');
+                    if (btn && text) {
+                        btn.classList.add('opacity-90', 'cursor-wait');
+                        text.textContent = 'Dispatching Code...';
+                        if (icon) {
+                            icon.className = 'bi bi-arrow-repeat inline-block animate-spin';
+                        }
+                    }
+                });
+            </script>
 
             <!-- Bottom Return Link -->
             <div class="mt-6 pt-5 border-t border-slate-800/80 text-center">
