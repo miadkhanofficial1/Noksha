@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\PasswordResetOtpMail;
+use App\Services\BrevoMailService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SendOtpMailCommand extends Command
 {
@@ -26,22 +25,20 @@ class SendOtpMailCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(BrevoMailService $brevoMailService): int
     {
         $email = $this->argument('email');
         $otp = $this->argument('otp');
         $name = $this->option('name') ?: 'Noksha Member';
 
-        try {
-            Mail::to($email)->send(new PasswordResetOtpMail($otp, null, 15, $name));
-            Log::info("Background OTP email successfully delivered to: {$email}");
+        $result = $brevoMailService->sendOtpMail($email, $otp, $name);
+
+        if ($result['success']) {
+            $this->info("OTP verification email dispatched to {$email} via {$result['transport']}.");
             return Command::SUCCESS;
-        } catch (\Throwable $e) {
-            Log::error("Background OTP email delivery failed for {$email}: " . $e->getMessage(), [
-                'email' => $email,
-                'exception' => $e,
-            ]);
-            return Command::FAILURE;
         }
+
+        $this->error("OTP verification email failed for {$email}: {$result['error']}");
+        return Command::FAILURE;
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Console\Commands\SendOtpMailCommand;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendPasswordResetOtpJob;
 use App\Models\User;
+use App\Services\BrevoMailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +13,13 @@ use Illuminate\Support\Facades\Log;
 
 class ForgotPasswordController extends Controller
 {
+    protected BrevoMailService $brevoMailService;
+
+    public function __construct(BrevoMailService $brevoMailService)
+    {
+        $this->brevoMailService = $brevoMailService;
+    }
+
     /**
      * Display the email submission form to request a password reset OTP.
      */
@@ -23,7 +29,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Generate 6-digit OTP, store in database, and dispatch via non-blocking background queue/job.
+     * Generate 6-digit OTP, store in database, and dispatch via Brevo service with resilient logging.
      */
     public function store(Request $request)
     {
@@ -33,7 +39,7 @@ class ForgotPasswordController extends Controller
 
         $email = strtolower(trim($request->email));
 
-        // 1. Fast user existence check
+        // 1. Validate user existence
         $user = User::where('email', $email)->select('id', 'name', 'email')->first();
         if (!$user) {
             return back()->withInput()->withErrors([
@@ -65,21 +71,31 @@ class ForgotPasswordController extends Controller
             ]);
         }
 
+        // Requirement: Ensure generated 6-digit OTP is also written to storage/logs/laravel.log
+        Log::info("Noksha Security: Generated 6-digit OTP [{$otp}] for {$email} (Expires in 15 minutes)");
+
         // 3. Store session state BEFORE dispatching
         session([
             'password_reset_email' => $email,
             'password_reset_otp_sent_at' => Carbon::now()->timestamp,
         ]);
 
-        // 4. Asynchronous / Non-blocking execution: dispatch mail in background process
-        // Guarantees sub-second response time and prevents freezing on remote SMTP socket
-        $this->dispatchOtpEmailAsync($user->email, $otp, $user->name);
+        // 4. Dispatch email via BrevoMailService (API or SMTP with 10s timeout & stream options)
+        $deliveryResult = $this->brevoMailService->sendOtpMail($user->email, $otp, $user->name);
 
-        // 5. Return instant redirect to OTP input screen without client freezing
-        return redirect()->route('password.otp.view')->with(
-            'status',
-            'A 6-digit verification code has been dispatched to your email address.'
-        );
+        if ($deliveryResult['success']) {
+            session([
+                'status' => 'A 6-digit verification code has been dispatched to your email address.'
+            ]);
+        } else {
+            // Requirement: Display a clear banner/flash message on verify-otp page instead of pretending it succeeded
+            session([
+                'mail_delivery_warning' => 'We were unable to deliver the email to your inbox (' . ($deliveryResult['error'] ?? 'Mail server connection issue') . '). For immediate testing/recovery, your 6-digit code has been logged to storage/logs/laravel.log.',
+            ]);
+        }
+
+        // 5. Redirect user to the OTP view without infinite loading
+        return redirect()->route('password.otp.view');
     }
 
     /**
@@ -193,7 +209,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Resend a fresh 6-digit OTP code to the user using non-blocking background execution.
+     * Resend a fresh 6-digit OTP code to the user.
      */
     public function resendOtp(Request $request)
     {
@@ -241,63 +257,22 @@ class ForgotPasswordController extends Controller
             return back()->withErrors(['otp' => 'Unable to generate code right now. Please try again shortly.']);
         }
 
+        // Log OTP to storage/logs/laravel.log
+        Log::info("Noksha Security: Resent 6-digit OTP [{$otp}] for {$email} (Expires in 15 minutes)");
+
         session([
             'password_reset_email' => $email,
             'password_reset_otp_sent_at' => Carbon::now()->timestamp,
         ]);
 
-        // Asynchronous non-blocking dispatch
-        $this->dispatchOtpEmailAsync($user->email, $otp, $user->name);
+        // Dispatch via Brevo service
+        $deliveryResult = $this->brevoMailService->sendOtpMail($user->email, $otp, $user->name);
 
-        return back()->with('status', 'A new 6-digit verification code has been dispatched to your email.');
-    }
-
-    /**
-     * Dispatch OTP email in a non-blocking background execution or isolated try-catch.
-     */
-    protected function dispatchOtpEmailAsync(string $email, string $otp, ?string $name = null): void
-    {
-        // 1. If queue worker is configured (e.g. database, redis, sqs)
-        if (config('queue.default') !== 'sync') {
-            try {
-                SendPasswordResetOtpJob::dispatch($email, $otp, $name, 15);
-                return;
-            } catch (\Throwable $e) {
-                Log::warning('Queue dispatch failed, attempting asynchronous background execution: ' . $e->getMessage());
-            }
+        if ($deliveryResult['success']) {
+            return back()->with('status', 'A new 6-digit verification code has been dispatched to your email.');
         }
 
-        // 2. Asynchronous non-blocking background process (Render Linux / Windows)
-        try {
-            $phpBinary = PHP_BINARY ?: 'php';
-            $artisan = base_path('artisan');
-            $safeEmail = escapeshellarg($email);
-            $safeOtp = escapeshellarg($otp);
-            $safeName = escapeshellarg($name ?: 'Noksha Member');
-
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                // Windows background execution
-                $cmd = "start /B \"\" \"{$phpBinary}\" \"{$artisan}\" mail:send-otp {$safeEmail} {$safeOtp} --name={$safeName}";
-                pclose(popen($cmd, "r"));
-            } else {
-                // Linux / Render background execution
-                $cmd = "\"{$phpBinary}\" \"{$artisan}\" mail:send-otp {$safeEmail} {$safeOtp} --name={$safeName} > /dev/null 2>&1 &";
-                exec($cmd);
-            }
-            return;
-        } catch (\Throwable $e) {
-            Log::warning('Background process launch failed: ' . $e->getMessage() . '. Falling back to afterResponse.');
-        }
-
-        // 3. Resilient fallback: dispatch after HTTP response finishes
-        try {
-            SendPasswordResetOtpJob::dispatchAfterResponse($email, $otp, $name, 15);
-        } catch (\Throwable $e) {
-            Log::error('All async email dispatch methods failed: ' . $e->getMessage(), [
-                'email' => $email,
-                'exception' => $e,
-            ]);
-        }
+        return back()->with('mail_delivery_warning', 'We could not reach the mail server to deliver your code (' . ($deliveryResult['error'] ?? 'Delivery failure') . '). For immediate verification, your new OTP has been recorded in storage/logs/laravel.log.');
     }
 
     /**

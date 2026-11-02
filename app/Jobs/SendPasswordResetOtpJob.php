@@ -2,14 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Mail\PasswordResetOtpMail;
+use App\Services\BrevoMailService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SendPasswordResetOtpJob implements ShouldQueue
 {
@@ -32,20 +31,14 @@ class SendPasswordResetOtpJob implements ShouldQueue
     }
 
     /**
-     * Execute the job with resilient try-catch boundary.
+     * Execute the job with resilient Brevo API / SMTP dispatch.
      */
-    public function handle(): void
+    public function handle(BrevoMailService $brevoMailService): void
     {
-        try {
-            Mail::to($this->email)->send(
-                new PasswordResetOtpMail($this->otp, null, $this->expiresInMinutes, $this->name)
-            );
-            Log::info("Password reset OTP email dispatched successfully to: {$this->email}");
-        } catch (\Throwable $e) {
-            Log::error('Background OTP email dispatch failed: ' . $e->getMessage(), [
-                'email' => $this->email,
-                'exception' => $e,
-            ]);
+        $result = $brevoMailService->sendOtpMail($this->email, $this->otp, $this->name);
+
+        if (!$result['success']) {
+            Log::error("SendPasswordResetOtpJob failed for {$this->email}: " . ($result['error'] ?? 'Unknown error'));
         }
     }
 }

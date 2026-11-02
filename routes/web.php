@@ -110,6 +110,91 @@ Route::get('/setup-admin-user', function () {
     }
 })->name('admin.setup');
 
+// Diagnostic Route for Brevo SMTP Handshake Verification
+Route::get('/test-brevo-mail', function (\Illuminate\Http\Request $request, \App\Services\BrevoMailService $brevoMailService) {
+    $to = $request->input('to', 'miadkhan.official1@gmail.com');
+    $config = [
+        'mailer' => config('mail.default'),
+        'host' => config('mail.mailers.smtp.host'),
+        'port' => config('mail.mailers.smtp.port'),
+        'username' => config('mail.mailers.smtp.username'),
+        'password' => config('mail.mailers.smtp.password') ? '***configured (' . strlen(config('mail.mailers.smtp.password')) . ' chars)***' : 'EMPTY',
+        'from_address' => config('mail.from.address'),
+        'from_name' => config('mail.from.name'),
+        'timeout' => config('mail.mailers.smtp.timeout'),
+        'verify_peer' => config('mail.mailers.smtp.verify_peer'),
+    ];
+
+    $diagnostics = [];
+
+    // Step 1: Raw TCP/SSL Socket Check
+    $socketStart = microtime(true);
+    $errno = 0;
+    $errstr = '';
+    $scheme = config('mail.mailers.smtp.port') == 465 ? 'ssl://' : 'tcp://';
+    $socketUrl = $scheme . config('mail.mailers.smtp.host') . ':' . config('mail.mailers.smtp.port');
+    $context = stream_context_create([
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
+        ],
+    ]);
+
+    $fp = @stream_socket_client($socketUrl, $errno, $errstr, 5, STREAM_CLIENT_CONNECT, $context);
+    $socketTime = round((microtime(true) - $socketStart) * 1000, 2);
+
+    if ($fp) {
+        $banner = fgets($fp, 512);
+        fclose($fp);
+        $diagnostics['socket'] = [
+            'status' => 'CONNECTED',
+            'url' => $socketUrl,
+            'latency_ms' => $socketTime,
+            'server_greeting' => trim($banner ?: 'Connected'),
+        ];
+    } else {
+        $diagnostics['socket'] = [
+            'status' => 'FAILED',
+            'url' => $socketUrl,
+            'latency_ms' => $socketTime,
+            'errno' => $errno,
+            'error' => $errstr,
+        ];
+    }
+
+    // Step 2: Full Email Dispatch Attempt via BrevoMailService
+    $dispatchStart = microtime(true);
+    $testOtp = (string) random_int(100000, 999999);
+    $result = $brevoMailService->sendOtpMail($to, $testOtp, 'Noksha Test User');
+    $dispatchTime = round((microtime(true) - $dispatchStart) * 1000, 2);
+
+    $diagnostics['dispatch'] = [
+        'recipient' => $to,
+        'otp_generated' => $testOtp,
+        'transport_used' => $result['transport'],
+        'success' => $result['success'],
+        'duration_ms' => $dispatchTime,
+        'error' => $result['error'],
+        'message_id' => $result['messageId'] ?? null,
+    ];
+
+    if ($request->wantsJson()) {
+        return response()->json([
+            'status' => $result['success'] ? 'SUCCESS' : 'FAILED',
+            'config' => $config,
+            'diagnostics' => $diagnostics,
+        ], $result['success'] ? 200 : 502);
+    }
+
+    return response()->view('test-brevo-mail', [
+        'config' => $config,
+        'diagnostics' => $diagnostics,
+        'recipient' => $to,
+        'success' => $result['success'],
+    ], $result['success'] ? 200 : 502);
+})->name('test.brevo.mail');
+
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

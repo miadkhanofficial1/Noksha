@@ -45,7 +45,9 @@ return [
             'port' => env('MAIL_PORT', 2525),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => (int) env('MAIL_TIMEOUT', 5),
+            'timeout' => (int) env('MAIL_TIMEOUT', 10),
+            'verify_peer' => env('MAIL_VERIFY_PEER', false),
+            'verify_peer_name' => env('MAIL_VERIFY_PEER_NAME', false),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 

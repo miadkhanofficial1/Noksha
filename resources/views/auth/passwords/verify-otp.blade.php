@@ -37,6 +37,23 @@
                 </div>
             </div>
 
+            <!-- Mail Delivery Warning Banner -->
+            @if (session('mail_delivery_warning'))
+                <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs shadow-lg shadow-amber-950/20">
+                    <div class="flex items-start gap-2.5">
+                        <i class="bi bi-exclamation-triangle-fill text-amber-400 text-base flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <div class="font-bold text-amber-200 uppercase tracking-wider text-[11px] mb-1">
+                                Mail Delivery Notice
+                            </div>
+                            <div class="leading-relaxed text-slate-300">
+                                {{ session('mail_delivery_warning') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Session Status / Errors -->
             @if (session('status'))
                 <div class="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-start gap-2.5">
@@ -45,7 +62,7 @@
                 </div>
             @endif
 
-            @if ($errors->any())
+            @if (isset($errors) && $errors->any())
                 <div class="mb-5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
                     <div class="flex items-start gap-2.5">
                         <i class="bi bi-exclamation-triangle-fill text-sm flex-shrink-0 mt-0.5"></i>
