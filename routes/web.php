@@ -203,9 +203,12 @@ Route::get('/refund-policy', [LegalController::class, 'refunds'])->name('legal.r
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    // Registration
+    // Registration Flow (Two-Step Signup with 6-Digit Email OTP)
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::get('/register/verify-otp', [RegisterController::class, 'showVerifyOtp'])->name('register.verify.otp');
+    Route::post('/register/verify-otp', [RegisterController::class, 'verifyOtp'])->name('register.verify.otp.submit');
+    Route::post('/register/resend-otp', [RegisterController::class, 'resendOtp'])->name('register.resend.otp');
 
     // Login
     Route::get('/login', [LoginController::class, 'create'])->name('login');
