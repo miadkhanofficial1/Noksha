@@ -42,6 +42,7 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate();
+        $request->session()->save();
 
         // Clear any stale intended URLs (e.g. /wallet) so successful login always lands cleanly on Homepage
         $request->session()->forget('url.intended');

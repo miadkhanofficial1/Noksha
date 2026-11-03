@@ -91,8 +91,9 @@ class RegisterController extends Controller
         // Immediately authenticate the newly registered user
         Auth::login($user);
 
-        // Regenerate session for security
+        // Regenerate and explicitly flush session to persistent database before redirect
         $request->session()->regenerate();
+        $request->session()->save();
 
         return redirect()->route('home')
             ->with('status', 'Registration successful! Welcome to Noksha.');
