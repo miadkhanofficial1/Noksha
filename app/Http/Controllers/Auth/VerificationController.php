@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VerificationController extends Controller
 {
@@ -37,8 +38,12 @@ class VerificationController extends Controller
             return redirect()->intended(route('home'));
         }
 
-        $request->user()->sendEmailVerificationNotification();
-
-        return back()->with('status', 'Verification link sent! Please check your inbox.');
+        try {
+            $request->user()->sendEmailVerificationNotification();
+            return back()->with('status', 'Verification link sent! Please check your inbox.');
+        } catch (\Throwable $e) {
+            Log::warning('Resend email verification notification failed: ' . $e->getMessage());
+            return back()->with('warning', 'Unable to send verification email right now. Please try again later.');
+        }
     }
 }

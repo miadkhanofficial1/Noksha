@@ -19,6 +19,14 @@
                     <p class="text-muted small">Join Noksha as a Creator & Buyer</p>
                 </div>
 
+                <!-- Session Status Message -->
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+                        <span class="small">{{ session('status') }}</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <!-- Alert Messages -->
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
@@ -31,7 +39,7 @@
                     </div>
                 @endif
 
-                <!-- Google OAuth Button Placeholder -->
+                <!-- Google OAuth Button -->
                 <div class="mb-4">
                     <a href="{{ route('auth.google') }}" class="btn btn-outline-dark w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 fw-semibold">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
@@ -60,6 +68,9 @@
                             {{ __('auth.name') }} <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control rounded-3 @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="e.g. Miad Khan" required autofocus>
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Username -->
@@ -67,9 +78,12 @@
                         <label for="username" class="form-label fw-semibold text-dark">
                             {{ __('auth.username') }} <span class="text-danger">*</span>
                         </label>
-                        <div class="input-group">
+                        <div class="input-group has-validation">
                             <span class="input-group-text bg-light">@</span>
                             <input type="text" class="form-control rounded-end-3 @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username') }}" placeholder="e.g. miadkhan" required>
+                            @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -79,6 +93,9 @@
                             {{ __('auth.email') }} <span class="text-danger">*</span>
                         </label>
                         <input type="email" class="form-control rounded-3 @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="name@example.com" required>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Phone -->
@@ -87,6 +104,9 @@
                             {{ __('auth.phone') }} <span class="text-muted">(Optional)</span>
                         </label>
                         <input type="text" class="form-control rounded-3 @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="+8801700000000">
+                        @error('phone')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Password -->
@@ -95,6 +115,9 @@
                             {{ __('auth.password') }} <span class="text-danger">*</span>
                         </label>
                         <input type="password" class="form-control rounded-3 @error('password') is-invalid @enderror" id="password" name="password" placeholder="At least 8 characters" required>
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Confirm Password -->
@@ -102,7 +125,10 @@
                         <label for="password_confirmation" class="form-label fw-semibold text-dark">
                             {{ __('auth.confirm_password') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="password" class="form-control rounded-3" id="password_confirmation" name="password_confirmation" placeholder="Re-enter password" required>
+                        <input type="password" class="form-control rounded-3 @error('password_confirmation') is-invalid @enderror" id="password_confirmation" name="password_confirmation" placeholder="Re-enter password" required>
+                        @error('password_confirmation')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Submit Button -->
