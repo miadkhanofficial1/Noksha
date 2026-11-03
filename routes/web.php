@@ -280,6 +280,7 @@ Route::middleware('auth')->group(function () {
 
     // User Profile Settings Hub Routes
     Route::get('/settings/profile', [ProfileSettingsController::class, 'edit'])->name('settings.profile');
+    Route::get('/profile', [ProfileSettingsController::class, 'edit'])->name('profile.edit');
     Route::put('/settings/profile', [ProfileSettingsController::class, 'updateProfile'])->name('settings.profile.update');
     Route::put('/settings/password', [ProfileSettingsController::class, 'updatePassword'])->name('settings.password.update');
 
