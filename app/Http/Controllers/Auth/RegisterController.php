@@ -94,7 +94,7 @@ class RegisterController extends Controller
         // Regenerate session for security
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard')
+        return redirect()->route('home')
             ->with('status', 'Registration successful! Welcome to Noksha.');
     }
 }

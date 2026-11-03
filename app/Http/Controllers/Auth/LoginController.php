@@ -59,7 +59,14 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        return redirect()->route('home')->with(
+        if ($user->role === 'admin' || $user->is_admin) {
+            return redirect()->route('admin.dashboard')->with(
+                'status',
+                'Welcome to Admin HQ, ' . ($user->name ?: 'Admin') . '!'
+            );
+        }
+
+        return redirect()->intended(route('home'))->with(
             'status',
             'Welcome back, ' . ($user->name ?: 'Member') . '!'
         );
