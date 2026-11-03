@@ -18,10 +18,11 @@ COPY . .
 RUN npm install && npm run build
 RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
-# Create storage symlink and permissions
-RUN php artisan storage:link || true
-RUN chmod -R 777 storage bootstrap/cache
+# Create storage directories and set permissions
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs \
+    && php artisan storage:link || true \
+    && chmod -R 777 storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000"]
+CMD ["sh", "-c", "mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs && chmod -R 777 storage bootstrap/cache && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=10000"]

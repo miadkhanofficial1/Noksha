@@ -11,6 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Trust all upstream reverse proxies (Render, Cloudflare, AWS ELB)
         $middleware->trustProxies(at: '*');
 
         $middleware->redirectTo(
@@ -29,5 +30,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Gracefully handle CSRF token expiration instead of showing a raw 419 error page
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            return redirect()
+                ->back()
+                ->withInput($request->except('password', 'password_confirmation', '_token'))
+                ->with('warning', 'Your session has expired. Please submit the form again.');
+        });
     })->create();

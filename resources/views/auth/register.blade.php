@@ -27,6 +27,14 @@
                     </div>
                 @endif
 
+                <!-- Warning Message (e.g. Session Expiration) -->
+                @if (session('warning'))
+                    <div class="alert alert-warning alert-dismissible fade show rounded-3 mb-4" role="alert">
+                        <span class="small">{{ session('warning') }}</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <!-- Alert Messages -->
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
