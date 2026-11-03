@@ -28,7 +28,11 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(Conversation::class, ConversationPolicy::class);
 
-        if ($this->app->environment('production')) {
+        if (
+            $this->app->environment('production') ||
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+            str_starts_with((string) config('app.url'), 'https://')
+        ) {
             URL::forceScheme('https');
         }
     }
