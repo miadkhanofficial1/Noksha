@@ -25,6 +25,20 @@ class AssetController extends Controller
                 ->with('error', 'Contributor KYC verification required. Please apply to unlock Creator Studio and upload privileges.');
         }
 
+        // Check if entire POST payload exceeded post_max_size (PHP drops $_POST & $_FILES)
+        if ($request->isMethod('post') && empty($_POST) && empty($_FILES) && (int) $request->header('Content-Length') > 0) {
+            return back()->withErrors([
+                'asset_file' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.'
+            ])->withInput();
+        }
+
+        // Safely verify file validity before calling store
+        if (!$request->hasFile('asset_file') || !$request->file('asset_file')->isValid()) {
+            return back()->withErrors([
+                'asset_file' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.'
+            ])->withInput();
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'nullable|string',
@@ -35,9 +49,12 @@ class AssetController extends Controller
             'dimensions' => 'nullable|string',
             'tags' => 'nullable|string',
             'cover_image' => 'nullable|image|max:15360',
-            'asset_file' => 'required|file|max:102400',
+            'asset_file' => 'required|file|max:102400', // 100MB limit
         ], [
             'asset_file.required' => 'Digital asset source file (e.g., .psd, .ai, .fig, .pdf, .eps, .zip) is required.',
+            'asset_file.file' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.',
+            'asset_file.uploaded' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.',
+            'asset_file.max' => 'The asset file may not be greater than 100MB.',
         ]);
 
         // Cover Image
