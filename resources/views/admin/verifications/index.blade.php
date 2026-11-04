@@ -287,10 +287,10 @@
                                     <!-- KYC Document -->
                                     <td>
                                         @php
-                                            $doc = $item->document_file ?? $item->user?->kyc_document_path;
+                                            $idPath = $item->id_file_path ?? $item->id_document_path ?? $item->document_file ?? $item->user?->kyc_document_path;
                                         @endphp
-                                        @if($doc)
-                                            <a href="{{ asset('storage/' . $doc) }}" target="_blank" download class="btn btn-sm btn-light border rounded-pill px-2.5 py-1 extra-small fw-bold text-dark d-inline-flex align-items-center gap-1">
+                                        @if($idPath)
+                                            <a href="{{ route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) }}" target="_blank" class="btn btn-sm btn-light border rounded-pill px-2.5 py-1 extra-small fw-bold text-dark d-inline-flex align-items-center gap-1">
                                                 <i class="bi bi-file-earmark-arrow-down-fill text-success"></i>
                                                 <span>Download ID</span>
                                             </a>

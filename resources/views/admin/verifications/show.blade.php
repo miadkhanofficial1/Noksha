@@ -176,10 +176,10 @@
             <!-- RIGHT COLUMN: DOCUMENT, SELFIE & VIDEO PREVIEWS -->
             <div class="col-12 col-lg-7">
                 @php
-                    $docFile = $verification->document_file ?? $verification->id_file_path;
-                    $docUrl = $docFile ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($docFile)]) : null;
-                    $selfieFile = $verification->selfie_file ?? $verification->selfie_file_path;
-                    $selfieUrl = $selfieFile ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfieFile)]) : null;
+                    $idPath = $verification->id_file_path ?? $verification->id_document_path ?? $verification->document_file ?? null;
+                    $docUrl = $idPath ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) : null;
+                    $selfie = $verification->selfie_file_path ?? $verification->selfie_path ?? $verification->selfie_file ?? null;
+                    $selfieUrl = $selfie ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfie)]) : null;
                     $videoFile = $verification->video_file ?? $verification->video_file_path ?? null;
                     $videoUrl = $videoFile ? route('admin.kyc.document', ['type' => 'videos', 'filename' => basename($videoFile)]) : null;
                 @endphp

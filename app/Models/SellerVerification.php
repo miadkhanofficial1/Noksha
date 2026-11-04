@@ -18,15 +18,20 @@ class SellerVerification extends Model
     protected $fillable = [
         'user_id',
         'full_name',
+        'legal_name',
         'date_of_birth',
         'country',
         'id_type',
         'document_type',
         'id_file_path',
+        'id_document_path',
         'document_file',
         'id_number',
+        'document_number',
         'portfolio_link',
+        'portfolio_url',
         'selfie_file_path',
+        'selfie_path',
         'selfie_file',
         'video_file_path',
         'video_file',
@@ -55,6 +60,22 @@ class SellerVerification extends Model
     }
 
     /**
+     * Accessor for full_name (fallback to legal_name).
+     */
+    public function getFullNameAttribute(): ?string
+    {
+        return $this->attributes['full_name'] ?? $this->attributes['legal_name'] ?? null;
+    }
+
+    /**
+     * Accessor for legal_name (fallback to full_name).
+     */
+    public function getLegalNameAttribute(): ?string
+    {
+        return $this->attributes['legal_name'] ?? $this->attributes['full_name'] ?? null;
+    }
+
+    /**
      * Accessor for document_type (fallback to id_type).
      */
     public function getDocumentTypeAttribute(): ?string
@@ -63,19 +84,51 @@ class SellerVerification extends Model
     }
 
     /**
-     * Accessor for document_file (fallback to id_file_path).
+     * Accessor for document_file (fallback to id_file_path or id_document_path).
      */
     public function getDocumentFileAttribute(): ?string
     {
-        return $this->attributes['document_file'] ?? $this->attributes['id_file_path'] ?? null;
+        return $this->attributes['document_file'] ?? $this->attributes['id_file_path'] ?? $this->attributes['id_document_path'] ?? null;
     }
 
     /**
-     * Accessor for selfie_file (fallback to selfie_file_path).
+     * Accessor for id_file_path (fallback to id_document_path or document_file).
+     */
+    public function getIdFilePathAttribute(): ?string
+    {
+        return $this->attributes['id_file_path'] ?? $this->attributes['id_document_path'] ?? $this->attributes['document_file'] ?? null;
+    }
+
+    /**
+     * Accessor for id_document_path (fallback to id_file_path or document_file).
+     */
+    public function getIdDocumentPathAttribute(): ?string
+    {
+        return $this->attributes['id_document_path'] ?? $this->attributes['id_file_path'] ?? $this->attributes['document_file'] ?? null;
+    }
+
+    /**
+     * Accessor for selfie_file (fallback to selfie_file_path or selfie_path).
      */
     public function getSelfieFileAttribute(): ?string
     {
-        return $this->attributes['selfie_file'] ?? $this->attributes['selfie_file_path'] ?? null;
+        return $this->attributes['selfie_file'] ?? $this->attributes['selfie_file_path'] ?? $this->attributes['selfie_path'] ?? null;
+    }
+
+    /**
+     * Accessor for selfie_file_path (fallback to selfie_path or selfie_file).
+     */
+    public function getSelfieFilePathAttribute(): ?string
+    {
+        return $this->attributes['selfie_file_path'] ?? $this->attributes['selfie_path'] ?? $this->attributes['selfie_file'] ?? null;
+    }
+
+    /**
+     * Accessor for selfie_path (fallback to selfie_file_path or selfie_file).
+     */
+    public function getSelfiePathAttribute(): ?string
+    {
+        return $this->attributes['selfie_path'] ?? $this->attributes['selfie_file_path'] ?? $this->attributes['selfie_file'] ?? null;
     }
 
     /**

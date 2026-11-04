@@ -73,15 +73,12 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                             @foreach($pendingKycUsers as $pUser)
                                 @php
-                                    $pDocFile = ($pUser->verification && ($pUser->verification->document_file || $pUser->verification->id_file_path))
-                                        ? ($pUser->verification->document_file ?? $pUser->verification->id_file_path)
-                                        : null;
-                                    $pDocUrl = $pDocFile ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($pDocFile)]) : null;
-                                    $pDocIsPdf = $pDocFile && str_ends_with(strtolower($pDocFile), '.pdf');
-                                    $pSelfieFile = ($pUser->verification && ($pUser->verification->selfie_file || $pUser->verification->selfie_file_path))
-                                        ? ($pUser->verification->selfie_file ?? $pUser->verification->selfie_file_path)
-                                        : null;
-                                    $pSelfieUrl = $pSelfieFile ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($pSelfieFile)]) : null;
+                                    $verification = $pUser->verification;
+                                    $idPath = $verification->id_file_path ?? $verification->id_document_path ?? $verification->document_file ?? null;
+                                    $pDocUrl = $idPath ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) : null;
+                                    $pDocIsPdf = $idPath && str_ends_with(strtolower($idPath), '.pdf');
+                                    $selfie = $verification->selfie_file_path ?? $verification->selfie_path ?? $verification->selfie_file ?? null;
+                                    $pSelfieUrl = $selfie ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfie)]) : null;
                                     $pKycData = [
                                         'name' => $pUser->name,
                                         'full_name' => $pUser->verification?->full_name ?? $pUser->name,
@@ -293,15 +290,12 @@
                                     <!-- KYC Review Trigger (if verification record exists) -->
                                     @if($user->verification)
                                         @php
-                                            $uDocFile = ($user->verification->document_file || $user->verification->id_file_path)
-                                                ? ($user->verification->document_file ?? $user->verification->id_file_path)
-                                                : null;
-                                            $uDocUrl = $uDocFile ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($uDocFile)]) : null;
-                                            $uDocIsPdf = $uDocFile && str_ends_with(strtolower($uDocFile), '.pdf');
-                                            $uSelfieFile = ($user->verification->selfie_file || $user->verification->selfie_file_path)
-                                                ? ($user->verification->selfie_file ?? $user->verification->selfie_file_path)
-                                                : null;
-                                            $uSelfieUrl = $uSelfieFile ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($uSelfieFile)]) : null;
+                                            $verification = $user->verification;
+                                            $idPath = $verification->id_file_path ?? $verification->id_document_path ?? $verification->document_file ?? null;
+                                            $uDocUrl = $idPath ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) : null;
+                                            $uDocIsPdf = $idPath && str_ends_with(strtolower($idPath), '.pdf');
+                                            $selfie = $verification->selfie_file_path ?? $verification->selfie_path ?? $verification->selfie_file ?? null;
+                                            $uSelfieUrl = $selfie ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfie)]) : null;
                                             $uKycData = [
                                                 'user_id' => $user->id,
                                                 'name' => $user->name,

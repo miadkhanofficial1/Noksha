@@ -53,7 +53,7 @@ class SellerVerificationController extends Controller
             'country' => ['nullable', 'string', 'max:100'],
             'document_type' => ['nullable', 'in:nid,passport,driving_license'],
             'document_file' => [
-                $existing && ($existing->document_file || auth()->user()->kyc_document_path) ? 'nullable' : 'required_without:kyc_document',
+                $existing && ($existing->document_file || $existing->id_file_path || $existing->id_document_path || auth()->user()->kyc_document_path) ? 'nullable' : 'required_without:kyc_document',
                 'nullable',
                 'file',
                 'mimes:jpeg,png,jpg,pdf',
@@ -65,7 +65,19 @@ class SellerVerificationController extends Controller
                 'mimes:jpeg,png,jpg,pdf',
                 'max:10240'
             ],
+            'id_document' => [
+                'nullable',
+                'file',
+                'mimes:jpeg,png,jpg,pdf',
+                'max:10240'
+            ],
             'selfie_file' => [
+                'nullable',
+                'file',
+                'mimes:jpeg,png,jpg',
+                'max:5120'
+            ],
+            'selfie' => [
                 'nullable',
                 'file',
                 'mimes:jpeg,png,jpg',
@@ -95,37 +107,49 @@ class SellerVerificationController extends Controller
         $dob = $validated['date_of_birth'] ?? now()->subYears(22)->format('Y-m-d');
 
         // File uploads handling via Laravel Storage (public disk)
-        $docPath = $existing ? ($existing->document_file ?? auth()->user()->kyc_document_path) : auth()->user()->kyc_document_path;
+        $docPath = $existing ? ($existing->id_file_path ?? $existing->id_document_path ?? $existing->document_file ?? auth()->user()->kyc_document_path) : auth()->user()->kyc_document_path;
         if ($request->hasFile('document_file')) {
             $docPath = $request->file('document_file')->store('verifications/ids', 'public');
         } elseif ($request->hasFile('kyc_document')) {
             $docPath = $request->file('kyc_document')->store('verifications/ids', 'public');
         } elseif ($request->hasFile('id_file')) {
             $docPath = $request->file('id_file')->store('verifications/ids', 'public');
+        } elseif ($request->hasFile('id_document')) {
+            $docPath = $request->file('id_document')->store('verifications/ids', 'public');
         }
 
-        $selfiePath = $existing ? $existing->selfie_file : null;
+        $selfiePath = $existing ? ($existing->selfie_file_path ?? $existing->selfie_path ?? $existing->selfie_file) : null;
         if ($request->hasFile('selfie_file')) {
             $selfiePath = $request->file('selfie_file')->store('verifications/selfies', 'public');
+        } elseif ($request->hasFile('selfie')) {
+            $selfiePath = $request->file('selfie')->store('verifications/selfies', 'public');
         }
 
         // Formatted admin notes combining portfolio and ID number
         $adminNotes = "ID/Passport: {$idNumber} | Portfolio: {$validated['portfolio_link']}";
 
-        // Save or Update Verification Record
+        // Save or Update Verification Record:
+        // id_document path saved to BOTH id_file_path AND id_document_path
+        // selfie path saved to BOTH selfie_file_path AND selfie_path
+        // applicant name saved to BOTH full_name AND legal_name
         SellerVerification::updateOrCreate(
             ['user_id' => auth()->id()],
             [
                 'full_name' => $fullName,
+                'legal_name' => $fullName,
                 'date_of_birth' => $dob,
                 'country' => $country,
                 'id_type' => $docType,
                 'document_type' => $docType,
                 'id_number' => $idNumber,
+                'document_number' => $idNumber,
                 'portfolio_link' => $validated['portfolio_link'],
+                'portfolio_url' => $validated['portfolio_link'],
                 'id_file_path' => $docPath,
+                'id_document_path' => $docPath,
                 'document_file' => $docPath,
                 'selfie_file_path' => $selfiePath,
+                'selfie_path' => $selfiePath,
                 'selfie_file' => $selfiePath,
                 'status' => 'pending',
                 'admin_notes' => $adminNotes,
