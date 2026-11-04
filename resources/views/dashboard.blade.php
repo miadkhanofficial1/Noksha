@@ -1088,9 +1088,12 @@ function handleDashImageSelect(input) {
 }
 
 function removeDashImage() {
-    document.getElementById('dash_preview_image').value = '';
-    document.getElementById('dashImagePreviewBox').classList.add('hidden');
-    document.getElementById('dashImageDropZone').classList.remove('hidden');
+    var input = document.getElementById('cover_image_input') || document.getElementById('dash_preview_image');
+    if (input) input.value = '';
+    var previewBox = document.getElementById('dashImagePreviewBox');
+    if (previewBox) previewBox.classList.add('hidden');
+    var dropZone = document.getElementById('dashImageDropZone');
+    if (dropZone) dropZone.classList.remove('hidden');
 }
 
 document.addEventListener('DOMContentLoaded', function() {

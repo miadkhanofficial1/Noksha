@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Resource extends Model
 {
@@ -40,6 +41,17 @@ class Resource extends Model
     ];
 
     /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'downloads' => 0,
+        'views' => 0,
+        'status' => 'approved',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -53,6 +65,34 @@ class Resource extends Model
             'downloads' => 'integer',
             'views' => 'integer',
         ];
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (empty($model->slug)) {
+                $base = Str::slug($model->title ?: 'asset');
+                $model->slug = $base . '-' . Str::random(6);
+            }
+            if ($model->is_paid === null) {
+                $model->is_paid = ((float) ($model->price ?? 0)) > 0;
+            }
+            if (empty($model->status)) {
+                $model->status = 'approved';
+            }
+            if (empty($model->category_id)) {
+                $model->category_id = Category::first()?->id ?? 1;
+            }
+            if ($model->downloads === null) {
+                $model->downloads = 0;
+            }
+            if ($model->views === null) {
+                $model->views = 0;
+            }
+        });
     }
 
     /**
@@ -105,9 +145,26 @@ class Resource extends Model
             $this->attributes['category_id'] = (int) $value;
         } elseif (is_string($value)) {
             $cat = Category::where('name', $value)->orWhere('slug', $value)->first();
-            $this->attributes['category_id'] = $cat?->id ?? 1;
+            $this->attributes['category_id'] = $cat?->id ?? Category::first()?->id ?? 1;
         } elseif ($value instanceof Category) {
             $this->attributes['category_id'] = $value->id;
+        } else {
+            $this->attributes['category_id'] = Category::first()?->id ?? 1;
+        }
+    }
+
+    /**
+     * Tags mutator (supports array or comma-separated string).
+     */
+    public function setTagsAttribute($value): void
+    {
+        if (is_string($value)) {
+            $tags = array_map('trim', explode(',', $value));
+            $this->attributes['tags'] = json_encode(array_values(array_filter($tags)));
+        } elseif (is_array($value)) {
+            $this->attributes['tags'] = json_encode(array_values($value));
+        } else {
+            $this->attributes['tags'] = json_encode([]);
         }
     }
 

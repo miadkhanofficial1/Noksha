@@ -81,7 +81,7 @@ class TemplateController extends Controller
      */
     public function store(Request $request)
     {
-        return app(ResourceController::class)->store($request);
+        return app(AssetController::class)->store($request);
     }
 
     /**

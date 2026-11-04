@@ -49,6 +49,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\WalletController;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
@@ -276,7 +277,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('EnsureApprovedContributor')->group(function () {
         Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
         Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
-        Route::post('/creator/assets', [ResourceController::class, 'store'])->name('creator.assets.store');
+        Route::post('/creator/assets', [AssetController::class, 'store'])->name('creator.assets.store');
         Route::post('/templates', [TemplateController::class, 'store'])->name('templates.store');
         Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
         Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
