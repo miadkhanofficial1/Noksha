@@ -7,7 +7,7 @@
 <!-- CUSTOM SINGLE CONTEST STYLES -->
 <style>
     .contest-detail-bg {
-        background: linear-gradient(180deg, #F8F5FF 0%, #FFFFFF 100%);
+        background: #070b14;
         min-height: 100vh;
     }
 

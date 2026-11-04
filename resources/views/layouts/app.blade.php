@@ -99,7 +99,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen d-flex flex-column">
+<body class="bg-[#070b14] text-gray-100 min-h-screen selection:bg-indigo-600 selection:text-white d-flex flex-column">
 
     <!-- INITIAL PRELOADER / SPLASH SCREEN -->
     @include('partials.preloader')
@@ -108,7 +108,7 @@
     @include('layouts.navigation')
 
     <!-- MAIN CONTENT AREA -->
-    <main class="flex-grow-1">
+    <main class="flex-grow-1 bg-[#070b14]">
         @yield('content')
     </main>
 

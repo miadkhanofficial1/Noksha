@@ -3,7 +3,7 @@
 @section('title', 'Launch a Design Contest - Noksha')
 
 @section('content')
-<div class="py-4 py-lg-5" style="background: linear-gradient(180deg, #F8F5FF 0%, #FFFFFF 100%); min-height: 100vh;">
+<div class="py-4 py-lg-5 min-h-screen bg-[#070b14] text-white">
     <div class="container max-w-4xl mx-auto py-2">
         
         <!-- BREADCRUMB -->
