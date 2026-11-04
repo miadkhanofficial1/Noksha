@@ -220,4 +220,18 @@ class BrevoMailService
             ];
         }
     }
+
+    /**
+     * Send 6-digit email verification OTP email using Brevo's HTTPS REST API (Port 443).
+     *
+     * @param string $email
+     * @param string $otp
+     * @param string|null $recipientName
+     * @param int $expiresInMinutes
+     * @return array{success: bool, transport: string, error: string|null, messageId: string|null}
+     */
+    public function sendEmailVerificationOtpMail(string $email, string $otp, ?string $recipientName = null, int $expiresInMinutes = 10): array
+    {
+        return $this->sendRegistrationOtpMail($email, $otp, $recipientName, $expiresInMinutes);
+    }
 }

@@ -242,8 +242,10 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-    // Email Verification Routes
+    // Email Verification Routes (6-Digit OTP & Legacy Signed URLs)
     Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+    Route::post('/email/verify-otp', [VerificationController::class, 'verifyOtp'])->name('verification.verify.otp');
+    Route::post('/email/resend-otp', [VerificationController::class, 'resendOtp'])->name('verification.resend.otp');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
