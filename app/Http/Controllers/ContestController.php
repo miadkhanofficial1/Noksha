@@ -6,7 +6,9 @@ use App\Models\Category;
 use App\Models\Contest;
 use App\Models\ContestEntry;
 use App\Models\Notification;
+use App\Models\Resource;
 use App\Models\User;
+use App\Models\Withdrawal;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -55,13 +57,75 @@ class ContestController extends Controller
 
         $contests = $query->latest('is_guaranteed')->latest()->paginate(12)->withQueryString();
 
-        // Top 10 Creators Leaderboard based on contest wins and uploaded resources
-        $topCreators = User::withCount(['wonContests as wins_count', 'resources as resources_count'])
+        // Top 10 Creators Leaderboard based on real dynamic platform ranking algorithm:
+        // Score = (Completed Withdrawals * 1.0) + (Contest Wins * 500) + (Approved Assets * 50)
+        // Strictly includes active sellers/creators/contributors and excludes pure buyers, admins, and test accounts.
+        $creators = User::query()
             ->where('is_admin', false)
-            ->orderByDesc('wins_count')
-            ->orderByDesc('resources_count')
-            ->take(10)
+            ->whereNotIn('role', ['admin', 'super_admin'])
+            ->where(function ($q) {
+                $q->whereIn('role', ['seller', 'creator'])
+                  ->orWhere('is_contributor', true)
+                  ->orWhere('contributor_status', 'approved')
+                  ->orWhereHas('wonContests');
+            })
+            ->where(function ($q) {
+                $q->whereNull('status')->orWhere('status', '!=', 'banned');
+            })
+            ->where('username', 'not like', '%test%')
             ->get();
+
+        $topCreators = $creators->map(function ($creator) {
+            $totalWithdrawn = (float) Withdrawal::where('user_id', $creator->id)
+                ->where('status', 'completed')
+                ->sum('amount');
+
+            $contestWins = (int) Contest::where('winner_id', $creator->id)->count();
+
+            $publishedAssets = (int) Resource::where('user_id', $creator->id)
+                ->where('status', 'approved')
+                ->count();
+
+            $rankingScore = ($totalWithdrawn * 1.0) + ($contestWins * 500) + ($publishedAssets * 50);
+
+            $creator->total_withdrawn = $totalWithdrawn;
+            $creator->contest_wins = $contestWins;
+            $creator->published_assets = $publishedAssets;
+            $creator->ranking_score = $rankingScore;
+
+            return $creator;
+        })
+        ->filter(function ($creator) {
+            return $creator->ranking_score > 0;
+        })
+        ->sort(function ($a, $b) {
+            if ($b->ranking_score !== $a->ranking_score) {
+                return $b->ranking_score <=> $a->ranking_score;
+            }
+            if ($b->contest_wins !== $a->contest_wins) {
+                return $b->contest_wins <=> $a->contest_wins;
+            }
+            return $b->published_assets <=> $a->published_assets;
+        })
+        ->values()
+        ->take(10)
+        ->map(function ($creator, $index) {
+            $rank = $index + 1;
+            $creator->rank = $rank;
+
+            if ($rank === 1) {
+                $creator->tier_badge = 'Elite Creator';
+                $creator->tier_style = 'gold';
+            } elseif ($rank <= 3) {
+                $creator->tier_badge = 'Pro Contributor';
+                $creator->tier_style = 'silver';
+            } else {
+                $creator->tier_badge = 'Verified Seller';
+                $creator->tier_style = 'emerald';
+            }
+
+            return $creator;
+        });
 
         $activeContestsCount = Contest::where('status', 'active')->count();
         $totalPrizePool = Contest::whereIn('status', ['active', 'judging', 'completed'])->sum('prize_amount');

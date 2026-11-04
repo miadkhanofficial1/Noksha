@@ -45,10 +45,10 @@
     }
 
     .leaderboard-card-glass {
-        background: #0d1527;
-        border-radius: 1.5rem !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5) !important;
+        background: #0b1329;
+        border-radius: 1rem !important;
+        border: 1px solid rgba(31, 41, 55, 0.8) !important;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7) !important;
     }
 
     .filter-pill {
@@ -333,7 +333,7 @@
                     {{ $contests->links() }}
                 </div>
             @else
-                <div class="card bg-[#0d1527] border border-gray-800/80 shadow-2xl rounded-2xl p-5 text-center my-4 text-white">
+                <div class="bg-[#0d1527] border border-gray-800/80 shadow-2xl rounded-2xl p-5 text-center my-4 text-white">
                     <div class="p-4 bg-indigo-500/10 text-indigo-400 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                         <i class="bi bi-trophy fs-1"></i>
                     </div>
@@ -351,99 +351,119 @@
         </div>
 
         <!-- TOP 10 CREATORS LEADERBOARD -->
-        <div class="card leaderboard-card-glass p-4 p-md-5">
-            <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-b border-gray-800 flex-wrap gap-2">
+        <div class="bg-[#0b1329]/95 border border-gray-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+            <div class="d-flex align-items-center justify-content-between mb-6 pb-4 border-b border-gray-800/80 flex-wrap gap-3">
                 <div>
-                    <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.25);">
-                        <i class="bi bi-award-fill me-1"></i> Hall of Fame
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 mb-2">
+                        <i class="bi bi-award-fill"></i> Hall of Fame
                     </span>
-                    <h3 class="fw-extrabold text-white mt-1 mb-0">Top Creator Leaderboard</h3>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Top Creator Leaderboard</h3>
+                    <p class="text-xs sm:text-sm text-gray-400 mt-1 mb-0">Ranked dynamically by verified platform earnings, contest victories, and published assets.</p>
                 </div>
-                <span class="small fw-bold text-gray-400 font-monospace"><i class="bi bi-shield-check text-emerald-400 me-1"></i>Verified Noksha Contributor Rankings</span>
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#070d1e] border border-gray-800 text-xs font-mono text-gray-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Live Creator Rankings</span>
+                </div>
             </div>
 
-            <div class="table-responsive rounded-xl overflow-hidden border border-gray-800">
-                <table class="table table-hover align-middle mb-0 text-white" style="background-color: transparent;">
-                    <thead class="bg-[#0b1120] text-uppercase extra-small text-gray-400 fw-bold border-b border-gray-800">
-                        <tr>
-                            <th class="py-3 px-3">Rank</th>
-                            <th class="py-3 px-3">Creator</th>
-                            <th class="py-3 px-3">Contest Wins</th>
-                            <th class="py-3 px-3">Published Assets</th>
-                            <th class="py-3 px-3">Trust Score</th>
-                            <th class="py-3 px-3 text-end">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-800/60">
-                        @if(isset($topCreators) && $topCreators->count() > 0)
-                            @foreach($topCreators as $index => $creator)
-                                <tr class="bg-[#0b1120] hover:bg-[#111c35] transition-colors border-b border-gray-800/60">
-                                    <td class="py-3 px-3" style="width: 70px;">
-                                        @if($index === 0)
-                                            <span class="badge rank-badge-gold rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center" style="width:34px; height:34px;">#1</span>
-                                        @elseif($index === 1)
-                                            <span class="badge rank-badge-silver rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center" style="width:34px; height:34px;">#2</span>
-                                        @elseif($index === 2)
-                                            <span class="badge rank-badge-bronze rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center" style="width:34px; height:34px;">#3</span>
+            @if(isset($topCreators) && $topCreators->count() > 0)
+                <div class="overflow-x-auto rounded-xl border border-gray-800/80 bg-[#070d1e]/50">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#070d1e] text-gray-400 text-xs font-semibold uppercase tracking-wider border-b border-gray-800">
+                            <tr>
+                                <th class="py-3.5 px-4 text-center" style="width: 80px;">Rank</th>
+                                <th class="py-3.5 px-4">Creator</th>
+                                <th class="py-3.5 px-4 text-center">Contest Wins</th>
+                                <th class="py-3.5 px-4 text-center">Published Assets</th>
+                                <th class="py-3.5 px-4 text-end">Earnings / Withdrawn</th>
+                                <th class="py-3.5 px-4 text-end">Dynamic Tier</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800/60 text-sm">
+                            @foreach($topCreators as $creator)
+                                <tr class="border-b border-gray-800/60 hover:bg-[#111c38]/50 transition duration-150">
+                                    <td class="py-4 px-4 text-center">
+                                        @if($creator->rank === 1)
+                                            <span class="badge rank-badge-gold rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center shadow-lg" style="width:34px; height:34px;">#1</span>
+                                        @elseif($creator->rank === 2)
+                                            <span class="badge rank-badge-silver rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center shadow-md" style="width:34px; height:34px;">#2</span>
+                                        @elseif($creator->rank === 3)
+                                            <span class="badge rank-badge-bronze rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center shadow-sm" style="width:34px; height:34px;">#3</span>
                                         @else
-                                            <span class="fw-bold text-gray-400 font-monospace ms-2">#{{ $index + 1 }}</span>
+                                            <span class="fw-bold text-gray-400 font-mono text-sm">#{{ $creator->rank }}</span>
                                         @endif
                                     </td>
-                                    <td class="py-3 px-3">
-                                        <a href="{{ route('user.profile', $creator->username ?? $creator->id) }}" class="d-flex align-items-center gap-3 text-decoration-none text-white" title="View {{ $creator->name }}'s Profile">
+                                    <td class="py-4 px-4">
+                                        <a href="{{ route('user.profile', $creator->username ?? $creator->id) }}" class="inline-flex items-center gap-3 text-decoration-none group" title="View {{ $creator->name }}'s Profile">
                                             @if($creator->avatar)
-                                                <img src="{{ asset('storage/' . $creator->avatar) }}" alt="{{ $creator->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                <img src="{{ $creator->avatar_url }}" alt="{{ $creator->name }}" class="rounded-full w-10 h-10 object-cover ring-2 ring-indigo-500/30 group-hover:ring-indigo-400 transition">
                                             @else
-                                                <div class="avatar-placeholder rounded-circle bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <div class="rounded-full w-10 h-10 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold text-xs flex items-center justify-center group-hover:border-indigo-400 transition">
                                                     {{ strtoupper(substr($creator->name, 0, 1)) }}
                                                 </div>
                                             @endif
                                             <div>
-                                                <div class="fw-bold text-white mb-0 hover:text-indigo-400 transition-colors">{{ $creator->name }}</div>
-                                                <div class="extra-small text-gray-400 font-monospace">&#64;{{ $creator->username ?? Str::slug($creator->name) }}</div>
+                                                <div class="font-bold text-white group-hover:text-indigo-400 transition-colors">{{ $creator->name }}</div>
+                                                <div class="text-xs text-gray-400 font-mono">&#64;{{ $creator->username ?? Str::slug($creator->name) }}</div>
                                             </div>
                                         </a>
                                     </td>
-                                    <td class="py-3 px-3">
-                                        <span class="badge bg-amber-500/15 text-amber-300 border border-amber-500/30 fw-bold rounded-pill px-3 py-1 extra-small">
-                                            <i class="bi bi-trophy-fill text-amber-400 me-1"></i> {{ $creator->wins_count ?? 0 }} Wins
+                                    <td class="py-4 px-4 text-center">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                                            <i class="bi bi-trophy-fill text-amber-400"></i> {{ $creator->contest_wins ?? 0 }} {{ Str::plural('Win', $creator->contest_wins ?? 0) }}
                                         </span>
                                     </td>
-                                    <td class="py-3 px-3">
-                                        <span class="fw-bold text-gray-300 small font-monospace">
-                                            {{ $creator->resources_count ?? 0 }} Assets
+                                    <td class="py-4 px-4 text-center">
+                                        <span class="font-semibold text-gray-200 text-sm font-mono">
+                                            <i class="bi bi-layers text-indigo-400 me-1"></i>{{ $creator->published_assets ?? 0 }} Assets
                                         </span>
                                     </td>
-                                    <td class="py-3 px-3">
-                                        <span class="fw-extrabold text-indigo-400 small">
-                                            <i class="bi bi-shield-check text-emerald-400 me-1"></i>{{ number_format($creator->trust_score ?? 99.4, 1) }}%
-                                        </span>
+                                    <td class="py-4 px-4 text-end">
+                                        <div>
+                                            <span class="font-extrabold text-emerald-400 font-mono text-sm">৳{{ number_format($creator->total_withdrawn ?? 0, 2) }}</span>
+                                            <div class="text-[11px] text-gray-400 font-mono">Score: {{ number_format($creator->ranking_score ?? 0, 0) }}</div>
+                                        </div>
                                     </td>
-                                    <td class="py-3 px-3 text-end">
-                                        @if(($creator->wins_count ?? 0) > 0)
-                                            <span class="badge bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                                <i class="bi bi-patch-check-fill me-1"></i> Contest Champion
+                                    <td class="py-4 px-4 text-end">
+                                        @if($creator->rank === 1)
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm">
+                                                <i class="bi bi-star-fill text-amber-400"></i> Elite Creator
                                             </span>
-                                        @elseif($creator->isContributor())
-                                            <span class="badge bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                                Verified Contributor
+                                        @elseif($creator->rank <= 3)
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-sm">
+                                                <i class="bi bi-patch-check-fill text-indigo-400"></i> Pro Contributor
                                             </span>
                                         @else
-                                            <span class="badge bg-gray-800 text-gray-400 border border-gray-700/60 rounded-pill px-2.5 py-1 extra-small">
-                                                Member
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm">
+                                                <i class="bi bi-shield-check text-emerald-400"></i> Verified Seller
                                             </span>
                                         @endif
                                     </td>
                                 </tr>
                             @endforeach
-                        @else
-                            <tr class="bg-[#0b1120]">
-                                <td colspan="6" class="text-center text-gray-400 py-4 small">Leaderboard entries will populate as creators win official design challenges.</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <!-- Clean Dark Empty State Card -->
+                <div class="bg-[#070d1e]/80 border border-gray-800/80 rounded-2xl p-8 sm:p-12 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-inner">
+                        <i class="bi bi-trophy text-3xl"></i>
+                    </div>
+                    <h4 class="text-lg sm:text-xl font-bold text-white mb-2">No Ranked Creators Yet</h4>
+                    <p class="text-sm text-gray-400 max-w-md mx-auto mb-6 leading-relaxed">
+                        The creator leaderboard dynamically tracks and ranks verified contributors as they win design challenges, publish approved templates, and earn platform bounties.
+                    </p>
+                    <div class="inline-flex flex-wrap items-center justify-center gap-3">
+                        <a href="{{ route('seller.verification.create') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2">
+                            <i class="bi bi-patch-check-fill"></i> Become a Verified Contributor
+                        </a>
+                        <a href="{{ route('contests.create') }}" class="btn btn-outline-light rounded-pill px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2">
+                            <i class="bi bi-plus-circle"></i> Launch a Contest
+                        </a>
+                    </div>
+                </div>
+            @endif
         </div>
 
     </div>
