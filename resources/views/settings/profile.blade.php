@@ -217,43 +217,74 @@
         @endif
 
         <!-- MAIN PROFILE FORM -->
-        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" id="profileForm">
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" id="profileSettingsForm">
             @csrf
 
             <!-- SECTION 1: COVER & AVATAR PREVIEWS -->
             <div class="bg-[#0b1329]/90 border border-gray-800/80 rounded-2xl shadow-xl backdrop-blur-md mb-8 overflow-hidden">
                 @php
-                    $coverUrl = $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null;
-                    $avatarUrl = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
+                    $coverClean = $user->cover_image ? ltrim(str_replace('storage/', '', $user->cover_image), '/') : null;
+                    $coverUrl = $coverClean ? (str_starts_with($coverClean, 'http') ? $coverClean : asset('storage/' . $coverClean)) : null;
+
+                    $avatarClean = $user->avatar ? ltrim(str_replace('storage/', '', $user->avatar), '/') : null;
+                    $avatarUrl = $avatarClean ? (str_starts_with($avatarClean, 'http') ? $avatarClean : asset('storage/' . $avatarClean)) : null;
                 @endphp
 
-                <!-- Cover Image Banner -->
-                <div class="relative w-full h-48 md:h-64 rounded-t-2xl overflow-hidden border-b border-gray-800 bg-[#0b1329] bg-cover bg-center"
-                     style="background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; background-color: #111a33;">
-                    <label for="cover_upload" class="absolute top-4 right-4 bg-gray-900/80 hover:bg-black text-white text-xs px-4 py-2 rounded-xl cursor-pointer backdrop-blur-md border border-gray-700 flex items-center gap-2 shadow-lg transition">
+                <!-- Cover Image Banner Box -->
+                <div id="cover_banner_box" class="relative w-full h-48 md:h-64 rounded-t-2xl overflow-hidden border-b border-gray-800 bg-[#0b1329] bg-cover bg-center"
+                     style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : 'background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);' }}">
+                    
+                    @if($coverUrl)
+                        <img id="cover_preview" src="{{ $coverUrl }}" alt="Cover Preview" class="w-full h-full object-cover">
+                    @else
+                        <img id="cover_preview" src="" alt="Cover Preview" class="w-full h-full object-cover hidden">
+                    @endif
+
+                    <!-- Hidden file input -->
+                    <input type="file" name="cover_image" id="cover_upload" accept="image/*" class="hidden">
+
+                    <!-- Change Cover Photo Button -->
+                    <button type="button" onclick="document.getElementById('cover_upload').click();" class="absolute top-4 right-4 bg-gray-900/80 hover:bg-black text-white text-xs px-4 py-2 rounded-xl cursor-pointer backdrop-blur-md border border-gray-700 flex items-center gap-2 shadow-lg transition">
                         <i class="bi bi-camera-fill fa fa-camera"></i>
                         <span>Change Cover Photo</span>
-                        <input type="file" id="cover_upload" name="cover_image" class="hidden d-none" accept="image/*">
-                    </label>
+                    </button>
                 </div>
 
                 <!-- Avatar and Profile Header Meta -->
                 <div class="p-6 pt-0">
                     <div class="flex items-end justify-between flex-wrap gap-4">
                         <div class="flex items-end gap-4 flex-wrap">
-                            <!-- Avatar Circle -->
-                            <div class="relative -mt-14 w-28 h-28 rounded-full overflow-hidden border-4 border-[#0b1329] shadow-2xl bg-[#0b1329]">
-                                @if($avatarUrl)
-                                    <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center bg-indigo-600 text-white text-2xl font-bold\'>{{ strtoupper(substr($user->name, 0, 2)) }}</div>';">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center bg-indigo-600 text-white text-2xl font-bold">
-                                        {{ strtoupper(substr($user->name, 0, 2)) }}
+                            <!-- Avatar Circle (Clickable Trigger) -->
+                            <div class="relative -mt-14 w-28 h-28">
+                                <div onclick="document.getElementById('avatar_upload').click();"
+                                     class="w-28 h-28 rounded-full overflow-hidden border-4 border-[#0b1329] shadow-2xl bg-[#0b1329] cursor-pointer group relative flex items-center justify-center">
+                                    <img id="avatar_preview" 
+                                         src="{{ $avatarUrl ?? '' }}" 
+                                         alt="{{ $user->name }}" 
+                                         class="w-full h-full object-cover rounded-full {{ $avatarUrl ? '' : 'hidden' }}"
+                                         onerror="this.classList.add('hidden'); document.getElementById('avatar_initials').classList.remove('hidden');">
+
+                                    <div id="avatar_initials" 
+                                         class="w-full h-full flex items-center justify-center bg-indigo-600 text-white text-2xl font-bold {{ $avatarUrl ? 'hidden' : '' }}">
+                                        {{ strtoupper(substr($user->name ?? 'MD', 0, 2)) }}
                                     </div>
-                                @endif
-                                <label for="avatar_upload" class="absolute bottom-1 right-1 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full cursor-pointer shadow-lg flex items-center justify-center" title="Change Avatar Photo">
+
+                                    <!-- Hover Camera Overlay -->
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                                        <i class="bi bi-camera-fill text-white text-lg"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Camera Badge Button -->
+                                <button type="button" 
+                                        onclick="document.getElementById('avatar_upload').click();" 
+                                        class="absolute bottom-1 right-1 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full cursor-pointer shadow-lg flex items-center justify-center border-2 border-[#0b1329] transition-transform hover:scale-110" 
+                                        title="Change Avatar Photo">
                                     <i class="bi bi-camera-fill fa fa-camera text-xs"></i>
-                                    <input type="file" id="avatar_upload" name="avatar" class="hidden d-none" accept="image/*">
-                                </label>
+                                </button>
+
+                                <!-- Hidden file input -->
+                                <input type="file" name="avatar" id="avatar_upload" accept="image/*" class="hidden">
                             </div>
 
                             <!-- Name & Handle Brief -->
@@ -648,14 +679,47 @@
 </div>
 
 <script>
-    // Automatic Form Submission on Image Change
+    // Instant JavaScript Previews (No instant reload; user sees preview first, then clicks Save)
     const coverUpload = document.getElementById('cover_upload');
     if (coverUpload) {
-        coverUpload.onchange = () => document.getElementById('profileForm').submit();
+        coverUpload.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(evt) {
+                    let banner = document.getElementById('cover_banner_box');
+                    if (banner) {
+                        banner.style.backgroundImage = 'url(' + evt.target.result + ')';
+                        banner.style.backgroundSize = 'cover';
+                        banner.style.backgroundPosition = 'center';
+                    }
+                    let imgPreview = document.getElementById('cover_preview');
+                    if (imgPreview) {
+                        imgPreview.src = evt.target.result;
+                        imgPreview.classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
     }
+
     const avatarUpload = document.getElementById('avatar_upload');
     if (avatarUpload) {
-        avatarUpload.onchange = () => document.getElementById('profileForm').submit();
+        avatarUpload.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(evt) {
+                    let preview = document.getElementById('avatar_preview');
+                    let initials = document.getElementById('avatar_initials');
+                    if (preview) {
+                        preview.src = evt.target.result;
+                        preview.classList.remove('hidden');
+                    }
+                    if (initials) initials.classList.add('hidden');
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
     }
 
     // Availability Switch Label Toggle

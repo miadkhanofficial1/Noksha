@@ -99,9 +99,7 @@ class ProfileController extends Controller
             $user->social_links = $socialLinks;
         }
 
-        if ($request->has('is_available')) {
-            $user->is_available = $request->boolean('is_available', true);
-        }
+        $user->is_available = $request->boolean('is_available');
 
         $user->save();
 
