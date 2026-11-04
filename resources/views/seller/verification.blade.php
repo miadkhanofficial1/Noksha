@@ -1,135 +1,101 @@
 @extends('layouts.app')
 
-@section('title', 'Seller Identity Verification - Noksha')
+@section('title', 'Contributor Identity Verification (KYC) - Noksha')
 
 @section('content')
 
-<!-- CUSTOM FIGMA GLASSMORPHISM VERIFICATION STYLES -->
+<!-- CUSTOM KYC VERIFICATION STYLES -->
 <style>
-    .verification-hero-section {
-        background: linear-gradient(135deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
-        position: relative;
-    }
-
-    .glass-verification-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        border-radius: 1.5rem !important;
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.15) !important;
-    }
-
-    /* Status Header Box */
-    .status-card-box {
-        border-radius: 1.25rem;
-        border: 1px solid rgba(108, 76, 241, 0.15);
-        padding: 1.5rem;
-        background: #ffffff;
-    }
-
-    /* Drag & Drop Upload Containers */
     .kyc-dropzone {
-        border: 2px dashed rgba(108, 76, 241, 0.3);
-        border-radius: 1.25rem;
-        background: rgba(108, 76, 241, 0.03);
-        padding: 2rem 1.25rem;
+        border: 2px dashed #374151;
+        border-radius: 1rem;
+        background: rgba(7, 13, 30, 0.8);
+        padding: 2rem 1.5rem;
         text-align: center;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.25s ease;
         cursor: pointer;
     }
 
     .kyc-dropzone:hover {
-        border-color: #6C4CF1;
-        background: rgba(108, 76, 241, 0.08);
+        border-color: #6366f1;
+        background: rgba(11, 19, 41, 0.95);
         transform: translateY(-2px);
-    }
-
-    .form-control-figma, .form-select-figma {
-        border-radius: 0.85rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        padding: 0.75rem 1rem !important;
-        font-size: 0.95rem;
-        background: #ffffff;
-    }
-
-    .form-control-figma:focus, .form-select-figma:focus {
-        border-color: #6C4CF1 !important;
-        box-shadow: 0 0 0 4px rgba(108, 76, 241, 0.18) !important;
-    }
-
-    .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
-        color: #ffffff !important;
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.35);
-    }
-
-    .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 14px 28px -4px rgba(108, 76, 241, 0.45);
     }
 </style>
 
-<!-- VERIFICATION HERO BANNER -->
-<section class="verification-hero-section py-4 py-lg-5 text-white">
-    <div class="container py-2">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-                <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold mb-3 border border-white border-opacity-25">
-                    <i class="bi bi-shield-check-fill me-1 text-warning"></i> Contributor Identity Verification (KYC)
-                </span>
-                <h1 class="display-5 fw-extrabold text-white mb-2">
-                    Apply to Become Contributor <span class="text-warning"></span>
-                </h1>
-                <p class="fs-6 text-white text-opacity-90 mb-0" style="max-width: 620px;">
-                    Verify your identity to earn the Contributor badge, unlock publishing permissions, and build trust as a Verified Creator on Noksha.
-                </p>
+<div class="min-h-screen bg-[#070b14] text-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+
+        <!-- Top Breadcrumbs & Page Header -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-6">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 text-xs uppercase font-semibold">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-indigo-400 hover:text-indigo-300 text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-indigo-400 hover:text-indigo-300 text-decoration-none">Dashboard</a></li>
+                        <li class="breadcrumb-item active text-gray-300" aria-current="page">KYC Verification</li>
+                    </ol>
+                </nav>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Contributor Identity Verification & Escrow Compliance</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-1">Apply to Become a Contributor</h1>
+                <p class="text-xs text-gray-400 mb-0">Verify your government identity to unlock design publishing, earn royalty payouts, and receive the Verified Author badge.</p>
             </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('dashboard') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
-                    <i class="bi bi-speedometer2 me-1"></i> Back to Dashboard
+
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-gray-300 bg-[#0b1329] border border-gray-700/80 hover:bg-[#131d36] hover:text-white transition shadow-sm">
+                    <i class="bi bi-speedometer2 text-indigo-400"></i>
+                    <span>Back to Dashboard</span>
                 </a>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- MAIN VERIFICATION CONTENT SECTION -->
-<section class="py-5" style="background-color: #F8F7FF;">
-    <div class="container py-2" style="max-width: 900px;">
-        
-
-        <!-- Session Alerts -->
+        <!-- Session Status & Alerts -->
         @if (session('warning'))
-            <div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 mb-4 border-start border-warning border-4 text-warning-emphasis d-flex align-items-center gap-2" style="background-color: rgba(245, 158, 11, 0.1);">
-                <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
-                <div class="small fw-semibold">{{ session('warning') }}</div>
+            <div class="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-2.5 font-semibold">
+                    <i class="bi bi-exclamation-triangle-fill text-amber-400 text-base"></i>
+                    <span>{{ session('warning') }}</span>
+                </div>
+                <button type="button" class="text-amber-400 hover:text-white" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="alert alert-danger border-0 shadow-sm rounded-4 p-3 mb-4 border-start border-danger border-4 text-danger d-flex align-items-center gap-2" style="background-color: rgba(239, 68, 68, 0.1);">
-                <i class="bi bi-x-circle-fill fs-5 text-danger"></i>
-                <div class="small fw-semibold">{{ session('error') }}</div>
+            <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-2.5 font-semibold">
+                    <i class="bi bi-x-circle-fill text-rose-400 text-base"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+                <button type="button" class="text-rose-400 hover:text-white" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
         @endif
 
         @if (session('success'))
-            <div class="alert alert-success border-0 shadow-sm rounded-4 p-3 mb-4 border-start border-success border-4 text-success d-flex align-items-center gap-2" style="background-color: rgba(16, 185, 129, 0.1);">
-                <i class="bi bi-check-circle-fill fs-5 text-success"></i>
-                <div class="small fw-semibold">{{ session('success') }}</div>
+            <div class="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-2.5 font-semibold">
+                    <i class="bi bi-check-circle-fill text-emerald-400 text-base"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+                <button type="button" class="text-emerald-400 hover:text-white" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
         @endif
 
-        <!-- Validation Error Summary -->
         @if (isset($errors) && $errors->any())
-            <div class="alert alert-danger border-0 shadow-sm rounded-4 p-4 mb-4 bg-white text-danger border-start border-danger border-4">
-                <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i> Please fix the errors below:</h6>
-                <ul class="mb-0 small ps-3">
+            <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs shadow-lg">
+                <div class="flex items-center gap-2 font-bold mb-1">
+                    <i class="bi bi-exclamation-triangle-fill text-rose-400 text-base"></i>
+                    <span>Please correct the errors below:</span>
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-slate-300 mt-2">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -138,289 +104,363 @@
         @endif
 
         <!-- VERIFICATION STATUS CARD -->
-        <div class="status-card-box shadow-sm mb-4">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                <div class="d-flex align-items-center gap-3">
+        <div class="bg-[#0b1329] border border-gray-800 rounded-2xl p-6 mb-6 shadow-xl">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-4">
                     @if(isset($verification) && $verification->status === 'approved')
-                        <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle fs-3">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-2xl flex-shrink-0 border border-emerald-500/30">
                             <i class="bi bi-patch-check-fill"></i>
                         </div>
                         <div>
-                            <span class="badge bg-success text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
+                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold inline-block mb-1">
                                 <i class="bi bi-check-circle-fill me-1"></i> Contributor Approved ✓
                             </span>
-                            <h5 class="fw-bold text-dark mb-0">Verified Creator Status Activated</h5>
-                            <p class="text-secondary extra-small mb-0">
+                            <h4 class="text-base font-bold text-white mb-0.5">Verified Creator Status Activated</h4>
+                            <p class="text-xs text-gray-400 mb-0">
                                 Verified on {{ $verification->reviewed_at ? $verification->reviewed_at->format('M d, Y') : $verification->updated_at->format('M d, Y') }}. Creator publishing tools unlocked!
                             </p>
                         </div>
                     @elseif(isset($verification) && $verification->status === 'pending')
-                        <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-circle fs-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-2xl flex-shrink-0 border border-amber-500/30">
                             <i class="bi bi-clock-history"></i>
                         </div>
                         <div>
-                            <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fw-bold mb-1">
+                            <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold inline-block mb-1">
                                 <i class="bi bi-hourglass-split me-1"></i> Pending Approval
                             </span>
-                            <h5 class="fw-bold text-dark mb-0">Application Under Compliance Review</h5>
-                            <p class="text-secondary extra-small mb-0">
-                                Submitted on {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y') }}. Our compliance team is verifying your NID/Passport & selfie.
+                            <h4 class="text-base font-bold text-white mb-0.5">Application Under Compliance Review</h4>
+                            <p class="text-xs text-gray-400 mb-0">
+                                Submitted on {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y') }}. Compliance team is verifying your NID/Passport & selfie.
                             </p>
                         </div>
                     @elseif(auth()->user()->isKycRejectedInCooldown())
-                        <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle fs-3">
+                        <div class="w-12 h-12 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center text-2xl flex-shrink-0 border border-rose-500/30">
                             <i class="bi bi-shield-x"></i>
                         </div>
                         <div>
-                            <span class="badge bg-danger text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
+                            <span class="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-full text-xs font-semibold inline-block mb-1">
                                 <i class="bi bi-shield-x me-1"></i> 7-Day Resubmission Cooldown
                             </span>
-                            <h5 class="fw-bold text-dark mb-1">{{ __('dashboard.kyc_cooldown_title') }}</h5>
-                            <p class="text-danger small mb-1 fw-bold">
+                            <h4 class="text-base font-bold text-white mb-0.5">{{ __('dashboard.kyc_cooldown_title') }}</h4>
+                            <p class="text-xs text-rose-400 font-semibold mb-0">
                                 Reason: {{ auth()->user()->getKycRejectionReason() }}
-                            </p>
-                            <p class="text-secondary extra-small mb-0">
-                                Reapplication unlocks after <strong>{{ auth()->user()->getKycCooldownRemainingDate() }}</strong>.
                             </p>
                         </div>
                     @elseif(isset($verification) && $verification->status === 'rejected')
-                        <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle fs-3">
+                        <div class="w-12 h-12 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center text-2xl flex-shrink-0 border border-rose-500/30">
                             <i class="bi bi-x-circle-fill"></i>
                         </div>
                         <div>
-                            <span class="badge bg-danger text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
+                            <span class="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-full text-xs font-semibold inline-block mb-1">
                                 <i class="bi bi-x-circle-fill me-1"></i> Declined / Resubmission Allowed
                             </span>
-                            <h5 class="fw-bold text-dark mb-0">Verification Declined</h5>
-                            <p class="text-secondary extra-small mb-0">
+                            <h4 class="text-base font-bold text-white mb-0.5">Verification Declined</h4>
+                            <p class="text-xs text-rose-400 mb-0">
                                 {{ auth()->user()->getKycRejectionReason() }}
                             </p>
                         </div>
                     @else
-                        <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-circle fs-3">
-                            <i class="bi bi-shield-exclamation"></i>
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-2xl flex-shrink-0 border border-indigo-500/30">
+                            <i class="bi bi-shield-lock-fill"></i>
                         </div>
                         <div>
-                            <span class="badge bg-secondary text-white rounded-pill px-3 py-1.5 fw-bold mb-1">
-                                <i class="bi bi-info-circle-fill me-1"></i> Not Submitted
+                            <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-semibold inline-block mb-1">
+                                <i class="bi bi-info-circle-fill me-1"></i> Application Ready
                             </span>
-                            <h5 class="fw-bold text-dark mb-0">Apply to Become a Contributor</h5>
-                            <p class="text-secondary extra-small mb-0">Please submit your official identity details and selfie below.</p>
+                            <h4 class="text-base font-bold text-white mb-0.5">Submit Identity Credentials</h4>
+                            <p class="text-xs text-gray-400 mb-0">Please submit your official government ID details and verification selfie below.</p>
                         </div>
                     @endif
                 </div>
 
-                <div class="text-end">
-                    <span class="small fw-bold text-muted d-block mb-1">Security Standard</span>
-                    <span class="badge bg-light text-primary border rounded-pill px-3 py-1.5 fw-bold">Local Encrypted KYC Storage</span>
+                <div class="text-right">
+                    <span class="text-[11px] font-bold text-gray-400 block mb-1 uppercase tracking-wider">Security Standard</span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#070d1e] text-indigo-400 border border-gray-700/60 text-xs font-mono">
+                        <i class="bi bi-lock-fill text-emerald-400"></i> Encrypted Storage
+                    </span>
                 </div>
             </div>
         </div>
 
         @if(auth()->user()->isKycRejectedInCooldown())
             <!-- COOLDOWN ACTIVE CARD -->
-            <div class="card glass-verification-card p-4 p-md-5 text-center border-danger border-opacity-30">
-                <div class="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto mb-3.5 fs-1" style="width: 64px; height: 64px; margin: 0 auto;">
+            <div class="bg-[#0b1329] border border-rose-500/30 rounded-2xl p-8 text-center shadow-2xl">
+                <div class="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center mx-auto mb-4 text-3xl border border-rose-500/20">
                     <i class="bi bi-shield-x"></i>
                 </div>
-                <h4 class="fw-extrabold text-dark mb-2">
+                <h3 class="text-xl font-bold text-white mb-2">
                     {{ __('dashboard.kyc_cooldown_title') }}
-                </h4>
-                <p class="text-secondary small mb-4" style="max-width: 560px; margin: 0 auto;">
+                </h3>
+                <p class="text-xs text-gray-400 mb-6 max-w-lg mx-auto">
                     {{ __('dashboard.kyc_cooldown_desc', ['reason' => auth()->user()->getKycRejectionReason(), 'date' => auth()->user()->getKycCooldownRemainingDate()]) }}
                 </p>
-                <div class="p-3.5 bg-light rounded-3 text-start small border mb-4" style="max-width: 480px; margin: 0 auto;">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Rejection Feedback:</span>
-                        <span class="fw-bold text-danger">{{ auth()->user()->getKycRejectionReason() }}</span>
+                <div class="p-4 bg-[#070d1e] rounded-xl border border-rose-500/20 text-left text-xs mb-6 max-w-md mx-auto space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Rejection Feedback:</span>
+                        <span class="font-bold text-rose-400">{{ auth()->user()->getKycRejectionReason() }}</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Status:</span>
-                        <span class="badge bg-danger bg-opacity-15 text-danger fw-bold">7-Day Resubmission Cooldown</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Status:</span>
+                        <span class="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[11px] font-semibold">7-Day Lock Active</span>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">Reapplication Unlocks:</span>
-                        <span class="fw-bold text-dark font-mono">{{ auth()->user()->getKycCooldownRemainingDate() }}</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Reapplication Unlocks:</span>
+                        <span class="font-bold text-white font-mono">{{ auth()->user()->getKycCooldownRemainingDate() }}</span>
                     </div>
                 </div>
                 <div>
-                    <a href="{{ route('dashboard') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                        &larr; Return to Dashboard
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition shadow-lg shadow-indigo-600/20">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Return to Dashboard</span>
                     </a>
                 </div>
             </div>
         @else
-            <!-- GLASSMORPHISM VERIFICATION FORM (Option 1B Synced) -->
-            <div class="card glass-verification-card p-4 p-md-5">
+            <!-- MODERN KYC SUBMISSION FORM -->
+            <div class="bg-[#0b1329] border border-gray-800 rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto shadow-2xl mb-8">
                 <form action="{{ route('seller.verification.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <!-- SECTION 1: PERSONAL IDENTITY -->
-                    <div class="mb-5">
-                        <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                            <i class="bi bi-person-vcard-fill text-primary"></i> Identity Information
-                        </h5>
-                        <p class="text-secondary small mb-4">Provide your legal details as printed on your government identity card.</p>
+                    <div class="mb-8">
+                        <div class="mb-5 pb-3 border-b border-gray-800">
+                            <div class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                                <i class="bi bi-person-vcard-fill text-indigo-400"></i>
+                                <span>1. Personal Identity Details</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Provide your legal credentials as registered on your official government identification card.</p>
+                        </div>
 
-                        <div class="row g-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <!-- Full Name -->
-                            <div class="col-12 col-md-6">
-                                <label for="full_name" class="form-label fw-bold text-dark small">Full Legal Name <span class="text-danger">*</span></label>
-                                <input type="text" name="full_name" id="full_name" class="form-control form-control-figma @error('full_name') is-invalid @enderror" placeholder="Legal full name" value="{{ old('full_name', $verification->full_name ?? auth()->user()->name) }}" required>
+                            <div>
+                                <label for="full_name" class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2">
+                                    Full Legal Name <span class="text-rose-400">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="full_name" 
+                                       id="full_name" 
+                                       class="w-full bg-[#070d1e] border border-gray-800 text-gray-200 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm transition-all duration-200 @error('full_name') border-rose-500 @enderror" 
+                                       placeholder="Legal full name" 
+                                       value="{{ old('full_name', $verification->full_name ?? auth()->user()->name) }}" 
+                                       required>
                                 @error('full_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="text-rose-400 text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Phone / WhatsApp -->
-                            <div class="col-12 col-md-6">
-                                <label for="phone" class="form-label fw-bold text-dark small">Phone / WhatsApp Number <span class="text-danger">*</span></label>
-                                <input type="text" name="phone" id="phone" class="form-control form-control-figma @error('phone') is-invalid @enderror" placeholder="01XXXXXXXXX" value="{{ old('phone', auth()->user()->phone) }}" required>
+                            <div>
+                                <label for="phone" class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2">
+                                    Phone / WhatsApp Number <span class="text-rose-400">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="phone" 
+                                       id="phone" 
+                                       class="w-full bg-[#070d1e] border border-gray-800 text-gray-200 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm transition-all duration-200 @error('phone') border-rose-500 @enderror" 
+                                       placeholder="01XXXXXXXXX" 
+                                       value="{{ old('phone', auth()->user()->phone) }}" 
+                                       required>
                                 @error('phone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="text-rose-400 text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- National ID / Passport Number -->
-                            <div class="col-12 col-md-6">
-                                <label for="id_number" class="form-label fw-bold text-dark small">National ID / Passport Number <span class="text-danger">*</span></label>
-                                <input type="text" name="id_number" id="id_number" class="form-control form-control-figma @error('id_number') is-invalid @enderror" placeholder="e.g. 199XXXXXXXXXX or Passport Number" value="{{ old('id_number', $verification->id_number ?? '') }}" required>
+                            <div>
+                                <label for="id_number" class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2">
+                                    National ID / Passport Number <span class="text-rose-400">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="id_number" 
+                                       id="id_number" 
+                                       class="w-full bg-[#070d1e] border border-gray-800 text-gray-200 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-mono transition-all duration-200 @error('id_number') border-rose-500 @enderror" 
+                                       placeholder="e.g. 199XXXXXXXXXX or Passport Number" 
+                                       value="{{ old('id_number', $verification->id_number ?? '') }}" 
+                                       required>
                                 @error('id_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="text-rose-400 text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Portfolio Link -->
-                            <div class="col-12 col-md-6">
-                                <label for="portfolio_link" class="form-label fw-bold text-dark small">Portfolio Link <span class="text-danger">*</span></label>
-                                <input type="url" name="portfolio_link" id="portfolio_link" class="form-control form-control-figma @error('portfolio_link') is-invalid @enderror" placeholder="https://behance.net/... or https://dribbble.com/..." value="{{ old('portfolio_link', $verification->portfolio_link ?? '') }}" required>
+                            <div>
+                                <label for="portfolio_link" class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2">
+                                    Portfolio Link <span class="text-rose-400">*</span>
+                                </label>
+                                <input type="url" 
+                                       name="portfolio_link" 
+                                       id="portfolio_link" 
+                                       class="w-full bg-[#070d1e] border border-gray-800 text-gray-200 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm transition-all duration-200 @error('portfolio_link') border-rose-500 @enderror" 
+                                       placeholder="https://behance.net/... or https://dribbble.com/..." 
+                                       value="{{ old('portfolio_link', $verification->portfolio_link ?? '') }}" 
+                                       required>
                                 @error('portfolio_link')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="text-rose-400 text-xs mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Government ID Type -->
+                            <div class="md:col-span-2">
+                                <label for="document_type" class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-2">
+                                    Government ID Document Type <span class="text-rose-400">*</span>
+                                </label>
+                                <select name="document_type" 
+                                        id="document_type" 
+                                        class="w-full bg-[#070d1e] border border-gray-800 text-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm transition-all duration-200 @error('document_type') border-rose-500 @enderror" 
+                                        required>
+                                    <option value="nid" {{ old('document_type', $verification->document_type ?? 'nid') == 'nid' ? 'selected' : '' }}>NID Card (National Identity Card)</option>
+                                    <option value="passport" {{ old('document_type', $verification->document_type ?? '') == 'passport' ? 'selected' : '' }}>International Passport</option>
+                                    <option value="driving_license" {{ old('document_type', $verification->document_type ?? '') == 'driving_license' ? 'selected' : '' }}>Driving License</option>
+                                </select>
+                                @error('document_type')
+                                    <div class="text-rose-400 text-xs mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                     </div>
 
-                        <!-- Government ID Type -->
-                        <div class="col-12 col-md-6">
-                            <label for="document_type" class="form-label fw-bold text-dark small">Government ID Document <span class="text-danger">*</span></label>
-                            <select name="document_type" id="document_type" class="form-select form-select-figma @error('document_type') is-invalid @enderror" required>
-                                <option value="nid" {{ old('document_type', $verification->document_type ?? 'nid') == 'nid' ? 'selected' : '' }}>NID Card (National ID)</option>
-                                <option value="passport" {{ old('document_type', $verification->document_type ?? '') == 'passport' ? 'selected' : '' }}>International Passport</option>
-                                <option value="driving_license" {{ old('document_type', $verification->document_type ?? '') == 'driving_license' ? 'selected' : '' }}>Driving License</option>
-                            </select>
-                            @error('document_type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <!-- SECTION 2: GOVERNMENT ID DOCUMENT UPLOAD -->
+                    <div class="mb-8">
+                        <div class="mb-4 pb-3 border-b border-gray-800">
+                            <div class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                                <i class="bi bi-file-earmark-person-fill text-indigo-400"></i>
+                                <span>2. Government Identity Document File</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Upload clear front & back scan of NID, Passport, or Driving License.</p>
                         </div>
+
+                        <div class="kyc-dropzone group" onclick="document.getElementById('document_file').click();">
+                            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 text-2xl group-hover:scale-110 transition-transform">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                            </div>
+                            <h5 class="text-sm font-bold text-white mb-1">Click or Drag Government ID File Here</h5>
+                            <p class="text-xs text-gray-400 mb-3">Allowed Formats: <span class="text-indigo-400 font-mono font-semibold">.PDF, .JPG, .PNG max 10MB</span></p>
+                            <div>
+                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#070d1e] text-indigo-300 border border-indigo-500/30 text-xs font-semibold" id="docFileName">
+                                    <i class="bi bi-paperclip"></i>
+                                    <span>{{ isset($verification->document_file) ? 'Replace Document File' : 'Choose Document File' }}</span>
+                                </span>
+                            </div>
+                            <input type="file" 
+                                   name="document_file" 
+                                   id="document_file" 
+                                   class="hidden" 
+                                   accept=".jpg,.jpeg,.png,.pdf" 
+                                   {{ isset($verification) ? '' : 'required' }} 
+                                   onchange="document.getElementById('docFileName').querySelector('span').textContent = this.files[0].name">
+                        </div>
+                        @error('document_file')
+                            <div class="text-rose-400 text-xs mt-1.5">{{ $message }}</div>
+                        @enderror
                     </div>
-                </div>
 
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 2: GOVERNMENT ID DOCUMENT UPLOAD -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-file-earmark-person-fill text-primary"></i> Government ID Upload
-                    </h5>
-                    <p class="text-secondary small mb-4">Upload NID, Passport, or Driving License document (JPG, PNG, PDF max 10MB).</p>
-
-                    <div class="kyc-dropzone" onclick="document.getElementById('document_file').click();">
-                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 54px; height: 54px;">
-                            <i class="bi bi-cloud-arrow-up fs-3"></i>
+                    <!-- SECTION 3: SELFIE PHOTO UPLOAD -->
+                    <div class="mb-8">
+                        <div class="mb-4 pb-3 border-b border-gray-800">
+                            <div class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                                <i class="bi bi-camera-fill text-indigo-400"></i>
+                                <span>3. Face Verification Selfie</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Upload a clear photo of your face holding your identity card next to you.</p>
                         </div>
-                        <h6 class="fw-bold text-dark mb-1">Click or Drag Government ID File Here</h6>
-                        <p class="text-muted extra-small mb-2">Allowed Formats: JPG, PNG, PDF (Max 10MB)</p>
-                        <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="docFileName">
-                            {{ isset($verification->document_file) ? 'Replace Document File' : 'Choose Document File' }}
+
+                        <div class="kyc-dropzone group" onclick="document.getElementById('selfie_file').click();">
+                            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 text-2xl group-hover:scale-110 transition-transform">
+                                <i class="bi bi-person-bounding-box"></i>
+                            </div>
+                            <h5 class="text-sm font-bold text-white mb-1">Click or Drag Selfie Photo Here</h5>
+                            <p class="text-xs text-gray-400 mb-3">Allowed Formats: <span class="text-indigo-400 font-mono font-semibold">.JPG, .PNG max 5MB</span></p>
+                            <div>
+                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#070d1e] text-indigo-300 border border-indigo-500/30 text-xs font-semibold" id="selfieFileName">
+                                    <i class="bi bi-camera"></i>
+                                    <span>{{ isset($verification->selfie_file) ? 'Replace Selfie Photo' : 'Choose Selfie Photo' }}</span>
+                                </span>
+                            </div>
+                            <input type="file" 
+                                   name="selfie_file" 
+                                   id="selfie_file" 
+                                   class="hidden" 
+                                   accept="image/*" 
+                                   {{ isset($verification) ? '' : 'required' }} 
+                                   onchange="document.getElementById('selfieFileName').querySelector('span').textContent = this.files[0].name">
+                        </div>
+                        @error('selfie_file')
+                            <div class="text-rose-400 text-xs mt-1.5">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- SECTION 4: VIDEO VERIFICATION (MAX 15 SECONDS) -->
+                    <div class="mb-8">
+                        <div class="mb-4 pb-3 border-b border-gray-800">
+                            <div class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                                <i class="bi bi-record-circle-fill text-indigo-400"></i>
+                                <span>4. Verification Video Clip</span>
+                                <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-400 border border-gray-700/60 font-normal">Optional / Max 15s</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Upload a short 5–15 second selfie video confirming your author identity.</p>
+                        </div>
+
+                        <div class="kyc-dropzone group" onclick="document.getElementById('video_file').click();">
+                            <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 text-2xl group-hover:scale-110 transition-transform">
+                                <i class="bi bi-file-earmark-play"></i>
+                            </div>
+                            <h5 class="text-sm font-bold text-white mb-1">Click or Drag Video File Here</h5>
+                            <p class="text-xs text-gray-400 mb-3">Allowed Formats: <span class="text-indigo-400 font-mono font-semibold">.MP4, .WEBM max 15 sec / 50MB</span></p>
+                            <div>
+                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#070d1e] text-indigo-300 border border-indigo-500/30 text-xs font-semibold" id="videoFileName">
+                                    <i class="bi bi-play-circle"></i>
+                                    <span>{{ isset($verification->video_file) ? 'Replace Video File' : 'Choose Video File' }}</span>
+                                </span>
+                            </div>
+                            <input type="file" 
+                                   name="video_file" 
+                                   id="video_file" 
+                                   class="hidden" 
+                                   accept="video/mp4,video/webm" 
+                                   onchange="document.getElementById('videoFileName').querySelector('span').textContent = this.files[0].name">
+                        </div>
+                        @error('video_file')
+                            <div class="text-rose-400 text-xs mt-1.5">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- SECTION 5: AGREEMENT CHECKBOX & SUBMISSION -->
+                    <div class="mb-6">
+                        <div class="p-4 bg-[#070d1e] rounded-xl border border-gray-800 flex items-start gap-3">
+                            <input class="w-5 h-5 accent-indigo-600 rounded cursor-pointer mt-0.5 flex-shrink-0" 
+                                   type="checkbox" 
+                                   name="agreement" 
+                                   id="agreement" 
+                                   value="1" 
+                                   required>
+                            <label class="text-xs font-semibold text-gray-300 cursor-pointer leading-relaxed" for="agreement">
+                                I confirm under penalty of account suspension that all submitted identity information and government document scans are genuine, accurate, and legally belong to me.
+                            </label>
+                        </div>
+                        @error('agreement')
+                            <div class="text-rose-400 text-xs mt-1.5">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <span class="text-xs text-gray-400 flex items-center gap-1.5">
+                            <i class="bi bi-shield-lock-fill text-emerald-400"></i>
+                            <span>Protected by Noksha Compliance & Encryption Protocols.</span>
                         </span>
-                        <input type="file" name="document_file" id="document_file" class="d-none" accept=".jpg,.jpeg,.png,.pdf" {{ isset($verification) ? '' : 'required' }} onchange="document.getElementById('docFileName').textContent = this.files[0].name">
+
+                        <button type="submit" 
+                                class="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3.5 px-8 rounded-xl shadow-lg shadow-indigo-600/30 transition transform active:scale-[0.99] text-sm flex items-center justify-center gap-2">
+                            <i class="bi bi-shield-check text-base"></i>
+                            <span>Submit Verification Application</span>
+                        </button>
                     </div>
-                    @error('document_file')
-                        <div class="text-danger small mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
 
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 3: SELFIE PHOTO UPLOAD -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-camera-fill text-primary"></i> Selfie Photo Upload
-                    </h5>
-                    <p class="text-secondary small mb-4">Please upload a clear selfie holding your NID card next to your face for identity verification.</p>
-
-                    <div class="kyc-dropzone" onclick="document.getElementById('selfie_file').click();">
-                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 54px; height: 54px;">
-                            <i class="bi bi-person-bounding-box fs-3"></i>
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">Click or Drag Selfie Photo Here</h6>
-                        <p class="text-muted extra-small mb-2">Allowed Formats: JPG, PNG (Max 5MB)</p>
-                        <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="selfieFileName">
-                            {{ isset($verification->selfie_file) ? 'Replace Selfie Photo' : 'Choose Selfie Photo' }}
-                        </span>
-                        <input type="file" name="selfie_file" id="selfie_file" class="d-none" accept="image/*" {{ isset($verification) ? '' : 'required' }} onchange="document.getElementById('selfieFileName').textContent = this.files[0].name">
-                    </div>
-                    @error('selfie_file')
-                        <div class="text-danger small mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 4: VIDEO VERIFICATION (MAX 15 SECONDS) -->
-                <div class="mb-5">
-                    <h5 class="fw-extrabold text-dark mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-record-circle-fill text-primary"></i> Video Upload <span class="badge bg-light text-muted border font-monospace extra-small ms-1">Optional / Max 15s</span>
-                    </h5>
-                    <p class="text-secondary small mb-4">Upload a short 5–15 second selfie video (MP4, WEBM max 15 seconds / 50MB).</p>
-
-                    <div class="kyc-dropzone" onclick="document.getElementById('video_file').click();">
-                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 54px; height: 54px;">
-                            <i class="bi bi-file-earmark-play fs-3"></i>
-                        </div>
-                        <h6 class="fw-bold text-dark mb-1">Click or Drag Video File Here</h6>
-                        <p class="text-muted extra-small mb-2">Allowed Format: MP4 (Max 15 sec / 50MB)</p>
-                        <span class="badge bg-white text-primary border rounded-pill px-3 py-1 small fw-bold" id="videoFileName">
-                            {{ isset($verification->video_file) ? 'Replace Video File' : 'Choose Video File' }}
-                        </span>
-                        <input type="file" name="video_file" id="video_file" class="d-none" accept="video/mp4,video/webm" onchange="document.getElementById('videoFileName').textContent = this.files[0].name">
-                    </div>
-                    @error('video_file')
-                        <div class="text-danger small mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <hr class="my-4 opacity-10">
-
-                <!-- SECTION 5: AGREEMENT CHECKBOX & SUBMISSION -->
-                <div class="mb-4">
-                    <div class="form-check p-3 bg-light rounded-3 border">
-                        <input class="form-check-input ms-0 me-2" type="checkbox" name="agreement" id="agreement" value="1" required>
-                        <label class="form-check-label fw-bold text-dark small" for="agreement">
-                            I confirm that all submitted information and documents are accurate and legally belong to me.
-                        </label>
-                    </div>
-                    @error('agreement')
-                        <div class="text-danger small mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 pt-3 border-top">
-                    <span class="extra-small text-muted">
-                        <i class="bi bi-lock-fill text-success me-1"></i> Data stored locally using Laravel Storage security policies.
-                    </span>
-
-                    <button type="submit" class="btn btn-purple-cta btn-lg rounded-pill px-5 py-3 fw-bold w-100 w-sm-auto">
-                        <i class="bi bi-shield-check me-2"></i> Submit Verification Application
-                    </button>
-                </div>
-
-            </form>
-        </div>
+                </form>
+            </div>
         @endif
 
     </div>
-</section>
+</div>
 
 @endsection
