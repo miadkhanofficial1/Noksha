@@ -66,3 +66,4 @@ class RegistrationOtpMail extends Mailable
         return [];
     }
 }
+
