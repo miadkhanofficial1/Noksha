@@ -40,45 +40,108 @@ class ResourceController extends Controller
                 ->with('error', 'Contributor KYC verification required. Please apply to unlock Creator Studio and upload privileges.');
         }
 
-        // Strict Server-Side Validation
+        // Normalize aliases for category
+        $categoryId = $request->input('category_id');
+        if (!$categoryId && $request->filled('category')) {
+            $cat = Category::where('id', $request->input('category'))
+                ->orWhere('name', $request->input('category'))
+                ->orWhere('slug', $request->input('category'))
+                ->first();
+            $categoryId = $cat?->id;
+        }
+        if (!$categoryId) {
+            $categoryId = Category::first()?->id ?? 1;
+        }
+        $request->merge(['category_id' => $categoryId]);
+
+        // Normalize aliases for dimensions
+        $dimensions = $request->input('dimensions') ?? $request->input('size_dimensions');
+        if (!empty($dimensions)) {
+            $request->merge([
+                'dimensions' => $dimensions,
+                'size_dimensions' => $dimensions,
+            ]);
+        }
+
+        // Resolve cover preview image file (supports 'cover_image' or 'preview_image')
+        $coverFile = $request->file('cover_image') ?? $request->file('preview_image');
+
+        // Resolve archive package file (supports 'zip_file', 'resource_file', or 'file')
+        $zipFile = $request->file('zip_file') ?? $request->file('resource_file') ?? $request->file('file');
+
+        // Validate text & scalar inputs
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
-            'description' => ['required', 'string'],
-            'color' => ['nullable', 'string', 'max:100'],
-            'extensions' => ['nullable'], // Array or string of selected extensions
-            'tags' => ['nullable', 'string'],
+            'description' => ['required', 'string', 'max:2000'],
+            'dimensions' => ['required', 'string', 'max:150'],
             'size_dimensions' => ['required', 'string', 'max:150'],
-            'preview_image' => ['required', 'file', 'mimes:jpeg,png,jpg,webp', 'max:10240'], // Max 10MB
-            'resource_file' => [
-                'required',
-                'file',
-                'extensions:zip',
-                'max:102400', // Max 100MB
-            ],
+            'color' => ['nullable', 'string', 'max:100'],
+            'extensions' => ['nullable'],
+            'tags' => ['nullable', 'string'],
             'is_paid' => ['nullable'],
-            'price' => [$request->boolean('is_paid') ? 'required' : 'nullable', 'numeric', 'min:0'],
+            'price' => ['nullable', 'numeric', 'min:0'],
             'status_toggle' => ['nullable', 'string'],
             'demo_link' => ['nullable', 'url', 'max:255'],
             'requirements' => ['nullable', 'string'],
         ], [
             'title.required' => 'Resource title is required.',
             'category_id.required' => 'Please select a category.',
+            'category_id.exists' => 'Selected category is invalid.',
             'description.required' => 'Design description is required.',
+            'description.max' => 'Design description cannot exceed 2000 characters.',
+            'dimensions.required' => 'Design format / dimensions are required.',
             'size_dimensions.required' => 'Design format / dimensions are required.',
-            'preview_image.required' => 'Cover preview image is required.',
-            'preview_image.mimes' => 'Preview image must be JPG, PNG, or WEBP format.',
-            'preview_image.max' => 'Preview image size cannot exceed 10MB.',
-            'resource_file.required' => 'Original design package .ZIP file is required.',
-            'resource_file.extensions' => 'Uploaded package must strictly be a valid .ZIP archive.',
-            'resource_file.max' => 'ZIP package size cannot exceed 100MB.',
-            'price.required' => 'Price is required for premium assets.',
+            'price.numeric' => 'Price must be a valid number.',
         ]);
 
+        // Validate Cover Preview Image
+        if (!$coverFile || !$coverFile->isValid()) {
+            return back()->withErrors([
+                'cover_image' => 'Cover preview image is required.',
+                'preview_image' => 'Cover preview image is required.',
+            ])->withInput();
+        }
+        $allowedImageMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+        if (!in_array($coverFile->getMimeType(), $allowedImageMimes)) {
+            return back()->withErrors([
+                'cover_image' => 'Cover preview image must be JPG, PNG, or WEBP format.',
+                'preview_image' => 'Cover preview image must be JPG, PNG, or WEBP format.',
+            ])->withInput();
+        }
+        if ($coverFile->getSize() > 10 * 1024 * 1024) {
+            return back()->withErrors([
+                'cover_image' => 'Cover preview image size cannot exceed 10MB.',
+                'preview_image' => 'Cover preview image size cannot exceed 10MB.',
+            ])->withInput();
+        }
+
+        // Validate Original Design Package Archive (.ZIP / .RAR)
+        if (!$zipFile || !$zipFile->isValid()) {
+            return back()->withErrors([
+                'zip_file' => 'Original design package .ZIP file is required.',
+                'resource_file' => 'Original design package .ZIP file is required.',
+                'file' => 'Original design package .ZIP file is required.',
+            ])->withInput();
+        }
+        $zipExt = strtolower($zipFile->getClientOriginalExtension());
+        if (!in_array($zipExt, ['zip', 'rar', '7z', 'tar', 'gz'])) {
+            return back()->withErrors([
+                'zip_file' => 'Uploaded package must strictly be a valid .ZIP archive.',
+                'resource_file' => 'Uploaded package must strictly be a valid .ZIP archive.',
+                'file' => 'Uploaded package must strictly be a valid .ZIP archive.',
+            ])->withInput();
+        }
+        if ($zipFile->getSize() > 100 * 1024 * 1024) {
+            return back()->withErrors([
+                'zip_file' => 'ZIP package size cannot exceed 100MB.',
+                'resource_file' => 'ZIP package size cannot exceed 100MB.',
+            ])->withInput();
+        }
+
         // Process File Storage
-        $disk = config('filesystems.default', 'public');
-        $previewPath = $request->file('preview_image')->store('previews', ['disk' => $disk, 'visibility' => 'public']);
-        $filePath = $request->file('resource_file')->store('resources', ['disk' => $disk, 'visibility' => 'public']);
+        $previewPath = $coverFile->store('templates/covers', 'public');
+        $filePath = $zipFile->store('templates/packages', 'public');
 
         // Process File Extensions
         $extensionsSelected = $request->input('extensions');
@@ -87,11 +150,11 @@ class ResourceController extends Controller
         } else {
             $extensionsStr = (string) $extensionsSelected;
         }
-        $fileType = !empty($extensionsStr) ? strtoupper($extensionsStr) : 'ZIP';
+        $fileType = !empty($extensionsStr) ? strtoupper($extensionsStr) : strtoupper($zipExt ?: 'ZIP');
 
         // Process Formatted Requirements & Specs
         $color = $request->input('color', '#6C4CF1');
-        $size = $validated['size_dimensions'];
+        $size = $validated['dimensions'];
         $extraReq = $request->input('requirements', '');
         $combinedRequirements = "Size: {$size} | Color: {$color} | Extensions: {$fileType}" . ($extraReq ? " | {$extraReq}" : "");
 
@@ -116,11 +179,12 @@ class ResourceController extends Controller
         $slug = $baseSlug . '-' . Str::random(6);
 
         // Pricing logic
-        $isPaid = $request->boolean('is_paid');
-        $price = $isPaid ? (float) ($validated['price'] ?? 0.00) : 0.00;
+        $rawPrice = (float) ($request->input('price', 0));
+        $isPaid = $request->boolean('is_paid') || $rawPrice > 0;
+        $price = $isPaid ? $rawPrice : 0.00;
 
-        // Status logic: active ('pending' moderation) or 'inactive'
-        $status = ($request->input('status_toggle') === 'inactive') ? 'inactive' : 'pending';
+        // Status logic: active ('approved') or 'inactive'
+        $status = ($request->input('status_toggle') === 'inactive') ? 'inactive' : 'approved';
 
         // Create Resource record
         $resource = Resource::create([
@@ -145,8 +209,8 @@ class ResourceController extends Controller
         // Send Notification to Contributor
         Notification::send(
             auth()->id(),
-            'Design Upload Submitted',
-            "Your design \"{$resource->title}\" was uploaded successfully and is pending admin moderation.",
+            'Design Upload Published',
+            "Your design \"{$resource->title}\" was published successfully!",
             'seller',
             route('seller.dashboard') . '#designs'
         );
@@ -156,15 +220,15 @@ class ResourceController extends Controller
         foreach ($adminUsers as $admin) {
             Notification::send(
                 $admin->id,
-                'New Resource Awaiting Moderation',
-                "Contributor " . auth()->user()->name . " uploaded a new design \"{$resource->title}\".",
+                'New Resource Published',
+                "Contributor " . auth()->user()->name . " published a new design \"{$resource->title}\".",
                 'admin',
                 route('admin.resources.index')
             );
         }
 
         return redirect()->route('dashboard', ['mode' => 'seller', 'tab' => 'designs'])
-            ->with('success', '✨ Your design was uploaded successfully! It is currently awaiting admin moderation.');
+            ->with('success', '✨ Your design was uploaded and published successfully!');
     }
 
     /**

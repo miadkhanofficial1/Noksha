@@ -276,6 +276,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('EnsureApprovedContributor')->group(function () {
         Route::get('/resource/upload', [ResourceController::class, 'create'])->name('resource.create');
         Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
+        Route::post('/creator/assets', [ResourceController::class, 'store'])->name('creator.assets.store');
+        Route::post('/templates', [TemplateController::class, 'store'])->name('templates.store');
         Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
         Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
         Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');

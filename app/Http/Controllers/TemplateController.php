@@ -77,6 +77,14 @@ class TemplateController extends Controller
     }
 
     /**
+     * Store a newly created template / asset in storage.
+     */
+    public function store(Request $request)
+    {
+        return app(ResourceController::class)->store($request);
+    }
+
+    /**
      * Show single template.
      */
     public function show(string $id)
