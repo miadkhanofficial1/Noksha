@@ -217,64 +217,44 @@
         @endif
 
         <!-- MAIN PROFILE FORM -->
-        <form action="{{ route('settings.profile.update') }}" method="POST" enctype="multipart/form-data" id="profileForm">
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" id="profileForm">
             @csrf
-            @method('PUT')
 
             <!-- SECTION 1: COVER & AVATAR PREVIEWS -->
             <div class="bg-[#0b1329]/90 border border-gray-800/80 rounded-2xl shadow-xl backdrop-blur-md mb-8 overflow-hidden">
-                <!-- Cover Banner Area -->
-                <div class="settings-cover-wrapper position-relative" id="coverBannerArea">
-                    @php
-                        $coverSrc = $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : $user->cover_url;
-                    @endphp
-                    @if($coverSrc)
-                        <img src="{{ $coverSrc }}" alt="Cover" class="settings-cover-img" id="coverPreviewImg">
-                    @else
-                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white/70" id="coverDefaultBg">
-                            <span class="text-xs uppercase tracking-wider font-semibold font-monospace">
-                                <i class="bi bi-image me-1"></i> 1200 x 300 Recommended
-                            </span>
-                        </div>
-                    @endif
-
-                    <!-- Dedicated Visible Cover Upload Trigger Button -->
-                    <div class="position-absolute top-0 end-0 m-3 z-1">
-                        <label for="coverInput" class="cover-upload-btn cursor-pointer shadow-lg">
-                            <i class="bi bi-camera-fill text-indigo-400"></i>
-                            <span>Change Cover Photo</span>
-                        </label>
-                    </div>
-
-                    <!-- Upload Trigger Overlay -->
-                    <div class="settings-cover-overlay">
-                        <label for="coverInput" class="cover-upload-btn cursor-pointer">
-                            <i class="bi bi-camera-fill text-indigo-400"></i>
-                            <span>Change Cover Photo</span>
-                        </label>
-                    </div>
-                    <input type="file" name="cover_image" id="coverInput" class="d-none" accept="image/png,image/jpeg,image/webp,image/jpg" onchange="previewCoverImage(this)">
+                <!-- Cover Image Banner -->
+                @php
+                    $coverSrc = $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : '';
+                @endphp
+                <div class="relative w-full h-48 md:h-64 rounded-t-2xl overflow-hidden border-b border-gray-800 bg-[#0b1329] bg-cover bg-center"
+                     style="background-image: url('{{ $coverSrc }}'); background-color: #111a33;">
+                    <label for="cover_upload" class="absolute top-4 right-4 bg-gray-900/80 hover:bg-black text-white text-xs px-4 py-2 rounded-xl cursor-pointer backdrop-blur-md border border-gray-700 flex items-center gap-2 shadow-lg transition">
+                        <i class="bi bi-camera-fill fa fa-camera"></i>
+                        <span>Change Cover Photo</span>
+                        <input type="file" id="cover_upload" name="cover_image" class="hidden d-none" accept="image/*" onchange="this.form.submit()">
+                    </label>
                 </div>
 
                 <!-- Avatar and Profile Header Meta -->
                 <div class="p-6 pt-0">
                     <div class="flex items-end justify-between flex-wrap gap-4">
                         <div class="flex items-end gap-4 flex-wrap">
-                            <!-- Avatar Wrapper with ring-4 ring-[#0b1329] -->
-                            <div class="settings-avatar-wrapper">
+                            <!-- Avatar Circle -->
+                            <div class="relative -mt-14 w-28 h-28 rounded-full overflow-hidden border-4 border-[#0b1329] shadow-2xl bg-[#0b1329]">
                                 @if($user->avatar)
-                                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="settings-avatar-img ring-4 ring-[#0b1329]" id="avatarPreviewImg" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff';">
+                                    @php
+                                        $avatarSrc = str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'));
+                                    @endphp
+                                    <img src="{{ $avatarSrc }}" alt="{{ $user->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff';">
                                 @else
-                                    <div class="settings-avatar-initial ring-4 ring-[#0b1329]" id="avatarInitial">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    <div class="w-full h-full flex items-center justify-center bg-indigo-600 text-white text-2xl font-bold">
+                                        {{ strtoupper(substr($user->name, 0, 2)) }}
                                     </div>
-                                    <img src="" alt="{{ $user->name }}" class="settings-avatar-img ring-4 ring-[#0b1329] d-none" id="avatarPreviewImg">
                                 @endif
-
-                                <label for="avatarInput" class="avatar-upload-badge cursor-pointer" title="Change Avatar Photo">
-                                    <i class="bi bi-camera-fill text-white"></i>
+                                <label for="avatar_upload" class="absolute bottom-1 right-1 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full cursor-pointer shadow-lg flex items-center justify-center" title="Change Avatar Photo">
+                                    <i class="bi bi-camera-fill fa fa-camera text-xs"></i>
+                                    <input type="file" id="avatar_upload" name="avatar" class="hidden d-none" accept="image/*" onchange="this.form.submit()">
                                 </label>
-                                <input type="file" name="avatar" id="avatarInput" class="d-none" accept="image/png,image/jpeg,image/webp,image/jpg" onchange="previewAvatarImage(this)">
                             </div>
 
                             <!-- Name & Handle Brief -->

@@ -26,6 +26,7 @@ use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationController;
 use App\Models\Resource;
 use App\Http\Controllers\PayoutController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileSettingsController;
 use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\OrderController;
@@ -173,6 +174,15 @@ Route::get('/creator/{username?}', [PublicProfileController::class, 'show'])->na
 Route::get('/author/{username?}', [PublicProfileController::class, 'show'])->name('author.show');
 Route::get('/seller/{username}', [PublicProfileController::class, 'show'])->name('seller.profile.show');
 
+// Public Storage File Delivery Fallback (prevents 404 if symlink is absent)
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (file_exists($filePath)) {
+        return response()->file($filePath);
+    }
+    abort(404);
+})->where('path', '.*');
+
 // Marketplace Templates / Catalog Routes
 Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
 Route::get('/resources', [TemplateController::class, 'index'])->name('resources.index');
@@ -285,12 +295,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
 
     // User Profile Settings Hub Routes
-    Route::get('/settings/profile', [ProfileSettingsController::class, 'edit'])->name('settings.profile');
-    Route::get('/profile', [ProfileSettingsController::class, 'edit'])->name('profile.edit');
-    Route::put('/settings/profile', [ProfileSettingsController::class, 'updateProfile'])->name('settings.profile.update');
-    Route::post('/settings/profile', [ProfileSettingsController::class, 'updateProfile']);
-    Route::patch('/profile', [ProfileSettingsController::class, 'updateProfile'])->name('profile.update');
-    Route::put('/profile', [ProfileSettingsController::class, 'updateProfile']);
+    Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::match(['post', 'put', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::match(['post', 'put', 'patch'], '/settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update');
     Route::put('/settings/password', [ProfileSettingsController::class, 'updatePassword'])->name('settings.password.update');
 
     // ==========================================

@@ -46,6 +46,21 @@
         display: block;
     }
 
+    .profile-avatar-initial {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid #0b1329;
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: #ffffff;
+        font-size: 3rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .profile-status-badge {
         position: absolute;
         bottom: 10px;
@@ -247,9 +262,12 @@
 
     <!-- HERO IDENTITY BANNER -->
     @php
-        $coverSrc = $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : $user->cover_url;
+        $coverSrc = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : ($user->cover_url ?? '');
     @endphp
-    <section class="profile-cover-banner" @if($coverSrc) style="background: url('{{ $coverSrc }}') center/cover no-repeat;" @endif>
+    <section class="profile-cover-banner" style="background-image: url('{{ $coverSrc }}'); background-size: cover; background-position: center; background-color: #111a33;">
+        @if($coverSrc)
+            <img src="{{ $coverSrc }}" alt="{{ $user->name }} cover" class="w-100 h-100 object-fit-cover">
+        @endif
         <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
             @if($user->is_available)
                 <span class="badge bg-black/40 text-amber-300 backdrop-blur border border-amber-500/30 rounded-pill px-3 py-1.5 extra-small fw-bold">
@@ -270,13 +288,19 @@
                         
                         <!-- Avatar with Availability Indicator -->
                         <div class="profile-avatar-wrapper">
-                            @php
-                                $avatarSrc = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : $user->avatar_url;
-                            @endphp
-                            <img src="{{ $avatarSrc }}" 
-                                 alt="{{ $user->name }}" 
-                                 class="profile-avatar-img ring-4 ring-[#0b1329]"
-                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff';">
+                            @if($user && $user->avatar)
+                                @php
+                                    $avatarSrc = str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'));
+                                @endphp
+                                <img src="{{ $avatarSrc }}" 
+                                     alt="{{ $user->name }}" 
+                                     class="profile-avatar-img ring-4 ring-[#0b1329]"
+                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'profile-avatar-initial ring-4 ring-[#0b1329]\'>{{ strtoupper(substr($user->name, 0, 2)) }}</div>';">
+                            @else
+                                <div class="profile-avatar-initial ring-4 ring-[#0b1329]">
+                                    {{ strtoupper(substr($user->name, 0, 2)) }}
+                                </div>
+                            @endif
 
                             <div class="profile-status-badge {{ $user->is_available ? 'status-available' : 'status-busy' }}" title="{{ $user->is_available ? 'Available for Hire' : 'Busy / Not Taking Work' }}"></div>
                         </div>

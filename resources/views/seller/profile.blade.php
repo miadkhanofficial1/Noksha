@@ -154,7 +154,13 @@
 <div class="min-h-screen bg-[#070b14] text-gray-100">
 
     <!-- HERO COVER BANNER -->
-    <section class="seller-cover-banner" @if($user && $user->cover_url) style="background: url('{{ $user->cover_url }}') center/cover no-repeat;" @endif>
+    @php
+        $coverSrc = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : ($user->cover_url ?? '');
+    @endphp
+    <section class="seller-cover-banner" style="background-image: url('{{ $coverSrc }}'); background-size: cover; background-position: center; background-color: #111a33;">
+        @if($coverSrc)
+            <img src="{{ $coverSrc }}" alt="{{ $user->name ?? 'Creator' }} cover" class="w-100 h-100 object-fit-cover">
+        @endif
         <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
             @if($user && $user->isContributor())
                 <span class="badge bg-black/40 text-emerald-300 backdrop-blur border border-emerald-500/30 rounded-pill px-3 py-1.5 small fw-bold">
@@ -175,10 +181,19 @@
                         
                         <!-- Circular Avatar -->
                         <div class="seller-avatar-wrapper">
-                            <img src="{{ $user->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name ?? 'Creator') . '&background=6366f1&color=fff' }}" 
-                                 alt="{{ $user->name ?? 'Creator' }}" 
-                                 class="seller-avatar-img ring-4 ring-[#0b1329]"
-                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name ?? 'Creator') }}&background=6366f1&color=fff';">
+                            @if($user && $user->avatar)
+                                @php
+                                    $avatarSrc = str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'));
+                                @endphp
+                                <img src="{{ $avatarSrc }}" 
+                                     alt="{{ $user->name ?? 'Creator' }}" 
+                                     class="seller-avatar-img ring-4 ring-[#0b1329]"
+                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-white fw-bold fs-2\' style=\'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);\'>{{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}</div>';">
+                            @else
+                                <div class="seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-white fw-bold fs-2" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                                    {{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}
+                                </div>
+                            @endif
                             <div class="seller-online-badge" title="Online now"></div>
                         </div>
 
