@@ -73,13 +73,15 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                             @foreach($pendingKycUsers as $pUser)
                                 @php
-                                    $pDocUrl = ($pUser->verification && ($pUser->verification->document_file || $pUser->verification->id_file_path))
-                                        ? asset('storage/' . ($pUser->verification->document_file ?? $pUser->verification->id_file_path))
+                                    $pDocFile = ($pUser->verification && ($pUser->verification->document_file || $pUser->verification->id_file_path))
+                                        ? ($pUser->verification->document_file ?? $pUser->verification->id_file_path)
                                         : null;
-                                    $pDocIsPdf = $pDocUrl && str_ends_with(strtolower($pDocUrl), '.pdf');
-                                    $pSelfieUrl = ($pUser->verification && ($pUser->verification->selfie_file || $pUser->verification->selfie_file_path))
-                                        ? asset('storage/' . ($pUser->verification->selfie_file ?? $pUser->verification->selfie_file_path))
+                                    $pDocUrl = $pDocFile ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($pDocFile)]) : null;
+                                    $pDocIsPdf = $pDocFile && str_ends_with(strtolower($pDocFile), '.pdf');
+                                    $pSelfieFile = ($pUser->verification && ($pUser->verification->selfie_file || $pUser->verification->selfie_file_path))
+                                        ? ($pUser->verification->selfie_file ?? $pUser->verification->selfie_file_path)
                                         : null;
+                                    $pSelfieUrl = $pSelfieFile ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($pSelfieFile)]) : null;
                                     $pKycData = [
                                         'name' => $pUser->name,
                                         'full_name' => $pUser->verification?->full_name ?? $pUser->name,
@@ -291,13 +293,15 @@
                                     <!-- KYC Review Trigger (if verification record exists) -->
                                     @if($user->verification)
                                         @php
-                                            $uDocUrl = ($user->verification->document_file || $user->verification->id_file_path)
-                                                ? asset('storage/' . ($user->verification->document_file ?? $user->verification->id_file_path))
+                                            $uDocFile = ($user->verification->document_file || $user->verification->id_file_path)
+                                                ? ($user->verification->document_file ?? $user->verification->id_file_path)
                                                 : null;
-                                            $uDocIsPdf = $uDocUrl && str_ends_with(strtolower($uDocUrl), '.pdf');
-                                            $uSelfieUrl = ($user->verification->selfie_file || $user->verification->selfie_file_path)
-                                                ? asset('storage/' . ($user->verification->selfie_file ?? $user->verification->selfie_file_path))
+                                            $uDocUrl = $uDocFile ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($uDocFile)]) : null;
+                                            $uDocIsPdf = $uDocFile && str_ends_with(strtolower($uDocFile), '.pdf');
+                                            $uSelfieFile = ($user->verification->selfie_file || $user->verification->selfie_file_path)
+                                                ? ($user->verification->selfie_file ?? $user->verification->selfie_file_path)
                                                 : null;
+                                            $uSelfieUrl = $uSelfieFile ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($uSelfieFile)]) : null;
                                             $uKycData = [
                                                 'user_id' => $user->id,
                                                 'name' => $user->name,
@@ -423,7 +427,7 @@
                         </a>
                     </div>
                     <div id="kycDocContainer" class="h-60 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden flex items-center justify-center p-2 relative">
-                        <img id="kycDocImg" src="" class="w-full h-full object-contain cursor-zoom-in" alt="Government ID" onclick="window.open(this.src, '_blank')">
+                        <img id="kycDocImg" src="" class="w-full h-full object-contain cursor-zoom-in" alt="Government ID" onclick="window.open(this.src, '_blank')" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
                         <div id="kycDocPdfBox" class="hidden text-center p-4">
                             <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-5xl mb-2 d-block"></i>
                             <div class="font-bold text-gray-800 dark:text-gray-200 mb-2">PDF Document Attached</div>
@@ -447,7 +451,7 @@
                         </a>
                     </div>
                     <div id="kycSelfieContainer" class="h-60 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden flex items-center justify-center p-2 relative">
-                        <img id="kycSelfieImg" src="" class="w-full h-full object-contain cursor-zoom-in" alt="Face Selfie" onclick="window.open(this.src, '_blank')">
+                        <img id="kycSelfieImg" src="" class="w-full h-full object-contain cursor-zoom-in rounded-lg" alt="Verification Face Selfie" onclick="window.open(this.src, '_blank')" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
                         <div id="kycSelfieEmpty" class="hidden text-gray-400 text-xs text-center">
                             <i class="bi bi-person-bounding-box text-3xl mb-1 d-block opacity-40"></i>
                             No selfie photo uploaded
@@ -541,6 +545,10 @@
                 docEmpty.classList.add('hidden');
             } else {
                 docImg.src = data.doc_url;
+                docImg.onerror = function() {
+                    this.onerror = null;
+                    this.src = '/assets/images/placeholder-avatar.png';
+                };
                 docImg.classList.remove('hidden');
                 docPdfBox.classList.add('hidden');
                 docEmpty.classList.add('hidden');
@@ -558,6 +566,10 @@
 
         if (data.selfie_url) {
             selfieImg.src = data.selfie_url;
+            selfieImg.onerror = function() {
+                this.onerror = null;
+                this.src = '/assets/images/placeholder-avatar.png';
+            };
             selfieImg.classList.remove('hidden');
             selfieEmpty.classList.add('hidden');
             selfieDownloadLink.href = data.selfie_url;

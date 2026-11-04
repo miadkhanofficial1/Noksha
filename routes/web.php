@@ -420,6 +420,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggleStatus');
         Route::post('/users/{user}/kyc/approve', [AdminUserController::class, 'approveKyc'])->name('users.kyc.approve');
         Route::post('/users/{user}/kyc/reject', [AdminUserController::class, 'rejectKyc'])->name('users.kyc.reject');
+        Route::get('/kyc-document/{type}/{filename}', [AdminUserController::class, 'viewKycDocument'])
+            ->where('type', 'ids|selfies|videos|documents')
+            ->where('filename', '[A-Za-z0-9_.-]+')
+            ->name('kyc.document');
 
         // Existing verification routes fallback
         Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');

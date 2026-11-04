@@ -184,4 +184,79 @@ class AdminUserController extends Controller
         return redirect()->back()
             ->with('success', "🚫 KYC verification for \"{$user->name}\" has been REJECTED. 7-day cooldown applied until {$reapplyDate}.");
     }
+
+    /**
+     * Securely serve KYC identity documents, selfies, and verification media to authorized administrators.
+     */
+    public function viewKycDocument(Request $request, string $type, string $filename)
+    {
+        // 1. Authorize: Only authenticated administrators can view KYC documents
+        if (!auth()->check() || (!auth()->user()->is_admin && auth()->user()->role !== 'admin' && auth()->user()->role !== 'super_admin')) {
+            abort(403, 'Unauthorized. Administrator privileges required to access KYC records.');
+        }
+
+        // 2. Sanitize inputs to prevent directory traversal
+        $safeFilename = basename($filename);
+        $safeType = strtolower(preg_replace('/[^a-z0-9_-]/', '', $type));
+
+        $allowedTypes = ['ids', 'selfies', 'videos', 'documents'];
+        if (!in_array($safeType, $allowedTypes, true)) {
+            abort(400, 'Invalid KYC document category.');
+        }
+
+        // 3. Search candidate storage paths
+        $candidatePaths = [
+            storage_path("app/public/verifications/{$safeType}/{$safeFilename}"),
+            storage_path("app/public/verifications/{$safeFilename}"),
+            storage_path("app/verifications/{$safeType}/{$safeFilename}"),
+            storage_path("app/verifications/{$safeFilename}"),
+            storage_path("app/private/verifications/{$safeType}/{$safeFilename}"),
+            storage_path("app/public/{$safeType}/{$safeFilename}"),
+            public_path("storage/verifications/{$safeType}/{$safeFilename}"),
+            public_path("storage/verifications/{$safeFilename}"),
+        ];
+
+        $filePath = null;
+        foreach ($candidatePaths as $path) {
+            if (file_exists($path) && is_file($path)) {
+                $filePath = $path;
+                break;
+            }
+        }
+
+        // 4. Fallback if file does not physically exist on disk (e.g. seeded demo or missing upload)
+        if (!$filePath) {
+            // For images (selfies or ID scans), return a fallback placeholder if available
+            $extension = strtolower(pathinfo($safeFilename, PATHINFO_EXTENSION));
+            if (in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) {
+                $fallbackImage = public_path('assets/images/placeholder-avatar.png');
+                if (file_exists($fallbackImage)) {
+                    return response()->file($fallbackImage, [
+                        'Content-Type' => 'image/png',
+                        'Cache-Control' => 'no-cache, private',
+                    ]);
+                }
+            }
+
+            abort(404, "The requested KYC document ({$safeFilename}) was not found in storage.");
+        }
+
+        // 5. Determine Content-Type and return file response
+        $mimeType = match (strtolower(pathinfo($filePath, PATHINFO_EXTENSION))) {
+            'pdf' => 'application/pdf',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'webp' => 'image/webp',
+            'gif' => 'image/gif',
+            'mp4' => 'video/mp4',
+            'webm' => 'video/webm',
+            default => (function_exists('mime_content_type') ? @mime_content_type($filePath) : null) ?: 'application/octet-stream',
+        };
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $safeFilename . '"',
+            'Cache-Control' => 'private, no-cache, must-revalidate',
+        ]);
+    }
 }

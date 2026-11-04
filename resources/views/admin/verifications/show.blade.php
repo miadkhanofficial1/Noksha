@@ -175,6 +175,14 @@
 
             <!-- RIGHT COLUMN: DOCUMENT, SELFIE & VIDEO PREVIEWS -->
             <div class="col-12 col-lg-7">
+                @php
+                    $docFile = $verification->document_file ?? $verification->id_file_path;
+                    $docUrl = $docFile ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($docFile)]) : null;
+                    $selfieFile = $verification->selfie_file ?? $verification->selfie_file_path;
+                    $selfieUrl = $selfieFile ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfieFile)]) : null;
+                    $videoFile = $verification->video_file ?? $verification->video_file_path ?? null;
+                    $videoUrl = $videoFile ? route('admin.kyc.document', ['type' => 'videos', 'filename' => basename($videoFile)]) : null;
+                @endphp
                 <div class="card verification-details-card p-4">
                     <h5 class="fw-extrabold text-dark mb-4 pb-2 border-bottom">
                         <i class="bi bi-images text-primary me-2"></i> KYC Document Media Previews
@@ -184,24 +192,24 @@
                     <div class="mb-4">
                         <label class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
                             <span><i class="bi bi-file-earmark-person text-primary me-1"></i> Government ID Document</span>
-                            @if($verification->document_file)
-                                <a href="{{ asset('storage/' . $verification->document_file) }}" target="_blank" class="extra-small text-primary fw-bold">
+                            @if($docUrl)
+                                <a href="{{ $docUrl }}" target="_blank" class="extra-small text-primary fw-bold">
                                     <i class="bi bi-box-arrow-up-right me-1"></i> Open Fullscreen / Download
                                 </a>
                             @endif
                         </label>
                         <div class="preview-media-box p-2 text-center">
-                            @if($verification->document_file)
-                                @if(str_ends_with(strtolower($verification->document_file), '.pdf'))
+                            @if($docUrl)
+                                @if(str_ends_with(strtolower($docFile), '.pdf'))
                                     <div class="p-4 bg-light text-center">
                                         <i class="bi bi-file-earmark-pdf-fill text-danger display-4 mb-2 d-block"></i>
                                         <span class="fw-bold text-dark d-block mb-2">PDF Document Uploaded</span>
-                                        <a href="{{ asset('storage/' . $verification->document_file) }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
+                                        <a href="{{ $docUrl }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
                                             View PDF Document
                                         </a>
                                     </div>
                                 @else
-                                    <img src="{{ asset('storage/' . $verification->document_file) }}" alt="Government ID" class="img-fluid rounded-3">
+                                    <img src="{{ $docUrl }}" alt="Government ID" class="img-fluid rounded-3" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
                                 @endif
                             @else
                                 <div class="p-4 text-muted small">No document file uploaded.</div>
@@ -213,15 +221,15 @@
                     <div class="mb-4">
                         <label class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
                             <span><i class="bi bi-camera-fill text-primary me-1"></i> Face Selfie Photo</span>
-                            @if($verification->selfie_file)
-                                <a href="{{ asset('storage/' . $verification->selfie_file) }}" target="_blank" class="extra-small text-primary fw-bold">
+                            @if($selfieUrl)
+                                <a href="{{ $selfieUrl }}" target="_blank" class="extra-small text-primary fw-bold">
                                     <i class="bi bi-box-arrow-up-right me-1"></i> View Full Image
                                 </a>
                             @endif
                         </label>
                         <div class="preview-media-box p-2 text-center">
-                            @if($verification->selfie_file)
-                                <img src="{{ asset('storage/' . $verification->selfie_file) }}" alt="Selfie Photo" class="img-fluid rounded-3">
+                            @if($selfieUrl)
+                                <img src="{{ $selfieUrl }}" alt="Selfie Photo" class="img-fluid rounded-3" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
                             @else
                                 <div class="p-4 text-muted small">No selfie photo uploaded.</div>
                             @endif
@@ -232,16 +240,16 @@
                     <div class="mb-3">
                         <label class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
                             <span><i class="bi bi-record-circle-fill text-primary me-1"></i> Video Verification (Max 15s)</span>
-                            @if($verification->video_file)
-                                <a href="{{ asset('storage/' . $verification->video_file) }}" download class="extra-small text-primary fw-bold">
+                            @if($videoUrl)
+                                <a href="{{ $videoUrl }}" download class="extra-small text-primary fw-bold">
                                     <i class="bi bi-download me-1"></i> Download Video
                                 </a>
                             @endif
                         </label>
                         <div class="preview-media-box p-2 text-center">
-                            @if($verification->video_file)
+                            @if($videoUrl)
                                 <video controls class="w-100 rounded-3">
-                                    <source src="{{ asset('storage/' . $verification->video_file) }}" type="video/mp4">
+                                    <source src="{{ $videoUrl }}" type="video/mp4">
                                     Your browser does not support HTML5 video playback.
                                 </video>
                             @else
