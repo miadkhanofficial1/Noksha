@@ -33,8 +33,15 @@ class MessageController extends Controller
      * Store and dispatch a new message within a conversation.
      * Enforces strict contact leak guard and attachment authorization.
      */
-    public function store(Request $request, Conversation $conversation): JsonResponse|RedirectResponse
+    public function store(Request $request, Conversation|string|int $conversation): JsonResponse|RedirectResponse
     {
+        if (!$conversation instanceof Conversation) {
+            $conversation = Conversation::find($conversation);
+            if (!$conversation) {
+                return $this->respondError('Conversation not found.', $request, 404);
+            }
+        }
+
         $user = Auth::user();
 
         // 1. Authorize thread participant or administrator
@@ -63,11 +70,12 @@ class MessageController extends Controller
         // Validate payload
         $request->validate([
             'body' => 'nullable|string|max:5000',
+            'message' => 'nullable|string|max:5000',
             'attachment' => 'nullable|file|max:51200', // max 50MB
             'message_type' => 'nullable|string|in:text,service_proposal,order_status,system_notice',
         ]);
 
-        $body = trim((string) $request->input('body', ''));
+        $body = trim((string) ($request->input('body') ?? $request->input('message') ?? ''));
         $hasAttachment = $request->hasFile('attachment');
 
         if (empty($body) && !$hasAttachment) {

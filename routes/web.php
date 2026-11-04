@@ -310,6 +310,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/inbox/{identifier}', [InboxController::class, 'show'])->name('inbox.show');
     Route::get('/inbox/{conversation}/poll', [InboxController::class, 'pollMessages'])->name('inbox.poll');
     Route::post('/inbox/{conversation}/messages', [MessageController::class, 'store'])->name('inbox.messages.store');
+    Route::post('/inbox/{conversation}/send', [MessageController::class, 'store'])->name('chat.send');
+    Route::post('/chat/{conversation}/send', [MessageController::class, 'store'])->name('chat.send.direct');
+    Route::get('/chat/{identifier}', [InboxController::class, 'show'])->name('chat.show');
+    Route::get('/chat', [InboxController::class, 'index'])->name('chat.index');
     Route::post('/inbox/{conversation}/freeze', [InboxController::class, 'freeze'])->name('inbox.freeze');
     Route::post('/inbox/{conversation}/reopen-request', [InboxController::class, 'requestReopen'])->name('inbox.reopen-request');
     Route::post('/inbox/{conversation}/reopen-respond', [InboxController::class, 'respondReopen'])->name('inbox.reopen-respond');

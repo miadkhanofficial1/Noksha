@@ -1,3 +1,12 @@
+@php
+    $activeConversation = $activeConversation ?? ($conversation ?? null);
+    $conversation = $activeConversation;
+    $conversations = $conversations ?? collect();
+    $counterpart = $counterpart ?? ($conversation ? $conversation->getOtherParticipant(auth()->user()) : null);
+    $services = $services ?? collect();
+    $messages = $messages ?? ($conversation ? $conversation->messages : collect());
+@endphp
+
 @extends('layouts.app')
 
 @section('title', ($activeConversation && $counterpart ? 'Chat with ' . $counterpart->name : 'Inbox') . ' - Noksha')
@@ -11,12 +20,6 @@
     html, body {
         overflow: hidden !important;
         height: 100vh !important;
-        max-height: 100vh !important;
-    }
-    main {
-        overflow: hidden !important;
-        height: calc(100vh - 80px) !important;
-        max-height: calc(100vh - 80px) !important;
     }
 </style>
 
@@ -164,7 +167,7 @@
             {{-- ======================================================== --}}
             {{-- 2. RIGHT COLUMN: ACTIVE CHAT VIEWPORT                    --}}
             {{-- ======================================================== --}}
-            <main class="flex-1 flex flex-col h-[calc(100vh-80px)] overflow-hidden bg-slate-900/60 relative min-h-0">
+            <section id="activeChatSection" class="flex-1 flex flex-col h-full max-h-full overflow-hidden bg-slate-900/60 relative min-h-0">
                 
                 @if($activeConversation)
                     @php
@@ -417,7 +420,7 @@
                     @endif
 
                     {{-- 2.3 MESSAGE HISTORY STREAM (SCROLLABLE) --}}
-                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
+                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto max-h-[calc(100vh-280px)] p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
@@ -623,14 +626,14 @@
                     </div>
 
                     {{-- 2.4 CHAT INPUT AREA --}}
-                    <footer class="flex-shrink-0 bg-[#0F172A] border-t border-slate-800 p-3 sticky bottom-0 z-20">
-                        @if($isSupportThread)
-                            <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 text-center text-xs text-slate-400 font-medium">
-                                🔒 This is an official system notice. Replies are disabled.
-                            </div>
-                        @elseif($isFrozen)
-                            <div class="p-3 rounded-2xl bg-slate-900 border border-amber-500/30 text-center text-xs text-amber-300 font-medium flex items-center justify-center gap-3">
-                                <span>❄️ Conversation is frozen.</span>
+                    @if($isSupportThread)
+                        <div class="p-3 bg-[#0b1329] border-t border-gray-800 text-center text-xs text-slate-400 font-medium shrink-0">
+                            🔒 This is an official system notice. Replies are disabled.
+                        </div>
+                    @else
+                        @if($isFrozen)
+                            <div class="px-4 py-2 bg-amber-500/10 border-t border-amber-500/20 text-center text-xs text-amber-300 font-medium flex items-center justify-center gap-3 shrink-0">
+                                <span>❄️ Conversation was frozen.</span>
                                 @if($activeConversation->reopen_status !== 'requested')
                                     <form action="{{ route('inbox.reopen-request', $activeConversation->id) }}" method="POST" class="inline">
                                         @csrf
@@ -642,50 +645,33 @@
                                     <span class="text-slate-400">(Re-open request pending approval)</span>
                                 @endif
                             </div>
-                        @else
-                            {{-- Active Message Form --}}
-                            <form id="chatMessageForm" action="{{ route('inbox.messages.store', $activeConversation->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-2">
+                        @endif
+
+                        <!-- Chat Input Area -->
+                        <div class="p-4 bg-[#0b1329] border-t border-gray-800 sticky bottom-0 z-20 shrink-0">
+                            <form id="chatMessageForm" action="{{ route('chat.send', $conversation->id ?? 115542) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-3">
                                 @csrf
                                 <input type="hidden" name="is_funded" id="isFundedFlag" value="{{ $isFunded ? '1' : '0' }}">
                                 <input type="hidden" name="is_funded_in_progress" id="isFundedInProgressFlag" value="{{ $isFundedInProgress ? '1' : '0' }}">
 
-                                {{-- Attachment Preview Pill (if selected) --}}
-                                <div id="attachmentPill" class="hidden items-center justify-between px-3 py-1.5 rounded-xl bg-slate-900 border border-indigo-500/30 text-xs text-indigo-300">
-                                    <div class="flex items-center gap-2 truncate">
-                                        <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-                                        <span id="attachmentFileName" class="truncate font-mono">file.zip</span>
-                                    </div>
-                                    <button type="button" onclick="clearAttachment()" class="text-slate-400 hover:text-white">&times;</button>
-                                </div>
+                                <!-- Attachment Button -->
+                                <label for="chat_file" class="p-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 cursor-pointer transition shrink-0" title="Attach file">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                    <input type="file" id="chat_file" name="attachment" class="hidden">
+                                </label>
 
-                                <div class="flex items-end gap-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-2 focus-within:border-indigo-500 transition-colors">
-                                    
-                                    {{-- Paperclip Attachment Button --}}
-                                    <div class="relative shrink-0">
-                                        @if($isFundedInProgress)
-                                            <input type="file" name="attachment" id="attachmentInput" class="hidden" onchange="handleAttachmentSelected(this)">
-                                            <button type="button" onclick="document.getElementById('attachmentInput').click()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer" title="Attach file">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-                                            </button>
-                                        @else
-                                            <button type="button" onclick="showLockedAttachmentNotice()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-400 hover:bg-slate-800/50 transition-colors cursor-not-allowed relative" title="File attachments locked until order is funded in progress">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-                                                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-slate-900 border border-slate-700 rounded-full flex items-center justify-center text-[9px] text-amber-400 font-bold">🔒</span>
-                                            </button>
-                                        @endif
-                                    </div>
+                                <!-- Text Input Field -->
+                                <input type="text" name="message" id="messageInput" placeholder="Type your message to {{ $counterpart->name ?? 'MD. MIAD IBNA NOOR' }}..." required
+                                       class="flex-1 bg-[#070b14] border border-gray-700 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none transition">
 
-                                    {{-- Textarea with Auto-Expand --}}
-                                    <textarea id="chatInputTextarea" name="body" rows="1" placeholder="Type a message (Enter to send, Shift+Enter for new line)..." class="flex-1 bg-transparent border-0 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-0 resize-none py-2 px-1 max-h-36 overflow-y-auto" oninput="autoResizeTextarea(this)" onkeydown="handleChatKeydown(event)"></textarea>
-
-                                    {{-- Send Button --}}
-                                    <button type="submit" id="chatSendButton" class="w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-600/30 transition-all shrink-0 cursor-pointer">
-                                        <svg class="w-4 h-4 -rotate-45 relative left-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                    </button>
-                                </div>
+                                <!-- Send Button -->
+                                <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl flex items-center gap-2 transition shadow-lg shadow-indigo-600/30 shrink-0">
+                                    <span>Send</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
                             </form>
-                        @endif
-                    </footer>
+                        </div>
+                    @endif
 
                 @else
                     {{-- Blank / No Conversation Selected State --}}
@@ -704,7 +690,7 @@
                     </div>
                 @endif
 
-            </main>
+            </section>
 
         </div>
     </div>
@@ -930,7 +916,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const messageForm = document.getElementById('chatMessageForm');
     if (messageForm) {
         messageForm.addEventListener('submit', function (e) {
-            const bodyInput = document.getElementById('chatInputTextarea');
+            const bodyInput = document.getElementById('messageInput') || document.getElementById('chatInputTextarea');
             const text = (bodyInput ? bodyInput.value : '').trim();
             const isFunded = document.getElementById('isFundedFlag')?.value === '1';
 
@@ -948,8 +934,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (hasPhone || hasEmail || hasLink) {
                     e.preventDefault();
-                    showNokshaToast('⚠️ Security Policy Alert: Sharing personal phone numbers, email addresses, or external links outside Noksha is strictly prohibited.', 'error');
+                    if (typeof showNokshaToast === 'function') {
+                        showNokshaToast('⚠️ Security Policy Alert: Sharing personal phone numbers, email addresses, or external links outside Noksha is strictly prohibited.', 'error');
+                    } else {
+                        alert('⚠️ Security Policy Alert: Sharing personal phone numbers, email addresses, or external links outside Noksha is strictly prohibited.');
+                    }
                     return false;
+                }
+            }
+        });
+    }
+
+    // Attachment input tooltip / visual feedback
+    const chatFileInput = document.getElementById('chat_file');
+    if (chatFileInput) {
+        chatFileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const label = this.closest('label');
+                if (label) {
+                    label.classList.add('bg-indigo-600/30', 'text-indigo-400', 'border', 'border-indigo-500/40');
+                    label.title = 'Selected: ' + this.files[0].name;
                 }
             }
         });
