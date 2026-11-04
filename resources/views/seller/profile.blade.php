@@ -155,11 +155,12 @@
 
     <!-- HERO COVER BANNER -->
     @php
-        $coverSrc = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : ($user->cover_url ?? '');
+        $coverUrl = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null;
+        $avatarUrl = $user && $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
     @endphp
-    <section class="seller-cover-banner" style="background-image: url('{{ $coverSrc }}'); background-size: cover; background-position: center; background-color: #111a33;">
-        @if($coverSrc)
-            <img src="{{ $coverSrc }}" alt="{{ $user->name ?? 'Creator' }} cover" class="w-100 h-100 object-fit-cover">
+    <section class="seller-cover-banner" style="background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; background-color: #111a33;">
+        @if($coverUrl)
+            <img src="{{ $coverUrl }}" alt="{{ $user->name ?? 'Creator' }} cover" class="w-100 h-100 object-fit-cover">
         @endif
         <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
             @if($user && $user->isContributor())
@@ -181,13 +182,10 @@
                         
                         <!-- Circular Avatar -->
                         <div class="seller-avatar-wrapper">
-                            @if($user && $user->avatar)
-                                @php
-                                    $avatarSrc = str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'));
-                                @endphp
-                                <img src="{{ $avatarSrc }}" 
+                            @if($avatarUrl)
+                                <img src="{{ $avatarUrl }}" 
                                      alt="{{ $user->name ?? 'Creator' }}" 
-                                     class="seller-avatar-img ring-4 ring-[#0b1329]"
+                                     class="seller-avatar-img ring-4 ring-[#0b1329] rounded-circle object-fit-cover"
                                      onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-white fw-bold fs-2\' style=\'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);\'>{{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}</div>';">
                             @else
                                 <div class="seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-white fw-bold fs-2" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">

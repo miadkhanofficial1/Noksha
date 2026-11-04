@@ -262,11 +262,12 @@
 
     <!-- HERO IDENTITY BANNER -->
     @php
-        $coverSrc = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : ($user->cover_url ?? '');
+        $coverUrl = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null;
+        $avatarUrl = $user && $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
     @endphp
-    <section class="profile-cover-banner" style="background-image: url('{{ $coverSrc }}'); background-size: cover; background-position: center; background-color: #111a33;">
-        @if($coverSrc)
-            <img src="{{ $coverSrc }}" alt="{{ $user->name }} cover" class="w-100 h-100 object-fit-cover">
+    <section class="profile-cover-banner" style="background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; background-color: #111a33;">
+        @if($coverUrl)
+            <img src="{{ $coverUrl }}" alt="{{ $user->name }} cover" class="w-100 h-100 object-fit-cover">
         @endif
         <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
             @if($user->is_available)
@@ -288,13 +289,10 @@
                         
                         <!-- Avatar with Availability Indicator -->
                         <div class="profile-avatar-wrapper">
-                            @if($user && $user->avatar)
-                                @php
-                                    $avatarSrc = str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'));
-                                @endphp
-                                <img src="{{ $avatarSrc }}" 
+                            @if($avatarUrl)
+                                <img src="{{ $avatarUrl }}" 
                                      alt="{{ $user->name }}" 
-                                     class="profile-avatar-img ring-4 ring-[#0b1329]"
+                                     class="profile-avatar-img ring-4 ring-[#0b1329] rounded-full object-cover"
                                      onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'profile-avatar-initial ring-4 ring-[#0b1329]\'>{{ strtoupper(substr($user->name, 0, 2)) }}</div>';">
                             @else
                                 <div class="profile-avatar-initial ring-4 ring-[#0b1329]">

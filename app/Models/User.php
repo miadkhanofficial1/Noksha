@@ -553,11 +553,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->avatar);
         }
 
-        $cleanPath = ltrim($this->avatar, '/');
-        if (str_starts_with($cleanPath, 'storage/')) {
-            $cleanPath = substr($cleanPath, 8);
-        }
-
+        $cleanPath = ltrim(str_replace('storage/', '', (string) $this->avatar), '/');
         return asset('storage/' . $cleanPath);
     }
 
@@ -579,11 +575,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->cover_image);
         }
 
-        $cleanPath = ltrim($this->cover_image, '/');
-        if (str_starts_with($cleanPath, 'storage/')) {
-            $cleanPath = substr($cleanPath, 8);
-        }
-
+        $cleanPath = ltrim(str_replace('storage/', '', (string) $this->cover_image), '/');
         return asset('storage/' . $cleanPath);
     }
 

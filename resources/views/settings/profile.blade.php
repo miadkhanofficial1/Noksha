@@ -222,16 +222,18 @@
 
             <!-- SECTION 1: COVER & AVATAR PREVIEWS -->
             <div class="bg-[#0b1329]/90 border border-gray-800/80 rounded-2xl shadow-xl backdrop-blur-md mb-8 overflow-hidden">
-                <!-- Cover Image Banner -->
                 @php
-                    $coverSrc = $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : '';
+                    $coverUrl = $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null;
+                    $avatarUrl = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
                 @endphp
+
+                <!-- Cover Image Banner -->
                 <div class="relative w-full h-48 md:h-64 rounded-t-2xl overflow-hidden border-b border-gray-800 bg-[#0b1329] bg-cover bg-center"
-                     style="background-image: url('{{ $coverSrc }}'); background-color: #111a33;">
+                     style="background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; background-color: #111a33;">
                     <label for="cover_upload" class="absolute top-4 right-4 bg-gray-900/80 hover:bg-black text-white text-xs px-4 py-2 rounded-xl cursor-pointer backdrop-blur-md border border-gray-700 flex items-center gap-2 shadow-lg transition">
                         <i class="bi bi-camera-fill fa fa-camera"></i>
                         <span>Change Cover Photo</span>
-                        <input type="file" id="cover_upload" name="cover_image" class="hidden d-none" accept="image/*" onchange="this.form.submit()">
+                        <input type="file" id="cover_upload" name="cover_image" class="hidden d-none" accept="image/*">
                     </label>
                 </div>
 
@@ -241,11 +243,8 @@
                         <div class="flex items-end gap-4 flex-wrap">
                             <!-- Avatar Circle -->
                             <div class="relative -mt-14 w-28 h-28 rounded-full overflow-hidden border-4 border-[#0b1329] shadow-2xl bg-[#0b1329]">
-                                @if($user->avatar)
-                                    @php
-                                        $avatarSrc = str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'));
-                                    @endphp
-                                    <img src="{{ $avatarSrc }}" alt="{{ $user->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff';">
+                                @if($avatarUrl)
+                                    <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center bg-indigo-600 text-white text-2xl font-bold\'>{{ strtoupper(substr($user->name, 0, 2)) }}</div>';">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center bg-indigo-600 text-white text-2xl font-bold">
                                         {{ strtoupper(substr($user->name, 0, 2)) }}
@@ -253,7 +252,7 @@
                                 @endif
                                 <label for="avatar_upload" class="absolute bottom-1 right-1 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-full cursor-pointer shadow-lg flex items-center justify-center" title="Change Avatar Photo">
                                     <i class="bi bi-camera-fill fa fa-camera text-xs"></i>
-                                    <input type="file" id="avatar_upload" name="avatar" class="hidden d-none" accept="image/*" onchange="this.form.submit()">
+                                    <input type="file" id="avatar_upload" name="avatar" class="hidden d-none" accept="image/*">
                                 </label>
                             </div>
 
@@ -649,42 +648,14 @@
 </div>
 
 <script>
-    // Live Image Previews
-    function previewCoverImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                let img = document.getElementById('coverPreviewImg');
-                const defaultBg = document.getElementById('coverDefaultBg');
-                if (!img) {
-                    img = document.createElement('img');
-                    img.id = 'coverPreviewImg';
-                    img.className = 'settings-cover-img';
-                    document.getElementById('coverBannerArea').prepend(img);
-                }
-                img.src = e.target.result;
-                if (defaultBg) {
-                    defaultBg.style.display = 'none';
-                }
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+    // Automatic Form Submission on Image Change
+    const coverUpload = document.getElementById('cover_upload');
+    if (coverUpload) {
+        coverUpload.onchange = () => document.getElementById('profileForm').submit();
     }
-
-    function previewAvatarImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById('avatarPreviewImg');
-                const initial = document.getElementById('avatarInitial');
-                img.src = e.target.result;
-                img.classList.remove('d-none');
-                if (initial) {
-                    initial.classList.add('d-none');
-                }
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+    const avatarUpload = document.getElementById('avatar_upload');
+    if (avatarUpload) {
+        avatarUpload.onchange = () => document.getElementById('profileForm').submit();
     }
 
     // Availability Switch Label Toggle
