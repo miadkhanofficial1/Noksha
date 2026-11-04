@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    <form method="post" action="{{ route('settings.profile.update') }}" class="space-y-4">
+    <form method="post" action="{{ route('settings.profile.update') }}" enctype="multipart/form-data" class="space-y-4">
         @csrf
         @method('put')
 

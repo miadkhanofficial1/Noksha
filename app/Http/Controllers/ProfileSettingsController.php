@@ -32,13 +32,13 @@ class ProfileSettingsController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => [
-                'required',
+                'nullable',
                 'string',
                 'alpha_dash',
                 'max:50',
                 Rule::unique('users', 'username')->ignore($user->id),
             ],
-            'headline' => ['nullable', 'string', 'max:150'],
+            'headline' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string', 'max:1000'],
             'phone' => ['nullable', 'string', 'max:30'],
             'skills' => ['nullable'],
@@ -50,36 +50,28 @@ class ProfileSettingsController extends Controller
             'social_links.twitter' => ['nullable', 'url', 'max:255'],
             'social_links.github' => ['nullable', 'url', 'max:255'],
             'is_available' => ['nullable', 'boolean'],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:3072'],
-            'cover_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:8192'],
         ], [
             'username.alpha_dash' => 'Username may only contain letters, numbers, dashes, and underscores.',
             'username.unique' => 'This username handle is already taken.',
-            'avatar.max' => 'Avatar image must not exceed 3MB.',
-            'cover_image.max' => 'Cover image must not exceed 5MB.',
+            'avatar.max' => 'Avatar image must not exceed 4MB.',
+            'cover_image.max' => 'Cover image must not exceed 8MB.',
         ]);
 
-        $disk = config('filesystems.default', 'public');
-
-        // Process avatar upload
+        // Handle Avatar Upload
         if ($request->hasFile('avatar')) {
-            if ($user->avatar && Storage::disk($disk)->exists($user->avatar)) {
-                Storage::disk($disk)->delete($user->avatar);
-            }
-            $avatarPath = $request->file('avatar')->store('avatars', ['disk' => $disk, 'visibility' => 'public']);
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $user->avatar = $avatarPath;
         }
 
-        // Process cover image upload
+        // Handle Cover Image Upload
         if ($request->hasFile('cover_image')) {
-            if ($user->cover_image && Storage::disk($disk)->exists($user->cover_image)) {
-                Storage::disk($disk)->delete($user->cover_image);
-            }
-            $coverPath = $request->file('cover_image')->store('covers', ['disk' => $disk, 'visibility' => 'public']);
+            $coverPath = $request->file('cover_image')->store('covers', 'public');
             $user->cover_image = $coverPath;
         }
 
-        // Normalize skills
+        // Normalize skills (supports array or comma-separated string)
         $skills = [];
         if (!empty($request->skills)) {
             if (is_array($request->skills)) {
@@ -102,18 +94,34 @@ class ProfileSettingsController extends Controller
         }
 
         $user->name = $validated['name'];
-        $user->username = strtolower($validated['username']);
-        $user->headline = $validated['headline'] ?? null;
-        $user->bio = $validated['bio'] ?? null;
-        if (isset($validated['phone'])) {
-            $user->phone = $validated['phone'];
+        if (!empty($validated['username'])) {
+            $user->username = strtolower($validated['username']);
         }
-        $user->skills = $skills;
-        $user->social_links = $socialLinks;
-        $user->is_available = $request->boolean('is_available', true);
+        $user->headline = $validated['headline'] ?? $request->input('headline');
+        $user->bio = $validated['bio'] ?? $request->input('bio');
+        if (isset($validated['phone']) || $request->has('phone')) {
+            $user->phone = $request->input('phone');
+        }
+        if ($request->has('skills')) {
+            $user->skills = $skills;
+        }
+        if ($request->has('social_links')) {
+            $user->social_links = $socialLinks;
+        }
+        if ($request->has('is_available')) {
+            $user->is_available = $request->boolean('is_available', true);
+        }
         $user->save();
 
-        return redirect()->route('settings.profile')->with('success', 'Profile updated successfully.');
+        return back()->with('success', 'Profile and media updated successfully.');
+    }
+
+    /**
+     * Alias for updateProfile to support standard update resource signatures.
+     */
+    public function update(Request $request)
+    {
+        return $this->updateProfile($request);
     }
 
     /**
@@ -136,6 +144,6 @@ class ProfileSettingsController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('settings.profile')->with('success', 'Password updated successfully.');
+        return back()->with('success', 'Password updated successfully.');
     }
 }

@@ -171,6 +171,7 @@ Route::get('/contests/{contest:slug}', [ContestController::class, 'show'])->wher
 Route::get('/u/{username}', [PublicProfileController::class, 'show'])->name('user.profile');
 Route::get('/creator/{username?}', [PublicProfileController::class, 'show'])->name('creator.profile');
 Route::get('/author/{username?}', [PublicProfileController::class, 'show'])->name('author.show');
+Route::get('/seller/{username}', [PublicProfileController::class, 'show'])->name('seller.profile.show');
 
 // Marketplace Templates / Catalog Routes
 Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
@@ -287,6 +288,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/profile', [ProfileSettingsController::class, 'edit'])->name('settings.profile');
     Route::get('/profile', [ProfileSettingsController::class, 'edit'])->name('profile.edit');
     Route::put('/settings/profile', [ProfileSettingsController::class, 'updateProfile'])->name('settings.profile.update');
+    Route::post('/settings/profile', [ProfileSettingsController::class, 'updateProfile']);
+    Route::patch('/profile', [ProfileSettingsController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile', [ProfileSettingsController::class, 'updateProfile']);
     Route::put('/settings/password', [ProfileSettingsController::class, 'updatePassword'])->name('settings.password.update');
 
     // ==========================================
