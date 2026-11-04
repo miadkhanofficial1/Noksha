@@ -504,7 +504,7 @@
                                         <button type="button" class="btn btn-studio-cta btn-sm px-3 py-1 extra-small" onclick="document.getElementById('resource_file').click();">
                                             <i class="bi bi-folder2-open me-1"></i> {{ __('upload.zip_select_btn') }}
                                         </button>
-                                        <input type="file" name="resource_file" id="resource_file" class="d-none" accept=".zip" required onchange="handleZipFileSelect(this)">
+                                        <input type="file" name="resource_file" id="resource_file" class="d-none" accept=".psd,.ai,.fig,.pdf,.eps,.svg,.png,.jpg,.jpeg,.zip,.rar" required onchange="handleZipFileSelect(this)">
                                     </div>
                                     @error('resource_file')
                                         <div class="text-danger small mt-1">{{ $message }}</div>
@@ -645,14 +645,15 @@ document.getElementById('colorPicker').addEventListener('input', function() {
     document.getElementById('colorHexText').textContent = this.value.toUpperCase();
 });
 
-// ZIP file select handler
+// Digital Asset / ZIP file select handler
 function handleZipFileSelect(input) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
         const ext = file.name.split('.').pop().toLowerCase();
+        const allowedExts = ['zip', 'rar', '7z', 'tar', 'gz', 'psd', 'ai', 'fig', 'pdf', 'eps', 'svg', 'png', 'jpg', 'jpeg'];
         
-        if (ext !== 'zip') {
-            alert('Invalid file format. Only .zip archives are allowed.');
+        if (!allowedExts.includes(ext)) {
+            alert('Invalid file format. Please select a valid digital asset file (.psd, .ai, .fig, .pdf, .eps, .svg, .zip, .rar).');
             input.value = '';
             document.getElementById('zipFileNameDisplay').textContent = "{{ __('upload.zip_no_file') }}";
             document.getElementById('zipFileSizeDisplay').textContent = "{{ __('upload.zip_format_only') }}";
@@ -660,7 +661,7 @@ function handleZipFileSelect(input) {
         }
 
         document.getElementById('zipFileNameDisplay').textContent = file.name;
-        document.getElementById('zipFileSizeDisplay').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB (ZIP Archive)';
+        document.getElementById('zipFileSizeDisplay').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB (' + ext.toUpperCase() + ')';
     }
 }
 

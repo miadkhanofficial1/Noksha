@@ -2,7 +2,7 @@
     $categories = $categories ?? \App\Models\Category::all();
 @endphp
 
-<form action="{{ route('creator.assets.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('creator.assets.store') }}" method="POST" enctype="multipart/form-data" id="assetUploadForm">
     @csrf
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Cover Image Dropzone -->
@@ -75,9 +75,14 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Source Package (.ZIP / .RAR) <span class="text-rose-400">*</span></label>
-                <input type="file" name="zip_file" accept=".zip,.rar,application/zip,application/x-zip-compressed" class="w-full px-3 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-300 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer" required>
-                <p class="text-[11px] text-slate-500 mt-1">Upload the master ZIP archive containing source files (AI, EPS, PSD, Figma, SVG).</p>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                    Source Digital Asset File (.PSD, .AI, .FIG, .PDF, .EPS, .ZIP) <span class="text-rose-400">*</span>
+                </label>
+                <input type="file" name="asset_file" id="asset_file" 
+                       accept=".psd,.ai,.fig,.pdf,.eps,.svg,.png,.jpg,.jpeg,.zip,.rar" 
+                       required 
+                       class="block w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+                <p class="text-[11px] text-slate-500 mt-1">Upload your raw project file (Photoshop .PSD, Illustrator .AI, Figma, PDF or Archive).</p>
             </div>
 
             <div class="pt-2">

@@ -26,7 +26,7 @@ class ResourceController extends Controller
     }
 
     /**
-     * Store a newly created design resource with strict ZIP validation and metadata.
+     * Store a newly created design resource with flexible digital asset file support.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -66,16 +66,17 @@ class ResourceController extends Controller
         // Resolve cover preview image file (supports 'cover_image' or 'preview_image')
         $coverFile = $request->file('cover_image') ?? $request->file('preview_image');
 
-        // Resolve archive package file (supports 'zip_file', 'resource_file', or 'file')
-        $zipFile = $request->file('zip_file') ?? $request->file('resource_file') ?? $request->file('file');
+        // Resolve digital asset file (supports 'asset_file', 'zip_file', 'resource_file', or 'file')
+        $assetFile = $request->file('asset_file') ?? $request->file('zip_file') ?? $request->file('resource_file') ?? $request->file('file');
 
         // Validate text & scalar inputs
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'description' => ['required', 'string', 'max:2000'],
-            'dimensions' => ['required', 'string', 'max:150'],
-            'size_dimensions' => ['required', 'string', 'max:150'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'category' => ['nullable'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'dimensions' => ['nullable', 'string', 'max:150'],
+            'size_dimensions' => ['nullable', 'string', 'max:150'],
             'color' => ['nullable', 'string', 'max:100'],
             'extensions' => ['nullable'],
             'tags' => ['nullable', 'string'],
@@ -85,15 +86,13 @@ class ResourceController extends Controller
             'demo_link' => ['nullable', 'url', 'max:255'],
             'requirements' => ['nullable', 'string'],
         ], [
-            'title.required' => 'Resource title is required.',
-            'category_id.required' => 'Please select a category.',
+            'title.required' => 'Asset title is required.',
             'category_id.exists' => 'Selected category is invalid.',
-            'description.required' => 'Design description is required.',
-            'description.max' => 'Design description cannot exceed 2000 characters.',
-            'dimensions.required' => 'Design format / dimensions are required.',
-            'size_dimensions.required' => 'Design format / dimensions are required.',
             'price.numeric' => 'Price must be a valid number.',
         ]);
+
+        $description = $request->input('description') ?: 'High quality digital design asset.';
+        $dimensions = $request->input('dimensions') ?? $request->input('size_dimensions') ?: 'Vector / High Resolution';
 
         // Validate Cover Preview Image
         if (!$coverFile || !$coverFile->isValid()) {
@@ -116,45 +115,58 @@ class ResourceController extends Controller
             ])->withInput();
         }
 
-        // Validate Original Design Package Archive (.ZIP / .RAR)
-        if (!$zipFile || !$zipFile->isValid()) {
+        // Validate Digital Asset File
+        if (!$assetFile || !$assetFile->isValid()) {
             return back()->withErrors([
-                'zip_file' => 'Original design package .ZIP file is required.',
-                'resource_file' => 'Original design package .ZIP file is required.',
-                'file' => 'Original design package .ZIP file is required.',
+                'asset_file' => 'Digital asset source file (e.g., .psd, .ai, .fig, .pdf, .eps, .zip) is required.',
+                'zip_file' => 'Digital asset source file is required.',
+                'resource_file' => 'Digital asset source file is required.',
+                'file' => 'Digital asset source file is required.',
             ])->withInput();
         }
-        $zipExt = strtolower($zipFile->getClientOriginalExtension());
-        if (!in_array($zipExt, ['zip', 'rar', '7z', 'tar', 'gz'])) {
+
+        $extension = strtolower($assetFile->getClientOriginalExtension());
+        $allowedAssetExts = [
+            'psd', 'ai', 'fig', 'pdf', 'eps', 'svg', 'png', 'jpg', 'jpeg', 'webp',
+            'zip', 'rar', '7z', 'tar', 'gz', 'xd', 'sketch', 'indd', 'cdr', 'tif',
+            'tiff', 'blend', 'fbx', 'obj'
+        ];
+        if (!empty($extension) && !in_array($extension, $allowedAssetExts)) {
             return back()->withErrors([
-                'zip_file' => 'Uploaded package must strictly be a valid .ZIP archive.',
-                'resource_file' => 'Uploaded package must strictly be a valid .ZIP archive.',
-                'file' => 'Uploaded package must strictly be a valid .ZIP archive.',
+                'asset_file' => 'Uploaded file format is not supported. Please upload a valid digital asset file (.psd, .ai, .fig, .pdf, .eps, .svg, .zip, .rar, etc.).',
+                'zip_file' => 'Uploaded file format is not supported.',
+                'resource_file' => 'Uploaded file format is not supported.',
+                'file' => 'Uploaded file format is not supported.',
             ])->withInput();
         }
-        if ($zipFile->getSize() > 100 * 1024 * 1024) {
+
+        if ($assetFile->getSize() > 100 * 1024 * 1024) {
             return back()->withErrors([
-                'zip_file' => 'ZIP package size cannot exceed 100MB.',
-                'resource_file' => 'ZIP package size cannot exceed 100MB.',
+                'asset_file' => 'Digital asset file size cannot exceed 100MB.',
+                'zip_file' => 'Asset package size cannot exceed 100MB.',
+                'resource_file' => 'Asset package size cannot exceed 100MB.',
+                'file' => 'Asset package size cannot exceed 100MB.',
             ])->withInput();
         }
 
         // Process File Storage
         $previewPath = $coverFile->store('templates/covers', 'public');
-        $filePath = $zipFile->store('templates/packages', 'public');
+        $rawExt = $assetFile->getClientOriginalExtension() ?: 'bin';
+        $filename = time() . '_' . uniqid() . '.' . $rawExt;
+        $filePath = $assetFile->storeAs('templates/packages', $filename, 'public');
 
-        // Process File Extensions
+        // Process File Extensions / Type
         $extensionsSelected = $request->input('extensions');
         if (is_array($extensionsSelected)) {
             $extensionsStr = implode(', ', array_filter($extensionsSelected));
         } else {
             $extensionsStr = (string) $extensionsSelected;
         }
-        $fileType = !empty($extensionsStr) ? strtoupper($extensionsStr) : strtoupper($zipExt ?: 'ZIP');
+        $fileType = !empty($extensionsStr) ? strtoupper($extensionsStr) : strtoupper($rawExt ?: 'ASSET');
 
         // Process Formatted Requirements & Specs
         $color = $request->input('color', '#6C4CF1');
-        $size = $validated['dimensions'];
+        $size = $dimensions;
         $extraReq = $request->input('requirements', '');
         $combinedRequirements = "Size: {$size} | Color: {$color} | Extensions: {$fileType}" . ($extraReq ? " | {$extraReq}" : "");
 
@@ -165,10 +177,10 @@ class ResourceController extends Controller
             $manualTags = array_slice(array_filter($exploded), 0, 10);
         }
 
-        $categoryName = Category::find($validated['category_id'])?->name;
+        $categoryName = Category::find($categoryId)?->name;
         $tagsArray = TagService::generate(
             $validated['title'],
-            $validated['description'],
+            $description,
             $categoryName,
             $manualTags
         );
@@ -189,11 +201,13 @@ class ResourceController extends Controller
         // Create Resource record
         $resource = Resource::create([
             'user_id' => auth()->id(),
-            'category_id' => $validated['category_id'],
+            'category_id' => $categoryId,
+            'category' => $categoryId,
             'title' => $validated['title'],
             'slug' => $slug,
-            'description' => $validated['description'],
+            'description' => $description,
             'preview_image' => $previewPath,
+            'thumbnail_path' => $previewPath,
             'file_path' => $filePath,
             'file_type' => $fileType,
             'tags' => $tagsArray,
@@ -325,4 +339,3 @@ class ResourceController extends Controller
         ]);
     }
 }
-

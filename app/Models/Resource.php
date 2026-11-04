@@ -20,10 +20,12 @@ class Resource extends Model
     protected $fillable = [
         'user_id',
         'category_id',
+        'category',
         'title',
         'slug',
         'description',
         'preview_image',
+        'thumbnail_path',
         'file_path',
         'file_type',
         'tags',
@@ -76,6 +78,37 @@ class Resource extends Model
         }
 
         return \Illuminate\Support\Facades\Storage::disk($disk)->url($this->preview_image);
+    }
+
+    /**
+     * Thumbnail path mutator (maps to preview_image).
+     */
+    public function setThumbnailPathAttribute($value): void
+    {
+        $this->attributes['preview_image'] = $value;
+    }
+
+    /**
+     * Thumbnail path accessor (alias for preview_image).
+     */
+    public function getThumbnailPathAttribute(): ?string
+    {
+        return $this->attributes['preview_image'] ?? null;
+    }
+
+    /**
+     * Category mutator (maps string, integer, or Category instance to category_id).
+     */
+    public function setCategoryAttribute($value): void
+    {
+        if (is_numeric($value)) {
+            $this->attributes['category_id'] = (int) $value;
+        } elseif (is_string($value)) {
+            $cat = Category::where('name', $value)->orWhere('slug', $value)->first();
+            $this->attributes['category_id'] = $cat?->id ?? 1;
+        } elseif ($value instanceof Category) {
+            $this->attributes['category_id'] = $value->id;
+        }
     }
 
     /**
