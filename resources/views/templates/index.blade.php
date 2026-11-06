@@ -8,42 +8,41 @@
 
         <!-- HEADER HERO -->
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-            <div class="max-w-3xl">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-3">
-                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div class="max-w-4xl">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-[#20165c] border border-purple-200 mb-3">
+                    <svg class="w-3.5 h-3.5 shrink-0 text-[#f47402]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     <span>Curated Marketplace</span>
                 </span>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-[#121826] tracking-tight">Explore Creative Design Templates</h1>
                 <p class="text-sm text-slate-500 mt-2">Discover premium UI kits, vectors, Figma assets, and digital templates crafted by verified creators.</p>
                 
-                <!-- Search Box -->
-                <form action="{{ route('templates.index') }}" method="GET" class="mt-5 flex items-center gap-3 max-w-xl">
-                    <div class="relative flex-grow">
-                        <svg class="w-5 h-5 absolute left-3.5 top-3 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <input type="text" name="q" value="{{ $queryStr ?? '' }}" placeholder="Search templates by keyword, title, or tag..." class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:border-[#20165c] focus:outline-none">
-                    </div>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold text-[#121826] bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all shrink-0">
-                        Search
-                    </button>
-                </form>
-            </div>
-        </div>
+                <!-- DYNAMIC CATEGORY FILTER PILLS -->
+                <div class="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    <a href="{{ route('templates.index', array_merge(request()->except(['category', 'page']))) }}" 
+                       class="px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 {{ empty($categoryId) ? 'bg-[#20165c] text-white shadow-sm' : 'bg-white text-slate-600 hover:text-[#20165c] hover:bg-slate-100 border border-slate-200' }}">
+                        All Templates
+                    </a>
+                    @foreach($categories as $category)
+                        <a href="{{ route('templates.index', array_merge(request()->except(['page']), ['category' => $category->id])) }}" 
+                           class="px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 {{ (string)$categoryId === (string)$category->id ? 'bg-[#20165c] text-white shadow-sm' : 'bg-white text-slate-600 hover:text-[#20165c] hover:bg-slate-100 border border-slate-200' }}">
+                            {{ $category->name }}
+                            @if(isset($category->resources_count))
+                                <span class="ml-1 opacity-70 font-mono text-[11px]">({{ $category->resources_count }})</span>
+                            @endif
+                        </a>
+                    @endforeach
+                </div>
 
-        <!-- DYNAMIC CATEGORY FILTER PILLS -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            <a href="{{ route('templates.index', array_merge(request()->except(['category', 'page']))) }}" 
-               class="px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 {{ empty($categoryId) ? 'bg-[#20165c] text-[#121826] shadow-sm' : 'bg-white text-slate-600 hover:text-[#20165c] hover:bg-slate-100 border border-slate-200' }}">
-                All Templates
-            </a>
-            @foreach($categories as $category)
-                <a href="{{ route('templates.index', array_merge(request()->except(['page']), ['category' => $category->id])) }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 {{ (string)$categoryId === (string)$category->id ? 'bg-[#20165c] text-[#121826] shadow-sm' : 'bg-white text-slate-600 hover:text-[#20165c] hover:bg-slate-100 border border-slate-200' }}">
-                    {{ $category->name }}
-                    @if(isset($category->resources_count))
-                        <span class="ml-1 opacity-70 font-mono text-[11px]">({{ $category->resources_count }})</span>
-                    @endif
-                </a>
-            @endforeach
+                @if(!empty($queryStr))
+                    <div class="mt-4 pt-3 border-t border-slate-200 flex items-center gap-2 text-sm text-slate-600">
+                        <span>Showing results for <strong class="text-[#121826]">"{{ $queryStr }}"</strong></span>
+                        <a href="{{ route('templates.index', request()->except(['q', 'page'])) }}" class="inline-flex items-center gap-1 text-xs text-rose-600 hover:underline ms-2 font-medium">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Clear search
+                        </a>
+                    </div>
+                @endif
+            </div>
         </div>
 
         <!-- TEMPLATES GRID -->
@@ -56,7 +55,7 @@
                             <img src="{{ $template->thumbnail_url }}" alt="{{ $template->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='{{ asset('images/logo.png') }}'">
                             
                             <!-- Category Badge -->
-                            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100/80 text-slate-200 border border-slate-200 backdrop-blur-md">
+                            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white/95 text-slate-700 border border-slate-200 shadow-xs backdrop-blur-md">
                                 {{ $template->category?->name ?? 'Design' }}
                             </span>
                         </div>
@@ -69,9 +68,9 @@
 
                             <div class="flex items-center gap-2 mt-2 text-xs text-slate-500">
                                 @if($template->owner)
-                                    <span>by <strong class="text-slate-300">{{ $template->owner->name }}</strong></span>
+                                    <span>by <strong class="text-slate-700">{{ $template->owner->name }}</strong></span>
                                 @else
-                                    <span>by <strong class="text-slate-300">Noksha Creator</strong></span>
+                                    <span>by <strong class="text-slate-700">Noksha Creator</strong></span>
                                 @endif
                             </div>
                         </div>
@@ -84,7 +83,7 @@
                         </span>
 
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('templates.show', $template->id) }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#121826] bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all">
+                            <a href="{{ route('templates.show', $template->id) }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all">
                                 View
                             </a>
                         </div>
@@ -99,11 +98,11 @@
                     <h3 class="text-lg font-bold text-[#121826]">No creations published yet</h3>
                     <p class="text-xs text-slate-500 mt-1.5 max-w-md mx-auto">Upload your first design asset to start showcasing your portfolio and earning royalties.</p>
                     <div class="mt-6 flex items-center justify-center gap-3">
-                        <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-[#121826] bg-[#20165c] hover:bg-[#181045] shadow-lg transition-all">
+                        <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-lg transition-all">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             <span>Upload New Asset</span>
                         </a>
-                        <a href="{{ route('templates.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-[#121826] bg-slate-800 border border-slate-700/60 transition-all">
+                        <a href="{{ route('templates.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-[#20165c] bg-white border border-slate-200 hover:bg-slate-50 shadow-xs transition-all">
                             <span>Reset Filters</span>
                         </a>
                     </div>

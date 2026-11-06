@@ -617,8 +617,13 @@
 
     <div class="container position-relative py-4 py-lg-5 animate-fade-in-up" style="z-index: 1;">
         <div class="row align-items-center g-5">
-            <!-- Left Column: Bilingual Headline & Search -->
+            <!-- Left Column: Bilingual Headline & Category Pills -->
             <div class="col-lg-7 text-center text-lg-start">
+
+                <!-- Badge -->
+                <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-3 d-inline-flex align-items-center gap-1.5" style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.18);">
+                    <i class="bi bi-stars text-[#f47402]"></i> Curated Digital Graphics Templates
+                </span>
 
                 <!-- Bilingual Headline -->
                 <h1 class="display-3 fw-extrabold text-[#121826] mb-3 tracking-tight lh-sm">
@@ -626,21 +631,20 @@
                 </h1>
 
                 <!-- Subtitle -->
-                <p class="fs-5 text-slate-600 mb-4 me-lg-4 lh-base" style="max-width: 620px;">
+                <p class="fs-5 text-slate-600 mb-0 me-lg-4 lh-base" style="max-width: 620px;">
                     {{ __('marketplace.hero_subtitle') }}
                 </p>
 
-                <!-- Glassmorphism Search Bar -->
-                <div class="p-2 hero-search-box rounded-pill shadow-sm mb-4 text-start" style="max-width: 590px;">
-                    <form class="d-flex align-items-center" action="{{ route('search.index') }}" method="GET">
-                        <span class="ps-3 text-muted fs-5">
-                            <i class="bi bi-search text-[#20165c]"></i>
-                        </span>
-                        <input type="text" name="q" id="heroSearchInput" class="form-control border-0 shadow-none bg-transparent ps-3 text-[#121826] fs-6" placeholder="{{ __('marketplace.search_placeholder') }}" aria-label="Search Marketplace">
-                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm btn-search-hero" type="submit" style="background: #20165c;">
-                            {{ __('app.search') }}
+                <!-- Category Filter Pills Directly Beneath Subtitle -->
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-2 my-4 hero-categories">
+                    <button type="button" class="btn cat-chip-pill active" data-cat="All">
+                        All Templates
+                    </button>
+                    @foreach($categories->take(6) as $cat)
+                        <button type="button" class="btn cat-chip-pill" data-cat="{{ $cat->name }}">
+                            {{ $cat->name }}
                         </button>
-                    </form>
+                    @endforeach
                 </div>
 
                 <!-- Hero CTA Buttons -->
@@ -1336,12 +1340,11 @@
 <!-- FIGMA/DRIBBBLE FILTER CHIP UI & HERO INTERACTION ENGINE SCRIPT -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const heroSearchInput = document.getElementById('heroSearchInput');
     const filterSearchInput = document.getElementById('filterSearchInput');
     const catChips = document.querySelectorAll('.cat-chip-pill');
     const scrollTopBtn = document.getElementById('scrollTopBtn');
 
-    // 1. Sync Hero Search with Filter Bar Search Input
+    // 1. Template Filter Bar Search & Instant Filter
     let currentCategory = 'All';
     let filterDebounceTimer = null;
 
@@ -1385,19 +1388,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 220);
     }
 
-    if (heroSearchInput && filterSearchInput) {
-        heroSearchInput.addEventListener('input', function (e) {
-            filterSearchInput.value = e.target.value;
-            if (e.target.value.trim() !== '') {
-                const templatesElem = document.getElementById('templates');
-                if (templatesElem) templatesElem.scrollIntoView({ behavior: 'smooth' });
-            }
-            clearTimeout(filterDebounceTimer);
-            filterDebounceTimer = setTimeout(applyTemplateFilters, 280);
-        });
-
+    if (filterSearchInput) {
         filterSearchInput.addEventListener('input', function () {
-            heroSearchInput.value = filterSearchInput.value;
             clearTimeout(filterDebounceTimer);
             filterDebounceTimer = setTimeout(applyTemplateFilters, 280);
         });
@@ -1405,9 +1397,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 2. Category Chips Active State Toggle & Skeleton Filter
     function setActiveChip(categoryName) {
-        catChips.forEach(chip => {
+        document.querySelectorAll('.cat-chip-pill').forEach(chip => {
             const chipCat = chip.getAttribute('data-cat');
-            if (chipCat === categoryName || (categoryName === 'All' && chipCat === 'All')) {
+            if (chipCat === categoryName || (categoryName === 'All' && (chipCat === 'All' || chipCat === 'All Templates'))) {
                 chip.classList.add('active');
             } else {
                 chip.classList.remove('active');
@@ -1415,12 +1407,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    catChips.forEach(chip => {
+    document.querySelectorAll('.cat-chip-pill').forEach(chip => {
         chip.addEventListener('click', function () {
-            const selectedCat = this.getAttribute('data-cat');
+            const selectedCat = this.getAttribute('data-cat') || 'All';
             currentCategory = selectedCat;
             setActiveChip(selectedCat);
             applyTemplateFilters();
+
+            // If clicked from hero section, smoothly scroll down to templates showcase
+            if (this.closest('.hero-categories') || this.closest('#hero')) {
+                const templatesElem = document.getElementById('templates');
+                if (templatesElem) {
+                    templatesElem.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
         });
     });
 
