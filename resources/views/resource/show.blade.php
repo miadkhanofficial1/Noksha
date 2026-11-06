@@ -64,7 +64,7 @@
         background: #ffffff;
         box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.06) !important;
     }
-
+    
     /* AI Tag Pills */
     .ai-tag-pill {
         background: rgba(108, 76, 241, 0.06);
@@ -89,18 +89,18 @@
 
     /* Action Buttons */
     .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
+        background: linear-gradient(135deg, #20165c 0%, #2c1e7a 100%);
         color: #ffffff !important;
         border: none;
-        font-weight: 600;
+        font-weight: 700;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.4);
+        box-shadow: 0 8px 20px -4px rgba(32, 22, 92, 0.35);
     }
 
     .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
+        background: linear-gradient(135deg, #181045 0%, #20165c 100%);
         transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 14px 28px -4px rgba(108, 76, 241, 0.5);
+        box-shadow: 0 14px 28px -4px rgba(32, 22, 92, 0.45);
         color: #ffffff !important;
     }
 
@@ -283,12 +283,100 @@
                     </div>
                 </div>
 
-                <!-- Overview & Description -->
+                <!-- Overview & Visual Case Study Breakdown -->
                 <div class="mb-5">
-                    <h3 class="fw-extrabold text-dark mb-3">Product Description</h3>
+                    <h3 class="fw-extrabold text-dark mb-3">Design Story & Case Study</h3>
                     <p class="text-secondary lh-lg mb-4">
-                        {{ isset($resource) ? $resource->description : 'The Fintech Mobile UI Kit is a modern, pixel-perfect design system built for professional designers and developers.' }}
+                        {{ isset($resource) ? $resource->description : 'High-caliber design system and vector graphics crafted with precision for professional UI/UX, print branding, and digital media applications.' }}
                     </p>
+
+                    <!-- Tools Used Badges -->
+                    <div class="mb-4 p-4 rounded-4 bg-white border border-slate-200 shadow-sm">
+                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-tools text-[#20165c]"></i> Creative Tools Used
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2.5">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-[#20165c] border border-purple-200">
+                                <i class="bi bi-bezier2 text-[#20165c]"></i> Figma Component Library
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                                <i class="bi bi-vector-pen text-amber-600"></i> Adobe Illustrator (.AI / .EPS)
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200">
+                                <i class="bi bi-file-earmark-image text-blue-600"></i> Adobe Photoshop (.PSD)
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                <i class="bi bi-box text-emerald-600"></i> Blender 3D Assets
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Color Palette Swatches -->
+                    <div class="mb-4 p-4 rounded-4 bg-white border border-slate-200 shadow-sm">
+                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-palette-fill text-[#f47402]"></i> Design System Color Palette
+                        </h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="d-flex align-items-center gap-2 p-1.5 pe-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <span class="rounded-lg shadow-sm" style="width: 28px; height: 28px; background: #20165c; display: inline-block;"></span>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-800 font-mono">#20165C</div>
+                                    <div class="text-[10px] text-slate-500">Royal Purple</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 p-1.5 pe-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <span class="rounded-lg shadow-sm" style="width: 28px; height: 28px; background: #f47402; display: inline-block;"></span>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-800 font-mono">#F47402</div>
+                                    <div class="text-[10px] text-slate-500">Tangerine</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 p-1.5 pe-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <span class="rounded-lg shadow-sm" style="width: 28px; height: 28px; background: #121826; display: inline-block;"></span>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-800 font-mono">#121826</div>
+                                    <div class="text-[10px] text-slate-500">Charcoal</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 p-1.5 pe-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <span class="rounded-lg shadow-sm" style="width: 28px; height: 28px; background: #f8fafc; border: 1px solid #e2e8f0; display: inline-block;"></span>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-800 font-mono">#F8FAFC</div>
+                                    <div class="text-[10px] text-slate-500">Soft Surface</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 p-1.5 pe-3 bg-slate-50 border border-slate-200 rounded-xl">
+                                <span class="rounded-lg shadow-sm" style="width: 28px; height: 28px; background: #ffffff; border: 1px solid #e2e8f0; display: inline-block;"></span>
+                                <div>
+                                    <div class="text-[11px] font-bold text-slate-800 font-mono">#FFFFFF</div>
+                                    <div class="text-[10px] text-slate-500">Pure White</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Typography Breakdown -->
+                    <div class="mb-4 p-4 rounded-4 bg-white border border-slate-200 shadow-sm">
+                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-fonts text-[#20165c]"></i> Typography Hierarchy
+                        </h6>
+                        <div class="row g-3 text-xs">
+                            <div class="col-12 col-sm-6">
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <span class="text-slate-500 extra-small font-bold uppercase tracking-wider block mb-1">Display & Headings</span>
+                                    <div class="text-lg font-black text-[#121826]">Plus Jakarta Sans</div>
+                                    <div class="text-slate-500 text-[11px] mt-0.5">Bold / SemiBold • 24px - 48px</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <span class="text-slate-500 extra-small font-bold uppercase tracking-wider block mb-1">Body & Interface</span>
+                                    <div class="text-lg font-medium text-[#121826]">Inter / System UI</div>
+                                    <div class="text-slate-500 text-[11px] mt-0.5">Regular / Medium • 12px - 16px</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Software Requirements Section -->
                     <div class="p-4 bg-light rounded-4 border mb-5">
@@ -465,9 +553,10 @@
                             <div class="text-muted extra-small fw-bold text-uppercase tracking-wider">Marketplace Price</div>
                             <div class="d-flex align-items-baseline gap-2">
                                 @if(isset($resource) && $resource->is_paid && $resource->price > 0)
-                                    <span class="display-5 fw-extrabold text-dark">৳{{ number_format($resource->price, 2) }}</span>
+                                    <span class="display-5 fw-extrabold text-[#f47402]">৳{{ number_format($resource->price, 2) }}</span>
+                                    <span class="text-muted small fw-bold">BDT</span>
                                 @else
-                                    <span class="display-5 fw-extrabold text-success">Free</span>
+                                    <span class="display-5 fw-extrabold text-emerald-600">Free</span>
                                 @endif
                             </div>
                         </div>
@@ -534,6 +623,31 @@
                                 <span><strong>Quality Checked:</strong> Verified by Noksha Compliance.</span>
                             </div>
                         </div>
+
+                        <!-- Technical Specifications Matrix -->
+                        <div class="pt-3 border-top border-light-subtle mt-2">
+                            <div class="text-muted extra-small fw-bold text-uppercase tracking-wider mb-2.5">
+                                <i class="bi bi-sliders text-[#20165c] me-1"></i> Technical Specifications
+                            </div>
+                            <div class="d-flex flex-column gap-2 text-xs">
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-slate-100">
+                                    <span class="text-slate-500">License</span>
+                                    <span class="fw-bold text-slate-800">Commercial Standard</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-slate-100">
+                                    <span class="text-slate-500">Resolution</span>
+                                    <span class="fw-bold text-slate-800">Vector Scalable / 3840×2160</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-slate-100">
+                                    <span class="text-slate-500">Source Format</span>
+                                    <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 font-mono">{{ isset($resource) ? strtoupper($resource->file_type ?? 'ZIP') : 'FIGMA' }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center py-1">
+                                    <span class="text-slate-500">Compatibility</span>
+                                    <span class="fw-bold text-slate-800">Figma, Illustrator, Photoshop</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Seller Profile Card -->
@@ -578,9 +692,14 @@
                             </div>
                         </div>
 
-                        <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="btn btn-outline-secondary rounded-pill w-100 fw-bold btn-sm">
-                            <i class="bi bi-person-circle me-1"></i> View Creator Profile
-                        </a>
+                        <div class="d-flex flex-column gap-2 mt-3">
+                            <a href="{{ isset($resource) && $resource->owner ? route('inbox.index', ['recipient' => $resource->owner->id]) : route('seller.demo') }}" class="btn rounded-pill w-100 fw-bold btn-sm py-2 text-white bg-[#20165c] hover:bg-[#181045] transition shadow-sm">
+                                <i class="bi bi-chat-dots-fill me-1.5"></i> Hire for Custom Job
+                            </a>
+                            <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="btn btn-outline-secondary rounded-pill w-100 fw-bold btn-sm">
+                                <i class="bi bi-person-circle me-1"></i> View Creator Profile
+                            </a>
+                        </div>
                     </div>
 
                 </div>

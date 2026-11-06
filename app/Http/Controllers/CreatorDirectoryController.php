@@ -33,6 +33,9 @@ class CreatorDirectoryController extends Controller
             })
             ->withCount(['templates' => function ($q) {
                 $q->where('status', 'approved');
+            }])
+            ->with(['templates' => function ($q) {
+                $q->where('status', 'approved')->latest('id')->limit(3);
             }]);
 
         // Filter by creator name, username, or general query

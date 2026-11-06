@@ -158,6 +158,7 @@ Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 // Resource Details Routes
 Route::get('/resource/demo', [ResourceController::class, 'showDemo'])->name('resource.demo');
 Route::get('/resource/{slug}', [ResourceController::class, 'show'])->where('slug', '^(?!upload$|demo$).*')->name('resource.show');
+Route::get('/assets/{slug}', [ResourceController::class, 'show'])->where('slug', '^(?!upload$|demo$).*')->name('assets.show');
 
 // Demo Seller Profile Page
 Route::get('/seller/demo', function () {

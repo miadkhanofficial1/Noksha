@@ -836,7 +836,7 @@
         </div>
 
         <!-- FLOATING GLASSMORPHISM FILTER BAR -->
-        <div class="card p-3.5 p-md-4 border border-slate-200 shadow-sm mb-4 rounded-4 filter-bar-glass position-relative overflow-hidden">
+        <div class="card p-3.5 p-md-4 border border-slate-200 shadow-sm mb-4 rounded-4 filter-bar-glass position-sticky top-20 z-10 bg-white/95 backdrop-blur-md">
             <!-- Top Row: Search Input (Left) & Sort Dropdown (Right) -->
             <div class="row g-3 align-items-center mb-3">
                 <!-- Search Input (Left) -->
@@ -900,82 +900,108 @@
                          data-downloads="{{ $resource->downloads }}" 
                          data-price-val="{{ $resource->price }}" 
                          data-id="{{ $resource->id }}">
-                        <div class="card h-100 template-card-figma">
-                            <!-- Preview Area -->
-                            <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 240px; background: #1E1B4B;">
-                                @if($resource->preview_image)
-                                    <img src="{{ $resource->thumbnail_url }}" class="w-100 h-100 object-fit-cover" alt="{{ $resource->title }}">
-                                @else
-                                    <div class="w-100 h-100 {{ $gradClass }} p-4 d-flex align-items-center justify-content-center text-white">
-                                        <svg width="76" height="76" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                                        </svg>
-                                    </div>
-                                @endif
-                                <!-- Floating Category Badge -->
-                                <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small animate-badge-float">
+                        <div class="card h-100 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
+                            <!-- Preview Media Container with Behance Hover Overlay -->
+                            <div class="position-relative overflow-hidden bg-slate-900" style="height: 250px;">
+                                <a href="{{ route('resource.show', $resource->slug ?? $resource->id) }}" class="d-block w-100 h-100 text-decoration-none">
+                                    @if($resource->preview_image)
+                                        <img src="{{ $resource->thumbnail_url }}" class="w-100 h-100 object-fit-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $resource->title }}" loading="lazy">
+                                    @else
+                                        <div class="w-100 h-100 {{ $gradClass }} p-4 d-flex align-items-center justify-content-center text-white group-hover:scale-105 transition-transform duration-500">
+                                            <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                                            </svg>
+                                        </div>
+                                    @endif
+                                </a>
+
+                                <!-- Floating Category Badge (Default View) -->
+                                <span class="position-absolute top-0 start-0 m-3 badge bg-white/90 backdrop-blur-sm text-[#121826] rounded-pill shadow-sm px-2.5 py-1 font-bold extra-small pointer-events-none group-hover:opacity-0 transition-opacity">
                                     {{ $catName }}
                                 </span>
-                            </div>
 
-                            <!-- Card Content -->
-                            <div class="card-body p-4 d-flex flex-column">
-                                <div class="d-flex align-items-center justify-content-between text-muted small mb-2.5">
-                                    <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                        <i class="bi bi-star-fill text-warning me-1"></i>{{ $resource->average_rating ?? '5.0' }} ({{ $resource->reviews_count ?? ($resource->relationLoaded('reviews') ? $resource->reviews->count() : 0) }})
-                                    </span>
-                                    <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($resource->downloads) }} downloads</span>
-                                </div>
-
-                                <h5 class="card-title fw-bold text-dark mb-1 text-truncate" title="{{ $resource->title }}">
-                                    {{ $resource->title }}
-                                </h5>
-                                <div class="d-flex align-items-center gap-1 extra-small text-muted mb-2">
-                                    @if($resource->owner)
-                                        <a href="{{ route('user.profile', $resource->owner->username ?? $resource->owner->id) }}" class="text-decoration-none text-muted d-inline-flex align-items-center gap-1 hover-primary" title="View {{ $resource->owner->name }}'s Profile">
-                                            <span>by <strong class="text-dark">{{ $resource->owner->name }}</strong></span>
-                                            @if($resource->owner && $resource->owner->isVerifiedCreator())
-                                                <span class="text-emerald-500" title="Verified Creator">
-                                                    <i class="bi bi-patch-check-fill" style="font-size: 0.85rem;"></i>
-                                                </span>
-                                            @endif
-                                        </a>
-                                    @else
-                                        <span>by <strong class="text-dark">Noksha Creator</strong></span>
-                                    @endif
-                                </div>
-                                <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">
-                                    {{ Str::limit($resource->description, 90) }}
-                                </p>
-
-                                <div class="d-flex align-items-center justify-content-between pt-3 border-top border-slate-200">
-                                    <div>
-                                        <span class="text-slate-500 extra-small d-block fw-semibold text-uppercase">Price</span>
-                                        @if($resource->is_paid && $resource->price > 0)
-                                            <span class="fw-extrabold text-[#f47402] fs-5">৳{{ number_format($resource->price, 2) }}</span>
-                                        @else
-                                            <span class="fw-extrabold text-emerald-600 fs-5">Free</span>
-                                        @endif
+                                <!-- Behance Hover Overlay -->
+                                <div class="position-absolute inset-0 d-flex flex-column justify-content-between p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style="background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%);">
+                                    <!-- Top Row: Category & Quick Save Actions -->
+                                    <div class="d-flex align-items-center justify-content-between w-100 pointer-events-auto">
+                                        <span class="badge bg-white/95 text-[#20165c] rounded-pill px-2.5 py-1 font-bold extra-small shadow-sm">
+                                            {{ $catName }}
+                                        </span>
+                                        <div class="d-flex align-items-center gap-1.5">
+                                            <form action="{{ route('wishlist.store', $resource->id) }}" method="POST" class="m-0">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm rounded-circle bg-white/95 hover:bg-white text-rose-500 shadow-sm p-1.5 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Save to Wishlist">
+                                                    <i class="bi bi-heart-fill small"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('cart.store', $resource->id) }}" method="POST" class="m-0">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm rounded-circle bg-white/95 hover:bg-white text-[#20165c] shadow-sm p-1.5 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Add to Cart">
+                                                    <i class="bi bi-cart-plus-fill small"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div class="d-flex align-items-center gap-1.5">
-                                        <form action="{{ route('wishlist.store', $resource->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-light border btn-sm rounded-circle p-2" title="Save to Wishlist">
-                                                <i class="bi bi-heart-fill text-danger"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('cart.store', $resource->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-circle p-2" title="Add to Cart">
-                                                <i class="bi bi-cart-plus-fill"></i>
-                                            </button>
-                                        </form>
-                                        <a href="{{ route('resource.show', $resource->slug ?? $resource->id) }}" class="btn btn-purple-cta rounded-pill px-3 py-2 btn-sm">
+
+                                    <!-- Bottom Row: Creator Info & View Action -->
+                                    <div class="d-flex align-items-center justify-content-between w-100 pointer-events-auto">
+                                        <div class="d-flex align-items-center gap-2 min-w-0">
+                                            @if($resource->owner && $resource->owner->avatar)
+                                                <img src="{{ asset('storage/' . $resource->owner->avatar) }}" alt="{{ $resource->owner->name }}" class="rounded-circle border border-white/50 shrink-0 object-cover" style="width: 28px; height: 28px;">
+                                            @else
+                                                <div class="rounded-circle bg-[#20165c] text-white extra-small fw-bold d-flex align-items-center justify-content-center shrink-0 border border-white/50" style="width: 28px; height: 28px;">
+                                                    {{ strtoupper(substr($resource->owner?->name ?? 'N', 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <div class="min-w-0">
+                                                <div class="text-white fw-bold extra-small text-truncate" style="max-width: 130px;">
+                                                    {{ $resource->owner?->name ?? 'Noksha Creator' }}
+                                                </div>
+                                                <div class="text-white-50 font-monospace extra-small" style="font-size: 0.68rem;">
+                                                    <i class="bi bi-download me-0.5"></i>{{ number_format($resource->downloads) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('resource.show', $resource->slug ?? $resource->id) }}" class="btn btn-sm rounded-pill px-3 py-1 text-white font-bold extra-small shadow-sm" style="background: #f47402;">
                                             View
                                         </a>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Clean Bottom Information Bar -->
+                            <div class="p-3.5 d-flex flex-column bg-white">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-1.5">
+                                    <h6 class="fw-bold text-[#121826] mb-0 text-truncate flex-grow-1" title="{{ $resource->title }}">
+                                        <a href="{{ route('resource.show', $resource->slug ?? $resource->id) }}" class="text-[#121826] hover:text-[#20165c] text-decoration-none transition-colors">
+                                            {{ $resource->title }}
+                                        </a>
+                                    </h6>
+                                    <!-- Price Pill -->
+                                    <div class="shrink-0 text-end">
+                                        @if($resource->is_paid && $resource->price > 0)
+                                            <span class="fw-black text-[#f47402] fs-6">৳{{ number_format($resource->price, 2) }}</span>
+                                        @else
+                                            <span class="fw-black text-emerald-600 fs-6">Free</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="d-flex align-items-center justify-content-between pt-2 border-top border-slate-100 text-slate-500 extra-small">
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
+                                            {{ $catName }}
+                                        </span>
+                                        <span class="text-slate-400">•</span>
+                                        <span class="d-inline-flex align-items-center text-amber-600 fw-semibold">
+                                            <i class="bi bi-star-fill text-amber-400 me-1"></i>{{ $resource->average_rating ?? '5.0' }}
+                                        </span>
+                                    </div>
+                                    <span class="text-slate-400 font-mono text-[11px] uppercase">
+                                        {{ strtoupper($resource->file_type ?? 'ZIP') }}
+                                    </span>
                                 </div>
                             </div>
                         </div>

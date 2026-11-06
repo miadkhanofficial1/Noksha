@@ -211,400 +211,277 @@
         <!-- ========================================== -->
         <div id="pane-overview" class="dash-content-pane space-y-8">
 
-            <!-- 3. TOP STAT CARDS (Strict Buyer vs Seller Separation) -->
-            @if($user->isApprovedContributor() && $user->isSellerMode())
-                {{-- SELLER / CONTRIBUTOR STUDIO METRICS --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 dash-metrics-grid">
-                    <!-- Seller Card 1: Total Uploads -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Uploads</span>
-                                <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-[#f47402] flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#121826] tracking-tight my-2">
-                                {{ number_format($totalResources ?? $contributorResources?->count() ?? 0) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#f47402] shrink-0"></span>
-                                Live & Approved
+            <!-- BENTO-GRID MODULAR DASHBOARD SUITE -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- CARD 1 (Span 7 on lg): Available Wallet & Escrow Balance -->
+                <div class="lg:col-span-7 bg-gradient-to-br from-[#20165c] via-[#281c74] to-[#181045] text-white rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-[#f47402]/15 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -left-8 -top-8 w-40 h-40 bg-purple-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between gap-3 flex-wrap">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15 backdrop-blur-md">
+                                <svg class="w-3.5 h-3.5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                <span>Secured Escrow Wallet</span>
                             </span>
+                            <span class="text-xs font-mono text-white/70">Central BDT Account</span>
+                        </div>
+
+                        <div class="my-5">
+                            <div class="text-xs font-medium uppercase tracking-wider text-white/70 mb-1">Available Escrow Balance</div>
+                            <div class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight flex items-baseline gap-2">
+                                <span>৳{{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
+                                <span class="text-sm font-semibold text-white/70 font-sans">BDT</span>
+                            </div>
+                            @if($user->isApprovedContributor())
+                                <div class="mt-2 text-xs text-white/80 flex items-center gap-2">
+                                    <span>Royalty Earnings: <strong class="text-[#f47402]">৳{{ number_format($user->earnings_balance ?? 0, 2) }}</strong></span>
+                                    <span>•</span>
+                                    <span class="text-emerald-400">50% Platform Share</span>
+                                </div>
+                            @else
+                                <div class="mt-2 text-xs text-white/70">
+                                    Protected by Noksha buyer escrow guarantee for all digital asset purchases.
+                                </div>
+                            @endif
                         </div>
                     </div>
 
-                    <!-- Seller Card 2: Gross Sales Volume -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Sales</span>
-                                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#121826] tracking-tight my-2">
-                                {{ number_format($totalSales ?? 0) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                Gross: ৳{{ number_format($grossSales ?? 0, 2) }}
-                            </span>
-                        </div>
-                    </div>
+                    <!-- Action Buttons -->
+                    <div class="relative z-10 pt-4 border-t border-white/10 flex items-center gap-3 flex-wrap">
+                        <a href="{{ route('wallet.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#f47402] hover:bg-[#d96602] text-white font-bold text-xs shadow-md transition-all">
+                            <i class="bi bi-plus-circle-fill"></i>
+                            <span>Add Funds / Deposit</span>
+                        </a>
 
-                    <!-- Seller Card 3: Royalties Available for Payout -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Seller Earnings</span>
-                                <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#f47402] tracking-tight my-2">
-                                ৳{{ number_format($user->earnings_balance, 2) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center justify-between">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 text-[#20165c] border border-purple-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#20165c] shrink-0"></span>
-                                Available to Cashout
-                            </span>
-                            <a href="{{ route('seller.payouts.index') }}" class="text-xs text-[#20165c] hover:underline font-semibold">Payouts</a>
-                        </div>
-                    </div>
+                        @if($user->isApprovedContributor())
+                            <a href="{{ route('seller.payouts.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/20 transition-all">
+                                <i class="bi bi-cash-stack"></i>
+                                <span>Request Payout</span>
+                            </a>
+                        @endif
 
-                    <!-- Seller Card 4: Total Deliveries -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Downloads</span>
-                                <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#121826] tracking-tight my-2">
-                                {{ number_format($totalDownloads ?? 0) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#20165c] shrink-0"></span>
-                                Digital Deliveries
-                            </span>
-                        </div>
+                        <a href="{{ route('wallet.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/20 transition-all">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Transaction History</span>
+                        </a>
                     </div>
                 </div>
 
-                <!-- SELLER QUICK ACTIONS -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 dash-actions-grid">
-                    <button type="button" onclick="switchDashboardTab('pane-upload')" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left w-full group shadow-sm cursor-pointer">
-                        <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 text-[#f47402] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                        </div>
-                        <div>
-                            <span class="text-sm font-bold text-[#121826] block group-hover:text-[#20165c] transition-colors">Upload New Asset</span>
-                            <span class="text-xs text-slate-500 block mt-0.5">Publish vector, template or UI kit</span>
-                        </div>
-                    </button>
-
-                    <a href="{{ route('seller.payouts.index') }}" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left group shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                        </div>
-                        <div>
-                            <span class="text-sm font-bold text-[#121826] block group-hover:text-emerald-600 transition-colors">Seller Earnings & Payouts</span>
-                            <span class="text-xs text-slate-500 block mt-0.5">Request withdrawal to bKash / Bank</span>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('resources.index') }}" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left group shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </div>
-                        <div>
-                            <span class="text-sm font-bold text-[#121826] block group-hover:text-[#20165c] transition-colors">Explore Marketplace</span>
-                            <span class="text-xs text-slate-500 block mt-0.5">Browse verified creative designs</span>
-                        </div>
-                    </a>
-                </div>
-            @else
-                {{-- BUYER-CENTRIC STAT CARDS (Strict Buyer View, Zero Seller Metrics) --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 dash-metrics-grid">
-                    <!-- Buyer Card 1: Available Wallet Balance -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Escrow Wallet Balance</span>
-                                <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#121826] tracking-tight my-2">
-                                ৳{{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center justify-between">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 text-[#20165c] border border-purple-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#20165c] shrink-0"></span>
-                                Secured Funds
-                            </span>
-                            <a href="{{ route('wallet.index') }}" class="text-xs text-[#20165c] hover:underline font-semibold">Add Funds</a>
-                        </div>
-                    </div>
-
-                    <!-- Buyer Card 2: Total Spent / Purchases -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Spent / Purchases</span>
-                                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-emerald-600 tracking-tight my-2">
-                                ৳{{ number_format($totalSpent ?? 0, 2) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                {{ number_format($ordersCount ?? 0) }} Completed Orders
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Buyer Card 3: Total Downloads -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Downloads</span>
-                                <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#121826] tracking-tight my-2">
-                                {{ number_format($downloadsCount ?? 0) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center justify-between">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#20165c] shrink-0"></span>
-                                Purchased Asset Files
-                            </span>
-                            <button type="button" onclick="switchDashboardTab('pane-downloads')" class="text-xs text-[#20165c] hover:underline font-semibold cursor-pointer">View Library</button>
-                        </div>
-                    </div>
-
-                    <!-- Buyer Card 4: Saved Wishlist -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:border-slate-300 transition duration-200">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Saved Wishlist</span>
-                                <div class="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 text-rose-500 flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="text-3xl font-extrabold text-[#121826] tracking-tight my-2">
-                                {{ number_format($wishlistCount ?? 0) }}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 mt-auto flex items-center justify-between">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
-                                Saved For Later
-                            </span>
-                            <button type="button" onclick="switchDashboardTab('pane-wishlist')" class="text-xs text-rose-600 hover:underline font-semibold cursor-pointer">Wishlist</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BUYER QUICK ACTIONS -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 dash-actions-grid">
-                    @if($user->isApprovedContributor())
-                        <form action="{{ route('user.switch-mode') }}" method="POST" class="m-0 p-0">
-                            @csrf
-                            <input type="hidden" name="mode" value="seller">
-                            <button type="submit" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left w-full group shadow-sm cursor-pointer">
-                                <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 text-[#f47402] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                    <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <!-- CARD 2 (Span 5 on lg): Active Project & Service Orders / Milestones -->
+                <div class="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center">
+                                    <i class="bi bi-kanban small"></i>
                                 </div>
                                 <div>
-                                    <span class="text-sm font-bold text-[#121826] block group-hover:text-[#20165c] transition-colors">Switch to Contributor Studio</span>
-                                    <span class="text-xs text-slate-500 block mt-0.5">Publish assets & view royalties</span>
+                                    <h4 class="text-sm font-bold text-[#121826] mb-0">Project Orders & Milestones</h4>
+                                    <span class="text-[11px] text-slate-500">Live escrow order tracking</span>
                                 </div>
-                            </button>
-                        </form>
-                    @elseif($user->contributor_status === 'pending')
-                        <button type="button" onclick="switchDashboardTab('pane-upload')" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left w-full group shadow-sm cursor-pointer">
-                            <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 text-[#f47402] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
-                            <div>
-                                <span class="text-sm font-bold text-[#121826] block group-hover:text-[#20165c] transition-colors">KYC Verification Status</span>
-                                <span class="text-xs text-slate-500 block mt-0.5">Application in admin review</span>
-                            </div>
-                        </button>
-                    @else
-                        <button type="button" onclick="switchDashboardTab('pane-upload')" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left w-full group shadow-sm cursor-pointer">
-                            <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                            </div>
-                            <div>
-                                <span class="text-sm font-bold text-[#121826] block group-hover:text-[#20165c] transition-colors">Become a Contributor</span>
-                                <span class="text-xs text-slate-500 block mt-0.5">Apply for KYC to earn 50% royalties</span>
-                            </div>
-                        </button>
-                    @endif
-
-                    <!-- Action 2: Explore Marketplace -->
-                    <a href="{{ route('resources.index') }}" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left group shadow-sm">
-                        <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 font-mono">
+                                {{ number_format($ordersCount ?? $orders?->count() ?? 0) }} Orders
+                            </span>
                         </div>
-                        <div>
-                            <span class="text-sm font-bold text-[#121826] block group-hover:text-[#20165c] transition-colors">Explore Marketplace</span>
-                            <span class="text-xs text-slate-500 block mt-0.5">Browse vectors, Figma & UI assets</span>
-                        </div>
-                    </a>
 
-                    <!-- Action 3: Download Active License Keys -->
-                    <button type="button" onclick="switchDashboardTab('pane-downloads')" class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-3.5 hover:border-slate-300 hover:bg-slate-50 transition duration-200 text-left w-full group shadow-sm cursor-pointer">
-                        <div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-                        </div>
-                        <div>
-                            <span class="text-sm font-bold text-[#121826] block group-hover:text-emerald-600 transition-colors">My Downloaded Assets</span>
-                            <span class="text-xs text-slate-500 block mt-0.5">Instant access to purchased files</span>
-                        </div>
-                    </button>
-                </div>
-            @endif
-
-            <!-- 5. RECENT ACTIVITY SECTION -->
-            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden p-6 shadow-sm">
-                <div class="flex items-center justify-between pb-5 border-b border-slate-200 flex-wrap gap-3">
-                    <div>
-                        <h3 class="text-base font-bold text-[#121826] flex items-center gap-2 mb-0">
-                            <svg class="w-5 h-5 shrink-0 text-[#20165c]" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                            </svg>
-                            Recent Purchases & Activity
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-1 mb-0">Real-time records of digital acquisitions, licensing orders, and asset performance</p>
-                    </div>
-                    <button type="button" onclick="switchDashboardTab('pane-orders')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#20165c] bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer">
-                        <span>View Full History</span>
-                        <svg class="w-3.5 h-3.5 shrink-0" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-
-                @if(isset($orders) && $orders->count() > 0)
-                    <div class="overflow-x-auto mt-4">
-                        <table class="w-full text-left text-sm text-slate-700">
-                            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-slate-200">
-                                <tr>
-                                    <th scope="col" class="py-3.5 px-4">Asset Name</th>
-                                    <th scope="col" class="py-3.5 px-4">Category</th>
-                                    <th scope="col" class="py-3.5 px-4">Date</th>
-                                    <th scope="col" class="py-3.5 px-4">Amount / Status</th>
-                                    <th scope="col" class="py-3.5 px-4 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                @foreach($orders->take(5) as $order)
+                        <!-- Orders List or Empty State -->
+                        <div class="my-3 space-y-2.5">
+                            @if(isset($orders) && $orders->count() > 0)
+                                @foreach($orders->take(2) as $ord)
                                     @php
-                                        $firstItem = $order->items->first();
+                                        $firstItem = $ord->items->first();
                                         $resource = $firstItem?->resource;
                                     @endphp
-                                    <tr class="hover:bg-slate-50 transition-colors">
-                                        <td class="py-3.5 px-4">
-                                            <div class="flex items-center gap-3">
-                                                @if($resource && $resource->preview_image)
-                                                    <img src="{{ asset('storage/' . $resource->preview_image) }}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 bg-slate-50 shrink-0" alt="{{ $resource->title }}" onerror="this.src='{{ asset('images/logo.png') }}'">
-                                                @else
-                                                    <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 text-[#20165c] flex items-center justify-center shrink-0">
-                                                        <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                    </div>
-                                                @endif
-                                                <div class="truncate max-w-xs">
-                                                    <a href="{{ $resource ? route('resource.show', $resource->slug ?? $resource->id) : '#' }}" class="font-semibold text-[#121826] hover:text-[#20165c] text-sm truncate block transition-colors">
-                                                        {{ $resource?->title ?? 'Digital Design Asset' }}
-                                                    </a>
-                                                    <span class="text-xs text-slate-500 font-mono block mt-0.5">
-                                                        #{{ $order->order_number ?? $order->id }} @if($order->items->count() > 1) <span class="text-[#20165c]">(+{{ $order->items->count() - 1 }} more)</span> @endif
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-3.5 px-4">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
-                                                {{ $resource?->category?->name ?? 'Design Resource' }}
-                                            </span>
-                                        </td>
-                                        <td class="py-3.5 px-4">
-                                            <span class="text-xs text-slate-500 font-mono">
-                                                {{ $order->created_at->format('M d, Y') }}
-                                            </span>
-                                        </td>
-                                        <td class="py-3.5 px-4">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-bold text-[#f47402] font-mono text-sm">৳{{ number_format($order->total, 2) }}</span>
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span> Paid
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="py-3.5 px-4 text-right">
-                                            <a href="{{ route('orders.show', $order) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#20165c] bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all shrink-0">
-                                                <svg class="w-3.5 h-3.5 shrink-0 text-[#20165c]" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                                <span>Invoice</span>
+                                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 hover:bg-slate-100/70 transition">
+                                        <div class="min-w-0">
+                                            <a href="{{ route('orders.show', $ord) }}" class="font-semibold text-xs text-[#121826] hover:text-[#20165c] truncate block">
+                                                {{ $resource?->title ?? 'Digital Asset Order' }}
                                             </a>
-                                        </td>
-                                    </tr>
+                                            <div class="text-[11px] text-slate-500 font-mono mt-0.5">
+                                                #{{ $ord->order_number ?? $ord->id }} • {{ $ord->created_at->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                        <div class="text-right shrink-0">
+                                            <span class="font-bold text-[#f47402] text-xs font-mono block">৳{{ number_format($ord->total, 2) }}</span>
+                                            <span class="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-semibold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Delivered
+                                            </span>
+                                        </div>
+                                    </div>
                                 @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <!-- Graceful Empty State -->
-                    <div class="text-center py-12">
-                        <svg class="w-10 h-10 text-slate-400 mx-auto mb-2 shrink-0" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                        </svg>
-                        <h4 class="text-sm font-semibold text-slate-700">No recent activity found</h4>
-                        <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Explore thousands of creative templates, vectors, and UI kits ready for immediate use.</p>
-                        <div class="mt-4">
-                            <a href="{{ route('resources.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all">
-                                <svg class="w-3.5 h-3.5 shrink-0" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                <span>Explore Assets</span>
-                            </a>
+                            @else
+                                <div class="py-6 text-center text-slate-400">
+                                    <i class="bi bi-inbox fs-3 d-block mb-1 opacity-50"></i>
+                                    <p class="text-xs mb-0">No active custom orders currently pending.</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                @endif
-            </div>
 
+                    <button type="button" onclick="switchDashboardTab('pane-orders')" class="w-full mt-2 py-2.5 rounded-xl text-xs font-semibold text-[#20165c] bg-purple-50 hover:bg-purple-100 border border-purple-200 transition text-center cursor-pointer">
+                        View All Orders & Invoices →
+                    </button>
+                </div>
+
+                <!-- CARD 3 (Span 5 on lg): Download Library / Creator Performance & KYC -->
+                <div class="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+                                    <i class="bi bi-cloud-arrow-down-fill small"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-[#121826] mb-0">
+                                        @if($user->isApprovedContributor() && $user->isSellerMode())
+                                            Creator Studio & KYC
+                                        @else
+                                            Asset Downloads Library
+                                        @endif
+                                    </h4>
+                                    <span class="text-[11px] text-slate-500">
+                                        @if($user->isApprovedContributor() && $user->isSellerMode())
+                                            Approved portfolio metrics
+                                        @else
+                                            Instant cloud file access
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                            @if($user->isApprovedContributor())
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    KYC Verified
+                                </span>
+                            @else
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-[#20165c] border border-purple-200">
+                                    Instant License
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Mini metrics -->
+                        <div class="grid grid-cols-2 gap-3 my-4">
+                            @if($user->isApprovedContributor() && $user->isSellerMode())
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Live Assets</span>
+                                    <span class="text-2xl font-black text-[#121826] mt-1 block">
+                                        {{ number_format($totalResources ?? $contributorResources?->count() ?? 0) }}
+                                    </span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Downloads</span>
+                                    <span class="text-2xl font-black text-[#20165c] mt-1 block">
+                                        {{ number_format($totalDownloads ?? 0) }}
+                                    </span>
+                                </div>
+                            @else
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Licensed Files</span>
+                                    <span class="text-2xl font-black text-[#121826] mt-1 block">
+                                        {{ number_format($downloadsCount ?? 0) }}
+                                    </span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Saved Wishlist</span>
+                                    <span class="text-2xl font-black text-rose-600 mt-1 block">
+                                        {{ number_format($wishlistCount ?? 0) }}
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($user->isApprovedContributor() && $user->isSellerMode())
+                        <button type="button" onclick="switchDashboardTab('pane-upload')" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] transition shadow-sm text-center cursor-pointer">
+                            + Upload New Creative Asset
+                        </button>
+                    @else
+                        <button type="button" onclick="switchDashboardTab('pane-downloads')" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] transition shadow-sm text-center cursor-pointer">
+                            Open Downloads Vault
+                        </button>
+                    @endif
+                </div>
+
+                <!-- CARD 4 (Span 7 on lg): Recent Transaction Ledger Table -->
+                <div class="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                                <h4 class="text-sm font-bold text-[#121826] mb-0 flex items-center gap-1.5">
+                                    <i class="bi bi-receipt text-[#20165c]"></i>
+                                    <span>Recent Transaction Ledger</span>
+                                </h4>
+                                <span class="text-[11px] text-slate-500">Audit records of escrow transactions & licenses</span>
+                            </div>
+                            <button type="button" onclick="switchDashboardTab('pane-orders')" class="text-xs font-semibold text-[#20165c] hover:underline cursor-pointer">
+                                All History
+                            </button>
+                        </div>
+
+                        @if(isset($orders) && $orders->count() > 0)
+                            <div class="overflow-x-auto mt-3">
+                                <table class="w-full text-left text-xs text-slate-700">
+                                    <thead class="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">
+                                        <tr>
+                                            <th class="py-2.5 px-3">Asset</th>
+                                            <th class="py-2.5 px-3">Date</th>
+                                            <th class="py-2.5 px-3">Amount</th>
+                                            <th class="py-2.5 px-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        @foreach($orders->take(4) as $order)
+                                            @php
+                                                $firstItem = $order->items->first();
+                                                $resource = $firstItem?->resource;
+                                            @endphp
+                                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                                <td class="py-2.5 px-3">
+                                                    <div class="flex items-center gap-2 max-w-[200px]">
+                                                        @if($resource && $resource->preview_image)
+                                                            <img src="{{ asset('storage/' . $resource->preview_image) }}" class="w-7 h-7 rounded-lg object-cover border border-slate-200 shrink-0" alt="">
+                                                        @else
+                                                            <div class="w-7 h-7 rounded-lg bg-purple-50 text-[#20165c] flex items-center justify-center shrink-0">
+                                                                <i class="bi bi-file-earmark text-[11px]"></i>
+                                                            </div>
+                                                        @endif
+                                                        <span class="font-semibold text-slate-900 truncate">{{ $resource?->title ?? 'Design Resource' }}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-2.5 px-3 font-mono text-slate-500 text-[11px]">
+                                                    {{ $order->created_at->format('M d, Y') }}
+                                                </td>
+                                                <td class="py-2.5 px-3 font-bold font-mono text-[#f47402]">
+                                                    ৳{{ number_format($order->total, 2) }}
+                                                </td>
+                                                <td class="py-2.5 px-3 text-right">
+                                                    <a href="{{ route('orders.show', $order) }}" class="inline-flex items-center px-2 py-1 rounded-md text-[11px] font-semibold text-slate-600 hover:text-[#20165c] hover:bg-slate-100 border border-slate-200 transition">
+                                                        Receipt
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="py-8 text-center text-slate-400">
+                                <i class="bi bi-clock-history fs-3 d-block mb-1 opacity-50"></i>
+                                <p class="text-xs mb-0">No past transactions recorded yet.</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-2">
+                        <span>Showing {{ min(4, isset($orders) ? $orders->count() : 0) }} most recent ledger entries</span>
+                        <a href="{{ route('wallet.index') }}" class="text-[#20165c] font-semibold hover:underline">Wallet Statement →</a>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <!-- ========================================== -->

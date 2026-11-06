@@ -38,31 +38,48 @@
                          class="noksha-brand-logo h-10 w-auto object-contain flex-shrink-0"
                          height="40"
                          style="height: 40px; width: auto; max-height: 40px; object-fit: contain; display: block;">
-                    <span class="fw-bold fs-4 tracking-tight text-[#121826] text-nowrap">
+                    <span class="fw-black fs-4 tracking-tight text-[#20165c] text-nowrap">
                         Noksha
                     </span>
                 </a>
             </div>
 
             <!-- ========================================================= -->
-            <!-- 2. CENTER SECTION: TEMPLATES, CONTESTS, CONTACT US        -->
+            <!-- 2. CENTER SECTION: CENTRAL DISCOVERY SEARCH & NAV LINKS   -->
             <!-- ========================================================= -->
-            <div class="d-none d-xl-flex align-items-center gap-2 mx-auto">
-                <a class="nav-link-custom {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
-                    <i class="bi bi-grid me-1.5 text-secondary"></i> Templates
-                </a>
+            <div class="d-none d-lg-flex align-items-center gap-3 flex-grow-1 mx-3 mx-xl-4 justify-content-center">
+                <!-- Navigation Links -->
+                <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
+                    <a class="nav-link-custom {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
+                        <i class="bi bi-grid me-1 text-slate-500"></i> Templates
+                    </a>
 
-                <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
-                    <i class="bi bi-people-fill me-1.5 text-[#20165c]"></i> Creators
-                </a>
+                    <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
+                        <i class="bi bi-people-fill me-1 text-[#20165c]"></i> Creators
+                    </a>
 
-                <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
-                    <i class="bi bi-trophy-fill me-1.5 text-[#f47402]"></i> Contests
-                </a>
+                    <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
+                        <i class="bi bi-trophy-fill me-1 text-[#f47402]"></i> Contests
+                    </a>
+                </div>
 
-                <a class="nav-link-custom {{ request()->routeIs('contact.*') ? 'active' : '' }}" href="{{ route('contact.index') }}">
-                    <i class="bi bi-headset me-1.5 text-[#20165c]"></i> Contact Us
-                </a>
+                <!-- Central Discovery Search Bar -->
+                <div class="w-100 max-w-sm" style="max-width: 320px;">
+                    <form action="{{ route('resources.index') }}" method="GET" class="m-0 position-relative">
+                        <div class="d-flex align-items-center bg-slate-50 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#20165c] rounded-full px-3 py-1.5 transition-all shadow-sm">
+                            <i class="bi bi-search text-slate-400 me-2 small"></i>
+                            <input type="text" 
+                                   name="q" 
+                                   id="globalNavSearchInput" 
+                                   value="{{ request('q') }}" 
+                                   placeholder="Search templates, mockups..." 
+                                   class="form-control form-control-sm border-0 bg-transparent p-0 text-slate-800 shadow-none" 
+                                   style="font-size: 0.8125rem;"
+                                   aria-label="Search Marketplace">
+                            <kbd class="d-none d-xl-inline-block px-1.5 py-0.5 text-[10px] font-mono bg-slate-100 border border-slate-200 rounded text-slate-500 flex-shrink-0 ms-1.5">Ctrl K</kbd>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- ========================================================= -->
@@ -157,12 +174,10 @@
     $inboxUnreadCount = $user ? $user->unreadMessagesCount() : 0;
                     @endphp
 
-                    <!-- Clickable Wallet Pill Badge (Pure BDT Escrow Balance) -->
-                    <a href="{{ route('wallet.index') }}" class="wallet-credit-badge d-none d-sm-inline-flex align-items-center gap-1.5 text-decoration-none px-2.5 py-1.5 rounded-pill shadow-sm" title="View Wallet Balance">
-                        <div class="d-flex align-items-center gap-1 font-monospace fw-extrabold text-success small">
-                            <i class="bi bi-wallet2 text-success"></i>
-                            <span>৳ {{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
-                        </div>
+                    <!-- Clickable Central BDT Wallet Pill Badge -->
+                    <a href="{{ route('wallet.index') }}" class="d-none d-sm-inline-flex align-items-center gap-1.5 text-decoration-none px-3 py-1.5 rounded-full border border-purple-200 bg-purple-50 hover:bg-purple-100/80 transition-all shadow-sm" title="Central BDT Escrow Wallet">
+                        <i class="bi bi-wallet2 text-[#20165c] small"></i>
+                        <span class="font-monospace fw-semibold small text-[#20165c]">৳{{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
                     </a>
 
                     <!-- Notification Bell Dropdown -->
@@ -721,3 +736,16 @@
         </div>
     </div>
 </header>
+
+<script>
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            const searchInput = document.getElementById('globalNavSearchInput');
+            if (searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+    });
+</script>
