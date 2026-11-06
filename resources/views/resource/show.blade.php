@@ -13,18 +13,19 @@
 
     /* Main Preview Container */
     .resource-preview-main {
-        border-radius: 1.5rem !important; /* 24px Radius */
-        border: 1px solid rgba(108, 76, 241, 0.15) !important;
-        box-shadow: 0 15px 35px -10px rgba(108, 76, 241, 0.12) !important;
+        border-radius: 1rem !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
         overflow: hidden;
-        background: #ffffff;
+        background: #f8fafc;
         position: relative;
     }
 
     .resource-preview-box {
-        height: 420px;
+        min-height: 420px;
         position: relative;
         overflow: hidden;
+        background: #f8fafc;
         transition: all 0.3s ease;
     }
 
@@ -196,7 +197,7 @@
                     {{ isset($resource) ? $resource->title : 'Digital Asset' }}
                 </h1>
                 <p class="fs-6 text-secondary mb-0">
-                    {{ isset($resource) ? Str::limit($resource->description, 180) : 'High quality design asset for modern creative projects.' }}
+                    {{ isset($resource) ? Str::limit($cleanDesc ?? $resource->description, 180) : 'High quality design asset for modern creative projects.' }}
                 </p>
             </div>
             
@@ -239,27 +240,65 @@
             <div class="col-12 col-lg-8">
                 
                 <!-- Large Product Preview Gallery -->
-                <div class="resource-preview-main mb-4">
-                    <div id="mainPreviewDisplay" class="resource-preview-box p-0 position-relative overflow-hidden" style="height: 420px; background: #1E1B4B;">
-                        @if(isset($resource) && $resource->preview_image)
-                            <img src="{{ asset('storage/' . $resource->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $resource->title }}">
-                        @else
-                            <div class="w-100 h-100 card-grad-1 p-4 d-flex align-items-center justify-content-center text-white text-center">
-                                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90 mb-3">
+                @php
+    $coverUrl = null;
+    if (isset($resource)) {
+        if (!empty($resource->preview_image)) {
+            if (str_starts_with($resource->preview_image, 'http://') || str_starts_with($resource->preview_image, 'https://')) {
+                $coverUrl = $resource->preview_image;
+            } else {
+                $cleanPath = ltrim(str_replace('storage/', '', $resource->preview_image), '/');
+                $coverUrl = asset('storage/' . $cleanPath);
+            }
+        } elseif (!empty($resource->thumbnail_url)) {
+            $coverUrl = $resource->thumbnail_url;
+        }
+    }
+
+    // Filter out dummy/test strings (e.g. dlknfonsdof, asdf, etc.)
+    $rawDesc = trim($resource->description ?? '');
+    $isDummyDesc = empty($rawDesc) || strlen($rawDesc) < 15 || preg_match('/^[a-z]{8,}$/i', $rawDesc) || in_array(strtolower($rawDesc), ['test', 'asdf', 'dlknfonsdof', 'sample', 'description']);
+    $cleanDesc = !$isDummyDesc 
+        ? $rawDesc 
+        : 'High-caliber digital design asset crafted with precision for professional UI/UX, brand identity, and modern digital workflows. Fully organized vector layers, global design tokens, and scalable components configured for instant production deployment.';
+@endphp
+
+                <!-- Large Product Preview Gallery Frame (White/Slate-50 Frame) -->
+                <div class="resource-preview-main mb-4 bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div id="mainPreviewDisplay" class="resource-preview-box p-0 position-relative overflow-hidden bg-slate-50 d-flex align-items-center justify-content-center" style="min-height: 440px;">
+                        @if(!empty($coverUrl))
+                            <img src="{{ $coverUrl }}" 
+                                 id="resourceMainCoverImg"
+                                 class="w-100 h-100 object-fit-cover" 
+                                 alt="{{ $resource->title }}"
+                                 onerror="this.onerror=null; this.classList.add('d-none'); document.getElementById('previewVectorFallback').classList.remove('d-none');">
+                        @endif
+
+                        <!-- Graceful Vector Showcase Fallback (When cover image is missing or broken) -->
+                        <div id="previewVectorFallback" class="{{ !empty($coverUrl) ? 'd-none' : '' }} w-100 h-100 p-5 d-flex flex-column align-items-center justify-content-center text-center bg-gradient-to-br from-purple-50/60 via-slate-50 to-amber-50/40" style="min-height: 440px;">
+                            <div class="rounded-2xl p-4 bg-white border border-purple-100 shadow-sm mb-3 text-[#20165c]">
+                                <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                                     <line x1="8" y1="21" x2="16" y2="21"></line>
                                     <line x1="12" y1="17" x2="12" y2="21"></line>
                                 </svg>
-                                <h4 class="fw-extrabold mb-1">{{ isset($resource) ? $resource->title : 'Vector Preview Screen' }}</h4>
-                                <p class="small text-white text-opacity-80 mb-0">High-resolution Design Asset Preview</p>
                             </div>
-                        @endif
+                            <h4 class="fw-bold text-[#121826] mb-1.5">{{ isset($resource) ? $resource->title : 'Digital Asset Showcase' }}</h4>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 px-3 py-1 rounded-pill extra-small font-mono fw-bold">
+                                    {{ isset($resource) ? strtoupper($resource->file_type ?? 'VECTOR') : 'VECTOR' }} FORMAT
+                                </span>
+                                <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-pill extra-small font-mono fw-bold">
+                                    VERIFIED ASSET
+                                </span>
+                            </div>
+                        </div>
 
                         <!-- Top Floating Badges -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3.5 py-2 fw-bold small">
-                            <i class="bi bi-award-fill text-primary me-1"></i> Editor's Choice
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white/95 backdrop-blur-md text-[#121826] border border-slate-200 rounded-pill shadow-sm px-3.5 py-2 fw-bold small">
+                            <i class="bi bi-award-fill text-[#20165c] me-1"></i> Editor's Choice
                         </span>
-                        <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1.5 small font-monospace">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-white/95 backdrop-blur-md text-[#20165c] border border-slate-200 rounded-pill px-3 py-1.5 small font-monospace fw-bold shadow-sm">
                             {{ isset($resource) ? strtoupper($resource->file_type ?? 'ZIP') : 'FIGMA' }} Format
                         </span>
                     </div>
@@ -287,7 +326,7 @@
                 <div class="mb-5">
                     <h3 class="fw-extrabold text-dark mb-3">Design Story & Case Study</h3>
                     <p class="text-secondary lh-lg mb-4">
-                        {{ isset($resource) ? $resource->description : 'High-caliber design system and vector graphics crafted with precision for professional UI/UX, print branding, and digital media applications.' }}
+                        {{ $cleanDesc ?? ($resource->description ?? '') }}
                     </p>
 
                     <!-- Tools Used Badges -->
@@ -564,26 +603,27 @@
                         <!-- Main Action Buttons -->
                         <div class="d-grid gap-2.5 mb-4">
                             @if(isset($hasPurchased) && $hasPurchased)
-                                <div class="p-2.5 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 text-center mb-1">
-                                    <span class="text-success extra-small fw-bold">
+                                <div class="p-2.5 rounded-3 bg-emerald-50 border border-emerald-200 text-center mb-1">
+                                    <span class="text-emerald-700 extra-small fw-bold">
                                         <i class="bi bi-patch-check-fill me-1"></i> License Owned & Unlocked
                                     </span>
                                 </div>
-                                <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold">
-                                    <i class="bi bi-cloud-arrow-down-fill me-2"></i> Download Asset Now
+                                <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold text-decoration-none shadow-md transition-all">
+                                    <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
+                                    <span>Download Asset</span>
                                 </a>
                             @else
                                 @if(isset($resource) && $resource->is_paid && $resource->price > 0)
                                     <!-- Buy Template Direct with Wallet -->
-                                    <button type="button" onclick="handleBuyTemplate()" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                                    <button type="button" onclick="handleBuyTemplate()" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-md transition-all border-0">
                                         <i class="bi bi-wallet2"></i>
-                                        <span>Buy Now / Download — ৳{{ number_format($resource->price, 2) }}</span>
+                                        <span>Download Asset — ৳{{ number_format($resource->price, 2) }}</span>
                                     </button>
 
                                     <!-- Add to Cart Alternative -->
                                     <form action="{{ route('cart.store', $resource->id ?? 1) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-outline-slate rounded-pill py-2.5 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 extra-small">
+                                        <button type="submit" class="btn btn-outline-secondary rounded-xl py-2.5 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 extra-small">
                                             <i class="bi bi-cart-plus"></i>
                                             <span>Add to Cart</span>
                                         </button>
@@ -592,22 +632,23 @@
                                     <!-- Free Download Direct -->
                                     <form action="{{ route('resource.buy-wallet', $resource->id ?? 1) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-purple-cta btn-lg rounded-pill py-3 fw-bold w-100">
-                                            <i class="bi bi-cloud-arrow-down-fill me-2"></i> Download Free Asset
+                                        <button type="submit" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-md transition-all border-0">
+                                            <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
+                                            <span>Download Asset (Free)</span>
                                         </button>
                                     </form>
                                 @endif
                             @endif
 
                             <!-- Studio Quick Customize Action Trigger -->
-                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="btn btn-ai-quick-edit btn-lg rounded-pill py-3 fw-bold text-decoration-none d-flex align-items-center justify-content-center gap-2" title="Customize this template in the web editor">
-                                <i class="bi bi-palette2 fs-5 text-warning"></i>
+                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-white hover:bg-purple-50 text-[#20165c] border border-[#20165c]/30 hover:border-[#20165c] font-semibold text-decoration-none shadow-sm transition-all" title="Customize this template in the web editor">
+                                <i class="bi bi-palette2 fs-5 text-[#f47402]"></i>
                                 <span>Studio Quick Edit</span>
                             </a>
 
                             @if(isset($resource) && $resource->demo_link)
-                                <a href="{{ $resource->demo_link }}" target="_blank" class="btn btn-outline-purple btn-lg rounded-pill py-3 fw-bold">
-                                    <i class="bi bi-box-arrow-up-right me-2"></i> Live Demo Preview
+                                <a href="{{ $resource->demo_link }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-100 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 hover:text-[#20165c] hover:bg-slate-50 font-semibold text-decoration-none text-xs transition-all">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i> Live Demo Preview
                                 </a>
                             @endif
                         </div>
@@ -710,16 +751,16 @@
 </section>
 
 <!-- RELATED RESOURCES SECTION -->
-<section class="py-5 py-lg-6" style="background-color: #F8F7FF;">
+<section class="py-5 py-lg-6" style="background-color: #f8fafc;">
     <div class="container">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
-                <span class="badge px-3 py-1 rounded-pill text-uppercase fw-bold small mb-1" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1;">
+                <span class="badge px-3 py-1 rounded-pill text-uppercase fw-bold small mb-1" style="background: rgba(32, 22, 92, 0.08); color: #20165c;">
                     Recommendations
                 </span>
-                <h3 class="fw-extrabold text-dark mb-0">Related Marketplace Resources <span class="text-primary"></span></h3>
+                <h3 class="fw-extrabold text-[#121826] mb-0">Related Marketplace Resources</h3>
             </div>
-            <a href="{{ route('home') }}#templates" class="btn btn-outline-purple rounded-pill px-4 py-2 fw-bold btn-sm">
+            <a href="{{ route('home') }}#templates" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-bold btn-sm">
                 View All <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
@@ -727,28 +768,53 @@
         <div class="row g-4">
             @if(isset($relatedResources) && $relatedResources->count() > 0)
                 @foreach($relatedResources as $rel)
+                    @php
+                        $relCover = null;
+                        if (!empty($rel->preview_image)) {
+                            if (str_starts_with($rel->preview_image, 'http://') || str_starts_with($rel->preview_image, 'https://')) {
+                                $relCover = $rel->preview_image;
+                            } else {
+                                $relCover = asset('storage/' . ltrim(str_replace('storage/', '', $rel->preview_image), '/'));
+                            }
+                        } elseif (!empty($rel->thumbnail_url)) {
+                            $relCover = $rel->thumbnail_url;
+                        }
+                    @endphp
                     <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card h-100 template-card-figma">
-                            <div class="template-preview-area p-0 overflow-hidden position-relative" style="height: 200px; background: #1E1B4B;">
-                                @if($rel->preview_image)
-                                    <img src="{{ asset('storage/' . $rel->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $rel->title }}">
+                        <div class="card h-100 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+                            <div class="position-relative overflow-hidden bg-slate-50 border-bottom border-slate-100" style="height: 180px;">
+                                @if($relCover)
+                                    <img src="{{ $relCover }}" class="w-100 h-100 object-fit-cover" alt="{{ $rel->title }}" onerror="this.onerror=null; this.src='{{ asset('images/logo.png') }}';">
                                 @else
                                     <div class="w-100 h-100 card-grad-2 p-4 d-flex align-items-center justify-content-center text-white">
-                                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
+                                        <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
                                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                                         </svg>
                                     </div>
                                 @endif
-                                <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
+                                <span class="position-absolute top-0 start-0 m-2.5 badge bg-white/95 text-[#121826] border border-slate-200 rounded-pill shadow-sm px-2.5 py-1 fw-bold extra-small">
                                     {{ $rel->category ? $rel->category->name : 'General' }}
                                 </span>
                             </div>
-                            <div class="card-body p-4 d-flex flex-column">
-                                <h5 class="card-title fw-bold text-dark mb-1 text-truncate">{{ $rel->title }}</h5>
-                                <p class="card-text text-secondary small mb-4 flex-grow-1 line-clamp-2">{{ Str::limit($rel->description, 80) }}</p>
-                                <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
-                                    <span class="fw-extrabold text-dark">{{ $rel->is_paid && $rel->price > 0 ? '৳' . number_format($rel->price, 2) : 'Free' }}</span>
-                                    <a href="{{ route('resource.show', $rel->slug ?? $rel->id) }}" class="btn btn-purple-cta rounded-pill px-4 py-2 btn-sm">
+                            <div class="p-4 d-flex flex-column flex-grow-1 justify-content-between">
+                                <div>
+                                    <div class="d-flex align-items-center justify-content-between gap-2 mb-1.5">
+                                        <h6 class="fw-bold text-[#121826] mb-0 text-truncate flex-grow-1" title="{{ $rel->title }}">
+                                            <a href="{{ route('resource.show', $rel->slug ?? $rel->id) }}" class="text-[#121826] hover:text-[#20165c] text-decoration-none">
+                                                {{ $rel->title }}
+                                            </a>
+                                        </h6>
+                                        <span class="fw-black text-[#f47402] font-mono text-sm shrink-0">
+                                            {{ $rel->is_paid && $rel->price > 0 ? '৳' . number_format($rel->price, 2) : 'Free' }}
+                                        </span>
+                                    </div>
+                                    <p class="text-slate-500 extra-small mb-3 line-clamp-2">{{ Str::limit($rel->description, 75) }}</p>
+                                </div>
+                                <div class="pt-3 border-top border-slate-100 d-flex align-items-center justify-content-between">
+                                    <span class="badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded extra-small uppercase font-mono">
+                                        {{ strtoupper($rel->file_type ?? 'ZIP') }}
+                                    </span>
+                                    <a href="{{ route('resource.show', $rel->slug ?? $rel->id) }}" class="btn btn-sm rounded-xl px-3 py-1.5 text-white bg-[#20165c] hover:bg-[#181045] font-semibold extra-small shadow-sm text-decoration-none">
                                         View Details
                                     </a>
                                 </div>
@@ -757,76 +823,6 @@
                     </div>
                 @endforeach
             @endif
-        </div>
-    </div>
-</section>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-success fs-5">Free</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-3 p-4 d-flex align-items-center justify-content-center text-white" style="height: 200px;">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            Social Media
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>5.0 (210)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>3.1k</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">Instagram Post & Story Bundle</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1">30 minimalist social media layouts for agency marketing.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-dark fs-5">৳299</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 template-card-figma">
-                    <div class="template-preview-area card-grad-4 p-4 d-flex align-items-center justify-content-center text-white" style="height: 200px;">
-                        <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white text-dark rounded-pill shadow-sm px-3 py-1.5 fw-bold small">
-                            3D Mockup
-                        </span>
-                    </div>
-                    <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between text-muted small mb-2">
-                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-2.5 py-1 rounded-pill">
-                                <i class="bi bi-star-fill text-warning me-1"></i>4.9 (67)
-                            </span>
-                            <span class="text-secondary font-monospace"><i class="bi bi-download me-1"></i>950</span>
-                        </div>
-                        <h5 class="card-title fw-bold text-dark mb-1 text-truncate">3D Isometric Tech Icons</h5>
-                        <p class="card-text text-secondary small mb-4 flex-grow-1">High-res transparent PNG & Blender 3D source files included.</p>
-                        <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                            <span class="fw-extrabold text-dark fs-5">৳199</span>
-                            <a href="{{ route('resource.demo') }}" class="btn btn-purple-cta rounded-pill px-4 py-2 btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </section>
@@ -881,7 +877,7 @@ function handleBuyTemplate() {
 <!-- MODAL: Insufficient Wallet Balance Prompt -->
 <div class="modal fade" id="insufficientBalanceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
-        <div class="modal-content border-0 shadow-lg" style="background: #0B1120; border: 1.5px solid rgba(239, 68, 68, 0.35) !important; border-radius: 1.5rem; color: #F8FAFC;">
+        <div class="modal-content border-0 shadow-lg" style="background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 1.5rem; color: #121826;">
             <div class="modal-body p-4 text-center">
                 <div style="width: 64px; height: 64px; border-radius: 1.25rem; background: rgba(239, 68, 68, 0.15); color: #F87171; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; border: 1px solid rgba(239, 68, 68, 0.35);">
                     <i class="bi bi-wallet-fill fs-2 text-danger"></i>
@@ -894,12 +890,12 @@ function handleBuyTemplate() {
                     </span>
                 </div>
 
-                <h3 class="h5 fw-extrabold text-white mb-2">Insufficient Wallet Balance</h3>
-                <p class="text-slate-300 extra-small mb-3" style="line-height: 1.6;">
+                <h3 class="h5 fw-extrabold text-[#121826] mb-2">Insufficient Wallet Balance</h3>
+                <p class="text-slate-600 extra-small mb-3" style="line-height: 1.6;">
                     Insufficient Wallet Balance. Please deposit funds to continue.
                 </p>
-                <p class="text-slate-400 extra-small mb-4" style="line-height: 1.6;">
-                    This premium design costs <strong class="text-white">৳{{ number_format($resource->price ?? 0, 2) }}</strong>. Your current available wallet balance is <strong class="text-slate-300">৳{{ number_format(auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0, 2) }}</strong>.
+                <p class="text-slate-500 extra-small mb-4" style="line-height: 1.6;">
+                    This premium design costs <strong class="text-[#121826]">৳{{ number_format($resource->price ?? 0, 2) }}</strong>. Your current available wallet balance is <strong class="text-slate-300">৳{{ number_format(auth()->check() ? (auth()->user()->wallet->balance ?? 0) : 0, 2) }}</strong>.
                 </p>
 
                 <div class="d-flex flex-column gap-2">
@@ -907,7 +903,7 @@ function handleBuyTemplate() {
                         <i class="bi bi-plus-circle-fill"></i>
                         <span>Recharge Wallet & Add Funds</span>
                     </a>
-                    <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-400 extra-small" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-500 extra-small" data-bs-dismiss="modal">
                         Cancel
                     </button>
                 </div>
@@ -919,25 +915,25 @@ function handleBuyTemplate() {
 <!-- MODAL: Confirm Template Purchase with Wallet -->
 <div class="modal fade" id="confirmPurchaseModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
-        <div class="modal-content border-0 shadow-lg" style="background: #0B1120; border: 1.5px solid rgba(124, 58, 237, 0.4) !important; border-radius: 1.5rem; color: #F8FAFC;">
+        <div class="modal-content border-0 shadow-lg" style="background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 1.5rem; color: #121826;">
             <div class="modal-body p-4 text-center">
                 <div style="width: 64px; height: 64px; border-radius: 1.25rem; background: rgba(124, 58, 237, 0.2); color: #C4B5FD; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; border: 1px solid rgba(124, 58, 237, 0.4);">
                     <i class="bi bi-bag-check-fill fs-2 text-warning"></i>
                 </div>
                 
-                <h3 class="h5 fw-extrabold text-white mb-1">Confirm Instant Purchase</h3>
-                <p class="text-slate-400 extra-small mb-3">
+                <h3 class="h5 fw-extrabold text-[#121826] mb-1">Confirm Instant Purchase</h3>
+                <p class="text-slate-500 extra-small mb-3">
                     Unlock full commercial license and instant digital source file download.
                 </p>
 
-                <div class="p-3 rounded-3 mb-4 text-start" style="background: #070B12; border: 1px solid #1E293B;">
+                <div class="p-3 rounded-3 mb-4 text-start" style="background: #f8fafc; border: 1px solid #e2e8f0;">
                     <div class="d-flex justify-content-between extra-small text-slate-400 mb-1.5">
                         <span>Asset:</span>
-                        <strong class="text-white text-truncate ms-2" style="max-width: 220px;">{{ $resource->title }}</strong>
+                        <strong class="text-[#121826] text-truncate ms-2" style="max-width: 220px;">{{ $resource->title }}</strong>
                     </div>
                     <div class="d-flex justify-content-between extra-small text-slate-400 mb-1.5">
                         <span>Template Price:</span>
-                        <strong class="text-white font-monospace">৳{{ number_format($resource->price ?? 0, 2) }}</strong>
+                        <strong class="text-[#121826] font-monospace">৳{{ number_format($resource->price ?? 0, 2) }}</strong>
                     </div>
                     <div class="d-flex justify-content-between extra-small text-slate-400 mb-1.5">
                         <span>Your Current Balance:</span>
@@ -958,7 +954,7 @@ function handleBuyTemplate() {
                             <i class="bi bi-check-circle-fill"></i>
                             <span>Confirm & Unlock Files</span>
                         </button>
-                        <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-400 extra-small" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-500 extra-small" data-bs-dismiss="modal">
                             Cancel
                         </button>
                     </div>

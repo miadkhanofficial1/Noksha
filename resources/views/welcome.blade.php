@@ -221,22 +221,22 @@
 
     /* Figma/Dribbble Category Chips */
     .cat-chip-pill {
-        background: #ffffff;
+        background: #ffffff !important;
         border-radius: 999px !important;
         border: 1px solid #e2e8f0 !important;
-        color: #64748b;
+        color: #334155 !important;
         font-weight: 600;
         font-size: 0.875rem;
         padding: 0.5rem 1.25rem;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.25s ease;
         white-space: nowrap;
         flex-shrink: 0;
     }
 
     .cat-chip-pill:hover {
         border-color: #20165c !important;
-        box-shadow: 0 4px 12px rgba(32, 22, 92, 0.1);
-        color: #20165c;
+        color: #20165c !important;
+        box-shadow: 0 2px 8px rgba(32, 22, 92, 0.08);
         transform: translateY(-1px);
     }
 
@@ -244,8 +244,8 @@
         background: #20165c !important;
         color: #ffffff !important;
         border-color: #20165c !important;
-        box-shadow: 0 6px 16px rgba(32, 22, 92, 0.25) !important;
-        transform: scale(1.03) !important;
+        box-shadow: 0 4px 14px rgba(32, 22, 92, 0.25) !important;
+        transform: scale(1.02) !important;
     }
 
     /* Improved Template Cards with Shimmer Sweep & 24px Radius */
@@ -1066,12 +1066,14 @@
                         $gradClass = 'card-grad-' . (($index % 4) + 1);
                     @endphp
                     <div class="col-6 col-md-6 col-lg-3">
-                        <div class="card h-100 cat-card-figma p-3.5 text-center d-flex flex-column align-items-center justify-content-center cursor-pointer" onclick="activateChipCategory('{{ $cat->name }}')">
-                            <div class="cat-icon-wrapper {{ $gradClass }} mb-3 shadow-sm">
+                        <div class="card h-100 bg-white border border-slate-200 hover:border-[#20165c] rounded-2xl p-6 transition shadow-sm hover:shadow-md text-center d-flex flex-column align-items-center justify-content-center cursor-pointer group" onclick="activateChipCategory('{{ $cat->name }}')">
+                            <div class="cat-icon-wrapper {{ $gradClass }} mb-3 shadow-sm group-hover:scale-105 transition-transform">
                                 <i class="bi {{ $iconClass }}"></i>
                             </div>
-                            <h5 class="fw-bold text-dark mb-1">{{ $cat->name }}</h5>
-                            <span class="small text-secondary font-monospace">{{ number_format($cat->resources_count) }} Templates</span>
+                            <h5 class="fw-bold text-[#121826] mb-2 group-hover:text-[#20165c] transition-colors">{{ $cat->name }}</h5>
+                            <span class="text-[#f47402] bg-[#f47402]/10 px-2.5 py-0.5 rounded-full text-xs font-semibold font-mono">
+                                {{ number_format($cat->resources_count) }} Templates
+                            </span>
                         </div>
                     </div>
                 @endforeach
@@ -1114,7 +1116,7 @@
                     @endphp
                     <div class="col-12 col-md-4">
                         <div class="card h-100 template-card-figma border border-slate-200 shadow-sm bg-white">
-                            <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 220px; background: #1E1B4B;">
+                            <div class="template-preview-area p-0 position-relative overflow-hidden bg-slate-50 border-bottom border-slate-100" style="height: 220px;">
                                 @if($trending->preview_image)
                                     <img src="{{ $trending->thumbnail_url }}" class="w-100 h-100 object-fit-cover" alt="{{ $trending->title }}">
                                 @else
@@ -1239,13 +1241,24 @@
 
                         <div class="bg-light p-3 rounded-3 mb-3 border">
                             <div class="d-flex align-items-center gap-3">
-                                @if($aiShowcase->preview_image)
-                                    <img src="{{ $aiShowcase->thumbnail_url }}" alt="{{ $aiShowcase->title }}" class="rounded shadow-sm object-fit-cover" style="width: 60px; height: 60px;">
-                                @else
-                                    <div class="bg-primary bg-opacity-10 text-primary rounded p-3 text-center d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                        <i class="bi bi-file-earmark-code fs-3"></i>
-                                    </div>
+                                @php
+                                    $spotlightCover = null;
+                                    if (!empty($aiShowcase->preview_image)) {
+                                        if (str_starts_with($aiShowcase->preview_image, 'http://') || str_starts_with($aiShowcase->preview_image, 'https://')) {
+                                            $spotlightCover = $aiShowcase->preview_image;
+                                        } else {
+                                            $spotlightCover = asset('storage/' . ltrim(str_replace('storage/', '', $aiShowcase->preview_image), '/'));
+                                        }
+                                    } elseif (!empty($aiShowcase->thumbnail_url)) {
+                                        $spotlightCover = $aiShowcase->thumbnail_url;
+                                    }
+                                @endphp
+                                @if($spotlightCover)
+                                    <img src="{{ $spotlightCover }}" alt="{{ $aiShowcase->title }}" class="rounded-2xl shadow-sm object-fit-cover border border-slate-200" style="width: 64px; height: 64px;" onerror="this.onerror=null; this.classList.add('d-none'); document.getElementById('spotlightFallbackBox').classList.remove('d-none');">
                                 @endif
+                                <div id="spotlightFallbackBox" class="{{ $spotlightCover ? 'd-none' : '' }} bg-purple-50 text-[#20165c] border border-purple-200 rounded-2xl p-3 text-center d-flex align-items-center justify-content-center shrink-0" style="width: 64px; height: 64px;">
+                                    <i class="bi bi-file-earmark-code fs-3 text-[#20165c]"></i>
+                                </div>
                                 <div class="overflow-hidden flex-grow-1">
                                     <h6 class="fw-bold mb-1 text-dark text-truncate">{{ $aiShowcase->title }}</h6>
                                     <div class="d-flex flex-wrap gap-1">

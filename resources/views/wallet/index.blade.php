@@ -41,22 +41,23 @@
 
     /* Primary Balance Hero Card */
     .balance-hero-card {
-        background: linear-gradient(135deg, #20165c 0%, #2c1e7a 100%);
-        border: 1.5px solid #20165c;
-        border-radius: 1.5rem;
+        background: linear-gradient(135deg, #20165c 0%, #2d1f7d 100%);
+        border: 1px solid #20165c;
+        border-radius: 1.25rem;
         padding: 2.25rem 2rem;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 25px -5px rgba(32, 22, 92, 0.3); color: #ffffff;
+        box-shadow: 0 10px 25px -5px rgba(32, 22, 92, 0.35);
+        color: #ffffff;
     }
 
     .balance-hero-glow-accent {
         position: absolute;
         top: -60px;
         right: -60px;
-        width: 220px;
-        height: 220px;
-        background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+        width: 240px;
+        height: 240px;
+        background: radial-gradient(circle, rgba(244, 116, 2, 0.2) 0%, transparent 70%);
         border-radius: 50%;
         pointer-events: none;
     }
@@ -121,9 +122,9 @@
     }
 
     .amount-preset-btn:hover, .amount-preset-btn:focus, .amount-preset-btn.active {
-        background: rgba(16, 185, 129, 0.25) !important;
-        border-color: #10B981 !important;
-        color: #34D399 !important;
+        background: rgba(32, 22, 92, 0.08) !important;
+        border-color: #20165c !important;
+        color: #20165c !important;
         text-decoration: none !important;
         transform: translateY(-1px);
     }
@@ -142,7 +143,7 @@
     }
 
     .method-card-box {
-        background: #0B1120;
+        background: #ffffff;
         border: 1.5px solid #cbd5e1;
         border-radius: 0.85rem;
         padding: 0.85rem 1rem;
@@ -155,34 +156,34 @@
     /* bKash */
     .method-card-option.method-bkash:hover .method-card-box {
         border-color: rgba(236, 72, 153, 0.5);
-        background: #0F172A;
+        background: #fdf2f8;
     }
     .method-card-option.method-bkash input[type="radio"]:checked + .method-card-box {
         border-color: #EC4899 !important;
-        background: rgba(236, 72, 153, 0.14) !important;
-        box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3), 0 0 20px rgba(236, 72, 153, 0.25) !important;
+        background: #fdf2f8 !important;
+        box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3) !important;
     }
 
     /* Nagad */
     .method-card-option.method-nagad:hover .method-card-box {
         border-color: rgba(249, 115, 22, 0.5);
-        background: #0F172A;
+        background: #fff7ed;
     }
     .method-card-option.method-nagad input[type="radio"]:checked + .method-card-box {
         border-color: #F97316 !important;
-        background: rgba(249, 115, 22, 0.14) !important;
-        box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3), 0 0 20px rgba(249, 115, 22, 0.25) !important;
+        background: #fff7ed !important;
+        box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
     }
 
     /* Card */
     .method-card-option.method-card:hover .method-card-box {
         border-color: rgba(59, 130, 246, 0.5);
-        background: #0F172A;
+        background: #eff6ff;
     }
     .method-card-option.method-card input[type="radio"]:checked + .method-card-box {
         border-color: #3B82F6 !important;
-        background: rgba(59, 130, 246, 0.14) !important;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.25) !important;
+        background: #eff6ff !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
     }
 
     /* Transaction Table */
@@ -231,7 +232,7 @@
 
     .btn-emerald-recharge:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        box-shadow: 0 8px 25px rgba(244, 116, 2, 0.4);
     }
 
     .btn-withdraw-payout {
@@ -321,19 +322,19 @@
         <!-- ========================================================= -->
         <!-- 1. STREAMLINED AVAILABLE WALLET BALANCE CARD             -->
         <!-- ========================================================= -->
-        <div class="balance-hero-card mb-4">
+        <div class="bg-gradient-to-r from-[#20165c] to-[#2d1f7d] text-white p-6 sm:p-8 rounded-2xl shadow-lg mb-4 position-relative overflow-hidden">
             <div class="balance-hero-glow-accent"></div>
 
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 position-relative z-1">
                 <!-- Balance & Status -->
                 <div>
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="extra-small fw-bold text-uppercase tracking-wider text-slate-400">Available Wallet Balance</span>
-                        <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(16, 185, 129, 0.2); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <span class="extra-small fw-bold text-uppercase tracking-wider text-purple-200">Available Wallet Balance</span>
+                        <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);">
                             <i class="bi bi-shield-check me-1"></i> Active Escrow Wallet
                         </span>
                         @if($canWithdraw && $earningsBalance > 0)
-                            <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(99, 102, 241, 0.2); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3);">
+                            <span class="badge px-2.5 py-0.5 rounded-pill extra-small font-monospace" style="background: rgba(244, 116, 2, 0.25); color: #fed7aa; border: 1px solid rgba(244, 116, 2, 0.4);">
                                 <i class="bi bi-stars me-1"></i> Creator Royalties: ৳{{ number_format($earningsBalance, 2) }}
                             </span>
                         @endif
@@ -341,15 +342,15 @@
 
                     <!-- Prominent Balance Amount -->
                     <div class="d-flex align-items-baseline gap-2 font-monospace mb-0">
-                        <span class="display-4 fw-extrabold text-emerald-400">৳</span>
+                        <span class="display-4 fw-extrabold text-[#f47402]">৳</span>
                         <span class="display-4 fw-extrabold text-white">{{ number_format($wallet->balance ?? auth()->user()->balance ?? 0, 2) }}</span>
-                        <span class="fs-4 fw-bold text-slate-400">BDT</span>
+                        <span class="fs-4 fw-bold text-purple-200">BDT</span>
                     </div>
                 </div>
 
                 <!-- Primary Action Buttons -->
                 <div class="d-flex align-items-center flex-wrap gap-3">
-                    <button type="button" class="btn btn-emerald-recharge d-inline-flex align-items-center justify-content-center gap-2" onclick="openDepositModal()">
+                    <button type="button" class="btn d-inline-flex align-items-center justify-content-center gap-2 bg-[#f47402] hover:bg-[#d96602] text-white font-semibold py-3 px-5 rounded-xl shadow-md border-0 transition" onclick="openDepositModal()">
                         <i class="bi bi-plus-circle-fill fs-5"></i>
                         <span>+ Add Funds (bKash / Nagad)</span>
                     </button>
@@ -397,10 +398,10 @@
         <!-- 3. FINANCIAL TRANSACTION LEDGER                           -->
         <!-- ========================================================= -->
         <div class="wallet-glass-card">
-            <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom border-slate-800">
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom border-slate-200">
                 <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-receipt-cutoff text-emerald-400 fs-5"></i>
-                    <h3 class="h5 fw-bold text-white mb-0">Financial Transaction Ledger</h3>
+                    <i class="bi bi-receipt-cutoff text-[#20165c] fs-5"></i>
+                    <h3 class="h5 fw-bold text-[#121826] mb-0">Financial Transaction Ledger</h3>
                 </div>
                 <span class="badge bg-slate-100 text-slate-600 border border-slate-200 rounded-pill extra-small font-monospace">
                     {{ $transactions->total() }} Total Records
@@ -443,7 +444,7 @@
                                 <tr>
                                     <!-- Date & Time -->
                                     <td class="font-monospace text-slate-400 extra-small">
-                                        <div class="text-slate-200 fw-semibold">{{ $tx->created_at->format('M d, Y') }}</div>
+                                        <div class="text-slate-800 fw-semibold">{{ $tx->created_at->format('M d, Y') }}</div>
                                         <span class="text-slate-500" style="font-size: 0.725rem;">{{ $tx->created_at->format('h:i A') }}</span>
                                     </td>
 
@@ -493,7 +494,7 @@
 
                                     <!-- Description -->
                                     <td>
-                                        <div class="fw-semibold text-white small">{{ $tx->description }}</div>
+                                        <div class="fw-semibold text-slate-800 small">{{ $tx->description }}</div>
                                         @if($tx->balance_after !== null)
                                             <div class="extra-small text-slate-500 font-monospace">
                                                 Ledger balance after: ৳{{ number_format($tx->balance_after, 2) }}
@@ -536,7 +537,7 @@
 
                 <!-- Pagination -->
                 @if($transactions->hasPages())
-                    <div class="mt-4 pt-3 border-top border-slate-800 d-flex justify-content-center">
+                    <div class="mt-4 pt-3 border-top border-slate-200 d-flex justify-content-center">
                         {{ $transactions->links() }}
                     </div>
                 @endif
@@ -546,7 +547,7 @@
                     <div style="width: 56px; height: 56px; border-radius: 1rem; background: rgba(148, 163, 184, 0.1); color: #64748b; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
                         <i class="bi bi-clock-history fs-3"></i>
                     </div>
-                    <h5 class="fw-bold text-white mb-1">No Financial Transactions Recorded Yet</h5>
+                    <h5 class="fw-bold text-[#121826] mb-1">No Financial Transactions Recorded Yet</h5>
                     <p class="text-slate-400 extra-small mb-3">
                         Recharge funds to start transacting on the Noksha creator marketplace.
                     </p>

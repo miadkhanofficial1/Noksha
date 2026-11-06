@@ -7,24 +7,22 @@
                  str_contains(strtolower($notification->title), 'contest');
 
     if ($isBroadcast) {
-        $wrapperBorder = 'border-l-4 border-indigo-500';
-        $wrapperStyle = 'border-left: 4px solid #6366f1 !important; background: linear-gradient(135deg, rgba(99, 102, 241, 0.14) 0%, rgba(139, 92, 246, 0.07) 100%); border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);';
+        $wrapperBorder = 'border-l-4 border-l-[#20165c] border-slate-200';
+        $wrapperBg = !$notification->is_read ? 'bg-purple-50/50' : 'bg-white';
         $icon = 'bi-megaphone-fill';
-        $iconClass = 'text-indigo-400';
-        $iconBg = 'background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35);';
-        $badge = '<span class="badge text-white rounded-pill px-2.5 py-1 extra-small" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); font-size: 0.65rem;"><i class="bi bi-megaphone-fill me-1"></i>Broadcast Announcement</span>';
+        $iconClass = 'text-[#20165c]';
+        $iconBg = 'background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.15);';
+        $badge = '<span class="badge text-white rounded-pill px-2.5 py-0.5 extra-small" style="background: #20165c; font-size: 0.65rem;"><i class="bi bi-megaphone-fill me-1"></i>Broadcast Announcement</span>';
     } elseif ($isContest) {
-        $wrapperBorder = 'border-l-4 border-amber-500';
-        $wrapperStyle = 'border-left: 4px solid #f59e0b !important; background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(249, 115, 22, 0.07) 100%); border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);';
+        $wrapperBorder = 'border-l-4 border-l-[#f47402] border-slate-200';
+        $wrapperBg = !$notification->is_read ? 'bg-amber-50/50' : 'bg-white';
         $icon = 'bi-trophy-fill';
-        $iconClass = 'text-amber-400';
-        $iconBg = 'background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35);';
-        $badge = '<span class="badge text-white rounded-pill px-2.5 py-1 extra-small" style="background: linear-gradient(135deg, #f59e0b, #ea580c); font-size: 0.65rem;"><i class="bi bi-trophy-fill me-1"></i>Contest Alert</span>';
+        $iconClass = 'text-[#f47402]';
+        $iconBg = 'background: rgba(244, 116, 2, 0.1); color: #f47402; border: 1px solid rgba(244, 116, 2, 0.25);';
+        $badge = '<span class="badge text-white rounded-pill px-2.5 py-0.5 extra-small" style="background: #f47402; font-size: 0.65rem;"><i class="bi bi-trophy-fill me-1"></i>Contest Alert</span>';
     } else {
-        $wrapperBorder = !$notification->is_read ? 'border-l-4 border-indigo-500' : '';
-        $wrapperStyle = !$notification->is_read 
-            ? 'border-left: 4px solid #6366f1 !important; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25);' 
-            : 'background: #0e172e; border: 1px solid rgba(255, 255, 255, 0.06);';
+        $wrapperBorder = !$notification->is_read ? 'border-l-4 border-l-[#20165c] border-slate-200' : 'border-slate-200';
+        $wrapperBg = !$notification->is_read ? 'bg-purple-50/30' : 'bg-white';
         $icon = match($type) {
             'seller' => 'bi-shop-fill',
             'buyer'  => 'bi-bag-check-fill',
@@ -32,19 +30,18 @@
             default  => 'bi-bell-fill',
         };
         $iconClass = match($type) {
-            'seller' => 'text-indigo-400',
-            'buyer'  => 'text-emerald-400',
-            'warning'=> 'text-amber-400',
-            default  => 'text-cyan-400',
+            'seller' => 'text-[#20165c]',
+            'buyer'  => 'text-emerald-600',
+            'warning'=> 'text-[#f47402]',
+            default  => 'text-[#20165c]',
         };
-        $iconBg = 'background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);';
+        $iconBg = 'background: rgba(32, 22, 92, 0.06); border: 1px solid rgba(32, 22, 92, 0.12);';
         $badge = '';
     }
 @endphp
 
-{{-- NOTIFICATION ITEM WRAPPER --}}
-<div class="notif-item-wrapper rounded-2xl {{ $wrapperBorder }} {{ !$notification->is_read ? 'notif-unread' : '' }}"
-     style="{{ $wrapperStyle }}"
+{{-- NOTIFICATION ITEM ROW (Clean White Card) --}}
+<div class="notif-item-wrapper rounded-xl {{ $wrapperBorder }} {{ $wrapperBg }} border p-4 sm:p-5 shadow-sm mb-3 flex items-start gap-4 hover:border-[#20165c]/40 transition {{ !$notification->is_read ? 'notif-unread' : '' }}"
      data-notif-id="{{ $notification->id }}"
      data-notif-type="{{ $type }}"
      data-notif-title="{{ e($notification->title) }}"
@@ -57,7 +54,7 @@
      style="cursor: pointer;">
 
     <a href="{{ $notification->action_url ? url(parse_url($notification->action_url, PHP_URL_PATH) ?: '/') : 'javascript:void(0)' }}"
-       class="notif-item d-flex align-items-start gap-3 p-3 text-decoration-none bg-transparent border-0"
+       class="d-flex align-items-start gap-3 w-100 text-decoration-none bg-transparent border-0"
        data-notif-link>
 
         {{-- Icon Badge --}}
@@ -69,20 +66,20 @@
         {{-- Content --}}
         <div class="flex-grow-1 min-w-0">
             <div class="d-flex align-items-center justify-content-between mb-1 gap-2">
-                <h6 class="fw-bold text-white mb-0 small text-truncate">{{ $notification->title }}</h6>
+                <h6 class="fw-bold text-[#121826] mb-0 small text-truncate">{{ $notification->title }}</h6>
 
-                {{-- Unread Glowing Green Dot --}}
+                {{-- Unread Indicator: Tangerine Dot --}}
                 @if(!$notification->is_read)
                     <span class="notif-unread-dot flex-shrink-0" title="Unread"></span>
                 @else
-                    <i class="bi bi-check2 text-gray-500 extra-small flex-shrink-0"></i>
+                    <i class="bi bi-check2 text-slate-400 extra-small flex-shrink-0"></i>
                 @endif
             </div>
 
-            <p class="text-gray-300 extra-small mb-1 lh-sm">{{ $notification->message }}</p>
+            <p class="text-[#475569] extra-small mb-1.5 lh-sm">{{ $notification->message }}</p>
 
             <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
-                <span class="extra-small text-indigo-400 font-monospace">{{ $notification->created_at->diffForHumans() }}</span>
+                <span class="extra-small text-slate-400 font-monospace">{{ $notification->created_at->diffForHumans() }}</span>
                 {!! $badge !!}
             </div>
         </div>
