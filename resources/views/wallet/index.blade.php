@@ -104,13 +104,13 @@
 
     /* Preset Quick Amount Pills */
     .amount-preset-btn {
-        background: #f8fafc !important;
-        border: 1.5px solid #e2e8f0 !important;
-        color: #121826 !important;
-        border-radius: 0.65rem;
-        padding: 0.5rem 1.15rem;
-        font-size: 0.95rem;
-        font-weight: 700;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #334155 !important;
+        border-radius: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
         font-family: inherit;
         text-decoration: none !important;
         transition: all 0.2s ease;
@@ -122,7 +122,7 @@
     }
 
     .amount-preset-btn:hover, .amount-preset-btn:focus, .amount-preset-btn.active {
-        background: rgba(32, 22, 92, 0.08) !important;
+        background: #ffffff !important;
         border-color: #20165c !important;
         color: #20165c !important;
         text-decoration: none !important;
@@ -143,47 +143,29 @@
     }
 
     .method-card-box {
-        background: #ffffff;
-        border: 1.5px solid #cbd5e1;
-        border-radius: 0.85rem;
-        padding: 0.85rem 1rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 1rem;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 0.75rem;
+        justify-content: center;
+        color: #334155;
         transition: all 0.25s ease;
     }
 
-    /* bKash */
-    .method-card-option.method-bkash:hover .method-card-box {
-        border-color: rgba(236, 72, 153, 0.5);
-        background: #fdf2f8;
-    }
-    .method-card-option.method-bkash input[type="radio"]:checked + .method-card-box {
-        border-color: #EC4899 !important;
-        background: #fdf2f8 !important;
-        box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3) !important;
+    .method-card-option:hover .method-card-box {
+        border-color: #20165c;
+        background: #ffffff;
     }
 
-    /* Nagad */
-    .method-card-option.method-nagad:hover .method-card-box {
-        border-color: rgba(249, 115, 22, 0.5);
-        background: #fff7ed;
-    }
-    .method-card-option.method-nagad input[type="radio"]:checked + .method-card-box {
-        border-color: #F97316 !important;
-        background: #fff7ed !important;
-        box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
-    }
-
-    /* Card */
-    .method-card-option.method-card:hover .method-card-box {
-        border-color: rgba(59, 130, 246, 0.5);
-        background: #eff6ff;
-    }
-    .method-card-option.method-card input[type="radio"]:checked + .method-card-box {
-        border-color: #3B82F6 !important;
-        background: #eff6ff !important;
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+    .method-card-option input[type="radio"]:checked + .method-card-box {
+        background: rgba(32, 22, 92, 0.06) !important;
+        border: 2px solid #20165c !important;
+        color: #20165c !important;
+        font-weight: 600 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
     }
 
     /* Transaction Table */
@@ -373,9 +355,9 @@
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <span class="fw-bold text-[#121826] small text-uppercase tracking-wider">Quick Deposit:</span>
                     <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(500)">+৳500</button>
-                        <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(1000)">+৳1,000</button>
-                        <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(2000)">+৳2,000</button>
+                        <button type="button" class="amount-preset-btn bg-white border border-slate-200 text-slate-700 hover:border-[#20165c] hover:text-[#20165c] rounded-lg px-3 py-1.5 font-medium transition" onclick="startDepositWithAmount(500)">+৳500</button>
+                        <button type="button" class="amount-preset-btn bg-white border border-slate-200 text-slate-700 hover:border-[#20165c] hover:text-[#20165c] rounded-lg px-3 py-1.5 font-medium transition" onclick="startDepositWithAmount(1000)">+৳1,000</button>
+                        <button type="button" class="amount-preset-btn bg-white border border-slate-200 text-slate-700 hover:border-[#20165c] hover:text-[#20165c] rounded-lg px-3 py-1.5 font-medium transition" onclick="startDepositWithAmount(2000)">+৳2,000</button>
                     </div>
                 </div>
 
@@ -570,12 +552,12 @@
         <div class="modal-content border-0 shadow-lg" style="background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 1.5rem; color: #121826;">
             <div class="modal-header border-bottom border-slate-200 px-4 pt-4 pb-3 bg-slate-50">
                 <div class="d-flex align-items-center gap-2">
-                    <div class="metric-icon-box" style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.15); color: #34D399; font-size: 1.15rem;">
-                        <i class="bi bi-phone-fill"></i>
+                    <div class="metric-icon-box" style="width: 40px; height: 40px; background: rgba(32, 22, 92, 0.08); color: #20165c; font-size: 1.15rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-wallet2 text-[#20165c]"></i>
                     </div>
                     <div>
                         <h5 class="modal-title fw-extrabold text-[#121826] mb-0" id="manualDepositModalLabel">Deposit Funds via Mobile Banking</h5>
-                        <span class="extra-small text-slate-400">bKash &bull; Nagad &bull; Bank Card &bull; Instant Verification</span>
+                        <span class="extra-small text-slate-500">bKash &bull; Nagad &bull; Bank Card &bull; Instant Verification</span>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -583,24 +565,24 @@
 
             <div class="modal-body p-4">
                 <!-- Official Payment Numbers Box -->
-                <div class="p-3.5 rounded-4 mb-4" style="background: #f8fafc; border: 1.5px dashed #f47402;">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="extra-small fw-bold text-uppercase tracking-wider text-emerald-400">
-                            <i class="bi bi-shield-check me-1"></i> Official Noksha Deposit Accounts
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="extra-small fw-bold text-uppercase tracking-wider text-[#20165c] d-flex align-items-center gap-1.5">
+                            <i class="bi bi-shield-check text-[#f47402]"></i> Official Noksha Deposit Accounts
                         </span>
-                        <span class="badge bg-emerald-900 text-emerald-300 extra-small">24/7 Monitored</span>
+                        <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 extra-small">24/7 Monitored</span>
                     </div>
 
                     <div class="row g-2 mb-2 font-monospace extra-small">
                         <!-- bKash -->
                         <div class="col-6">
-                            <div class="p-2 rounded-3 bg-white border border-slate-200">
-                                <div class="text-pink-400 fw-bold d-flex align-items-center justify-content-between">
+                            <div class="bg-white border border-slate-200 rounded-lg p-3 text-slate-800 shadow-xs">
+                                <div class="text-[#EC4899] fw-bold d-flex align-items-center justify-content-between">
                                     <span>bKash Personal:</span>
                                 </div>
-                                <div class="text-[#121826] fw-bold fs-6 mt-0.5 d-flex align-items-center justify-content-between">
+                                <div class="text-slate-800 fw-bold fs-6 mt-1 d-flex align-items-center justify-content-between">
                                     <span>01700-123456</span>
-                                    <button type="button" class="btn btn-link p-0 text-slate-400 hover-text-white" onclick="copyNumber('01700123456', this)" title="Copy">
+                                    <button type="button" class="btn btn-link p-0 text-slate-400 hover:text-[#20165c]" onclick="copyNumber('01700123456', this)" title="Copy">
                                         <i class="bi bi-copy"></i>
                                     </button>
                                 </div>
@@ -609,13 +591,13 @@
 
                         <!-- Nagad -->
                         <div class="col-6">
-                            <div class="p-2 rounded-3 bg-white border border-slate-200">
-                                <div class="text-orange-400 fw-bold d-flex align-items-center justify-content-between">
+                            <div class="bg-white border border-slate-200 rounded-lg p-3 text-slate-800 shadow-xs">
+                                <div class="text-[#F97316] fw-bold d-flex align-items-center justify-content-between">
                                     <span>Nagad Personal:</span>
                                 </div>
-                                <div class="text-[#121826] fw-bold fs-6 mt-0.5 d-flex align-items-center justify-content-between">
+                                <div class="text-slate-800 fw-bold fs-6 mt-1 d-flex align-items-center justify-content-between">
                                     <span>01800-123456</span>
-                                    <button type="button" class="btn btn-link p-0 text-slate-400 hover-text-white" onclick="copyNumber('01800123456', this)" title="Copy">
+                                    <button type="button" class="btn btn-link p-0 text-slate-400 hover:text-[#20165c]" onclick="copyNumber('01800123456', this)" title="Copy">
                                         <i class="bi bi-copy"></i>
                                     </button>
                                 </div>
@@ -623,7 +605,7 @@
                         </div>
                     </div>
 
-                    <p class="text-slate-400 extra-small mb-0" style="line-height: 1.4;">
+                    <p class="text-slate-500 extra-small mb-0 mt-2" style="line-height: 1.4;">
                         Send Money (Personal) to either official number above, then submit your sender phone and transaction ID (TrxID) below to credit your balance.
                     </p>
                 </div>
@@ -633,48 +615,59 @@
                     @csrf
 
                     <!-- Payment Method Selector -->
-                    <div class="mb-3">
-                        <label class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
+                    <div class="mb-4">
+                        <label class="form-label text-slate-700 extra-small fw-bold text-uppercase tracking-wider mb-2 d-block">
                             Select Payment Method <span class="text-danger">*</span>
                         </label>
-                        <div class="row g-2">
+                        <div class="row g-2.5">
                             <div class="col-4">
-                                <label class="method-card-option method-bkash w-100">
-                                    <input type="radio" name="payment_method" value="bkash" checked>
-                                    <div class="method-card-box text-center justify-content-center flex-column py-2.5">
-                                        <i class="bi bi-phone-fill fs-5" style="color: #EC4899;"></i>
-                                        <span class="extra-small fw-bold text-slate-800">bKash</span>
+                                <label class="method-card-option method-bkash w-100 cursor-pointer mb-0">
+                                    <input type="radio" name="payment_method" value="bkash" class="peer hidden" checked>
+                                    <div class="method-card-box bg-slate-50 border border-slate-200 text-slate-700 hover:border-[#20165c] hover:bg-white rounded-xl p-4 flex flex-col items-center justify-center transition peer-checked:bg-purple-50/60 peer-checked:border-2 peer-checked:border-[#20165c] peer-checked:text-[#20165c] peer-checked:font-semibold peer-checked:shadow-sm">
+                                        <i class="bi bi-phone-fill fs-4 mb-1 text-[#EC4899]"></i>
+                                        <span class="text-xs font-semibold">bKash</span>
                                     </div>
                                 </label>
                             </div>
 
                             <div class="col-4">
-                                <label class="method-card-option method-nagad w-100">
-                                    <input type="radio" name="payment_method" value="nagad">
-                                    <div class="method-card-box text-center justify-content-center flex-column py-2.5">
-                                        <i class="bi bi-cash-stack fs-5" style="color: #F97316;"></i>
-                                        <span class="extra-small fw-bold text-slate-800">Nagad</span>
+                                <label class="method-card-option method-nagad w-100 cursor-pointer mb-0">
+                                    <input type="radio" name="payment_method" value="nagad" class="peer hidden">
+                                    <div class="method-card-box bg-slate-50 border border-slate-200 text-slate-700 hover:border-[#20165c] hover:bg-white rounded-xl p-4 flex flex-col items-center justify-center transition peer-checked:bg-purple-50/60 peer-checked:border-2 peer-checked:border-[#20165c] peer-checked:text-[#20165c] peer-checked:font-semibold peer-checked:shadow-sm">
+                                        <i class="bi bi-cash-stack fs-4 mb-1 text-[#F97316]"></i>
+                                        <span class="text-xs font-semibold">Nagad</span>
                                     </div>
                                 </label>
                             </div>
 
                             <div class="col-4">
-                                <label class="method-card-option method-card w-100">
-                                    <input type="radio" name="payment_method" value="card">
-                                    <div class="method-card-box text-center justify-content-center flex-column py-2.5">
-                                        <i class="bi bi-credit-card-2-front-fill fs-5" style="color: #38BDF8;"></i>
-                                        <span class="extra-small fw-bold text-slate-800">Bank Card</span>
+                                <label class="method-card-option method-card w-100 cursor-pointer mb-0">
+                                    <input type="radio" name="payment_method" value="card" class="peer hidden">
+                                    <div class="method-card-box bg-slate-50 border border-slate-200 text-slate-700 hover:border-[#20165c] hover:bg-white rounded-xl p-4 flex flex-col items-center justify-center transition peer-checked:bg-purple-50/60 peer-checked:border-2 peer-checked:border-[#20165c] peer-checked:text-[#20165c] peer-checked:font-semibold peer-checked:shadow-sm">
+                                        <i class="bi bi-credit-card-2-front-fill fs-4 mb-1 text-[#38BDF8]"></i>
+                                        <span class="text-xs font-semibold">Bank Card</span>
                                     </div>
                                 </label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Deposit Amount -->
+                    <!-- Deposit Amount & Quick Preset Pills -->
                     <div class="mb-3">
-                        <label for="depositAmountInput" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
-                            Deposit Amount (BDT) <span class="text-danger">*</span>
-                        </label>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <label for="depositAmountInput" class="form-label text-slate-700 extra-small fw-bold text-uppercase tracking-wider mb-0">
+                                Deposit Amount (BDT) <span class="text-danger">*</span>
+                            </label>
+                            <span class="extra-small text-slate-400">Min: ৳10</span>
+                        </div>
+
+                        <!-- Preset Pills -->
+                        <div class="d-flex align-items-center gap-2 mb-2.5">
+                            <button type="button" class="btn btn-sm bg-white border border-slate-200 text-slate-700 hover:border-[#20165c] hover:text-[#20165c] rounded-lg px-3 py-1.5 font-medium transition" onclick="document.getElementById('depositAmountInput').value=500">+৳500</button>
+                            <button type="button" class="btn btn-sm bg-white border border-slate-200 text-slate-700 hover:border-[#20165c] hover:text-[#20165c] rounded-lg px-3 py-1.5 font-medium transition" onclick="document.getElementById('depositAmountInput').value=1000">+৳1,000</button>
+                            <button type="button" class="btn btn-sm bg-white border border-slate-200 text-slate-700 hover:border-[#20165c] hover:text-[#20165c] rounded-lg px-3 py-1.5 font-medium transition" onclick="document.getElementById('depositAmountInput').value=2000">+৳2,000</button>
+                        </div>
+
                         <div class="input-group">
                             <span class="input-group-text bg-slate-50 border-slate-200 text-[#f47402] fw-bold font-monospace">৳</span>
                             <input type="number" 
@@ -692,7 +685,7 @@
 
                     <!-- Sender Phone Number -->
                     <div class="mb-3">
-                        <label for="senderNumberInput" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="senderNumberInput" class="form-label text-slate-700 extra-small fw-bold text-uppercase tracking-wider mb-2">
                             Sender Phone Number <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
@@ -710,7 +703,7 @@
 
                     <!-- Transaction ID (TrxID) -->
                     <div class="mb-4">
-                        <label for="trxIdInput" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="trxIdInput" class="form-label text-slate-700 extra-small fw-bold text-uppercase tracking-wider mb-2">
                             Transaction ID (TrxID) <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
@@ -725,12 +718,12 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="d-flex flex-column gap-2">
-                        <button type="submit" class="btn btn-emerald-recharge w-100 d-inline-flex align-items-center justify-content-center gap-2 py-2.5">
+                    <div class="d-flex flex-column gap-2 pt-1">
+                        <button type="submit" class="w-100 d-inline-flex align-items-center justify-content-center gap-2 bg-[#f47402] hover:bg-[#d96602] text-white py-3.5 font-semibold rounded-xl shadow-md border-0 transition">
                             <i class="bi bi-check2-circle fs-5"></i>
                             <span>Submit Deposit Confirmation</span>
                         </button>
-                        <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-400 extra-small" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-slate rounded-pill py-2 text-slate-500 extra-small" data-bs-dismiss="modal">
                             Cancel
                         </button>
                     </div>

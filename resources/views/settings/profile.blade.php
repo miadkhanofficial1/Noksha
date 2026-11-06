@@ -14,7 +14,7 @@
     .settings-cover-wrapper {
         position: relative;
         height: 200px;
-        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+        background: linear-gradient(135deg, #20165c 0%, #3b2a8c 50%, #f47402 100%);
         border-radius: 1.25rem 1.25rem 0 0;
         overflow: hidden;
     }
@@ -28,7 +28,7 @@
     .settings-cover-overlay {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(7, 11, 20, 0.65);
+        background: rgba(18, 24, 38, 0.4);
         opacity: 0;
         transition: opacity 0.25s ease;
         display: flex;
@@ -41,10 +41,10 @@
     }
 
     .cover-upload-btn {
-        background: rgba(11, 19, 41, 0.9);
+        background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(8px);
         color: #121826;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid #e2e8f0;
         padding: 0.5rem 1.15rem;
         border-radius: 50rem;
         font-size: 0.825rem;
@@ -54,13 +54,13 @@
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     .cover-upload-btn:hover {
-        background: #1e1b4b;
-        border-color: #6366f1;
-        color: #ffffff;
+        background: #ffffff;
+        border-color: #20165c;
+        color: #20165c;
         transform: translateY(-1px);
     }
 
@@ -76,7 +76,7 @@
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
         object-fit: cover;
         background: #ffffff;
         display: block;
@@ -86,8 +86,8 @@
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #20165c 0%, #3b2a8c 100%);
         color: #FFFFFF;
         font-size: 3rem;
         font-weight: 800;
@@ -103,7 +103,7 @@
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: #4f46e5;
+        background: #20165c;
         color: #FFFFFF;
         border: 3px solid #ffffff;
         display: flex;
@@ -111,19 +111,19 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
+        box-shadow: 0 2px 8px rgba(32, 22, 92, 0.25);
     }
 
     .avatar-upload-badge:hover {
-        background: #6366f1;
+        background: #181045;
         transform: scale(1.08);
     }
 
     /* Skills interactive tags */
     .skill-tag {
-        background: rgba(99, 102, 241, 0.15);
-        color: #a5b4fc;
-        border: 1px solid rgba(99, 102, 241, 0.3);
+        background: rgba(32, 22, 92, 0.08);
+        color: #20165c;
+        border: 1px solid rgba(32, 22, 92, 0.15);
         padding: 0.35rem 0.85rem;
         border-radius: 999px;
         font-size: 0.8rem;
@@ -135,20 +135,20 @@
 
     .skill-tag-remove {
         cursor: pointer;
-        color: #f43f5e;
+        color: #ef4444;
         font-size: 1rem;
         line-height: 1;
         transition: color 0.15s;
     }
 
     .skill-tag-remove:hover {
-        color: #fb7185;
+        color: #dc2626;
     }
 
     .skill-suggestion {
         cursor: pointer;
         background: #f8fafc;
-        color: #64748b;
+        color: #475569;
         border: 1px solid #e2e8f0;
         padding: 0.3rem 0.75rem;
         border-radius: 999px;
@@ -158,9 +158,9 @@
     }
 
     .skill-suggestion:hover {
-        background: rgba(99, 102, 241, 0.2);
-        color: #c7d2fe;
-        border-color: rgba(99, 102, 241, 0.4);
+        background: rgba(32, 22, 92, 0.06);
+        color: #20165c;
+        border-color: #20165c;
     }
 </style>
 
@@ -172,8 +172,8 @@
             <div>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-1 text-xs uppercase font-semibold">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-indigo-400 hover:text-indigo-300 text-decoration-none">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-indigo-400 hover:text-indigo-300 text-decoration-none">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-[#20165c] hover:underline text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-[#20165c] hover:underline text-decoration-none">Dashboard</a></li>
                         <li class="breadcrumb-item active text-slate-700" aria-current="page">Profile Settings</li>
                     </ol>
                 </nav>
@@ -182,8 +182,8 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                <a href="{{ route('user.profile', $user->username ?? $user->id) }}" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-[#131d36] hover:text-[#121826] transition shadow-sm" title="View Public Profile">
-                    <i class="bi bi-box-arrow-up-right text-indigo-400"></i>
+                <a href="{{ route('user.profile', $user->username ?? $user->id) }}" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-[#20165c] hover:text-[#20165c] transition shadow-sm" title="View Public Profile">
+                    <i class="bi bi-box-arrow-up-right text-[#20165c]"></i>
                     <span>Preview Public Profile</span>
                 </a>
             </div>
@@ -231,21 +231,21 @@
                 @endphp
 
                 <!-- Cover Image Banner Box -->
-                <div id="cover_banner_box" class="relative w-full h-48 md:h-64 rounded-t-2xl overflow-hidden border-b border-slate-200 bg-white bg-cover bg-center"
-                     style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : 'background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);' }}">
+                <div id="cover_banner_box" class="bg-gradient-to-r from-[#20165c] via-[#3b2a8c] to-[#f47402] h-48 md:h-56 w-full rounded-t-2xl relative overflow-hidden border-b border-slate-200"
+                     style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : '' }}">
                     
                     @if($coverUrl)
-                        <img id="cover_preview" src="{{ $coverUrl }}" alt="Cover Preview" class="w-full h-full object-cover">
+                        <img id="cover_preview" src="{{ $coverUrl }}" alt="Cover Preview" class="w-full h-full object-cover" onerror="this.classList.add('hidden');">
                     @else
-                        <img id="cover_preview" src="" alt="Cover Preview" class="w-full h-full object-cover hidden">
+                        <img id="cover_preview" src="" alt="Cover Preview" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden');">
                     @endif
 
                     <!-- Hidden file input -->
                     <input type="file" name="cover_image" id="cover_upload" accept="image/*" class="hidden">
 
                     <!-- Change Cover Photo Button -->
-                    <button type="button" onclick="document.getElementById('cover_upload').click();" class="absolute top-4 right-4 bg-[#20165c]/80 hover:bg-[#20165c] text-[#121826] text-xs px-4 py-2 rounded-xl cursor-pointer backdrop-blur-md border border-slate-200 flex items-center gap-2 shadow-lg transition">
-                        <i class="bi bi-camera-fill fa fa-camera"></i>
+                    <button type="button" onclick="document.getElementById('cover_upload').click();" class="absolute top-4 right-4 bg-white/90 backdrop-blur text-slate-800 border border-slate-200 text-xs font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-white flex items-center gap-2 cursor-pointer transition">
+                        <i class="bi bi-camera-fill text-[#20165c]"></i>
                         <span>Change Cover Photo</span>
                     </button>
                 </div>
@@ -254,10 +254,10 @@
                 <div class="p-6 pt-0">
                     <div class="flex items-end justify-between flex-wrap gap-4">
                         <div class="flex items-end gap-4 flex-wrap">
-                            <!-- Avatar Circle (Clickable Trigger) -->
+                            <!-- Avatar Circle (Clickable Trigger with crisp white ring) -->
                             <div class="relative -mt-14 w-28 h-28">
                                 <div onclick="document.getElementById('avatar_upload').click();"
-                                     class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md shadow-2xl bg-white cursor-pointer group relative flex items-center justify-center">
+                                     class="w-28 h-28 rounded-full overflow-hidden ring-4 ring-white shadow-lg bg-white cursor-pointer group relative flex items-center justify-center">
                                     <img id="avatar_preview" 
                                          src="{{ $avatarUrl ?? '' }}" 
                                          alt="{{ $user->name }}" 
@@ -265,22 +265,22 @@
                                          onerror="this.classList.add('hidden'); document.getElementById('avatar_initials').classList.remove('hidden');">
 
                                     <div id="avatar_initials" 
-                                         class="w-full h-full flex items-center justify-center bg-indigo-600 text-[#121826] text-2xl font-bold {{ $avatarUrl ? 'hidden' : '' }}">
+                                         class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#20165c] to-[#3b2a8c] text-white text-2xl font-bold {{ $avatarUrl ? 'hidden' : '' }}">
                                         {{ strtoupper(substr($user->name ?? 'MD', 0, 2)) }}
                                     </div>
 
                                     <!-- Hover Camera Overlay -->
                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                                        <i class="bi bi-camera-fill text-[#121826] text-lg"></i>
+                                        <i class="bi bi-camera-fill text-white text-lg"></i>
                                     </div>
                                 </div>
 
                                 <!-- Camera Badge Button -->
                                 <button type="button" 
                                         onclick="document.getElementById('avatar_upload').click();" 
-                                        class="absolute bottom-1 right-1 bg-indigo-600 hover:bg-indigo-500 text-[#121826] p-2 rounded-full cursor-pointer shadow-lg flex items-center justify-center border-2 border-[#0b1329] transition-transform hover:scale-110" 
+                                        class="absolute bottom-1 right-1 bg-[#20165c] hover:bg-[#181045] text-white p-2 rounded-full cursor-pointer shadow-md flex items-center justify-center ring-2 ring-white transition-transform hover:scale-110" 
                                         title="Change Avatar Photo">
-                                    <i class="bi bi-camera-fill fa fa-camera text-xs"></i>
+                                    <i class="bi bi-camera-fill text-xs"></i>
                                 </button>
 
                                 <!-- Hidden file input -->
@@ -291,9 +291,9 @@
                             <div class="mb-2">
                                 <h3 class="text-xl font-bold text-[#121826] mb-0.5">{{ $user->name }}</h3>
                                 <div class="text-xs text-slate-500 flex items-center gap-2">
-                                    <span class="font-mono text-indigo-400 font-semibold">&#64;{{ $user->username }}</span>
+                                    <span class="font-mono text-[#20165c] font-semibold">&#64;{{ $user->username }}</span>
                                     <span>•</span>
-                                    <span class="badge bg-white text-slate-700 border border-slate-200/60 font-mono text-[11px] px-2 py-0.5 rounded">{{ $user->getRoleBadgeLabel() }}</span>
+                                    <span class="badge bg-slate-100 text-slate-700 border border-slate-200 font-mono text-[11px] px-2 py-0.5 rounded">{{ $user->getRoleBadgeLabel() }}</span>
                                 </div>
                             </div>
                         </div>
@@ -316,10 +316,10 @@
             </div>
 
             <!-- SECTION 2: BASIC INFORMATION -->
-            <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md mb-8">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
                 <div class="mb-6 pb-4 border-b border-slate-200">
                     <div class="text-lg font-bold text-[#121826] tracking-wide flex items-center gap-2">
-                        <i class="bi bi-person-badge-fill text-indigo-400"></i>
+                        <i class="bi bi-person-badge-fill text-[#20165c]"></i>
                         <span>Basic Information</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-1">Public identification details visible on your creator storefront and design submissions.</p>
@@ -334,7 +334,7 @@
                         <input type="text" 
                                name="name" 
                                id="inputName" 
-                               class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
+                               class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
                                value="{{ old('name', $user->name) }}" 
                                required 
                                placeholder="e.g. Miad Khan">
@@ -349,11 +349,11 @@
                             Username Handle <span class="text-rose-400">*</span>
                         </label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-slate-500 font-mono text-sm">&#64;</span>
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-slate-500 font-mono text-sm">&#64;</span>
                             <input type="text" 
                                    name="username" 
                                    id="inputUsername" 
-                                   class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm font-mono transition-all duration-200" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm font-mono transition-all duration-200" 
                                    value="{{ old('username', $user->username) }}" 
                                    required 
                                    placeholder="username">
@@ -372,7 +372,7 @@
                         <input type="text" 
                                name="headline" 
                                id="inputHeadline" 
-                               class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
+                               class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
                                value="{{ old('headline', $user->headline) }}" 
                                maxlength="150" 
                                placeholder="e.g. Brand Identity Designer & Vector Specialist">
@@ -393,7 +393,7 @@
                         <textarea name="bio" 
                                   id="inputBio" 
                                   rows="4" 
-                                  class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
+                                  class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
                                   maxlength="1000" 
                                   placeholder="Share your experience, design principles, tools, and background with clients and fellow contributors..." 
                                   oninput="updateBioCounter()">{{ old('bio', $user->bio) }}</textarea>
@@ -405,10 +405,10 @@
             </div>
 
             <!-- SECTION 3: SKILLS & TOOLS TAG MANAGER -->
-            <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md mb-8">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
                 <div class="mb-6 pb-4 border-b border-slate-200">
                     <div class="text-lg font-bold text-[#121826] tracking-wide flex items-center gap-2">
-                        <i class="bi bi-tools text-indigo-400"></i>
+                        <i class="bi bi-tools text-[#20165c]"></i>
                         <span>Skills & Creative Tools</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-1">Highlight your core design competencies, software proficiencies, and categories.</p>
@@ -444,12 +444,12 @@
                     <div class="flex-grow">
                         <input type="text" 
                                id="newSkillInput" 
-                               class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                               class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                placeholder="Type a skill (e.g. Logo Design, Typography, Figma) and press Enter" 
                                onkeydown="handleSkillKeyDown(event)">
                     </div>
                     <button type="button" 
-                            class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-[#121826] font-semibold text-xs transition shadow-lg shadow-indigo-600/20 whitespace-nowrap" 
+                            class="px-5 py-3 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold text-xs transition shadow-sm whitespace-nowrap" 
                             onclick="addSkillFromInput()">
                         <i class="bi bi-plus-lg me-1"></i> Add Skill
                     </button>
@@ -467,10 +467,10 @@
             </div>
 
             <!-- SECTION 4: SOCIAL & PORTFOLIO LINKS -->
-            <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md mb-8">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
                 <div class="mb-6 pb-4 border-b border-slate-200">
                     <div class="text-lg font-bold text-[#121826] tracking-wide flex items-center gap-2">
-                        <i class="bi bi-globe text-indigo-400"></i>
+                        <i class="bi bi-globe text-[#20165c]"></i>
                         <span>Social & Portfolio Presence</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-1">Connect your external creative profiles to establish authority and trust.</p>
@@ -485,8 +485,8 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="linkBehance">Behance Portfolio</label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-indigo-400"><i class="bi bi-behance fs-6"></i></span>
-                            <input type="url" name="social_links[behance]" id="linkBehance" class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['behance'] ?? '' }}" placeholder="https://behance.net/username">
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-[#20165c]"><i class="bi bi-behance fs-6"></i></span>
+                            <input type="url" name="social_links[behance]" id="linkBehance" class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['behance'] ?? '' }}" placeholder="https://behance.net/username">
                         </div>
                     </div>
 
@@ -494,8 +494,8 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="linkDribbble">Dribbble Profile</label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-rose-400"><i class="bi bi-dribbble fs-6"></i></span>
-                            <input type="url" name="social_links[dribbble]" id="linkDribbble" class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['dribbble'] ?? '' }}" placeholder="https://dribbble.com/username">
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-[#f47402]"><i class="bi bi-dribbble fs-6"></i></span>
+                            <input type="url" name="social_links[dribbble]" id="linkDribbble" class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['dribbble'] ?? '' }}" placeholder="https://dribbble.com/username">
                         </div>
                     </div>
 
@@ -503,8 +503,8 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="linkWebsite">Personal Website / Studio</label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-indigo-400"><i class="bi bi-globe2 fs-6"></i></span>
-                            <input type="url" name="social_links[website]" id="linkWebsite" class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['website'] ?? '' }}" placeholder="https://yourportfolio.com">
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-[#20165c]"><i class="bi bi-globe2 fs-6"></i></span>
+                            <input type="url" name="social_links[website]" id="linkWebsite" class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['website'] ?? '' }}" placeholder="https://yourportfolio.com">
                         </div>
                     </div>
 
@@ -512,8 +512,8 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="linkLinkedin">LinkedIn Profile</label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-cyan-400"><i class="bi bi-linkedin fs-6"></i></span>
-                            <input type="url" name="social_links[linkedin]" id="linkLinkedin" class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['linkedin'] ?? '' }}" placeholder="https://linkedin.com/in/username">
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-[#0a66c2]"><i class="bi bi-linkedin fs-6"></i></span>
+                            <input type="url" name="social_links[linkedin]" id="linkLinkedin" class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['linkedin'] ?? '' }}" placeholder="https://linkedin.com/in/username">
                         </div>
                     </div>
 
@@ -521,8 +521,8 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="linkTwitter">Twitter / X Handle</label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-slate-700"><i class="bi bi-twitter-x fs-6"></i></span>
-                            <input type="url" name="social_links[twitter]" id="linkTwitter" class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['twitter'] ?? '' }}" placeholder="https://x.com/username">
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-slate-700"><i class="bi bi-twitter-x fs-6"></i></span>
+                            <input type="url" name="social_links[twitter]" id="linkTwitter" class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['twitter'] ?? '' }}" placeholder="https://x.com/username">
                         </div>
                     </div>
 
@@ -530,18 +530,18 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="linkGithub">GitHub Profile</label>
                         <div class="flex items-center">
-                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-[#050814] border border-r-0 border-gray-800 text-slate-700"><i class="bi bi-github fs-6"></i></span>
-                            <input type="url" name="social_links[github]" id="linkGithub" class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['github'] ?? '' }}" placeholder="https://github.com/username">
+                            <span class="inline-flex items-center px-3.5 py-3 rounded-l-xl bg-slate-50 border border-r-0 border-slate-200 text-slate-800"><i class="bi bi-github fs-6"></i></span>
+                            <input type="url" name="social_links[github]" id="linkGithub" class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-r-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" value="{{ $socialLinks['github'] ?? '' }}" placeholder="https://github.com/username">
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- SECTION 5: CONTACT INFORMATION -->
-            <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md mb-8">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
                 <div class="mb-6 pb-4 border-b border-slate-200">
                     <div class="text-lg font-bold text-[#121826] tracking-wide flex items-center gap-2">
-                        <i class="bi bi-envelope-check-fill text-indigo-400"></i>
+                        <i class="bi bi-envelope-check-fill text-[#20165c]"></i>
                         <span>Contact & Account Verification</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-1">Credentials used for system notifications, contest payouts, and order invoices.</p>
@@ -551,15 +551,17 @@
                     <!-- Email Address (Readonly / Status) -->
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">Email Address</label>
-                        <div class="flex items-center">
-                            <input type="email" class="w-full bg-[#050814] text-slate-500 border border-slate-200/60 cursor-not-allowed rounded-l-xl px-4 py-3 text-sm" value="{{ $user->email }}" readonly disabled>
-                            <span class="inline-flex items-center px-3.5 py-3 bg-[#050814] border border-l-0 border-gray-800 rounded-r-xl">
-                                @if($user->hasVerifiedEmail())
-                                    <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-xs font-semibold">Verified ✓</span>
-                                @else
-                                    <a href="{{ route('verification.notice') }}" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full text-xs font-semibold hover:bg-amber-500/20 text-decoration-none">Verify Now</a>
-                                @endif
-                            </span>
+                        <div class="flex items-center gap-2">
+                            <input type="email" class="w-full bg-slate-100 border border-slate-200 text-slate-600 rounded-xl px-4 py-3 cursor-not-allowed text-sm" value="{{ $user->email }}" readonly disabled>
+                            @if($user->hasVerifiedEmail())
+                                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 shrink-0">
+                                    <i class="bi bi-check-circle-fill text-emerald-600"></i> Verified
+                                </span>
+                            @else
+                                <a href="{{ route('verification.notice') }}" class="bg-amber-50 text-amber-700 border border-amber-200 font-semibold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 hover:bg-amber-100 text-decoration-none shrink-0">
+                                    <i class="bi bi-exclamation-circle-fill text-amber-600"></i> Verify Now
+                                </a>
+                            @endif
                         </div>
                         <div class="text-[11px] text-slate-500 mt-1">To change your email address, contact support.</div>
                     </div>
@@ -570,7 +572,7 @@
                         <input type="tel" 
                                name="phone" 
                                id="inputPhone" 
-                               class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all duration-200" 
+                               class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] rounded-xl px-4 py-3 text-sm transition-all duration-200" 
                                value="{{ old('phone', $user->phone) }}" 
                                placeholder="+880 1XXXXXXXXX">
                         <div class="text-[11px] text-slate-500 mt-1">Used for payment confirmations and contest winner notifications.</div>
@@ -580,10 +582,10 @@
 
             <!-- SAVE PROFILE BUTTON -->
             <div class="flex items-center justify-end gap-3 mb-8">
-                <a href="{{ route('dashboard') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-gray-800 font-semibold text-sm transition">
+                <a href="{{ route('dashboard') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold text-sm transition">
                     Cancel
                 </a>
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-[#121826] font-medium rounded-xl px-6 py-2.5 transition shadow-lg shadow-indigo-600/20 text-sm inline-flex items-center gap-2">
+                <button type="submit" class="bg-[#20165c] hover:bg-[#181045] text-white font-semibold rounded-xl px-6 py-2.5 transition shadow-md text-sm inline-flex items-center gap-2">
                     <i class="bi bi-check2-circle text-base"></i>
                     <span>Save Profile Changes</span>
                 </button>
@@ -591,10 +593,10 @@
         </form>
 
         <!-- SECTION 6: PASSWORD & SECURITY (SEPARATE FORM) -->
-        <div class="bg-white/90 border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md mb-8">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
             <div class="mb-6 pb-4 border-b border-slate-200">
                 <div class="text-lg font-bold text-[#121826] tracking-wide flex items-center gap-2">
-                    <i class="bi bi-shield-lock-fill text-rose-400"></i>
+                    <i class="bi bi-shield-lock-fill text-rose-500"></i>
                     <span>Password & Security</span>
                 </div>
                 <p class="text-xs text-slate-500 mt-1">Ensure your Noksha account is secured with a strong, distinct password.</p>
@@ -614,10 +616,10 @@
                             <input type="password" 
                                    name="current_password" 
                                    id="current_password" 
-                                   class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                    required 
                                    placeholder="Enter current password">
-                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-300 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('current_password', this)">
+                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-200 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('current_password', this)">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
@@ -635,10 +637,10 @@
                             <input type="password" 
                                    name="password" 
                                    id="password" 
-                                   class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                    required 
                                    placeholder="At least 8 characters">
-                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-300 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('password', this)">
+                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-200 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('password', this)">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
@@ -656,17 +658,17 @@
                             <input type="password" 
                                    name="password_confirmation" 
                                    id="password_confirmation" 
-                                   class="w-full bg-white border border-slate-200 text-slate-800 placeholder-gray-500 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                    required 
                                    placeholder="Re-type new password">
-                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-300 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('password_confirmation', this)">
+                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-200 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('password_confirmation', this)">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-[#121826] font-medium rounded-xl px-5 py-2.5 transition shadow-lg shadow-indigo-600/20 text-sm inline-flex items-center gap-2">
+                        <button type="submit" class="bg-[#20165c] hover:bg-[#181045] text-white font-semibold rounded-xl px-5 py-2.5 transition shadow-md text-sm inline-flex items-center gap-2">
                             <i class="bi bi-shield-check"></i>
                             <span>Update Password</span>
                         </button>
