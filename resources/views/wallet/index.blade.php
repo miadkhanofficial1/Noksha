@@ -4,10 +4,10 @@
 
 @section('content')
 <style>
-    /* Dark Theme Wallet & Financial Hub Styling */
+    /* Modern Light Theme Wallet & Financial Hub Styling */
     .wallet-wrapper {
-        background-color: #020617; /* slate-950 */
-        color: #F8FAFC; /* slate-50 */
+        background-color: #ffffff; /* pure white canvas */
+        color: #121826; /* charcoal black */
         min-height: calc(100vh - 72px);
         position: relative;
     }
@@ -19,35 +19,35 @@
         transform: translateX(-50%);
         width: 850px;
         height: 380px;
-        background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(99, 102, 241, 0.08) 45%, transparent 70%);
+        background: radial-gradient(circle, rgba(32, 22, 92, 0.04) 0%, rgba(244, 116, 2, 0.03) 45%, transparent 70%);
         pointer-events: none;
         z-index: 0;
     }
 
     /* Glass Cards */
     .wallet-glass-card {
-        background: rgba(15, 23, 42, 0.75); /* slate-900 */
+        background: #ffffff;
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(148, 163, 184, 0.14);
+        border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         border-radius: 1.25rem;
         padding: 1.75rem;
         transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .wallet-glass-card:hover {
-        border-color: rgba(148, 163, 184, 0.25);
+        border-color: #cbd5e1;
     }
 
     /* Primary Balance Hero Card */
     .balance-hero-card {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(11, 17, 32, 0.9) 100%);
-        border: 1.5px solid rgba(16, 185, 129, 0.25);
+        background: linear-gradient(135deg, #20165c 0%, #2c1e7a 100%);
+        border: 1.5px solid #20165c;
         border-radius: 1.5rem;
         padding: 2.25rem 2rem;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5), 0 0 25px -10px rgba(16, 185, 129, 0.15);
+        box-shadow: 0 10px 25px -5px rgba(32, 22, 92, 0.3); color: #ffffff;
     }
 
     .balance-hero-glow-accent {
@@ -73,9 +73,9 @@
 
     /* Dark Form Inputs */
     .form-control-wallet {
-        background-color: #0B1120;
-        border: 1.5px solid #1E293B;
-        color: #F8FAFC !important;
+        background-color: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        color: #121826 !important;
         border-radius: 0.75rem;
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
@@ -83,9 +83,9 @@
     }
 
     .form-control-wallet:focus {
-        background-color: #0F172A;
-        border-color: #10B981;
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        background-color: #f8fafc;
+        border-color: #20165c;
+        box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.15);
         outline: none;
     }
 
@@ -103,9 +103,9 @@
 
     /* Preset Quick Amount Pills */
     .amount-preset-btn {
-        background: #0F172A !important;
-        border: 1.5px solid #334155 !important;
-        color: #F8FAFC !important;
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        color: #121826 !important;
         border-radius: 0.65rem;
         padding: 0.5rem 1.15rem;
         font-size: 0.95rem;
@@ -143,7 +143,7 @@
 
     .method-card-box {
         background: #0B1120;
-        border: 1.5px solid #1E293B;
+        border: 1.5px solid #cbd5e1;
         border-radius: 0.85rem;
         padding: 0.85rem 1rem;
         display: flex;
@@ -187,44 +187,44 @@
 
     /* Transaction Table */
     .table-wallet {
-        color: #F8FAFC;
+        color: #121826;
         margin-bottom: 0;
     }
 
     .table-wallet th {
         background: transparent;
-        color: #94A3B8;
+        color: #64748b;
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        border-bottom: 1px solid #e2e8f0;
         padding: 0.85rem 1rem;
     }
 
     .table-wallet td {
         background: transparent;
-        color: #E2E8F0;
+        color: #1e293b;
         font-size: 0.875rem;
         vertical-align: middle;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+        border-bottom: 1px solid #f1f5f9;
         padding: 1rem;
     }
 
     .table-wallet tr:hover td {
-        background: rgba(255, 255, 255, 0.02);
+        background: #f8fafc;
     }
 
     /* Custom Gradient Buttons */
     .btn-emerald-recharge {
-        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        background: linear-gradient(135deg, #f47402 0%, #d96602 100%);
         color: #FFFFFF !important;
         border: none;
         border-radius: 0.75rem;
         padding: 0.75rem 1.75rem;
         font-weight: 700;
         font-size: 0.95rem;
-        box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+        box-shadow: 0 4px 14px rgba(244, 116, 2, 0.3);
         transition: all 0.25s ease;
         cursor: pointer;
     }
@@ -235,14 +235,14 @@
     }
 
     .btn-withdraw-payout {
-        background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+        background: linear-gradient(135deg, #20165c 0%, #181045 100%);
         color: #FFFFFF !important;
         border: none;
         border-radius: 0.75rem;
         padding: 0.75rem 1.75rem;
         font-weight: 700;
         font-size: 0.95rem;
-        box-shadow: 0 4px 18px rgba(99, 102, 241, 0.35);
+        box-shadow: 0 4px 14px rgba(32, 22, 92, 0.3);
         transition: all 0.25s ease;
         cursor: pointer;
     }
@@ -268,7 +268,7 @@
 
         <!-- Header -->
         <div class="mb-4">
-            <h1 class="display-6 fw-extrabold text-white mb-1">Central BDT Wallet</h1>
+            <h1 class="display-6 fw-extrabold text-[#121826] mb-1">Central BDT Wallet</h1>
             <p class="text-slate-400 small mb-0">
                 Instant deposits, creator payouts, and verified escrow transactions.
             </p>
@@ -280,7 +280,7 @@
                  style="background-color: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.35) !important;" role="alert">
                 <i class="bi bi-check-circle-fill text-success fs-4"></i>
                 <div class="fw-semibold text-emerald-300 small">{{ session('success') }}</div>
-                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
@@ -289,7 +289,7 @@
                  style="background-color: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.35) !important;" role="alert">
                 <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
                 <div class="fw-semibold text-red-300 small">{{ session('error') }}</div>
-                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
@@ -298,7 +298,7 @@
                  style="background-color: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35) !important;" role="alert">
                 <i class="bi bi-info-circle-fill text-info fs-4"></i>
                 <div class="fw-semibold text-indigo-300 small">{{ session('info') }}</div>
-                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
@@ -314,7 +314,7 @@
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
@@ -370,7 +370,7 @@
         <div class="wallet-glass-card mb-4 py-3 px-4">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div class="d-flex align-items-center flex-wrap gap-3">
-                    <span class="fw-bold text-white small text-uppercase tracking-wider">Quick Deposit:</span>
+                    <span class="fw-bold text-[#121826] small text-uppercase tracking-wider">Quick Deposit:</span>
                     <div class="d-flex align-items-center gap-2">
                         <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(500)">+৳500</button>
                         <button type="button" class="amount-preset-btn" onclick="startDepositWithAmount(1000)">+৳1,000</button>
@@ -379,7 +379,7 @@
                 </div>
 
                 <div class="input-group" style="max-width: 280px;">
-                    <span class="input-group-text bg-slate-900 border-slate-800 text-emerald-400 fw-bold font-monospace">৳</span>
+                    <span class="input-group-text bg-slate-50 border-slate-200 text-[#f47402] fw-bold font-monospace">৳</span>
                     <input type="number" 
                            id="quickCustomAmount" 
                            class="form-control form-control-wallet font-monospace fw-bold" 
@@ -402,7 +402,7 @@
                     <i class="bi bi-receipt-cutoff text-emerald-400 fs-5"></i>
                     <h3 class="h5 fw-bold text-white mb-0">Financial Transaction Ledger</h3>
                 </div>
-                <span class="badge bg-slate-800 text-slate-400 rounded-pill extra-small font-monospace">
+                <span class="badge bg-slate-100 text-slate-600 border border-slate-200 rounded-pill extra-small font-monospace">
                     {{ $transactions->total() }} Total Records
                 </span>
             </div>
@@ -478,7 +478,7 @@
                                                 <i class="bi bi-dash-circle me-1 text-danger"></i> Debit
                                             </span>
                                         @else
-                                            <span class="badge bg-slate-800 text-slate-300 rounded-pill extra-small font-monospace">
+                                            <span class="badge bg-slate-100 text-slate-600 border border-slate-200 rounded-pill extra-small font-monospace">
                                                 {{ ucfirst(str_replace('_', ' ', $tx->type)) }}
                                             </span>
                                         @endif
@@ -486,7 +486,7 @@
 
                                     <!-- Reference / Order ID -->
                                     <td class="font-monospace extra-small">
-                                        <span class="text-slate-300 px-2 py-1 rounded bg-slate-800 border border-slate-700">
+                                        <span class="text-slate-700 px-2 py-1 rounded bg-slate-100 border border-slate-200">
                                             {{ $referenceDisplay }}
                                         </span>
                                     </td>
@@ -543,7 +543,7 @@
             @else
                 <!-- Empty State -->
                 <div class="text-center py-5">
-                    <div style="width: 56px; height: 56px; border-radius: 1rem; background: rgba(148, 163, 184, 0.1); color: #94A3B8; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <div style="width: 56px; height: 56px; border-radius: 1rem; background: rgba(148, 163, 184, 0.1); color: #64748b; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
                         <i class="bi bi-clock-history fs-3"></i>
                     </div>
                     <h5 class="fw-bold text-white mb-1">No Financial Transactions Recorded Yet</h5>
@@ -566,23 +566,23 @@
 <!-- ========================================================= -->
 <div class="modal fade" id="manualDepositModal" tabindex="-1" aria-labelledby="manualDepositModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 540px;">
-        <div class="modal-content border-0 shadow-lg" style="background: #0B1120; border: 1.5px solid rgba(16, 185, 129, 0.35) !important; border-radius: 1.5rem; color: #F8FAFC;">
-            <div class="modal-header border-bottom border-slate-800 px-4 pt-4 pb-3">
+        <div class="modal-content border-0 shadow-lg" style="background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 1.5rem; color: #121826;">
+            <div class="modal-header border-bottom border-slate-200 px-4 pt-4 pb-3 bg-slate-50">
                 <div class="d-flex align-items-center gap-2">
                     <div class="metric-icon-box" style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.15); color: #34D399; font-size: 1.15rem;">
                         <i class="bi bi-phone-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title fw-extrabold text-white mb-0" id="manualDepositModalLabel">Deposit Funds via Mobile Banking</h5>
+                        <h5 class="modal-title fw-extrabold text-[#121826] mb-0" id="manualDepositModalLabel">Deposit Funds via Mobile Banking</h5>
                         <span class="extra-small text-slate-400">bKash &bull; Nagad &bull; Bank Card &bull; Instant Verification</span>
                     </div>
                 </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-4">
                 <!-- Official Payment Numbers Box -->
-                <div class="p-3.5 rounded-4 mb-4" style="background: rgba(15, 23, 42, 0.85); border: 1.5px dashed rgba(16, 185, 129, 0.4);">
+                <div class="p-3.5 rounded-4 mb-4" style="background: #f8fafc; border: 1.5px dashed #f47402;">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <span class="extra-small fw-bold text-uppercase tracking-wider text-emerald-400">
                             <i class="bi bi-shield-check me-1"></i> Official Noksha Deposit Accounts
@@ -593,11 +593,11 @@
                     <div class="row g-2 mb-2 font-monospace extra-small">
                         <!-- bKash -->
                         <div class="col-6">
-                            <div class="p-2 rounded-3 bg-slate-900 border border-slate-800">
+                            <div class="p-2 rounded-3 bg-white border border-slate-200">
                                 <div class="text-pink-400 fw-bold d-flex align-items-center justify-content-between">
                                     <span>bKash Personal:</span>
                                 </div>
-                                <div class="text-white fw-bold fs-6 mt-0.5 d-flex align-items-center justify-content-between">
+                                <div class="text-[#121826] fw-bold fs-6 mt-0.5 d-flex align-items-center justify-content-between">
                                     <span>01700-123456</span>
                                     <button type="button" class="btn btn-link p-0 text-slate-400 hover-text-white" onclick="copyNumber('01700123456', this)" title="Copy">
                                         <i class="bi bi-copy"></i>
@@ -608,11 +608,11 @@
 
                         <!-- Nagad -->
                         <div class="col-6">
-                            <div class="p-2 rounded-3 bg-slate-900 border border-slate-800">
+                            <div class="p-2 rounded-3 bg-white border border-slate-200">
                                 <div class="text-orange-400 fw-bold d-flex align-items-center justify-content-between">
                                     <span>Nagad Personal:</span>
                                 </div>
-                                <div class="text-white fw-bold fs-6 mt-0.5 d-flex align-items-center justify-content-between">
+                                <div class="text-[#121826] fw-bold fs-6 mt-0.5 d-flex align-items-center justify-content-between">
                                     <span>01800-123456</span>
                                     <button type="button" class="btn btn-link p-0 text-slate-400 hover-text-white" onclick="copyNumber('01800123456', this)" title="Copy">
                                         <i class="bi bi-copy"></i>
@@ -633,7 +633,7 @@
 
                     <!-- Payment Method Selector -->
                     <div class="mb-3">
-                        <label class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Select Payment Method <span class="text-danger">*</span>
                         </label>
                         <div class="row g-2">
@@ -642,7 +642,7 @@
                                     <input type="radio" name="payment_method" value="bkash" checked>
                                     <div class="method-card-box text-center justify-content-center flex-column py-2.5">
                                         <i class="bi bi-phone-fill fs-5" style="color: #EC4899;"></i>
-                                        <span class="extra-small fw-bold text-white">bKash</span>
+                                        <span class="extra-small fw-bold text-slate-800">bKash</span>
                                     </div>
                                 </label>
                             </div>
@@ -652,7 +652,7 @@
                                     <input type="radio" name="payment_method" value="nagad">
                                     <div class="method-card-box text-center justify-content-center flex-column py-2.5">
                                         <i class="bi bi-cash-stack fs-5" style="color: #F97316;"></i>
-                                        <span class="extra-small fw-bold text-white">Nagad</span>
+                                        <span class="extra-small fw-bold text-slate-800">Nagad</span>
                                     </div>
                                 </label>
                             </div>
@@ -662,7 +662,7 @@
                                     <input type="radio" name="payment_method" value="card">
                                     <div class="method-card-box text-center justify-content-center flex-column py-2.5">
                                         <i class="bi bi-credit-card-2-front-fill fs-5" style="color: #38BDF8;"></i>
-                                        <span class="extra-small fw-bold text-white">Bank Card</span>
+                                        <span class="extra-small fw-bold text-slate-800">Bank Card</span>
                                     </div>
                                 </label>
                             </div>
@@ -671,11 +671,11 @@
 
                     <!-- Deposit Amount -->
                     <div class="mb-3">
-                        <label for="depositAmountInput" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="depositAmountInput" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Deposit Amount (BDT) <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text bg-slate-900 border-slate-800 text-emerald-400 fw-bold font-monospace">৳</span>
+                            <span class="input-group-text bg-slate-50 border-slate-200 text-[#f47402] fw-bold font-monospace">৳</span>
                             <input type="number" 
                                    id="depositAmountInput" 
                                    name="amount" 
@@ -691,11 +691,11 @@
 
                     <!-- Sender Phone Number -->
                     <div class="mb-3">
-                        <label for="senderNumberInput" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="senderNumberInput" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Sender Phone Number <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text bg-slate-900 border-slate-800 text-slate-400 font-monospace">
+                            <span class="input-group-text bg-slate-50 border-slate-200 text-slate-600 font-monospace">
                                 <i class="bi bi-telephone"></i>
                             </span>
                             <input type="text" 
@@ -709,11 +709,11 @@
 
                     <!-- Transaction ID (TrxID) -->
                     <div class="mb-4">
-                        <label for="trxIdInput" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="trxIdInput" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Transaction ID (TrxID) <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text bg-slate-900 border-slate-800 text-slate-400 font-monospace">#</span>
+                            <span class="input-group-text bg-slate-50 border-slate-200 text-slate-600 font-monospace">#</span>
                             <input type="text" 
                                    id="trxIdInput" 
                                    name="transaction_id" 
@@ -745,28 +745,28 @@
 @if($canWithdraw)
 <div class="modal fade" id="creatorWithdrawalModal" tabindex="-1" aria-labelledby="creatorWithdrawalModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 520px;">
-        <div class="modal-content border-0 shadow-lg" style="background: #0B1120; border: 1.5px solid rgba(99, 102, 241, 0.4) !important; border-radius: 1.5rem; color: #F8FAFC;">
-            <div class="modal-header border-bottom border-slate-800 px-4 pt-4 pb-3">
+        <div class="modal-content border-0 shadow-lg" style="background: #ffffff; border: 1px solid #e2e8f0 !important; border-radius: 1.5rem; color: #121826;">
+            <div class="modal-header border-bottom border-slate-200 px-4 pt-4 pb-3 bg-slate-50">
                 <div class="d-flex align-items-center gap-2">
                     <div class="metric-icon-box" style="width: 40px; height: 40px; background: rgba(99, 102, 241, 0.15); color: #A5B4FC; font-size: 1.15rem;">
                         <i class="bi bi-arrow-up-circle-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title fw-extrabold text-white mb-0" id="creatorWithdrawalModalLabel">Request Creator Payout</h5>
+                        <h5 class="modal-title fw-extrabold text-[#121826] mb-0" id="creatorWithdrawalModalLabel">Request Creator Payout</h5>
                         <span class="extra-small text-slate-400">Withdraw your design royalties directly to mobile banking or bank account</span>
                     </div>
                 </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-4">
                 <!-- Creator Balance Summary -->
-                <div class="p-3.5 rounded-4 mb-4" style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(99, 102, 241, 0.3);">
+                <div class="p-3.5 rounded-4 mb-4" style="background: #f8fafc; border: 1px solid #e2e8f0;">
                     <div class="d-flex align-items-center justify-content-between mb-1">
                         <span class="extra-small text-slate-400 fw-bold text-uppercase tracking-wider">Available Royalty Earnings</span>
                         <span class="badge bg-indigo-900 text-indigo-300 extra-small">Minimum ৳500.00</span>
                     </div>
-                    <div class="font-monospace fw-bold text-white fs-4">
+                    <div class="font-monospace fw-bold text-[#121826] fs-4">
                         ৳{{ number_format($earningsBalance > 0 ? $earningsBalance : ($wallet->balance ?? 0), 2) }} BDT
                     </div>
                     <div class="extra-small text-slate-400 mt-1">
@@ -779,11 +779,11 @@
 
                     <!-- Withdrawal Amount -->
                     <div class="mb-3">
-                        <label for="withdrawAmount" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="withdrawAmount" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Withdrawal Amount (BDT) <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text bg-slate-900 border-slate-800 text-indigo-400 fw-bold font-monospace">৳</span>
+                            <span class="input-group-text bg-slate-50 border-slate-200 text-[#20165c] fw-bold font-monospace">৳</span>
                             <input type="number" 
                                    id="withdrawAmount" 
                                    name="amount" 
@@ -798,7 +798,7 @@
 
                     <!-- Payment Method -->
                     <div class="mb-3">
-                        <label for="withdrawMethod" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="withdrawMethod" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Payout Method <span class="text-danger">*</span>
                         </label>
                         <select id="withdrawMethod" name="payment_method" class="form-select form-control-wallet" required>
@@ -810,7 +810,7 @@
 
                     <!-- Account Details / Phone Number -->
                     <div class="mb-3">
-                        <label for="withdrawAccountDetails" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="withdrawAccountDetails" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Account Number / Bank Details <span class="text-danger">*</span>
                         </label>
                         <input type="text" 
@@ -823,7 +823,7 @@
 
                     <!-- Optional Note -->
                     <div class="mb-4">
-                        <label for="withdrawNote" class="form-label text-slate-300 extra-small fw-bold text-uppercase tracking-wider">
+                        <label for="withdrawNote" class="form-label text-slate-600 extra-small fw-bold text-uppercase tracking-wider">
                             Special Instructions (Optional)
                         </label>
                         <textarea id="withdrawNote" 

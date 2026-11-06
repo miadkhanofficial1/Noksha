@@ -10,7 +10,7 @@
 
     <div class="w-full max-w-md relative z-10">
         <!-- Main Card -->
-        <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-md transition-all">
             <!-- Header Section -->
             <div class="text-center mb-6">
                 <a href="{{ route('home') }}" class="inline-block mb-4 transition-transform hover:scale-105">
@@ -24,8 +24,8 @@
                     <span>Identity Verified</span>
                 </div>
 
-                <h1 class="text-2xl font-bold text-white tracking-tight">Create New Password</h1>
-                <p class="text-sm text-slate-400 mt-2">
+                <h1 class="text-2xl font-bold text-[#121826] tracking-tight">Create New Password</h1>
+                <p class="text-sm text-slate-500 mt-2">
                     Resetting password for:
                 </p>
                 <div class="inline-flex items-center gap-2 mt-1 px-3 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-mono text-cyan-300">
@@ -61,7 +61,7 @@
 
                 <!-- New Password Field -->
                 <div>
-                    <label for="password" class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">
+                    <label for="password" class="block text-xs font-medium text-slate-700 uppercase tracking-wider mb-2">
                         New Password <span class="text-rose-400">*</span>
                     </label>
                     <div class="relative">
@@ -74,10 +74,10 @@
                                required 
                                autofocus
                                placeholder="Minimum 8 characters"
-                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all @error('password') border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20 @enderror">
+                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[#121826] placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all @error('password') border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20 @enderror">
                         <button type="button" 
                                 onclick="togglePasswordVisibility('password', 'toggleIcon1')"
-                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-[#121826] transition-colors"
                                 tabindex="-1">
                             <i class="bi bi-eye" id="toggleIcon1"></i>
                         </button>
@@ -90,7 +90,7 @@
                             <div id="strBar2" class="h-full w-1/3 bg-slate-700 rounded-full transition-all"></div>
                             <div id="strBar3" class="h-full w-1/3 bg-slate-700 rounded-full transition-all"></div>
                         </div>
-                        <div class="flex items-center justify-between text-[11px] text-slate-400 px-0.5">
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 px-0.5">
                             <span>Strength: <span id="strengthLabel" class="text-slate-500 font-semibold">Enter password</span></span>
                             <span class="text-slate-500">Must be distinct from current</span>
                         </div>
@@ -99,7 +99,7 @@
 
                 <!-- Confirm Password Field -->
                 <div>
-                    <label for="password_confirmation" class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">
+                    <label for="password_confirmation" class="block text-xs font-medium text-slate-700 uppercase tracking-wider mb-2">
                         Confirm New Password <span class="text-rose-400">*</span>
                     </label>
                     <div class="relative">
@@ -111,10 +111,10 @@
                                id="password_confirmation" 
                                required 
                                placeholder="Re-enter your new password"
-                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[#121826] placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
                         <button type="button" 
                                 onclick="togglePasswordVisibility('password_confirmation', 'toggleIcon2')"
-                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-[#121826] transition-colors"
                                 tabindex="-1">
                             <i class="bi bi-eye" id="toggleIcon2"></i>
                         </button>
@@ -123,15 +123,15 @@
 
                 <!-- Submit Button -->
                 <button type="submit" 
-                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-[#121826] font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
                     <i class="bi bi-check-lg text-base"></i>
                     <span>Update Password & Secure Account</span>
                 </button>
             </form>
 
             <!-- Bottom Cancel Link -->
-            <div class="mt-6 pt-5 border-t border-slate-800/80 text-center">
-                <a href="{{ route('login') }}" class="text-xs text-slate-500 hover:text-slate-300 inline-flex items-center gap-1.5 transition-colors">
+            <div class="mt-6 pt-5 border-t border-slate-200/80 text-center">
+                <a href="{{ route('login') }}" class="text-xs text-slate-500 hover:text-slate-700 inline-flex items-center gap-1.5 transition-colors">
                     <i class="bi bi-x-circle"></i>
                     <span>Cancel and return to Login</span>
                 </a>

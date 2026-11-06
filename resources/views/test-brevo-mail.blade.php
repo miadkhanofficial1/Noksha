@@ -44,7 +44,7 @@
                    value="{{ $recipient }}" 
                    placeholder="Enter destination email" 
                    required
-                   class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-400 font-mono">
+                   class="flex-1 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-white text-sm focus:outline-none focus:border-cyan-400 font-mono">
             <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-semibold text-sm hover:opacity-90 transition-all flex items-center gap-2">
                 <i class="bi bi-send-fill text-xs"></i>
                 <span>Test Live Send</span>
@@ -52,7 +52,7 @@
         </form>
 
         <!-- Configuration Card -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
             <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <i class="bi bi-sliders text-cyan-400"></i>
                 <span>Active API Configuration</span>
@@ -78,7 +78,7 @@
         </div>
 
         <!-- Step 1: HTTPS REST API Connectivity Check -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
             <div class="flex items-center justify-between">
                 <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                     <i class="bi bi-globe2 text-cyan-400"></i>
@@ -88,7 +88,7 @@
                     {{ $diagnostics['api_connectivity']['status'] }} ({{ $diagnostics['api_connectivity']['latency_ms'] }} ms)
                 </span>
             </div>
-            <div class="p-3 rounded-lg bg-slate-950 font-mono text-xs text-slate-300 overflow-x-auto space-y-1">
+            <div class="p-3 rounded-lg bg-slate-50 font-mono text-xs text-slate-300 overflow-x-auto space-y-1">
                 <div><span class="text-slate-500">API Endpoint:</span> {{ $diagnostics['api_connectivity']['endpoint'] }}</div>
                 @if (isset($diagnostics['api_connectivity']['http_code']))
                     <div><span class="text-slate-500">HTTP Response Code:</span> <span class="text-cyan-400">{{ $diagnostics['api_connectivity']['http_code'] }}</span></div>
@@ -100,7 +100,7 @@
         </div>
 
         <!-- Step 2: Email Dispatch Result -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-3">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
             <div class="flex items-center justify-between">
                 <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                     <i class="bi bi-envelope-paper text-indigo-400"></i>
@@ -110,7 +110,7 @@
                     {{ $diagnostics['dispatch']['success'] ? 'SUCCESS' : 'FAILED' }} ({{ $diagnostics['dispatch']['duration_ms'] }} ms)
                 </span>
             </div>
-            <div class="p-4 rounded-lg bg-slate-950 font-mono text-xs space-y-2">
+            <div class="p-4 rounded-lg bg-slate-50 font-mono text-xs space-y-2">
                 <div><span class="text-slate-500">Recipient:</span> <span class="text-white">{{ $diagnostics['dispatch']['recipient'] }}</span></div>
                 <div><span class="text-slate-500">Transport:</span> <span class="text-cyan-400">{{ $diagnostics['dispatch']['transport_used'] }}</span></div>
                 <div><span class="text-slate-500">Generated OTP:</span> <span class="text-amber-400 font-bold tracking-widest">{{ $diagnostics['dispatch']['otp_generated'] }}</span></div>
@@ -127,7 +127,7 @@
         </div>
 
         <!-- Setup Instructions -->
-        <div class="bg-slate-900/60 border border-slate-800/60 rounded-2xl p-5 text-xs text-slate-400 space-y-2">
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-xs text-slate-400 space-y-2">
             <div class="font-semibold text-slate-300 flex items-center gap-1.5">
                 <i class="bi bi-key text-cyan-400"></i>
                 <span>How to Configure Brevo REST API Key</span>

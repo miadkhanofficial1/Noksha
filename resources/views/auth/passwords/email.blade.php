@@ -10,7 +10,7 @@
 
     <div class="w-full max-w-md relative z-10">
         <!-- Main Card -->
-        <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-md transition-all">
             <!-- Header Section -->
             <div class="text-center mb-6">
                 <a href="{{ route('home') }}" class="inline-block mb-4 transition-transform hover:scale-105">
@@ -24,8 +24,8 @@
                     <span>Secure Recovery</span>
                 </div>
 
-                <h1 class="text-2xl font-bold text-white tracking-tight">Forgot Password?</h1>
-                <p class="text-sm text-slate-400 mt-1.5">
+                <h1 class="text-2xl font-bold text-[#121826] tracking-tight">Forgot Password?</h1>
+                <p class="text-sm text-slate-500 mt-1.5">
                     Enter your registered email address and we'll dispatch a 6-digit verification code.
                 </p>
             </div>
@@ -56,7 +56,7 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">
+                    <label for="email" class="block text-xs font-medium text-slate-700 uppercase tracking-wider mb-2">
                         Account Email Address <span class="text-rose-400">*</span>
                     </label>
                     <div class="relative">
@@ -70,13 +70,13 @@
                                required 
                                autofocus
                                placeholder="you@example.com"
-                               class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all @error('email') border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20 @enderror">
+                               class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[#121826] placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all @error('email') border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20 @enderror">
                     </div>
                 </div>
 
                 <button type="submit" 
                         id="submitForgotBtn"
-                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-[#121826] font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
                     <span id="submitBtnText">Send 6-Digit Verification Code</span>
                     <i class="bi bi-arrow-right" id="submitBtnIcon"></i>
                 </button>
@@ -98,8 +98,8 @@
             </script>
 
             <!-- Bottom Return Link -->
-            <div class="mt-6 pt-5 border-t border-slate-800/80 text-center">
-                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-cyan-400 transition-colors">
+            <div class="mt-6 pt-5 border-t border-slate-200/80 text-center">
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-cyan-400 transition-colors">
                     <i class="bi bi-arrow-left"></i>
                     <span>Remembered your password? Back to Login</span>
                 </a>

@@ -2,29 +2,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap');
 
 // Bootstrap Custom Variables
-$primary: #4F46E5;
-$secondary: #7C3AED;
-$dark: #0F172A;
-$light: #F8FAFC;
+$primary: #20165c;
+$secondary: #f47402;
+$dark: #121826;
+$light: #f8fafc;
+$body-bg: #ffffff;
+$body-color: #121826;
 $font-family-sans-serif: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
 
 // Import Bootstrap 5 SASS
 @import "bootstrap/scss/bootstrap";
 
-// Noksha Custom Brand Styles
+// Noksha Custom Brand Tokens (Light Theme Platform Standard)
 :root {
-    --noksha-primary: #4F46E5;
-    --noksha-secondary: #7C3AED;
-    --noksha-accent: #06B6D4;
-    --noksha-dark: #0F172A;
-    --noksha-surface: #1E293B;
-    --noksha-light: #F8FAFC;
+    --noksha-primary: #20165c;
+    --noksha-secondary: #f47402;
+    --noksha-accent: #f47402;
+    --noksha-dark: #121826;
+    --noksha-charcoal: #1e293b;
+    --noksha-muted: #64748b;
+    --noksha-surface: #ffffff;
+    --noksha-light: #f8fafc;
+    --noksha-border: #e2e8f0;
 }
 
 body {
     font-family: var(--font-family-sans-serif);
-    background-color: var(--noksha-light);
-    color: var(--noksha-dark);
+    background-color: #ffffff;
+    color: #121826;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -32,11 +37,12 @@ body {
 
 main {
     flex: 1;
+    background-color: #ffffff;
 }
 
 // Brand Hero Gradients
 .bg-noksha-gradient {
-    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #311042 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
     position: relative;
     overflow: hidden;
 
@@ -47,80 +53,111 @@ main {
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.15), transparent 60%);
+        background: radial-gradient(circle at 50% 50%, rgba(32, 22, 92, 0.04), transparent 60%);
         pointer-events: none;
     }
 }
 
 .text-noksha-gradient {
-    background: linear-gradient(135deg, #818CF8 0%, #C084FC 50%, #22D3EE 100%);
+    background: linear-gradient(135deg, #20165c 0%, #2c1e7a 50%, #f47402 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-// Buttons
+// Primary & Secondary Brand Buttons
 .btn-noksha {
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    background: #20165c !important;
     color: #ffffff !important;
-    border: none;
-    font-weight: 600;
-    padding: 0.75rem 1.75rem;
+    border: 1px solid #181045;
+    font-weight: 700;
+    padding: 0.65rem 1.5rem;
     border-radius: 0.75rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(32, 22, 92, 0.2);
 
     &:hover {
-        background: linear-gradient(135deg, #4338CA 0%, #6D28D9 100%);
+        background: #181045 !important;
+        color: #ffffff !important;
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.4);
+        box-shadow: 0 8px 20px rgba(32, 22, 92, 0.3);
+    }
+}
+
+.btn-accent, .btn-tangerine {
+    background: #f47402 !important;
+    color: #ffffff !important;
+    border: 1px solid #d96602;
+    font-weight: 700;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(244, 116, 2, 0.25);
+
+    &:hover {
+        background: #d96602 !important;
+        color: #ffffff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(244, 116, 2, 0.35);
     }
 }
 
 .btn-noksha-outline {
-    background: rgba(255, 255, 255, 0.05);
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    font-weight: 600;
-    padding: 0.75rem 1.75rem;
+    background: #ffffff;
+    color: #20165c !important;
+    border: 1.5px solid #20165c;
+    font-weight: 700;
+    padding: 0.65rem 1.5rem;
     border-radius: 0.75rem;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.4);
+        background: rgba(32, 22, 92, 0.06);
+        color: #181045 !important;
+        border-color: #181045;
         transform: translateY(-2px);
     }
 }
 
 // Noksha Cards & Badges
 .noksha-card {
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: 1.25rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
     background: #ffffff;
-    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
 
     &:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
-        border-color: rgba(99, 102, 241, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px -6px rgba(18, 24, 38, 0.08);
+        border-color: #cbd5e1;
     }
 }
 
 .noksha-badge {
-    background: rgba(124, 58, 237, 0.12);
-    color: #7C3AED;
-    border: 1px solid rgba(124, 58, 237, 0.2);
-    font-weight: 600;
-    padding: 0.35rem 0.9rem;
+    background: rgba(32, 22, 92, 0.08);
+    color: #20165c;
+    border: 1px solid rgba(32, 22, 92, 0.15);
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
     border-radius: 2rem;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+}
+
+.noksha-badge-accent {
+    background: rgba(244, 116, 2, 0.1);
+    color: #f47402;
+    border: 1px solid rgba(244, 116, 2, 0.25);
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
 }
 
 // Logo Badge
 .noksha-logo-badge {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    width: 40px;
+    height: 40px;
+    background: #20165c;
     color: #ffffff;
     font-weight: 800;
     font-size: 1.25rem;
@@ -128,7 +165,7 @@ main {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 4px 12px rgba(32, 22, 92, 0.25);
 }
 
 // Brand Logo Image
@@ -141,12 +178,12 @@ main {
     transition: transform 0.2s ease;
 
     @media (min-width: 768px) {
-        height: 42px;
+        height: 40px;
     }
 }
 
 // -------------------------------------------------------------
-// Responsive Layout & Utility Helpers (Tailwind-compatible)
+// Responsive Layout & Utility Helpers
 // -------------------------------------------------------------
 .max-w-7xl {
     max-width: 80rem !important; // 1280px
@@ -197,19 +234,20 @@ main {
 }
 
 // -------------------------------------------------------------
-// Refined Noksha Header & Navbar Styles
+// Noksha Header & Navbar Styles
 // -------------------------------------------------------------
 .noksha-header {
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     transition: box-shadow 0.25s ease;
     z-index: 1040;
 }
 
 .nav-link-custom {
-    color: #475569;
+    color: #1e293b;
     font-weight: 600;
     font-size: 0.925rem;
     padding: 0.45rem 0.85rem;
@@ -221,13 +259,13 @@ main {
     white-space: nowrap;
 
     &:hover {
-        color: #4F46E5;
-        background: rgba(79, 70, 229, 0.06);
+        color: #20165c;
+        background: rgba(32, 22, 92, 0.06);
     }
 
     &.active {
-        color: #4F46E5 !important;
-        background: rgba(79, 70, 229, 0.1);
+        color: #20165c !important;
+        background: rgba(32, 22, 92, 0.08);
         font-weight: 700;
     }
 }
@@ -242,16 +280,16 @@ main {
     }
 
     .input-group {
-        background: #F1F5F9;
-        border: 1px solid #E2E8F0;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
         border-radius: 50rem;
         padding: 0.15rem 0.35rem 0.15rem 0.75rem;
         transition: all 0.2s ease;
 
         &:focus-within {
             background: #ffffff;
-            border-color: #4F46E5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            border-color: #20165c;
+            box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.12);
         }
     }
 
@@ -259,14 +297,14 @@ main {
         background: transparent !important;
         border: none !important;
         font-size: 0.875rem;
-        color: #1E293B;
+        color: #121826;
 
         &:focus {
             box-shadow: none !important;
         }
 
         &::placeholder {
-            color: #94A3B8;
+            color: #94a3b8;
         }
     }
 }
@@ -275,7 +313,7 @@ main {
     width: 38px;
     height: 38px;
     border-radius: 0.65rem;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #e2e8f0;
     background: #ffffff;
     display: inline-flex;
     align-items: center;
@@ -286,9 +324,9 @@ main {
     transition: all 0.2s ease;
 
     &:hover {
-        background: #F8FAFC;
-        border-color: #CBD5E1;
-        color: #0F172A;
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #20165c;
         transform: translateY(-1px);
     }
 
@@ -306,7 +344,7 @@ main {
 
 .user-avatar-btn {
     background: #ffffff;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #e2e8f0;
     border-radius: 50rem;
     padding: 0.25rem 0.75rem 0.25rem 0.35rem;
     display: inline-flex;
@@ -315,15 +353,15 @@ main {
     transition: all 0.2s ease;
 
     &:hover, &[aria-expanded="true"] {
-        background: #F8FAFC;
-        border-color: #CBD5E1;
+        background: #f8fafc;
+        border-color: #cbd5e1;
     }
 
     .user-avatar-initial {
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        background: #20165c;
         color: #ffffff;
         font-weight: 700;
         font-size: 0.85rem;
@@ -335,9 +373,10 @@ main {
 }
 
 .sleek-dropdown-menu {
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 1rem;
-    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 10px 25px -5px rgba(18, 24, 38, 0.1), 0 8px 10px -6px rgba(18, 24, 38, 0.04);
     padding: 0.5rem;
     min-width: 250px;
 
@@ -346,217 +385,38 @@ main {
         padding: 0.5rem 0.85rem;
         font-size: 0.875rem;
         font-weight: 500;
-        color: #334155;
+        color: #1e293b;
         transition: all 0.15s ease;
 
         &:hover {
-            background: #F1F5F9;
-            color: #4F46E5;
+            background: #f8fafc;
+            color: #20165c;
         }
 
         &.active, &:active {
-            background: #4F46E5;
-            color: #ffffff;
+            background: #20165c;
+            color: #ffffff !important;
         }
     }
 }
 
-// -------------------------------------------------------------
-// Dark Mode Palette & High Contrast Styles
-// -------------------------------------------------------------
-// Tailwind Color Helpers
-.bg-gray-50 { background-color: #F9FAFB !important; }
-.bg-gray-800 { background-color: #1F2937 !important; }
-.bg-gray-900 { background-color: #111827 !important; }
-.text-gray-100 { color: #F3F4F6 !important; }
-.text-gray-900 { color: #111827 !important; }
-.border-gray-800 { border-color: #1F2937 !important; }
+// Global Form Controls (Light Theme)
+.form-control, .form-select {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #121826 !important;
 
-html.dark {
-    .dark\:bg-\[\#0B0F19\] { background-color: #0B0F19 !important; }
-    .dark\:bg-gray-900 { background-color: #0F172A !important; }
-    .dark\:bg-gray-800 { background-color: #1E293B !important; }
-    .dark\:text-gray-100 { color: #F3F4F6 !important; }
-    .dark\:text-gray-400 { color: #9CA3AF !important; }
-    .dark\:text-white { color: #FFFFFF !important; }
-    .dark\:border-gray-700 { border-color: #374151 !important; }
-    .dark\:border-gray-800 { border-color: #1F2937 !important; }
-
-    body {
-        background-color: #0B0F19 !important;
-        color: #F3F4F6 !important;
+    &:focus {
+        border-color: #20165c !important;
+        box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.15) !important;
     }
 
-    // Header & Navbar
-    .noksha-header {
-        background: rgba(15, 23, 42, 0.9) !important; // #0F172A/90
-        border-bottom: 1px solid #1F2937 !important; // Tailwind border-gray-800
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-    }
-
-    .nav-link-custom {
-        color: #9CA3AF;
-        &:hover {
-            color: #A5B4FC;
-            background: rgba(99, 102, 241, 0.15);
-        }
-        &.active {
-            color: #A5B4FC !important;
-            background: rgba(99, 102, 241, 0.2);
-        }
-    }
-
-    .nav-search-container {
-        .input-group {
-            background: #1F2937 !important;
-            border-color: #374151 !important;
-        }
-        .form-control {
-            color: #F3F4F6 !important;
-            &::placeholder {
-                color: #6B7280;
-            }
-        }
-    }
-
-    .nav-action-btn {
-        background: #1E293B !important;
-        border-color: #374151 !important;
-        color: #9CA3AF !important;
-
-        &:hover {
-            background: #374151 !important;
-            border-color: #4B5563 !important;
-            color: #FFFFFF !important;
-        }
-
-        .badge-counter {
-            border-color: #1E293B !important;
-        }
-    }
-
-    .user-avatar-btn {
-        background: #1E293B !important;
-        border-color: #374151 !important;
-
-        &:hover, &[aria-expanded="true"] {
-            background: #374151 !important;
-            border-color: #4B5563 !important;
-        }
-
-        .text-dark {
-            color: #F3F4F6 !important;
-        }
-    }
-
-    .sleek-dropdown-menu {
-        background: #1E293B !important; // Tailwind bg-slate-800
-        border-color: #374151 !important;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
-
-        .dropdown-item {
-            color: #E5E7EB !important;
-
-            &:hover {
-                background: #374151 !important;
-                color: #A5B4FC !important;
-            }
-
-            &.text-danger {
-                color: #F87171 !important;
-                &:hover {
-                    background: rgba(239, 68, 68, 0.15) !important;
-                    color: #FCA5A5 !important;
-                }
-            }
-        }
-
-        .dropdown-divider {
-            border-color: #374151 !important;
-        }
-    }
-
-    // Cards & Surfaces
-    .card, .noksha-card {
-        background-color: #1E293B !important; // Tailwind bg-slate-800
-        border-color: #374151 !important;
-        color: #F3F4F6 !important; // Tailwind text-gray-100
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
-
-        &:hover {
-            border-color: #4F46E5 !important;
-        }
-
-        .card-header, .card-footer {
-            background-color: rgba(15, 23, 42, 0.6) !important;
-            border-color: #374151 !important;
-            color: #F3F4F6 !important;
-        }
-    }
-
-    // General Bootstrap Overrides in Dark Mode
-    .bg-white {
-        background-color: #1E293B !important;
-        color: #F3F4F6 !important;
-    }
-
-    .bg-light {
-        background-color: #0F172A !important;
-    }
-
-    footer.bg-dark {
-        background-color: #0F172A !important;
-        border-top: 1px solid #1F2937 !important;
-    }
-
-    .text-dark {
-        color: #F9FAFB !important;
-    }
-
-    .text-muted, .text-secondary {
-        color: #9CA3AF !important;
-    }
-
-    .border, .border-bottom, .border-top, .border-start, .border-end {
-        border-color: #374151 !important;
-    }
-
-    .list-group-item {
-        background-color: #1F2937 !important;
-        border-color: #374151 !important;
-        color: #E5E7EB !important;
-    }
-
-    .form-control, .form-select {
-        background-color: #1F2937 !important;
-        border-color: #374151 !important;
-        color: #F3F4F6 !important;
-
-        &:focus {
-            background-color: #1F2937 !important;
-            border-color: #6366F1 !important;
-            color: #FFFFFF !important;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
-        }
-    }
-
-    .lang-switcher-pill {
-        background: rgba(99, 102, 241, 0.15) !important;
-        border-color: rgba(99, 102, 241, 0.25) !important;
-    }
-
-    .lang-switcher-btn {
-        color: #9CA3AF !important;
-        &:hover {
-            color: #A5B4FC !important;
-        }
+    &::placeholder {
+        color: #94a3b8 !important;
     }
 }
 
-// ============================================================
-// SKELETON LOADERS (Subtle In-App Content Loading Placeholders)
-// ============================================================
+// Skeleton Loaders
 @keyframes skeleton-shimmer {
     0% {
         background-position: -200% 0;
@@ -567,27 +427,17 @@ html.dark {
 }
 
 .skeleton-shimmer {
-    background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.6s infinite ease-in-out;
-}
-
-html.dark .skeleton-shimmer {
-    background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
-    background-size: 200% 100%;
 }
 
 .skeleton-card {
     border-radius: 1.25rem;
     overflow: hidden;
-    background: #FFFFFF;
-    border: 1px solid rgba(108, 76, 241, 0.08);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-}
-
-html.dark .skeleton-card {
-    background: #0F172A;
-    border-color: rgba(255, 255, 255, 0.06);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .skeleton-thumb {
@@ -607,4 +457,3 @@ html.dark .skeleton-card {
     height: 34px;
     border-radius: 50%;
 }
-

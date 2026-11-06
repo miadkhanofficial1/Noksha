@@ -422,7 +422,7 @@
 
                     <!-- User Available Credits Pill (Admin Unlimited) -->
                     <a href="{{ route('wallet.index') }}" 
-                       class="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill bg-slate-900 border border-purple-500/30 text-purple-300 small font-monospace text-decoration-none"
+                       class="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill bg-slate-50 border border-slate-200 border border-purple-500/30 text-purple-300 small font-monospace text-decoration-none"
                        title="Admin Unlimited Access">
                         <span class="text-slate-400 extra-small">Access:</span>
                         <strong class="text-white" id="userCreditDisplay">Unlimited</strong>
@@ -437,7 +437,7 @@
 
                     <!-- User Available Credits Pill -->
                     <a href="{{ route('wallet.index') }}" 
-                       class="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill bg-slate-900 border border-slate-800 text-slate-300 small font-monospace text-decoration-none hover-border-purple"
+                       class="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill bg-slate-50 border border-slate-200 border border-slate-800 text-slate-300 small font-monospace text-decoration-none hover-border-purple"
                        title="Your available AI generation credits • Click to buy more">
                         <span class="text-slate-400 extra-small">Balance:</span>
                         <strong class="text-white" id="userCreditDisplay">{{ $userCredits ?? auth()->user()->ai_credits ?? 0 }}</strong>

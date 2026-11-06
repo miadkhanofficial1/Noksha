@@ -23,7 +23,7 @@
     }
 </style>
 
-<div class="bg-slate-950 text-slate-200 flex flex-col font-sans antialiased h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
+<div class="bg-[#ffffff] text-[#121826] flex flex-col font-sans antialiased h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
     
     {{-- ALERT TOAST CONTAINER (Client-side & Session) --}}
     <div id="toastContainer" class="fixed top-20 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-md w-full">
@@ -49,37 +49,37 @@
 
     {{-- MAIN INBOX CONTAINER --}}
     <div class="container-fluid max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-2 flex-1 flex flex-col h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
-        <div class="bg-slate-900/90 border border-slate-800/80 rounded-2xl shadow-2xl overflow-hidden flex-1 flex flex-col lg:flex-row h-full max-h-full backdrop-blur-xl min-h-0">
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden flex-1 flex flex-col lg:flex-row h-full max-h-full min-h-0">
 
             {{-- ======================================================== --}}
             {{-- 1. LEFT COLUMN: CONVERSATIONS SIDEBAR                    --}}
             {{-- ======================================================== --}}
-            <aside id="chatSidebar" class="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-slate-800/80 flex flex-col bg-slate-950/40 shrink-0 h-full max-h-full overflow-hidden min-h-0">
+            <aside id="chatSidebar" class="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-slate-200 flex flex-col bg-slate-50 shrink-0 h-full max-h-full overflow-hidden min-h-0">
                 
                 {{-- Sidebar Header --}}
-                <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+                <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
                     <div>
-                        <h1 class="text-base font-bold text-white tracking-tight flex items-center gap-2 mb-0">
-                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                        <h1 class="text-base font-bold text-[#121826] tracking-tight flex items-center gap-2 mb-0">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#20165c] animate-pulse"></span>
                             <span>Direct Escrow Inbox</span>
                         </h1>
                         <p class="text-[11px] text-slate-400 mb-0">Noksha Secured Messaging</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20">
                         {{ $conversations->count() }} {{ Str::plural('Chat', $conversations->count()) }}
                     </span>
                 </div>
 
                 {{-- Search Filter Input --}}
-                <div class="p-3 border-b border-slate-800/60 bg-slate-900/40">
+                <div class="p-3 border-b border-slate-200 bg-slate-50">
                     <div class="relative">
                         <svg class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <input type="text" id="conversationSearchInput" placeholder="Search chats by name or keyword..." value="{{ $search ?? '' }}" class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-950 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                        <input type="text" id="conversationSearchInput" placeholder="Search chats by name or keyword..." value="{{ $search ?? '' }}" class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] transition-all">
                     </div>
                 </div>
 
                 {{-- Thread List (Scrollable) --}}
-                <div id="conversationThreadList" class="flex-1 overflow-y-auto divide-y divide-slate-800/40 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
+                <div id="conversationThreadList" class="flex-1 overflow-y-auto divide-y divide-slate-200 scrollbar-thin scrollbar-thumb-slate-300 min-h-0">
                     @forelse($conversations as $conv)
                         @php
                             $convOther = $conv->getOtherParticipant(auth()->user());
@@ -88,7 +88,7 @@
                             $isSupport = $conv->conversation_type === 'system_support';
                             $unread = $conv->unread_count ?? 0;
                         @endphp
-                        <a href="{{ route('inbox.show', $conv->id) }}" class="conversation-thread-item block p-3.5 hover:bg-slate-800/40 transition-colors {{ $isActive ? 'bg-slate-800/70 border-l-4 border-indigo-500' : '' }}" data-search-name="{{ strtolower($convOther->name ?? 'support') }}" data-search-text="{{ strtolower($latestMsg->body ?? '') }}">
+                        <a href="{{ route('inbox.show', $conv->id) }}" class="conversation-thread-item block p-3.5 hover:bg-slate-100 transition-colors {{ $isActive ? 'bg-purple-50/80 border-l-4 border-[#20165c]' : '' }}" data-search-name="{{ strtolower($convOther->name ?? 'support') }}" data-search-text="{{ strtolower($latestMsg->body ?? '') }}">
                             <div class="flex items-center gap-3">
                                 
                                 {{-- Avatar & Online dot --}}
@@ -98,22 +98,22 @@
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         </div>
                                     @elseif($convOther && $convOther->avatar)
-                                        <img src="{{ asset('storage/' . $convOther->avatar) }}" alt="{{ $convOther->name }}" class="w-11 h-11 rounded-2xl object-cover border border-slate-700/60 shadow-sm">
+                                        <img src="{{ asset('storage/' . $convOther->avatar) }}" alt="{{ $convOther->name }}" class="w-11 h-11 rounded-2xl object-cover border border-slate-200 shadow-sm">
                                     @else
-                                        <div class="w-11 h-11 rounded-2xl bg-slate-800 border border-slate-700/60 flex items-center justify-center text-indigo-400 font-bold text-sm shadow-sm">
+                                        <div class="w-11 h-11 rounded-2xl bg-[#20165c]/10 border border-[#20165c]/20 flex items-center justify-center text-[#20165c] font-bold text-sm shadow-sm">
                                             {{ strtoupper(substr($convOther->name ?? 'U', 0, 1)) }}
                                         </div>
                                     @endif
                                     
                                     @if(!$isSupport)
-                                        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full {{ ($convOther->is_available ?? true) ? 'bg-emerald-500' : 'bg-slate-500' }} border-2 border-slate-900" title="{{ ($convOther->is_available ?? true) ? 'Available' : 'Offline' }}"></span>
+                                        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full {{ ($convOther->is_available ?? true) ? 'bg-emerald-500' : 'bg-slate-500' }} border-2 border-white" title="{{ ($convOther->is_available ?? true) ? 'Available' : 'Offline' }}"></span>
                                     @endif
                                 </div>
 
                                 {{-- Details --}}
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between gap-1 mb-1">
-                                        <h4 class="text-xs font-bold text-white truncate mb-0">
+                                        <h4 class="text-xs font-bold text-[#121826] truncate mb-0">
                                             {{ $isSupport ? 'Official System Notice' : ($convOther->name ?? 'User') }}
                                         </h4>
                                         <span class="text-[10px] text-slate-500 shrink-0">
@@ -138,7 +138,7 @@
                                     </div>
 
                                     <div class="flex items-center justify-between gap-2">
-                                        <p class="text-[11px] text-slate-400 truncate mb-0 max-w-[190px]">
+                                        <p class="text-[11px] text-slate-500 truncate mb-0 max-w-[190px]">
                                             @if($latestMsg)
                                                 {{ $latestMsg->sender_id === auth()->id() ? 'You: ' : '' }}{{ $latestMsg->body }}
                                             @else
@@ -146,7 +146,7 @@
                                             @endif
                                         </p>
                                         @if($unread > 0)
-                                            <span class="shrink-0 w-4 h-4 rounded-full bg-rose-500 text-white font-bold text-[9px] flex items-center justify-center shadow-sm shadow-rose-500/30">
+                                            <span class="shrink-0 w-4 h-4 rounded-full bg-[#f47402] text-white font-bold text-[9px] flex items-center justify-center shadow-sm">
                                                 {{ $unread }}
                                             </span>
                                         @endif
@@ -167,7 +167,7 @@
             {{-- ======================================================== --}}
             {{-- 2. RIGHT COLUMN: ACTIVE CHAT VIEWPORT                    --}}
             {{-- ======================================================== --}}
-            <section id="activeChatSection" class="flex-1 flex flex-col h-full max-h-full overflow-hidden bg-slate-900/60 relative min-h-0">
+            <section id="activeChatSection" class="flex-1 flex flex-col h-full max-h-full overflow-hidden bg-white relative min-h-0">
                 
                 @if($activeConversation)
                     @php
@@ -181,7 +181,7 @@
                     @endphp
 
                     {{-- 2.1 CHAT HEADER --}}
-                    <header class="p-4 border-b border-slate-800/80 bg-slate-950/60 flex items-center justify-between flex-wrap gap-3 shrink-0">
+                    <header class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between flex-wrap gap-3 shrink-0">
                         <div class="flex items-center gap-3">
                             <div class="relative">
                                 @if($isSupportThread)
@@ -191,18 +191,18 @@
                                 @elseif($counterpart && $counterpart->avatar)
                                     <img src="{{ asset('storage/' . $counterpart->avatar) }}" alt="{{ $counterpart->name }}" class="w-10 h-10 rounded-2xl object-cover border border-slate-700">
                                 @else
-                                    <div class="w-10 h-10 rounded-2xl bg-slate-800 flex items-center justify-center text-indigo-400 font-bold text-sm">
+                                    <div class="w-10 h-10 rounded-2xl bg-[#20165c]/10 border border-[#20165c]/20 flex items-center justify-center text-[#20165c] font-bold text-sm">
                                         {{ strtoupper(substr($counterpart->name ?? 'C', 0, 1)) }}
                                     </div>
                                 @endif
                                 @if(!$isSupportThread)
-                                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full {{ ($counterpart->is_available ?? true) ? 'bg-emerald-500' : 'bg-slate-500' }} border-2 border-slate-950"></span>
+                                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full {{ ($counterpart->is_available ?? true) ? 'bg-emerald-500' : 'bg-slate-500' }} border-2 border-white"></span>
                                 @endif
                             </div>
 
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h2 class="text-sm font-bold text-white mb-0">
+                                    <h2 class="text-sm font-bold text-[#121826] mb-0">
                                         {{ $isSupportThread ? 'Official Platform Notice' : ($counterpart->name ?? 'Counterpart') }}
                                     </h2>
                                     @if($counterpart && $counterpart->username)
@@ -216,7 +216,7 @@
                                                 $creatorUrl = url('/creator/' . $counterpart->username);
                                             }
                                         @endphp
-                                        <a href="{{ $creatorUrl }}" target="_blank" class="text-[11px] text-gray-400 hover:text-white">
+                                        <a href="{{ $creatorUrl }}" target="_blank" class="text-[11px] text-slate-500 hover:text-[#20165c]">
                                             &#64;{{ $counterpart->username }}
                                         </a>
                                     @endif
@@ -233,7 +233,7 @@
                         <div class="flex items-center gap-2">
                             {{-- Service Proposal Button --}}
                             @if(!$isSupportThread && !$isFrozen)
-                                <button type="button" onclick="openProposalModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm shadow-indigo-600/30 transition-all cursor-pointer">
+                                <button type="button" onclick="openProposalModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                     <span>{{ $isSeller ? 'Propose Custom Service' : 'Pick Seller Service' }}</span>
                                 </button>
@@ -253,7 +253,7 @@
                                         <form action="{{ route('inbox.reopen-respond', $activeConversation->id) }}" method="POST" class="inline">
                                             @csrf
                                             <input type="hidden" name="action" value="decline">
-                                            <button type="submit" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all">
+                                            <button type="submit" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:text-slate-900 transition-all">
                                                 Decline
                                             </button>
                                         </form>
@@ -265,7 +265,7 @@
                                 @else
                                     <form action="{{ route('inbox.reopen-request', $activeConversation->id) }}" method="POST" class="inline">
                                         @csrf
-                                        <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500/20 transition-all cursor-pointer">
+                                        <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#f47402]/10 text-[#f47402] border border-[#f47402]/30 hover:bg-indigo-500/20 transition-all cursor-pointer">
                                             🔓 Request to Re-open
                                         </button>
                                     </form>
@@ -274,7 +274,7 @@
                                 @if(!$isSupportThread)
                                     <form action="{{ route('inbox.freeze', $activeConversation->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to leave and freeze this conversation?');">
                                         @csrf
-                                        <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-slate-800 hover:border-rose-500/30 transition-all cursor-pointer" title="Leave Chat">
+                                        <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-300 transition-all cursor-pointer" title="Leave Chat">
                                             Leave Chat
                                         </button>
                                     </form>
@@ -285,22 +285,22 @@
 
                     {{-- 2.2 TOP ESCROW STATUS BANNER (CONDITIONAL) --}}
                     @if($activeOrder)
-                        <div class="px-4 py-3 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md shrink-0">
+                        <div class="px-4 py-3 border-b border-slate-200 bg-purple-50/40 shrink-0">
                             <div class="flex items-center justify-between flex-wrap gap-3">
                                 
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold text-xs shrink-0">
+                                    <div class="w-8 h-8 rounded-xl bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20 flex items-center justify-center font-bold text-xs shrink-0">
                                         ৳
                                     </div>
                                     <div>
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs font-bold text-white">{{ $activeOrder->service->title ?? 'Custom Service' }}</span>
+                                            <span class="text-xs font-bold text-[#121826]">{{ $activeOrder->service->title ?? 'Custom Service' }}</span>
                                             <span class="text-[10px] text-slate-400 font-mono">({{ $activeOrder->order_number }})</span>
                                         </div>
                                         <div class="text-[11px] text-slate-400">
-                                            Total: <strong class="text-white">৳{{ number_format($activeOrder->total_amount, 2) }}</strong>
+                                            Total: <strong class="text-[#121826]">৳{{ number_format($activeOrder->total_amount, 2) }}</strong>
                                             &bull; Platform Fee: ৳{{ number_format($activeOrder->platform_fee, 2) }}
-                                            &bull; Payout: <strong class="text-emerald-400">৳{{ number_format($activeOrder->seller_payout_amount, 2) }}</strong>
+                                            &bull; Payout: <strong class="text-emerald-600">৳{{ number_format($activeOrder->seller_payout_amount, 2) }}</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -314,12 +314,12 @@
                                                 <span>Funded & In Progress</span>
                                             </span>
                                             @if($activeOrder->deadline_at)
-                                                <div id="countdownTimer" data-deadline="{{ $activeOrder->deadline_at->toIso8601String() }}" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-slate-900 border border-slate-800 text-indigo-300">
+                                                <div id="countdownTimer" data-deadline="{{ $activeOrder->deadline_at->toIso8601String() }}" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-white border border-slate-200 text-[#20165c] font-semibold">
                                                     Calculating countdown...
                                                 </div>
                                             @endif
                                             @if($isSeller)
-                                                <button type="button" onclick="openDeliveryModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all cursor-pointer">
+                                                <button type="button" onclick="openDeliveryModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
                                                     📦 Deliver Final Work
                                                 </button>
                                             @endif
@@ -337,7 +337,7 @@
                                             <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
                                                 📦 Work Delivered
                                             </span>
-                                            <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 transition-colors">
+                                            <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-[#20165c] border border-slate-200 font-semibold transition-colors">
                                                 📥 Download Delivery (.ZIP)
                                             </a>
                                             @if($isBuyer)
@@ -363,7 +363,7 @@
                                         @if($isBuyer)
                                             <form action="{{ route('inbox.orders.fund', $activeOrder->id) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all cursor-pointer">
+                                                <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
                                                     💳 Proceed to Secure Escrow Payment (৳{{ number_format($activeOrder->total_amount, 2) }})
                                                 </button>
                                             </form>
@@ -374,7 +374,7 @@
                                                 ✅ Completed & Escrow Released
                                             </span>
                                             @if($activeOrder->delivery_archive_path)
-                                                <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 transition-colors">
+                                                <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-[#20165c] border border-slate-200 font-semibold transition-colors">
                                                     📥 Download Final Files
                                                 </a>
                                             @endif
@@ -395,7 +395,7 @@
                                                 <form action="{{ route('inbox.orders.respond', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Decline this proposal?');">
                                                     @csrf
                                                     <input type="hidden" name="action" value="decline">
-                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
+                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer">
                                                         ❌ Decline
                                                     </button>
                                                 </form>
@@ -409,7 +409,7 @@
                                             @endif
                                         </div>
                                     @else
-                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 capitalize">
+                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 capitalize">
                                             {{ str_replace('_', ' ', $activeOrder->status) }}
                                         </span>
                                     @endif
@@ -420,7 +420,7 @@
                     @endif
 
                     {{-- 2.3 MESSAGE HISTORY STREAM (SCROLLABLE) --}}
-                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto max-h-[calc(100vh-280px)] p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800 min-h-0">
+                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto max-h-[calc(100vh-280px)] p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-300 min-h-0 bg-white">
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
@@ -431,7 +431,7 @@
                             @if($isSystem)
                                 {{-- Centered System / Order Status Notice --}}
                                 <div class="flex justify-center my-1.5" data-msg-id="{{ $msg->id }}">
-                                    <div class="px-3 py-1.5 rounded-xl text-xs font-semibold {{ $msg->message_type === 'order_status' ? 'bg-indigo-950/60 border border-indigo-500/30 text-indigo-200' : 'bg-slate-950/80 border border-slate-800 text-slate-400' }} flex items-center gap-2 shadow-sm max-w-lg text-center">
+                                    <div class="px-3 py-1.5 rounded-xl text-xs font-semibold {{ $msg->message_type === 'order_status' ? 'bg-purple-50 border border-[#20165c]/20 text-[#20165c]' : 'bg-slate-50 border border-slate-200 text-slate-600' }} flex items-center gap-2 shadow-sm max-w-lg text-center">
                                         <svg class="w-3.5 h-3.5 {{ $msg->message_type === 'order_status' ? 'text-indigo-400' : 'text-slate-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <span>{{ $msg->body }}</span>
                                         <span class="text-[9px] text-slate-500 font-mono shrink-0">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
@@ -441,30 +441,30 @@
                                 {{-- In-Chat Service Widget Card --}}
                                 @php $meta = $msg->metadata ?? []; @endphp
                                 <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-1.5">
-                                    <div class="max-w-md w-full bg-slate-950 border border-indigo-500/30 rounded-2xl p-3.5 shadow-xl relative overflow-hidden">
+                                    <div class="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-3.5 shadow-md relative overflow-hidden">
                                         <div class="absolute -top-12 -right-12 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
                                         
-                                        <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-800/80 mb-2">
+                                        <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 mb-2">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold text-xs">
+                                                <div class="w-7 h-7 rounded-lg bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20 flex items-center justify-center font-bold text-xs">
                                                     ৳
                                                 </div>
                                                 <div>
-                                                    <h4 class="text-xs font-bold text-white mb-0">Custom Service Proposal</h4>
+                                                    <h4 class="text-xs font-bold text-[#121826] mb-0">Custom Service Proposal</h4>
                                                     <span class="text-[10px] text-slate-400">{{ $meta['order_number'] ?? 'Custom Order' }}</span>
                                                 </div>
                                             </div>
-                                            <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+                                            <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-[#f47402]/10 text-[#f47402] border border-[#f47402]/30">
                                                 ৳{{ number_format($meta['price'] ?? 600, 2) }}
                                             </span>
                                         </div>
 
-                                        <h5 class="text-xs font-bold text-white mb-1">{{ $meta['title'] ?? 'Creative Service Package' }}</h5>
+                                        <h5 class="text-xs font-bold text-[#121826] mb-1">{{ $meta['title'] ?? 'Creative Service Package' }}</h5>
                                         <p class="text-[11px] text-slate-400 leading-snug line-clamp-2 mb-2">
                                             {{ $meta['description'] ?? 'Custom design project negotiated via Noksha escrow.' }}
                                         </p>
 
-                                        <div class="flex items-center gap-2 text-[10px] text-slate-400 mb-2.5 bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
+                                        <div class="flex items-center gap-2 text-[10px] text-slate-400 mb-2.5 bg-slate-50 p-2 rounded-lg border border-slate-200">
                                             <span>⏱️ <strong>{{ $meta['duration_days'] ?? 3 }} Days</strong> Delivery</span>
                                             <span>&bull;</span>
                                             <span>🛡️ 100% Escrow Protected</span>
@@ -488,7 +488,7 @@
                                                         <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Decline this proposal?');">
                                                             @csrf
                                                             <input type="hidden" name="action" value="decline">
-                                                            <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
+                                                            <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer">
                                                                 ❌ Decline
                                                             </button>
                                                         </form>
@@ -533,7 +533,7 @@
                                                         @if($propOrder->delivery_notes)
                                                             <p class="text-[11px] text-slate-300 italic mb-1.5">"{{ $propOrder->delivery_notes }}"</p>
                                                         @endif
-                                                        <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-700 transition-colors">
+                                                        <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-[#20165c] border border-slate-200 font-semibold transition-colors">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                                             <span>Download Source Delivery (.ZIP)</span>
                                                         </a>
@@ -579,14 +579,14 @@
                                 {{-- Regular Message Bubble --}}
                                 <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} items-end gap-2.5">
                                     @if(!$isMe)
-                                        <div class="w-7 h-7 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-300 font-bold shrink-0">
+                                        <div class="w-7 h-7 rounded-xl bg-slate-200 border border-slate-300 flex items-center justify-center text-[10px] text-slate-700 font-bold shrink-0">
                                             {{ strtoupper(substr($msg->sender->name ?? 'U', 0, 1)) }}
                                         </div>
                                     @endif
 
-                                    <div class="max-w-[75%] sm:max-w-md {{ $isMe ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-2xl rounded-tr-sm' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-2xl rounded-tl-sm' }} p-3.5 shadow-lg">
+                                    <div class="max-w-[75%] sm:max-w-md {{ $isMe ? 'bg-[#20165c] text-white rounded-2xl rounded-tr-sm shadow-sm' : 'bg-slate-100 text-slate-900 border border-slate-200 rounded-2xl rounded-tl-sm' }} p-3.5 shadow-lg">
                                         @if(!$isMe)
-                                            <div class="text-[10px] font-bold text-slate-400 mb-1">
+                                            <div class="text-[10px] font-bold text-slate-500 mb-1">
                                                 {{ $msg->sender->name ?? 'User' }}
                                             </div>
                                         @endif
@@ -597,7 +597,7 @@
                                         @if($msg->attachments->isNotEmpty())
                                             <div class="mt-2 pt-2 border-t {{ $isMe ? 'border-indigo-500/40' : 'border-slate-700/60' }} space-y-1.5">
                                                 @foreach($msg->attachments as $att)
-                                                    <a href="{{ $att->url }}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl {{ $isMe ? 'bg-indigo-800/50 hover:bg-indigo-800/70' : 'bg-slate-900/60 hover:bg-slate-900' }} transition-colors text-xs text-white">
+                                                    <a href="{{ $att->url }}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl {{ $isMe ? 'bg-white/15 hover:bg-white/25 text-white' : 'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200' }} transition-colors text-xs">
                                                         <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                                                         <span class="truncate flex-1 font-mono text-[11px]">{{ $att->file_name }}</span>
                                                         <span class="text-[10px] opacity-75 shrink-0">{{ $att->formatted_size }}</span>
@@ -614,10 +614,10 @@
                             @endif
                         @empty
                             <div class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500">
-                                <div class="w-16 h-16 rounded-3xl bg-slate-800/40 border border-slate-800 flex items-center justify-center mb-3 text-slate-600">
+                                <div class="w-16 h-16 rounded-3xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-3 text-slate-400">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                                 </div>
-                                <h3 class="text-sm font-bold text-slate-300 mb-1">Secure Escrow Conversation Started</h3>
+                                <h3 class="text-sm font-bold text-slate-700 mb-1">Secure Escrow Conversation Started</h3>
                                 <p class="text-xs text-slate-500 max-w-sm mb-0">
                                     Discuss project requirements, clarify scope, or pick a custom service package below.
                                 </p>
@@ -627,7 +627,7 @@
 
                     {{-- 2.4 CHAT INPUT AREA --}}
                     @if($isSupportThread)
-                        <div class="p-3 bg-[#0b1329] border-t border-gray-800 text-center text-xs text-slate-400 font-medium shrink-0">
+                        <div class="p-3 bg-slate-50 border-t border-slate-200 text-slate-500 text-center text-xs text-slate-400 font-medium shrink-0">
                             🔒 This is an official system notice. Replies are disabled.
                         </div>
                     @else
@@ -648,24 +648,24 @@
                         @endif
 
                         <!-- Chat Input Area -->
-                        <div class="p-4 bg-[#0b1329] border-t border-gray-800 sticky bottom-0 z-20 shrink-0">
+                        <div class="p-4 bg-white border-t border-slate-200 sticky bottom-0 z-20 shrink-0">
                             <form id="chatMessageForm" action="{{ route('chat.send', $conversation->id ?? 115542) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-3">
                                 @csrf
                                 <input type="hidden" name="is_funded" id="isFundedFlag" value="{{ $isFunded ? '1' : '0' }}">
                                 <input type="hidden" name="is_funded_in_progress" id="isFundedInProgressFlag" value="{{ $isFundedInProgress ? '1' : '0' }}">
 
                                 <!-- Attachment Button -->
-                                <label for="chat_file" class="p-2.5 rounded-xl bg-gray-800/80 hover:bg-gray-700 text-gray-300 cursor-pointer transition shrink-0" title="Attach file">
+                                <label for="chat_file" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer border border-slate-200 transition shrink-0" title="Attach file">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                                     <input type="file" id="chat_file" name="attachment" class="hidden">
                                 </label>
 
                                 <!-- Text Input Field -->
                                 <input type="text" name="message" id="messageInput" placeholder="Type your message to {{ $counterpart->name ?? 'MD. MIAD IBNA NOOR' }}..." required
-                                       class="flex-1 bg-[#070b14] border border-gray-700 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none transition">
+                                       class="flex-1 bg-slate-50 border border-slate-300 focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition">
 
                                 <!-- Send Button -->
-                                <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl flex items-center gap-2 transition shadow-lg shadow-indigo-600/30 shrink-0">
+                                <button type="submit" class="px-5 py-2.5 bg-[#20165c] hover:bg-[#181045] text-white text-sm font-semibold rounded-xl flex items-center gap-2 transition shadow-sm shrink-0">
                                     <span>Send</span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </button>
@@ -676,10 +676,10 @@
                 @else
                     {{-- Blank / No Conversation Selected State --}}
                     <div class="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500">
-                        <div class="w-20 h-20 rounded-3xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-4 text-slate-600 shadow-xl">
+                        <div class="w-20 h-20 rounded-3xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-4 text-slate-400 shadow-sm">
                             <svg class="w-10 h-10 text-indigo-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                         </div>
-                        <h2 class="text-base font-bold text-white mb-1">Your Noksha Escrow Inbox</h2>
+                        <h2 class="text-base font-bold text-[#121826] mb-1">Your Noksha Escrow Inbox</h2>
                         <p class="text-xs text-slate-400 max-w-sm mb-4 leading-relaxed">
                             Select a thread from the left sidebar to resume messaging, or visit a creator's public profile to send a direct project inquiry.
                         </p>
@@ -700,20 +700,20 @@
 {{-- 3. PROPOSE / PICK SERVICE MODAL (DARK THEME)             --}}
 {{-- ======================================================== --}}
 @if($activeConversation && !$activeConversation->is_frozen)
-<div id="serviceProposalModal" data-modal="service-proposal" data-service-modal style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
-    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+<div id="serviceProposalModal" data-modal="service-proposal" data-service-modal style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
+    <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
-        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
                     💼
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white mb-0">{{ $isSeller ? 'Propose Custom Service' : 'Request Creative Service' }}</h3>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">{{ $isSeller ? 'Propose Custom Service' : 'Request Creative Service' }}</h3>
                     <p class="text-[11px] text-slate-400 mb-0">Minimum service threshold ৳600.00 BDT</p>
                 </div>
             </div>
-            <button type="button" onclick="handleModalClose()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm cursor-pointer" title="Close">&times;</button>
+            <button type="button" onclick="handleModalClose()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer" title="Close">&times;</button>
         </div>
 
         <form id="serviceProposalForm" action="{{ route('inbox.service-proposal.store', $activeConversation->id) }}" method="POST" class="p-6 space-y-4">
@@ -723,7 +723,7 @@
             @if($services->isNotEmpty())
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pick Existing Service (Optional)</label>
-                    <select name="service_id" id="serviceSelect" onchange="handleServiceSelect(this)" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <select name="service_id" id="serviceSelect" onchange="handleServiceSelect(this)" class="w-full px-3 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-indigo-500">
                         <option value="">-- Propose Custom / Enter Details Below --</option>
                         @foreach($services as $srv)
                             <option value="{{ $srv->id }}" data-title="{{ $srv->title }}" data-price="{{ $srv->price }}" data-days="{{ $srv->duration_days }}" data-desc="{{ $srv->description }}">
@@ -736,34 +736,34 @@
 
             {{-- Title --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Service Title <span class="text-rose-400">*</span></label>
-                <input type="text" name="title" id="proposalTitleInput" required placeholder="e.g. Mobile App UI Kit & Figma Design System" class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Service Title <span class="text-rose-400">*</span></label>
+                <input type="text" name="title" id="proposalTitleInput" required placeholder="e.g. Mobile App UI Kit & Figma Design System" class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
             </div>
 
             {{-- Price & Delivery Days Grid --}}
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Price (BDT ৳) <span class="text-rose-400">*</span></label>
-                    <input type="number" name="price" id="proposalPriceInput" min="600" step="10" value="600" required class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white font-mono focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Price (BDT ৳) <span class="text-rose-400">*</span></label>
+                    <input type="number" name="price" id="proposalPriceInput" min="600" step="10" value="600" required class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-indigo-500">
                     <span class="text-[10px] text-slate-500">Min: ৳600.00 BDT</span>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Delivery Time (Days) <span class="text-rose-400">*</span></label>
-                    <input type="number" name="duration_days" id="proposalDaysInput" min="1" max="90" value="3" required class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white font-mono focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Time (Days) <span class="text-rose-400">*</span></label>
+                    <input type="number" name="duration_days" id="proposalDaysInput" min="1" max="90" value="3" required class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
 
             {{-- Description / Scope --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Scope of Work & Deliverables <span class="text-rose-400">*</span></label>
-                <textarea name="description" id="proposalDescInput" rows="3" required placeholder="Outline deliverables, file formats (.FIG, .PSD, .AI), and revision milestones..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Scope of Work & Deliverables <span class="text-rose-400">*</span></label>
+                <textarea name="description" id="proposalDescInput" rows="3" required placeholder="Outline deliverables, file formats (.FIG, .PSD, .AI), and revision milestones..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
             </div>
 
-            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-800">
-                <button type="button" id="cancelProposalBtn" onclick="handleModalClose()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer">
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" id="cancelProposalBtn" onclick="handleModalClose()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
                     Cancel
                 </button>
-                <button type="submit" id="submitProposalBtn" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
+                <button type="submit" id="submitProposalBtn" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
                     🚀 Dispatch Proposal
                 </button>
             </div>
@@ -776,37 +776,37 @@
 {{-- 3B. DELIVER WORK MODAL (SELLER ONLY)                    --}}
 {{-- ======================================================== --}}
 @if(isset($activeOrder) && $activeOrder && !empty($isSeller) && $activeOrder->status === 'funded_in_progress')
-<div id="deliveryModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
-    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+<div id="deliveryModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
+    <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
-        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
                     📦
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white mb-0">Deliver Final Work</h3>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Deliver Final Work</h3>
                     <p class="text-[11px] text-slate-400 mb-0">Upload source ZIP package (AI, PSD, Figma, EPS, etc.)</p>
                 </div>
             </div>
-            <button type="button" onclick="closeDeliveryModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">&times;</button>
+            <button type="button" onclick="closeDeliveryModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm">&times;</button>
         </div>
 
         <form action="{{ route('inbox.orders.deliver', $activeOrder->id) }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Deliverable Package (.ZIP only, Max 200MB) <span class="text-rose-400">*</span></label>
-                <input type="file" name="delivery_file" accept=".zip,application/zip,application/x-zip-compressed" required class="w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 bg-slate-950 border border-slate-800 rounded-xl p-2 cursor-pointer">
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Deliverable Package (.ZIP only, Max 200MB) <span class="text-rose-400">*</span></label>
+                <input type="file" name="delivery_file" accept=".zip,application/zip,application/x-zip-compressed" required class="w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#20165c] file:text-white hover:file:bg-[#181045] bg-white border border-slate-300 text-slate-700 rounded-xl p-2 cursor-pointer">
                 <p class="text-[10px] text-slate-500 mt-1">Package all project source files, fonts, and documentation into a single .ZIP archive.</p>
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Delivery Notes / Handover Instructions</label>
-                <textarea name="delivery_notes" rows="4" placeholder="Add instructions on how to use the files, software versions, or handover notes..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Notes / Handover Instructions</label>
+                <textarea name="delivery_notes" rows="4" placeholder="Add instructions on how to use the files, software versions, or handover notes..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
             </div>
 
-            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-800">
-                <button type="button" onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 transition-colors">
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
                     Cancel
                 </button>
                 <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 transition-all cursor-pointer">
@@ -822,34 +822,34 @@
 {{-- 3C. REQUEST REVISION MODAL (BUYER ONLY)                 --}}
 {{-- ======================================================== --}}
 @if(isset($activeOrder) && $activeOrder && !empty($isBuyer) && $activeOrder->status === 'delivered')
-<div id="revisionModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
-    <div class="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+<div id="revisionModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
+    <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
-        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">
                     🔄
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-white mb-0">Request Revision</h3>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Request Revision</h3>
                     <p class="text-[11px] text-slate-400 mb-0">Specify changes or adjustments required for this project</p>
                 </div>
             </div>
-            <button type="button" onclick="closeRevisionModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">&times;</button>
+            <button type="button" onclick="closeRevisionModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm">&times;</button>
         </div>
 
         <form action="{{ route('inbox.orders.revision', $activeOrder->id) }}" method="POST" class="p-6 space-y-4">
             @csrf
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Revision Instructions <span class="text-rose-400">*</span></label>
-                <textarea name="revision_notes" rows="4" required placeholder="Clearly describe what changes are needed, referencing specific sections or assets..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Revision Instructions <span class="text-rose-400">*</span></label>
+                <textarea name="revision_notes" rows="4" required placeholder="Clearly describe what changes are needed, referencing specific sections or assets..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
             </div>
 
-            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-800">
-                <button type="button" onclick="closeRevisionModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-slate-800 transition-colors">
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeRevisionModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
                     Cancel
                 </button>
-                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all cursor-pointer">
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
                     🔄 Submit Revision Request
                 </button>
             </div>
@@ -1047,7 +1047,7 @@ function appendPolledMessage(msg, container) {
         const isOrder = msg.message_type === 'order_status';
         div.className = 'flex justify-center my-3';
         div.innerHTML = `
-            <div class="px-4 py-2 rounded-2xl text-xs font-semibold ${isOrder ? 'bg-indigo-950/60 border border-indigo-500/30 text-indigo-200' : 'bg-slate-950/80 border border-slate-800 text-slate-400'} flex items-center gap-2 shadow-sm max-w-lg text-center">
+            <div class="px-4 py-2 rounded-2xl text-xs font-semibold ${isOrder ? 'bg-purple-50 border border-[#20165c]/20 text-[#20165c]' : 'bg-slate-50 border border-slate-200 text-slate-600'} flex items-center gap-2 shadow-sm max-w-lg text-center">
                 <span>${escapeHtml(msg.body)}</span>
                 <span class="text-[9px] text-slate-500 font-mono shrink-0">${msg.created_at_human || ''}</span>
             </div>
@@ -1058,7 +1058,7 @@ function appendPolledMessage(msg, container) {
         if (msg.attachments && msg.attachments.length > 0) {
             attachmentsHtml = `<div class="mt-2 pt-2 border-t ${msg.is_me ? 'border-indigo-500/40' : 'border-slate-700/60'} space-y-1.5">` +
                 msg.attachments.map(att => `
-                    <a href="${att.url}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl ${msg.is_me ? 'bg-indigo-800/50 hover:bg-indigo-800/70' : 'bg-slate-900/60 hover:bg-slate-900'} transition-colors text-xs text-white">
+                    <a href="${att.url}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl ${msg.is_me ? 'bg-white/15 hover:bg-white/25 text-white' : 'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200'} transition-colors text-xs">
                         <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                         <span class="truncate flex-1 font-mono text-[11px]">${escapeHtml(att.file_name)}</span>
                         <span class="text-[10px] opacity-75 shrink-0">${escapeHtml(att.size || '')}</span>
@@ -1067,15 +1067,15 @@ function appendPolledMessage(msg, container) {
         }
 
         const avatarHtml = msg.is_me ? '' : `
-            <div class="w-7 h-7 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-300 font-bold shrink-0">
+            <div class="w-7 h-7 rounded-xl bg-slate-200 border border-slate-300 flex items-center justify-center text-[10px] text-slate-700 font-bold shrink-0">
                 ${(msg.sender_name || 'U').substring(0, 1).toUpperCase()}
             </div>
         `;
 
         div.innerHTML = `
             ${avatarHtml}
-            <div class="max-w-[75%] sm:max-w-md ${msg.is_me ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-2xl rounded-tr-sm' : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-2xl rounded-tl-sm'} p-3.5 shadow-lg">
-                ${!msg.is_me ? `<div class="text-[10px] font-bold text-slate-400 mb-1">${escapeHtml(msg.sender_name || 'User')}</div>` : ''}
+            <div class="max-w-[75%] sm:max-w-md ${msg.is_me ? 'bg-[#20165c] text-white rounded-2xl rounded-tr-sm shadow-sm' : 'bg-slate-100 text-slate-900 border border-slate-200 rounded-2xl rounded-tl-sm'} p-3.5 shadow-lg">
+                ${!msg.is_me ? `<div class="text-[10px] font-bold text-slate-500 mb-1">${escapeHtml(msg.sender_name || 'User')}</div>` : ''}
                 <p class="text-xs leading-relaxed whitespace-pre-wrap break-words mb-1">${escapeHtml(msg.body)}</p>
                 ${attachmentsHtml}
                 <div class="flex justify-end mt-1 text-[9px] ${msg.is_me ? 'text-indigo-200' : 'text-slate-400'}">

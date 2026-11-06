@@ -84,7 +84,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased flex flex-col">
 
     @php
         $pendingResourcesCount = \App\Models\Resource::where('status', 'pending')->count();

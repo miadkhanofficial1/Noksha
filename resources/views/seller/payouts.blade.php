@@ -202,12 +202,12 @@
         <!-- ========================================================= -->
         <!-- TOP BREADCRUMB & HEADER                                   -->
         <!-- ========================================================= -->
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 pb-2 border-bottom border-slate-800">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 pb-2 border-bottom border-slate-200">
             <div>
                 <nav aria-label="breadcrumb" class="mb-1">
-                    <ol class="breadcrumb extra-small font-monospace mb-0 text-slate-400">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-slate-400 text-decoration-none hover-underline">Noksha</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard', ['mode' => 'seller']) }}" class="text-slate-400 text-decoration-none hover-underline">Creator Hub</a></li>
+                    <ol class="breadcrumb extra-small font-monospace mb-0 text-slate-500">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-slate-500 text-decoration-none hover-underline">Noksha</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard', ['mode' => 'seller']) }}" class="text-slate-500 text-decoration-none hover-underline">Creator Hub</a></li>
                         <li class="breadcrumb-item active text-emerald-400" aria-current="page">Earnings & Payouts</li>
                     </ol>
                 </nav>
@@ -216,8 +216,8 @@
                         <i class="bi bi-cash-stack fs-5"></i>
                     </div>
                     <div>
-                        <h1 class="h4 fw-extrabold text-white mb-0">Seller Earnings & Payouts</h1>
-                        <p class="text-slate-400 extra-small mb-0">Manage your template royalty revenues, cash balances, and disburse instant withdrawals.</p>
+                        <h1 class="h4 fw-extrabold text-[#121826] mb-0">Seller Earnings & Payouts</h1>
+                        <p class="text-slate-500 extra-small mb-0">Manage your template royalty revenues, cash balances, and disburse instant withdrawals.</p>
                     </div>
                 </div>
             </div>
@@ -237,14 +237,14 @@
         <!-- ========================================================= -->
         <!-- BALANCE PROTECTION INFO BANNER                            -->
         <!-- ========================================================= -->
-        <div class="mb-4 p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="mb-4 p-3.5 rounded-xl border border-slate-200 bg-slate-50 backdrop-blur-sm d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
                 <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     <i class="bi bi-shield-lock-fill fs-5"></i>
                 </div>
                 <div>
-                    <div class="small fw-bold text-white">Strict Balance Protection Active</div>
-                    <div class="extra-small text-slate-400">
+                    <div class="small fw-bold text-[#121826]">Strict Balance Protection Active</div>
+                    <div class="extra-small text-slate-500">
                         Withdrawals are strictly paid out from your <strong>Seller Royalties Balance (৳{{ number_format($availableBalance, 2) }})</strong>. Deposited buyer shopping funds (৳{{ number_format($shoppingBalance, 2) }}) cannot be cashed out.
                     </div>
                 </div>
@@ -263,15 +263,15 @@
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="stat-metric-card text-emerald-400 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="extra-small font-monospace text-slate-400 text-uppercase fw-bold">Royalties to Cashout</span>
+                        <span class="extra-small font-monospace text-slate-500 text-uppercase fw-bold">Royalties to Cashout</span>
                         <div class="p-1.5 rounded-3 bg-emerald-500 bg-opacity-15 text-emerald-400 border border-emerald-500 border-opacity-30">
                             <i class="bi bi-wallet-fill"></i>
                         </div>
                     </div>
-                    <div class="h3 fw-extrabold text-white mb-1">
+                    <div class="h3 fw-extrabold text-[#121826] mb-1">
                         ৳ {{ number_format($availableBalance, 2) }}
                     </div>
-                    <div class="extra-small text-slate-400 d-flex align-items-center gap-1">
+                    <div class="extra-small text-slate-500 d-flex align-items-center gap-1">
                         <i class="bi bi-shield-check text-emerald-400"></i>
                         <span>Seller earnings balance</span>
                     </div>
@@ -282,15 +282,15 @@
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="stat-metric-card text-purple-400 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="extra-small font-monospace text-slate-400 text-uppercase fw-bold">Lifetime Template Sales</span>
+                        <span class="extra-small font-monospace text-slate-500 text-uppercase fw-bold">Lifetime Template Sales</span>
                         <div class="p-1.5 rounded-3 bg-purple-500 bg-opacity-15 text-purple-400 border border-purple-500 border-opacity-30">
                             <i class="bi bi-graph-up-arrow"></i>
                         </div>
                     </div>
-                    <div class="h3 fw-extrabold text-white mb-1">
+                    <div class="h3 fw-extrabold text-[#121826] mb-1">
                         ৳ {{ number_format($totalGrossSales, 2) }}
                     </div>
-                    <div class="extra-small text-slate-400 d-flex align-items-center gap-1">
+                    <div class="extra-small text-slate-500 d-flex align-items-center gap-1">
                         <span class="badge bg-purple-500 bg-opacity-20 text-purple-300 extra-small py-0.5">85% Net Royalty</span>
                         <span>15% Platform fee</span>
                     </div>
@@ -301,15 +301,15 @@
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="stat-metric-card text-warning h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="extra-small font-monospace text-slate-400 text-uppercase fw-bold">Pending Approval</span>
+                        <span class="extra-small font-monospace text-slate-500 text-uppercase fw-bold">Pending Approval</span>
                         <div class="p-1.5 rounded-3 bg-warning bg-opacity-15 text-warning border border-warning border-opacity-30">
                             <i class="bi bi-hourglass-split"></i>
                         </div>
                     </div>
-                    <div class="h3 fw-extrabold text-white mb-1">
+                    <div class="h3 fw-extrabold text-[#121826] mb-1">
                         ৳ {{ number_format($pendingWithdrawals, 2) }}
                     </div>
-                    <div class="extra-small text-slate-400 d-flex align-items-center gap-1">
+                    <div class="extra-small text-slate-500 d-flex align-items-center gap-1">
                         <i class="bi bi-clock-history text-warning"></i>
                         <span>Held in queue for processing</span>
                     </div>
@@ -320,15 +320,15 @@
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="stat-metric-card text-cyan-400 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="extra-small font-monospace text-slate-400 text-uppercase fw-bold">Completed Cashouts</span>
+                        <span class="extra-small font-monospace text-slate-500 text-uppercase fw-bold">Completed Cashouts</span>
                         <div class="p-1.5 rounded-3 bg-cyan-500 bg-opacity-15 text-cyan-400 border border-cyan-500 border-opacity-30">
                             <i class="bi bi-check2-circle"></i>
                         </div>
                     </div>
-                    <div class="h3 fw-extrabold text-white mb-1">
+                    <div class="h3 fw-extrabold text-[#121826] mb-1">
                         ৳ {{ number_format($completedPayouts, 2) }}
                     </div>
-                    <div class="extra-small text-slate-400 d-flex align-items-center gap-1">
+                    <div class="extra-small text-slate-500 d-flex align-items-center gap-1">
                         <i class="bi bi-bank text-cyan-400"></i>
                         <span>Disbursed to seller accounts</span>
                     </div>
@@ -344,10 +344,10 @@
             <!-- ========================================================= -->
             <div class="col-12 col-lg-5">
                 <div class="payout-card" id="withdrawalFormCard">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-slate-800">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-slate-200">
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-send-check text-emerald-400 fs-5"></i>
-                            <h2 class="h6 fw-bold text-white mb-0">Request Withdrawal</h2>
+                            <h2 class="h6 fw-bold text-[#121826] mb-0">Request Withdrawal</h2>
                         </div>
                         <span class="badge rounded-pill extra-small font-monospace" style="background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">
                             Min ৳{{ number_format($minThreshold, 0) }}
@@ -360,16 +360,16 @@
                         <!-- Field 1: Amount with Presets -->
                         <div class="mb-3.5">
                             <div class="d-flex align-items-center justify-content-between mb-1.5">
-                                <label for="withdrawAmountInput" class="extra-small font-monospace text-uppercase text-slate-400 fw-bold">
+                                <label for="withdrawAmountInput" class="extra-small font-monospace text-uppercase text-slate-500 fw-bold">
                                     Withdrawal Amount (BDT) <span class="text-danger">*</span>
                                 </label>
-                                <span class="extra-small text-slate-400">
+                                <span class="extra-small text-slate-500">
                                     Avail: <strong class="text-emerald-400 font-monospace">৳{{ number_format($availableBalance, 2) }}</strong>
                                 </span>
                             </div>
 
                             <div class="input-group mb-2">
-                                <span class="input-group-text bg-slate-900 border-slate-800 text-slate-400 fw-bold px-3">৳</span>
+                                <span class="input-group-text bg-slate-50 border-slate-200 text-slate-500 fw-bold px-3">৳</span>
                                 <input type="number" 
                                        step="1" 
                                        min="{{ $minThreshold }}" 
@@ -394,7 +394,7 @@
 
                         <!-- Field 2: Payout Method Radios -->
                         <div class="mb-3.5">
-                            <label class="extra-small font-monospace text-uppercase text-slate-400 fw-bold mb-2 d-block">
+                            <label class="extra-small font-monospace text-uppercase text-slate-500 fw-bold mb-2 d-block">
                                 Disbursal Method <span class="text-danger">*</span>
                             </label>
 
@@ -408,10 +408,10 @@
                                                 bK
                                             </div>
                                             <div class="flex-grow-1 min-w-0">
-                                                <div class="fw-bold text-white small">bKash Personal</div>
-                                                <div class="extra-small text-slate-400">Direct mobile wallet transfer • 0% fee</div>
+                                                <div class="fw-bold text-[#121826] small">bKash Personal</div>
+                                                <div class="extra-small text-slate-500">Direct mobile wallet transfer • 0% fee</div>
                                             </div>
-                                            <span class="badge bg-slate-800 text-slate-300 extra-small font-monospace">Instant</span>
+                                            <span class="badge bg-slate-800 text-slate-700 extra-small font-monospace">Instant</span>
                                         </div>
                                     </label>
                                 </div>
@@ -425,10 +425,10 @@
                                                 NG
                                             </div>
                                             <div class="flex-grow-1 min-w-0">
-                                                <div class="fw-bold text-white small">Nagad Direct</div>
-                                                <div class="extra-small text-slate-400">Postal financial mobile wallet • 0% fee</div>
+                                                <div class="fw-bold text-[#121826] small">Nagad Direct</div>
+                                                <div class="extra-small text-slate-500">Postal financial mobile wallet • 0% fee</div>
                                             </div>
-                                            <span class="badge bg-slate-800 text-slate-300 extra-small font-monospace">Instant</span>
+                                            <span class="badge bg-slate-800 text-slate-700 extra-small font-monospace">Instant</span>
                                         </div>
                                     </label>
                                 </div>
@@ -442,10 +442,10 @@
                                                 <i class="bi bi-bank2"></i>
                                             </div>
                                             <div class="flex-grow-1 min-w-0">
-                                                <div class="fw-bold text-white small">Bank Transfer</div>
-                                                <div class="extra-small text-slate-400">BEFTN / NPSB clearing to any BD Bank</div>
+                                                <div class="fw-bold text-[#121826] small">Bank Transfer</div>
+                                                <div class="extra-small text-slate-500">BEFTN / NPSB clearing to any BD Bank</div>
                                             </div>
-                                            <span class="badge bg-slate-800 text-slate-300 extra-small font-monospace">1-2 Days</span>
+                                            <span class="badge bg-slate-800 text-slate-700 extra-small font-monospace">1-2 Days</span>
                                         </div>
                                     </label>
                                 </div>
@@ -454,7 +454,7 @@
 
                         <!-- Field 3: Account Number / Details -->
                         <div class="mb-3.5">
-                            <label for="accountDetailsInput" class="extra-small font-monospace text-uppercase text-slate-400 fw-bold mb-1 d-block" id="accountDetailsLabel">
+                            <label for="accountDetailsInput" class="extra-small font-monospace text-uppercase text-slate-500 fw-bold mb-1 d-block" id="accountDetailsLabel">
                                 bKash Mobile Number <span class="text-danger">*</span>
                             </label>
                             <input type="text" 
@@ -471,7 +471,7 @@
 
                         <!-- Field 4: Optional Memo / Note -->
                         <div class="mb-4">
-                            <label for="withdrawNoteInput" class="extra-small font-monospace text-uppercase text-slate-400 fw-bold mb-1 d-block">
+                            <label for="withdrawNoteInput" class="extra-small font-monospace text-uppercase text-slate-500 fw-bold mb-1 d-block">
                                 Memo / Reference Note (Optional)
                             </label>
                             <input type="text" 
@@ -511,12 +511,12 @@
             <!-- ========================================================= -->
             <div class="col-12 col-lg-7">
                 <div class="payout-card">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-slate-800 flex-wrap gap-2">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-slate-200 flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-receipt-cutoff text-purple-400 fs-5"></i>
-                            <h2 class="h6 fw-bold text-white mb-0">Withdrawal History & Ledger</h2>
+                            <h2 class="h6 fw-bold text-[#121826] mb-0">Withdrawal History & Ledger</h2>
                         </div>
-                        <span class="badge bg-slate-900 border border-slate-800 text-slate-300 rounded-pill extra-small font-monospace">
+                        <span class="badge bg-slate-50 border border-slate-200 text-slate-700 rounded-pill extra-small font-monospace">
                             {{ $withdrawals->total() }} Record(s)
                         </span>
                     </div>
@@ -526,8 +526,8 @@
                             <div style="width: 60px; height: 60px; border-radius: 1.25rem; background: rgba(30, 41, 59, 0.5); color: #64748B; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 1px solid rgba(148, 163, 184, 0.1);">
                                 <i class="bi bi-inbox fs-3"></i>
                             </div>
-                            <h3 class="h6 fw-bold text-white mb-1">No Withdrawal Requests Yet</h3>
-                            <p class="text-slate-400 extra-small mx-auto mb-0" style="max-width: 320px;">
+                            <h3 class="h6 fw-bold text-[#121826] mb-1">No Withdrawal Requests Yet</h3>
+                            <p class="text-slate-500 extra-small mx-auto mb-0" style="max-width: 320px;">
                                 When you submit payout requests from your template earnings, each transaction status will be tracked here.
                             </p>
                         </div>
@@ -547,8 +547,8 @@
                                     @foreach($withdrawals as $item)
                                         <tr>
                                             <td>
-                                                <div class="fw-bold text-white font-monospace extra-small">#WTH-{{ $item->id }}</div>
-                                                <div class="extra-small text-slate-400">{{ $item->created_at->format('M d, Y • h:i A') }}</div>
+                                                <div class="fw-bold text-[#121826] font-monospace extra-small">#WTH-{{ $item->id }}</div>
+                                                <div class="extra-small text-slate-500">{{ $item->created_at->format('M d, Y • h:i A') }}</div>
                                             </td>
                                             <td>
                                                 @php
@@ -568,7 +568,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <div class="extra-small text-slate-300 font-monospace text-truncate" style="max-width: 160px;" title="{{ $item->account_details }}">
+                                                <div class="extra-small text-slate-700 font-monospace text-truncate" style="max-width: 160px;" title="{{ $item->account_details }}">
                                                     {{ $item->account_details }}
                                                 </div>
                                                 @if($item->note)
@@ -578,7 +578,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <strong class="text-white font-monospace">৳{{ number_format($item->amount, 2) }}</strong>
+                                                <strong class="text-[#121826] font-monospace">৳{{ number_format($item->amount, 2) }}</strong>
                                             </td>
                                             <td>
                                                 @if($item->status === 'approved')
@@ -603,7 +603,7 @@
 
                         <!-- Pagination -->
                         @if($withdrawals->hasPages())
-                            <div class="pt-3 border-top border-slate-800 d-flex justify-content-center">
+                            <div class="pt-3 border-top border-slate-200 d-flex justify-content-center">
                                 {{ $withdrawals->links() }}
                             </div>
                         @endif
@@ -625,16 +625,16 @@
                 <div style="width: 60px; height: 60px; border-radius: 1.25rem; background: rgba(16, 185, 129, 0.15); color: #34D399; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; border: 1px solid rgba(16, 185, 129, 0.3);">
                     <i class="bi bi-question-diamond-fill fs-2"></i>
                 </div>
-                <h3 class="h5 fw-extrabold text-white mb-2">Confirm Withdrawal Request</h3>
-                <p class="text-slate-400 extra-small mb-3">
-                    You are requesting a payout of <strong class="text-white" id="confirmAmountDisplay">৳0.00</strong> to your <span id="confirmMethodDisplay" class="text-emerald-400 fw-bold">bKash</span> account.
+                <h3 class="h5 fw-extrabold text-[#121826] mb-2">Confirm Withdrawal Request</h3>
+                <p class="text-slate-500 extra-small mb-3">
+                    You are requesting a payout of <strong class="text-[#121826]" id="confirmAmountDisplay">৳0.00</strong> to your <span id="confirmMethodDisplay" class="text-emerald-400 fw-bold">bKash</span> account.
                 </p>
-                <div class="p-3 rounded-3 bg-slate-900 border border-slate-800 text-start mb-4">
-                    <div class="d-flex justify-content-between extra-small text-slate-400 mb-1">
+                <div class="p-3 rounded-3 bg-slate-50 border border-slate-200 text-start mb-4">
+                    <div class="d-flex justify-content-between extra-small text-slate-500 mb-1">
                         <span>Recipient Account:</span>
-                        <strong class="text-white font-monospace" id="confirmAccountDisplay">-</strong>
+                        <strong class="text-[#121826] font-monospace" id="confirmAccountDisplay">-</strong>
                     </div>
-                    <div class="d-flex justify-content-between extra-small text-slate-400">
+                    <div class="d-flex justify-content-between extra-small text-slate-500">
                         <span>Processing Fee:</span>
                         <strong class="text-emerald-400 font-monospace">৳0.00 (Free)</strong>
                     </div>

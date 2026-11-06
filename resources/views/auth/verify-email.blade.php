@@ -10,7 +10,7 @@
 
     <div class="w-full max-w-lg relative z-10">
         <!-- Main Card -->
-        <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-md transition-all">
             <!-- Header Section -->
             <div class="text-center mb-6">
                 <a href="{{ route('home') }}" class="inline-block mb-4 transition-transform hover:scale-105">
@@ -24,8 +24,8 @@
                     <span>Email OTP Verification</span>
                 </div>
 
-                <h1 class="text-2xl font-bold text-white tracking-tight">Verify Your Email Address</h1>
-                <p class="text-sm text-slate-400 mt-2">
+                <h1 class="text-2xl font-bold text-[#121826] tracking-tight">Verify Your Email Address</h1>
+                <p class="text-sm text-slate-500 mt-2">
                     We've sent a 6-digit confirmation code to:
                 </p>
                 <div class="inline-flex items-center gap-2 mt-1 px-3 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-mono text-cyan-300">
@@ -43,7 +43,7 @@
                             <div class="font-bold text-amber-200 uppercase tracking-wider text-[11px] mb-1">
                                 Delivery Notice
                             </div>
-                            <div class="leading-relaxed text-slate-300">
+                            <div class="leading-relaxed text-slate-700">
                                 {{ session('mail_delivery_warning') }}
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                 <input type="hidden" name="otp" id="fullOtpInput">
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 text-center uppercase tracking-wider mb-3">
+                    <label class="block text-xs font-medium text-slate-700 text-center uppercase tracking-wider mb-3">
                         Enter 6-Digit Security Code
                     </label>
 
@@ -103,7 +103,7 @@
                                    @if ($i === 0) autofocus @endif>
                         @endfor
                     </div>
-                    <p class="text-xs text-slate-400 text-center mt-3">
+                    <p class="text-xs text-slate-500 text-center mt-3">
                         <i class="bi bi-clock-history mr-1"></i> Code valid for <span class="text-cyan-400 font-semibold">10 minutes</span>
                     </p>
                 </div>
@@ -111,15 +111,15 @@
                 <!-- Submit Button -->
                 <button type="submit" 
                         id="verifySubmitBtn"
-                        class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-cyan-500 via-indigo-600 to-indigo-700 hover:from-cyan-400 hover:to-indigo-600 focus:ring-2 focus:ring-cyan-400/50 shadow-lg shadow-indigo-900/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="w-full py-3.5 px-4 rounded-xl font-semibold text-sm text-[#121826] bg-gradient-to-r from-cyan-500 via-indigo-600 to-indigo-700 hover:from-cyan-400 hover:to-indigo-600 focus:ring-2 focus:ring-cyan-400/50 shadow-lg shadow-indigo-900/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="bi bi-shield-check text-base"></i>
                     <span>Verify & Continue</span>
                 </button>
             </form>
 
             <!-- Resend & Logout Section -->
-            <div class="mt-8 pt-6 border-t border-slate-800/80 text-center space-y-4">
-                <p class="text-xs text-slate-400 mb-2">
+            <div class="mt-8 pt-6 border-t border-slate-200/80 text-center space-y-4">
+                <p class="text-xs text-slate-500 mb-2">
                     Didn't receive the email? Check your spam folder or request a new code:
                 </p>
 
@@ -136,7 +136,7 @@
                 <div class="pt-2">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="text-xs text-slate-400 hover:text-rose-400 transition-colors inline-flex items-center gap-1.5">
+                        <button type="submit" class="text-xs text-slate-500 hover:text-rose-400 transition-colors inline-flex items-center gap-1.5">
                             <i class="bi bi-box-arrow-right"></i>
                             <span>Log Out</span>
                         </button>

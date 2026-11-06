@@ -3,7 +3,7 @@
 @section('title', 'Licensing Terms & Usage Rights - Noksha')
 
 @section('content')
-<div class="min-h-screen bg-slate-950 text-slate-200">
+<div class="min-h-screen bg-[#ffffff] text-slate-800">
     <!-- Header Hero Banner -->
     @include('legal.header', [
         'activePolicy' => 'licenses',
@@ -16,12 +16,12 @@
 
         <!-- Quick Summary Callout -->
         <div class="p-6 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 backdrop-blur-sm shadow-xl flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-[#20165c] border border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div class="space-y-1 text-sm leading-relaxed">
-                <h3 class="font-bold text-white text-base">The Core Principle</h3>
-                <p class="text-slate-300">
+                <h3 class="font-bold text-[#121826] text-base">The Core Principle</h3>
+                <p class="text-slate-700">
                     When you purchase a design template or asset on Noksha, you are granted a non-exclusive, worldwide, ongoing license to use the item in your end creative deliverables. You do <strong>not</strong> purchase the original underlying copyright; ownership remains with the verified creator. You may never resell, re-license, or redistribute raw source files.
                 </p>
             </div>
@@ -29,26 +29,26 @@
 
         <!-- Section 1: The Three License Tiers -->
         <div class="space-y-6">
-            <div class="border-b border-slate-800 pb-3">
-                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                    <span class="text-indigo-400">01.</span> License Tiers Breakdown
+            <div class="border-b border-slate-200 pb-3">
+                <h2 class="text-2xl font-black text-[#121826] tracking-tight flex items-center gap-2">
+                    <span class="text-[#20165c]">01.</span> License Tiers Breakdown
                 </h2>
-                <p class="text-xs font-mono text-slate-400 mt-1 uppercase tracking-wider">Choose the license level appropriate for your use case</p>
+                <p class="text-xs font-mono text-slate-500 mt-1 uppercase tracking-wider">Choose the license level appropriate for your use case</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Tier 1: Personal -->
-                <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-6 shadow-lg backdrop-blur-sm flex flex-col justify-between hover:border-slate-700 transition">
+                <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 shadow-lg backdrop-blur-sm flex flex-col justify-between hover:border-[#20165c]/30 transition">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700">Non-Commercial</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-800 text-slate-700 border border-slate-700">Non-Commercial</span>
                             <span class="text-xs font-mono text-slate-500">Tier 1</span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Personal License</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
+                        <h3 class="text-lg font-bold text-[#121826]">Personal License</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
                             Suitable for students, non-profit experiments, personal artistic portfolios, and individual projects with zero commercial monetization.
                         </p>
-                        <ul class="text-xs text-slate-300 space-y-2 pt-2 border-t border-slate-800/80">
+                        <ul class="text-xs text-slate-700 space-y-2 pt-2 border-t border-slate-200/80">
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 <span>1 Single personal project</span>
@@ -71,19 +71,19 @@
 
                 <!-- Tier 2: Commercial (Recommended) -->
                 <div class="bg-indigo-950/30 border-2 border-indigo-500/60 rounded-2xl p-6 shadow-xl backdrop-blur-sm flex flex-col justify-between relative">
-                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-white shadow-md">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-[#121826] shadow-md">
                         Standard Default
                     </div>
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">Standard Commercial</span>
-                            <span class="text-xs font-mono text-indigo-400">Tier 2</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-[#20165c] border border-indigo-500/40">Standard Commercial</span>
+                            <span class="text-xs font-mono text-[#20165c]">Tier 2</span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Commercial License</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
+                        <h3 class="text-lg font-bold text-[#121826]">Commercial License</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
                             Included with all standard template sales on Noksha. Intended for professional agencies, freelance client orders, and corporate branding.
                         </p>
-                        <ul class="text-xs text-slate-300 space-y-2 pt-2 border-t border-indigo-500/20">
+                        <ul class="text-xs text-slate-700 space-y-2 pt-2 border-t border-indigo-500/20">
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 <span>1 Single commercial client deliverable</span>
@@ -105,17 +105,17 @@
                 </div>
 
                 <!-- Tier 3: Extended Commercial -->
-                <div class="bg-slate-900/70 border border-slate-800/90 rounded-2xl p-6 shadow-lg backdrop-blur-sm flex flex-col justify-between hover:border-slate-700 transition">
+                <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 shadow-lg backdrop-blur-sm flex flex-col justify-between hover:border-[#20165c]/30 transition">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">Enterprise</span>
                             <span class="text-xs font-mono text-purple-400">Tier 3</span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Extended Commercial</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
+                        <h3 class="text-lg font-bold text-[#121826]">Extended Commercial</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
                             For mass production, SaaS software themes, broadcast television, print-on-demand merchandising, and unlimited reproduction runs.
                         </p>
-                        <ul class="text-xs text-slate-300 space-y-2 pt-2 border-t border-slate-800/80">
+                        <ul class="text-xs text-slate-700 space-y-2 pt-2 border-t border-slate-200/80">
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                 <span>Unlimited end client deliverables</span>
@@ -140,11 +140,11 @@
 
         <!-- Section 2: Allowed vs Strictly Prohibited Matrix -->
         <div class="space-y-6">
-            <div class="border-b border-slate-800 pb-3">
-                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                    <span class="text-indigo-400">02.</span> Permitted Uses vs. Prohibited Actions
+            <div class="border-b border-slate-200 pb-3">
+                <h2 class="text-2xl font-black text-[#121826] tracking-tight flex items-center gap-2">
+                    <span class="text-[#20165c]">02.</span> Permitted Uses vs. Prohibited Actions
                 </h2>
-                <p class="text-xs font-mono text-slate-400 mt-1 uppercase tracking-wider">A transparent guide to keeping your creative workflow compliant</p>
+                <p class="text-xs font-mono text-slate-500 mt-1 uppercase tracking-wider">A transparent guide to keeping your creative workflow compliant</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -157,7 +157,7 @@
                         <span>What You ARE Allowed To Do</span>
                     </div>
 
-                    <ul class="text-xs sm:text-sm text-slate-300 space-y-3">
+                    <ul class="text-xs sm:text-sm text-slate-700 space-y-3">
                         <li class="flex items-start gap-2.5">
                             <span class="text-emerald-400 font-bold mt-0.5">✓</span>
                             <span>Incorporate designs into completed client projects (e.g. delivering an exported PDF or final branding guidelines to a business client).</span>
@@ -186,7 +186,7 @@
                         <span>What You Are NEVER Allowed To Do</span>
                     </div>
 
-                    <ul class="text-xs sm:text-sm text-slate-300 space-y-3">
+                    <ul class="text-xs sm:text-sm text-slate-700 space-y-3">
                         <li class="flex items-start gap-2.5">
                             <span class="text-rose-400 font-bold mt-0.5">✗</span>
                             <span>Re-sell, sub-license, donate, or distribute the raw source files (`.psd`, `.ai`, `.eps`, `.fig`) on any marketplace, cloud folder, or website.</span>
@@ -209,14 +209,14 @@
         </div>
 
         <!-- Section 3: Client Transfer & Handover Rules -->
-        <div class="space-y-4 bg-slate-900/70 border border-slate-800/90 rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                <span class="text-indigo-400">03.</span> Client Handover Protocol
+        <div class="space-y-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
+            <h2 class="text-xl font-bold text-[#121826] flex items-center gap-2">
+                <span class="text-[#20165c]">03.</span> Client Handover Protocol
             </h2>
-            <p class="text-sm text-slate-300 leading-relaxed">
+            <p class="text-sm text-slate-700 leading-relaxed">
                 If you are a freelance designer or agency using a Noksha template for a paying client:
             </p>
-            <div class="space-y-3 text-xs sm:text-sm text-slate-400">
+            <div class="space-y-3 text-xs sm:text-sm text-slate-500">
                 <p>
                     • You may transfer the <em>customized end deliverable</em> (flattened images, vector silhouettes, printed merchandise, or rendered web assets) to your client.
                 </p>
@@ -230,23 +230,23 @@
         </div>
 
         <!-- Section 4: Font & Stock Asset Notice -->
-        <div class="space-y-4 bg-slate-900/70 border border-slate-800/90 rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                <span class="text-indigo-400">04.</span> Fonts, Photos & Embedded Assets
+        <div class="space-y-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
+            <h2 class="text-xl font-bold text-[#121826] flex items-center gap-2">
+                <span class="text-[#20165c]">04.</span> Fonts, Photos & Embedded Assets
             </h2>
-            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 Some templates contain mock images or typography for demonstration purposes. Contributors are required to use open-source Google Fonts or licensed stock photos. Noksha licenses cover the <em>design structure and arrangement</em>. Users are responsible for confirming third-party font license conditions before commercial publishing.
             </p>
         </div>
 
         <!-- Help CTA -->
-        <div class="text-center p-8 rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/80 to-slate-950 space-y-3">
-            <h3 class="text-lg font-bold text-white">Have questions about your specific commercial project?</h3>
-            <p class="text-xs text-slate-400 max-w-md mx-auto">
+        <div class="text-center p-8 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-900/80 to-slate-950 space-y-3">
+            <h3 class="text-lg font-bold text-[#121826]">Have questions about your specific commercial project?</h3>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">
                 Our compliance team is ready to evaluate your enterprise use case or discuss bespoke extended licensing agreements.
             </p>
             <div class="pt-2">
-                <a href="{{ route('contact.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-lg shadow-indigo-600/30">
+                <a href="{{ route('contact.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-[#121826] text-xs font-bold transition shadow-lg shadow-indigo-600/30">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                     <span>Contact Legal Support</span>
                 </a>

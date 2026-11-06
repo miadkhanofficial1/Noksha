@@ -104,15 +104,15 @@
     .rank-badge-bronze { background: linear-gradient(135deg, #B45309 0%, #78350F 100%); color: white; }
 </style>
 
-<div class="min-h-screen bg-[#070b14] py-10 px-4 sm:px-6 lg:px-8 text-white">
+<div class="min-h-screen bg-[#ffffff] py-10 px-4 sm:px-6 lg:px-8 text-[#121826]">
     <div class="max-w-7xl mx-auto">
         
         <!-- BREADCRUMB NAVIGATION -->
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb small fw-semibold text-gray-400 mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                    <li class="breadcrumb-item active text-gray-300" aria-current="page">Design Contests Hub</li>
+                <ol class="breadcrumb small fw-semibold text-slate-500 mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-[#20165c] hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                    <li class="breadcrumb-item active text-slate-700" aria-current="page">Design Contests Hub</li>
                 </ol>
             </nav>
             <a href="{{ route('contests.create') }}" class="btn btn-purple-cta rounded-pill px-4 py-2 small fw-bold d-inline-flex align-items-center gap-2">
@@ -121,7 +121,7 @@
         </div>
 
         <!-- HERO BANNER -->
-        <div class="contest-hero p-4 p-md-5 mb-5 text-white shadow-lg">
+        <div class="contest-hero p-4 p-md-5 mb-5 text-[#121826] shadow-lg">
             <div class="row align-items-center g-4">
                 <div class="col-lg-8">
                     <div class="d-flex align-items-center gap-2 mb-3">
@@ -132,8 +132,8 @@
                             <i class="bi bi-shield-fill-check me-1 text-warning"></i> 100% Guaranteed Escrow
                         </span>
                     </div>
-                    <h1 class="display-5 fw-extrabold text-white mb-3">Noksha Design Contests</h1>
-                    <p class="fs-5 text-gray-300 mb-4" style="max-width: 620px;">
+                    <h1 class="display-5 fw-extrabold text-[#121826] mb-3">Noksha Design Contests</h1>
+                    <p class="fs-5 text-slate-700 mb-4" style="max-width: 620px;">
                         Compete in real design challenges, submit original vectors, branding, & UI assets, win verified BDT prize pools, and rank on the national creator leaderboard.
                     </p>
                     <div class="d-flex flex-wrap gap-3">
@@ -147,10 +147,10 @@
                 </div>
                 <div class="col-lg-4 text-lg-end">
                     <div class="p-4 bg-white/5 rounded-2xl border border-white/10 text-center backdrop-blur">
-                        <div class="extra-small text-uppercase fw-bold text-gray-400">Verified Prize Pool</div>
-                        <div class="display-5 fw-extrabold text-amber-400 my-1 font-monospace">৳{{ number_format($totalPrizePool, 0) }}</div>
-                        <div class="extra-small text-gray-300">
-                            <span class="fw-bold text-white">{{ $activeContestsCount }}</span> Active Challenges • <span class="fw-bold text-white">{{ $totalCompleted }}</span> Completed
+                        <div class="extra-small text-uppercase fw-bold text-slate-500">Verified Prize Pool</div>
+                        <div class="display-5 fw-extrabold text-[#f47402] my-1 font-monospace">৳{{ number_format($totalPrizePool, 0) }}</div>
+                        <div class="extra-small text-slate-700">
+                            <span class="fw-bold text-[#121826]">{{ $activeContestsCount }}</span> Active Challenges • <span class="fw-bold text-[#121826]">{{ $totalCompleted }}</span> Completed
                         </div>
                     </div>
                 </div>
@@ -195,9 +195,9 @@
                         @endif
                         <input type="text" name="search" value="{{ request('search') }}"
                                placeholder="Search contests..."
-                               class="form-control form-control-sm rounded-pill ps-3 pe-5 py-2 border border-gray-700 bg-[#0b1329] text-white placeholder-gray-500 shadow-sm focus:border-indigo-500"
+                               class="form-control form-control-sm rounded-pill ps-3 pe-5 py-2 border border-slate-300 bg-white text-[#121826] placeholder-gray-500 shadow-sm focus:border-indigo-500"
                                style="font-size: 0.85rem;">
-                        <button type="submit" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-gray-400 pe-3 text-decoration-none">
+                        <button type="submit" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-slate-500 pe-3 text-decoration-none">
                             <i class="bi bi-search"></i>
                         </button>
                     </form>
@@ -206,7 +206,7 @@
 
             <!-- CATEGORY CHIPS ROW -->
             <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-2">
-                <span class="extra-small fw-bold text-gray-400 text-uppercase me-1"><i class="bi bi-funnel me-1"></i>Category:</span>
+                <span class="extra-small fw-bold text-slate-500 text-uppercase me-1"><i class="bi bi-funnel me-1"></i>Category:</span>
                 @php
                     $categoriesList = [
                         'all' => 'All Categories',
@@ -232,10 +232,10 @@
         <!-- CONTESTS LIST GRID -->
         <div class="mb-5">
             <div class="d-flex align-items-center justify-content-between mb-3">
-                <h4 class="fw-extrabold text-white mb-0">
-                    <i class="bi bi-fire text-indigo-400 me-2"></i>Contest Challenges
+                <h4 class="fw-extrabold text-[#121826] mb-0">
+                    <i class="bi bi-fire text-[#20165c] me-2"></i>Contest Challenges
                 </h4>
-                <span class="small fw-bold text-gray-400 font-monospace">{{ $contests->total() }} Contests Listed</span>
+                <span class="small fw-bold text-slate-500 font-monospace">{{ $contests->total() }} Contests Listed</span>
             </div>
 
             @if($contests->count() > 0)
@@ -263,14 +263,14 @@
                                                 </span>
                                             @elseif($contest->status === 'handover')
                                                 <span class="badge bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                                    <i class="bi bi-shield-lock-fill text-amber-400 me-1"></i> Handover
+                                                    <i class="bi bi-shield-lock-fill text-[#f47402] me-1"></i> Handover
                                                 </span>
                                             @elseif($contest->status === 'judging')
                                                 <span class="badge bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-hourglass-split me-1"></i> Judging
                                                 </span>
                                             @elseif($contest->status === 'completed')
-                                                <span class="badge bg-gray-700/50 text-gray-300 border border-gray-600/50 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                                <span class="badge bg-gray-700/50 text-slate-700 border border-gray-600/50 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-check-circle-fill me-1"></i> Completed
                                                 </span>
                                             @endif
@@ -278,24 +278,24 @@
                                     </div>
 
                                     <!-- Contest Title -->
-                                    <h5 class="fw-extrabold text-white mb-2 text-truncate" title="{{ $contest->title }}">
-                                        <a href="{{ route('contests.show', $contest->slug) }}" class="text-white text-decoration-none hover:text-indigo-400 transition-colors">
+                                    <h5 class="fw-extrabold text-[#121826] mb-2 text-truncate" title="{{ $contest->title }}">
+                                        <a href="{{ route('contests.show', $contest->slug) }}" class="text-[#121826] text-decoration-none hover:text-[#20165c] transition-colors">
                                             {{ $contest->title }}
                                         </a>
                                     </h5>
 
                                     <!-- Description Snippet -->
-                                    <p class="text-gray-400 small mb-3 line-clamp-2" style="min-height: 2.6rem;">
+                                    <p class="text-slate-500 small mb-3 line-clamp-2" style="min-height: 2.6rem;">
                                         {{ Str::limit($contest->description, 110) }}
                                     </p>
 
                                     <!-- Live Remaining Countdown Pill -->
                                     <div class="d-flex align-items-center gap-2 mb-3">
-                                        <span class="badge bg-[#111c35] text-gray-200 border border-gray-700/60 rounded-pill px-2.5 py-1 extra-small fw-bold font-monospace">
-                                            <i class="bi bi-clock me-1 text-indigo-400"></i> {{ $contest->remaining_time }}
+                                        <span class="badge bg-[#111c35] text-gray-200 border border-slate-300/60 rounded-pill px-2.5 py-1 extra-small fw-bold font-monospace">
+                                            <i class="bi bi-clock me-1 text-[#20165c]"></i> {{ $contest->remaining_time }}
                                         </span>
                                         @if($contest->required_dimensions)
-                                            <span class="badge bg-[#111c35] text-gray-400 border border-gray-700/60 rounded-pill px-2 py-1 extra-small font-monospace" title="Format / Dimensions">
+                                            <span class="badge bg-[#111c35] text-slate-500 border border-slate-300/60 rounded-pill px-2 py-1 extra-small font-monospace" title="Format / Dimensions">
                                                 <i class="bi bi-aspect-ratio me-1"></i>{{ Str::limit($contest->required_dimensions, 16) }}
                                             </span>
                                         @endif
@@ -304,15 +304,15 @@
 
                                 <!-- Bottom Card Meta & CTA -->
                                 <div>
-                                    <div class="p-3 bg-[#080d1a] border border-gray-800/80 rounded-xl mb-3 d-flex align-items-center justify-content-between">
+                                    <div class="p-3 bg-[#080d1a] border border-slate-200 rounded-xl mb-3 d-flex align-items-center justify-content-between">
                                         <div>
-                                            <div class="extra-small text-gray-400 text-uppercase fw-bold">Prize Bounty</div>
+                                            <div class="extra-small text-slate-500 text-uppercase fw-bold">Prize Bounty</div>
                                             <div class="fw-extrabold text-emerald-400 fs-5 font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</div>
                                         </div>
                                         <div class="text-end">
-                                            <div class="extra-small text-gray-400 text-uppercase fw-bold">Entries</div>
+                                            <div class="extra-small text-slate-500 text-uppercase fw-bold">Entries</div>
                                             <div class="fw-bold text-gray-200 font-monospace">
-                                                <i class="bi bi-file-earmark-image me-1 text-indigo-400"></i>
+                                                <i class="bi bi-file-earmark-image me-1 text-[#20165c]"></i>
                                                 {{ $contest->entries->count() ?: $contest->submissions->count() }} designs
                                             </div>
                                         </div>
@@ -333,12 +333,12 @@
                     {{ $contests->links() }}
                 </div>
             @else
-                <div class="bg-[#0d1527] border border-gray-800/80 shadow-2xl rounded-2xl p-5 text-center my-4 text-white">
-                    <div class="p-4 bg-indigo-500/10 text-indigo-400 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <div class="bg-[#0d1527] border border-slate-200 shadow-2xl rounded-2xl p-5 text-center my-4 text-[#121826]">
+                    <div class="p-4 bg-indigo-500/10 text-[#20165c] rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                         <i class="bi bi-trophy fs-1"></i>
                     </div>
-                    <h4 class="fw-bold text-white mb-2">No Contests Match Your Filter</h4>
-                    <p class="text-gray-400 small mb-4" style="max-width: 440px; margin: 0 auto;">
+                    <h4 class="fw-bold text-[#121826] mb-2">No Contests Match Your Filter</h4>
+                    <p class="text-slate-500 small mb-4" style="max-width: 440px; margin: 0 auto;">
                         There are currently no contests matching your search or category filter. Check back soon or launch your own contest!
                     </p>
                     <div>
@@ -351,25 +351,25 @@
         </div>
 
         <!-- TOP 10 CREATORS LEADERBOARD -->
-        <div class="bg-[#0b1329]/95 border border-gray-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
-            <div class="d-flex align-items-center justify-content-between mb-6 pb-4 border-b border-gray-800/80 flex-wrap gap-3">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+            <div class="d-flex align-items-center justify-content-between mb-6 pb-4 border-b border-slate-200 flex-wrap gap-3">
                 <div>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 mb-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-[#f47402] border border-amber-500/20 mb-2">
                         <i class="bi bi-award-fill"></i> Hall of Fame
                     </span>
-                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Top Creator Leaderboard</h3>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1 mb-0">Ranked dynamically by verified platform earnings, contest victories, and published assets.</p>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-[#121826] tracking-tight">Top Creator Leaderboard</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-0">Ranked dynamically by verified platform earnings, contest victories, and published assets.</p>
                 </div>
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#070d1e] border border-gray-800 text-xs font-mono text-gray-300">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>Live Creator Rankings</span>
                 </div>
             </div>
 
             @if(isset($topCreators) && $topCreators->count() > 0)
-                <div class="overflow-x-auto rounded-xl border border-gray-800/80 bg-[#070d1e]/50">
+                <div class="overflow-x-auto rounded-xl border border-slate-200 bg-slate-50">
                     <table class="w-full text-left border-collapse">
-                        <thead class="bg-[#070d1e] text-gray-400 text-xs font-semibold uppercase tracking-wider border-b border-gray-800">
+                        <thead class="bg-slate-50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
                             <tr>
                                 <th class="py-3.5 px-4 text-center" style="width: 80px;">Rank</th>
                                 <th class="py-3.5 px-4">Creator</th>
@@ -381,7 +381,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-800/60 text-sm">
                             @foreach($topCreators as $creator)
-                                <tr class="border-b border-gray-800/60 hover:bg-[#111c38]/50 transition duration-150">
+                                <tr class="border-b border-slate-200/60 hover:bg-[#111c38]/50 transition duration-150">
                                     <td class="py-4 px-4 text-center">
                                         @if($creator->rank === 1)
                                             <span class="badge rank-badge-gold rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center shadow-lg" style="width:34px; height:34px;">#1</span>
@@ -390,7 +390,7 @@
                                         @elseif($creator->rank === 3)
                                             <span class="badge rank-badge-bronze rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center shadow-sm" style="width:34px; height:34px;">#3</span>
                                         @else
-                                            <span class="fw-bold text-gray-400 font-mono text-sm">#{{ $creator->rank }}</span>
+                                            <span class="fw-bold text-slate-500 font-mono text-sm">#{{ $creator->rank }}</span>
                                         @endif
                                     </td>
                                     <td class="py-4 px-4">
@@ -403,35 +403,35 @@
                                                 </div>
                                             @endif
                                             <div>
-                                                <div class="font-bold text-white group-hover:text-indigo-400 transition-colors">{{ $creator->name }}</div>
-                                                <div class="text-xs text-gray-400 font-mono">&#64;{{ $creator->username ?? Str::slug($creator->name) }}</div>
+                                                <div class="font-bold text-[#121826] group-hover:text-[#20165c] transition-colors">{{ $creator->name }}</div>
+                                                <div class="text-xs text-slate-500 font-mono">&#64;{{ $creator->username ?? Str::slug($creator->name) }}</div>
                                             </div>
                                         </a>
                                     </td>
                                     <td class="py-4 px-4 text-center">
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                                            <i class="bi bi-trophy-fill text-amber-400"></i> {{ $creator->contest_wins ?? 0 }} {{ Str::plural('Win', $creator->contest_wins ?? 0) }}
+                                            <i class="bi bi-trophy-fill text-[#f47402]"></i> {{ $creator->contest_wins ?? 0 }} {{ Str::plural('Win', $creator->contest_wins ?? 0) }}
                                         </span>
                                     </td>
                                     <td class="py-4 px-4 text-center">
                                         <span class="font-semibold text-gray-200 text-sm font-mono">
-                                            <i class="bi bi-layers text-indigo-400 me-1"></i>{{ $creator->published_assets ?? 0 }} Assets
+                                            <i class="bi bi-layers text-[#20165c] me-1"></i>{{ $creator->published_assets ?? 0 }} Assets
                                         </span>
                                     </td>
                                     <td class="py-4 px-4 text-end">
                                         <div>
                                             <span class="font-extrabold text-emerald-400 font-mono text-sm">৳{{ number_format($creator->total_withdrawn ?? 0, 2) }}</span>
-                                            <div class="text-[11px] text-gray-400 font-mono">Score: {{ number_format($creator->ranking_score ?? 0, 0) }}</div>
+                                            <div class="text-[11px] text-slate-500 font-mono">Score: {{ number_format($creator->ranking_score ?? 0, 0) }}</div>
                                         </div>
                                     </td>
                                     <td class="py-4 px-4 text-end">
                                         @if($creator->rank === 1)
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm">
-                                                <i class="bi bi-star-fill text-amber-400"></i> Elite Creator
+                                                <i class="bi bi-star-fill text-[#f47402]"></i> Elite Creator
                                             </span>
                                         @elseif($creator->rank <= 3)
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-sm">
-                                                <i class="bi bi-patch-check-fill text-indigo-400"></i> Pro Contributor
+                                                <i class="bi bi-patch-check-fill text-[#20165c]"></i> Pro Contributor
                                             </span>
                                         @else
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm">
@@ -446,12 +446,12 @@
                 </div>
             @else
                 <!-- Clean Dark Empty State Card -->
-                <div class="bg-[#070d1e]/80 border border-gray-800/80 rounded-2xl p-8 sm:p-12 text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-inner">
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 sm:p-12 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-[#20165c] shadow-inner">
                         <i class="bi bi-trophy text-3xl"></i>
                     </div>
-                    <h4 class="text-lg sm:text-xl font-bold text-white mb-2">No Ranked Creators Yet</h4>
-                    <p class="text-sm text-gray-400 max-w-md mx-auto mb-6 leading-relaxed">
+                    <h4 class="text-lg sm:text-xl font-bold text-[#121826] mb-2">No Ranked Creators Yet</h4>
+                    <p class="text-sm text-slate-500 max-w-md mx-auto mb-6 leading-relaxed">
                         The creator leaderboard dynamically tracks and ranks verified contributors as they win design challenges, publish approved templates, and earn platform bounties.
                     </p>
                     <div class="inline-flex flex-wrap items-center justify-center gap-3">

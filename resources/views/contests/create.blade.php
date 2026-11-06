@@ -3,7 +3,7 @@
 @section('title', 'Launch a Design Contest - Noksha')
 
 @section('content')
-<div class="py-4 py-lg-5 min-h-screen bg-[#070b14] text-white">
+<div class="py-4 py-lg-5 min-h-screen bg-[#ffffff] text-[#121826]">
     <div class="container max-w-4xl mx-auto py-2">
         
         <!-- BREADCRUMB -->

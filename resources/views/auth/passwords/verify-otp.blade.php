@@ -10,7 +10,7 @@
 
     <div class="w-full max-w-lg relative z-10">
         <!-- Main Card -->
-        <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/50 backdrop-blur-xl transition-all">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-md transition-all">
             <!-- Header Section -->
             <div class="text-center mb-6">
                 <a href="{{ route('home') }}" class="inline-block mb-4 transition-transform hover:scale-105">
@@ -24,14 +24,14 @@
                     <span>Two-Step Verification</span>
                 </div>
 
-                <h1 class="text-2xl font-bold text-white tracking-tight">Enter Verification Code</h1>
-                <p class="text-sm text-slate-400 mt-2">
+                <h1 class="text-2xl font-bold text-[#121826] tracking-tight">Enter Verification Code</h1>
+                <p class="text-sm text-slate-500 mt-2">
                     We've sent a 6-digit security code to:
                 </p>
                 <div class="inline-flex items-center gap-2 mt-1 px-3 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-mono text-cyan-300">
                     <i class="bi bi-envelope-check"></i>
                     <span>{{ $maskedEmail }}</span>
-                    <a href="{{ route('password.request') }}" class="text-slate-400 hover:text-white ml-1 underline decoration-slate-600 transition-colors" title="Change email address">
+                    <a href="{{ route('password.request') }}" class="text-slate-500 hover:text-[#121826] ml-1 underline decoration-slate-600 transition-colors" title="Change email address">
                         Change
                     </a>
                 </div>
@@ -46,7 +46,7 @@
                             <div class="font-bold text-amber-200 uppercase tracking-wider text-[11px] mb-1">
                                 Mail Delivery Notice
                             </div>
-                            <div class="leading-relaxed text-slate-300">
+                            <div class="leading-relaxed text-slate-700">
                                 {{ session('mail_delivery_warning') }}
                             </div>
                         </div>
@@ -82,7 +82,7 @@
                 <input type="hidden" name="otp" id="fullOtpInput">
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 text-center uppercase tracking-wider mb-3">
+                    <label class="block text-xs font-medium text-slate-700 text-center uppercase tracking-wider mb-3">
                         6-Digit Security Code
                     </label>
 
@@ -103,7 +103,7 @@
                 </div>
 
                 <!-- Expiry Countdown Indicator -->
-                <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+                <div class="flex items-center justify-between text-xs text-slate-500 px-1">
                     <span class="flex items-center gap-1.5">
                         <i class="bi bi-clock-history text-slate-500"></i>
                         <span>Code expires in:</span>
@@ -116,19 +116,19 @@
                 <!-- Verify Button -->
                 <button type="submit" 
                         id="verifyBtn"
-                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-[#121826] font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
                     <i class="bi bi-shield-check"></i>
                     <span>Verify Code & Continue</span>
                 </button>
             </form>
 
             <!-- Resend OTP Action & Timer -->
-            <div class="mt-6 pt-5 border-t border-slate-800/80 text-center">
+            <div class="mt-6 pt-5 border-t border-slate-200/80 text-center">
                 <form id="resendForm" action="{{ route('password.otp.resend') }}" method="POST" class="inline-block">
                     @csrf
                     <input type="hidden" name="email" value="{{ $email }}">
                     
-                    <div class="text-xs text-slate-400 flex items-center justify-center gap-2">
+                    <div class="text-xs text-slate-500 flex items-center justify-center gap-2">
                         <span>Didn't receive the code?</span>
                         <button type="submit" 
                                 id="resendBtn" 
@@ -146,7 +146,7 @@
 
         <!-- Security Note -->
         <div class="mt-6 text-center">
-            <a href="{{ route('password.request') }}" class="text-xs text-slate-500 hover:text-slate-400 inline-flex items-center gap-1.5 transition-colors">
+            <a href="{{ route('password.request') }}" class="text-xs text-slate-500 hover:text-slate-500 inline-flex items-center gap-1.5 transition-colors">
                 <i class="bi bi-arrow-left"></i>
                 <span>Back to Email Request</span>
             </a>

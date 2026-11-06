@@ -39,13 +39,13 @@
     }
 </style>
 
-<div class="min-h-screen bg-[#070b14] py-12 px-4 sm:px-6 lg:px-8 text-white">
+<div class="min-h-screen bg-[#ffffff] py-12 px-4 sm:px-6 lg:px-8 text-[#121826]">
     <div class="max-w-4xl mx-auto">
         
         <!-- BREADCRUMB NAVIGATION -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb small fw-semibold text-gray-400 mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-[#20165c] hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
                 <li class="breadcrumb-item active text-gray-300" aria-current="page">Notification Center</li>
             </ol>
         </nav>
@@ -53,30 +53,30 @@
         <!-- PAGE HEADER -->
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <div>
-                <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small bg-indigo-500/10 text-[#20165c] border border-indigo-500/20">
                     <i class="bi bi-bell-fill me-1"></i> Real-time Alerts
                 </span>
-                <h2 class="display-6 fw-extrabold text-white mt-1 mb-0">Notification Center</h2>
+                <h2 class="display-6 fw-extrabold text-[#121826] mt-1 mb-0">Notification Center</h2>
             </div>
 
             @if(isset($unreadCount) && $unreadCount > 0)
                 <form action="{{ route('notifications.readAll') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn rounded-pill btn-sm px-3.5 py-2 fw-bold text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                    <button type="submit" class="btn rounded-pill btn-sm px-3.5 py-2 fw-bold text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600 hover:text-[#121826] transition-all shadow-sm">
                         <i class="bi bi-check2-all me-1"></i> Mark All as Read
                     </button>
                 </form>
             @endif
         </div>
 
-        <div class="bg-[#0b1329] border border-gray-800/80 shadow-2xl rounded-2xl p-4 sm:p-6 mb-4">
+        <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-4 sm:p-6 mb-4">
             @if(isset($notifications) && $notifications->count() > 0)
 
                 <!-- SECTION 1: TODAY -->
                 @if(isset($today) && $today->count() > 0)
                     <div class="mb-4">
                         <div class="extra-small text-uppercase tracking-wider fw-extrabold text-gray-400 mb-3 d-flex align-items-center gap-2">
-                            <i class="bi bi-calendar-event text-indigo-400"></i> Today
+                            <i class="bi bi-calendar-event text-[#20165c]"></i> Today
                             <span class="badge bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 rounded-pill px-2 py-0.5 extra-small">{{ $today->count() }}</span>
                         </div>
                         <div class="d-flex flex-column gap-2.5">
@@ -120,10 +120,10 @@
             @else
                 <!-- EMPTY STATE -->
                 <div class="text-center py-5">
-                    <div class="p-4 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <div class="p-4 bg-indigo-500/10 text-[#20165c] border border-indigo-500/20 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                         <i class="bi bi-bell-slash fs-1"></i>
                     </div>
-                    <h5 class="fw-extrabold text-white mb-1">No Notifications Yet</h5>
+                    <h5 class="fw-extrabold text-[#121826] mb-1">No Notifications Yet</h5>
                     <p class="text-gray-400 small mb-0">System alerts, sales notifications, and order updates will appear here.</p>
                 </div>
             @endif

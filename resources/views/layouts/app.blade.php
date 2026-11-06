@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,27 +20,37 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Permanent Dark Mode -->
-    <script>
-        try { localStorage.removeItem('theme'); } catch(e) {}
-        document.documentElement.classList.add('dark');
-    </script>
-
-    <!-- Tailwind CSS CDN (Guarantees modern utility classes render reliably) -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
+                        brand: {
+                            DEFAULT: '#20165c',
+                            dark: '#181045',
+                            light: '#2c1e7a',
+                            purple: '#20165c',
+                        },
+                        accent: {
+                            DEFAULT: '#f47402',
+                            hover: '#d96602',
+                            tangerine: '#f47402',
+                            light: '#ff8a1e',
+                        },
+                        charcoal: {
+                            DEFAULT: '#121826',
+                            muted: '#1e293b',
+                            soft: '#334155',
+                        },
                         noksha: {
-                            primary: '#4F46E5',
-                            secondary: '#7C3AED',
-                            accent: '#06B6D4',
-                            dark: '#0F172A',
-                            surface: '#1E293B',
-                            light: '#F8FAFC',
+                            primary: '#20165c',
+                            secondary: '#f47402',
+                            accent: '#f47402',
+                            dark: '#121826',
+                            surface: '#ffffff',
+                            light: '#f8fafc',
                         }
                     }
                 }
@@ -99,7 +109,7 @@
         }
     </style>
 </head>
-<body class="bg-[#070b14] text-gray-100 min-h-screen selection:bg-indigo-600 selection:text-white d-flex flex-column">
+<body class="bg-[#ffffff] text-[#121826] min-h-screen selection:bg-[#20165c] selection:text-white d-flex flex-column font-sans">
 
     <!-- INITIAL PRELOADER / SPLASH SCREEN -->
     @include('partials.preloader')
@@ -108,7 +118,7 @@
     @include('layouts.navigation')
 
     <!-- MAIN CONTENT AREA -->
-    <main class="flex-grow-1 bg-[#070b14]">
+    <main class="flex-grow-1 bg-[#ffffff]">
         @yield('content')
     </main>
 
@@ -153,72 +163,72 @@
     <!-- ADMIN ANNOUNCEMENT BROADCAST MODAL (Centered Fullscreen)  -->
     <!-- ========================================================= -->
     <div id="broadcastModal"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm d-none"
-         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex !important; align-items: center; justify-content: center; z-index: 99999; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 1rem; opacity: 0; transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none;"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm d-none"
+         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex !important; align-items: center; justify-content: center; z-index: 99999; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 1rem; opacity: 0; transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none;"
          aria-modal="true" role="dialog" aria-labelledby="broadcastModalTitle">
         
         <!-- Modal Card -->
         <div id="broadcastModalCard"
-             class="relative w-full max-w-lg rounded-2xl border border-purple-500/30 bg-[#0f172a] p-6 shadow-2xl text-center"
-             style="position: relative; width: 100%; max-width: 32rem; border-radius: 1rem; border: 1px solid rgba(168, 85, 247, 0.3); background-color: #0f172a; padding: 1.75rem 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: center; color: #ffffff; transform: scale(0.9) translateY(20px); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden;">
+             class="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl text-center"
+             style="position: relative; width: 100%; max-width: 32rem; border-radius: 1rem; border: 1px solid #e2e8f0; background-color: #ffffff; padding: 1.75rem 1.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); text-align: center; color: #121826; transform: scale(0.9) translateY(20px); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden;">
             
             <!-- Top Gradient Accent Strip -->
-            <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #8b5cf6, #d946ef, #f59e0b);"></div>
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #20165c, #f47402);"></div>
 
             <!-- Crisp Close Button ('X') in Top-Right Corner -->
             <button id="broadcastModalClose" type="button" aria-label="Close Announcement"
-                    class="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer"
-                    style="position: absolute; top: 1rem; right: 1rem; color: #9ca3af; background: transparent; border: none; font-size: 1.25rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0.25rem; transition: color 0.2s; z-index: 10;"
-                    onmouseover="this.style.color='#ffffff';"
-                    onmouseout="this.style.color='#9ca3af';">
+                    class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 cursor-pointer"
+                    style="position: absolute; top: 1rem; right: 1rem; color: #94a3b8; background: transparent; border: none; font-size: 1.25rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0.25rem; transition: color 0.2s; z-index: 10;"
+                    onmouseover="this.style.color='#121826';"
+                    onmouseout="this.style.color='#94a3b8';">
                 <i class="bi bi-x-lg"></i>
             </button>
 
             <!-- Megaphone Announcement Badge & Icon -->
             <div class="mb-3">
-                <div style="width: 56px; height: 56px; border-radius: 1rem; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4); border: 2px solid rgba(255, 255, 255, 0.15);">
+                <div style="width: 56px; height: 56px; border-radius: 1rem; background: linear-gradient(135deg, #20165c 0%, #2c1e7a 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; box-shadow: 0 8px 20px rgba(32, 22, 92, 0.25); border: 2px solid rgba(255, 255, 255, 0.2);">
                     <i class="bi bi-megaphone-fill text-white fs-4"></i>
                 </div>
                 <div class="d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill mb-1"
-                     style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3);">
-                    <i class="bi bi-patch-check-fill text-purple-400" style="font-size: 0.8rem; color: #c084fc;"></i>
-                    <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #c084fc;">
+                     style="background: rgba(32, 22, 92, 0.08); border: 1px solid rgba(32, 22, 92, 0.15);">
+                    <i class="bi bi-patch-check-fill text-[#20165c]" style="font-size: 0.8rem; color: #20165c;"></i>
+                    <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #20165c;">
                         Platform Announcement
                     </span>
                 </div>
-                <h3 id="broadcastModalTitle" class="font-extrabold text-white mt-2 mb-0 px-3"
-                    style="font-size: 1.25rem; line-height: 1.35; color: #ffffff;"></h3>
+                <h3 id="broadcastModalTitle" class="font-extrabold text-[#121826] mt-2 mb-0 px-3"
+                    style="font-size: 1.25rem; line-height: 1.35; color: #121826;"></h3>
             </div>
 
             <!-- Subtle Divider -->
-            <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.35), transparent); margin: 1rem 0;"></div>
+            <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(32, 22, 92, 0.15), transparent); margin: 1rem 0;"></div>
 
             <!-- Message Body -->
             <div class="px-2">
-                <p id="broadcastModalMessage" class="text-gray-300 text-center mb-0"
-                   style="font-size: 0.925rem; line-height: 1.65; color: #cbd5e1; white-space: pre-line; word-break: break-word;"></p>
+                <p id="broadcastModalMessage" class="text-slate-600 text-center mb-0"
+                   style="font-size: 0.925rem; line-height: 1.65; color: #475569; white-space: pre-line; word-break: break-word;"></p>
             </div>
 
             <!-- Footer with Branding & Date -->
             <div class="d-flex align-items-center justify-content-between pt-3 mt-4 border-top"
-                 style="border-color: rgba(255, 255, 255, 0.08) !important;">
-                <div class="d-flex align-items-center gap-1.5 text-gray-400" style="font-size: 0.75rem; color: #94a3b8;">
+                 style="border-color: #f1f5f9 !important;">
+                <div class="d-flex align-items-center gap-1.5 text-slate-500" style="font-size: 0.75rem; color: #64748b;">
                     <i class="bi bi-clock-history"></i>
                     <span id="broadcastModalDate" class="font-monospace"></span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <img src="{{ asset('images/logo.png') }}" alt="Noksha" style="height: 22px; width: auto; object-fit: contain;">
-                    <span class="font-bold text-white" style="font-size: 0.85rem; color: #ffffff;">Noksha</span>
+                    <span class="font-bold text-[#121826]" style="font-size: 0.85rem; color: #121826;">Noksha</span>
                 </div>
             </div>
 
             <!-- Dismiss Button -->
             <div class="mt-3">
                 <button id="broadcastModalDismiss" type="button"
-                        class="w-full py-2.5 rounded-xl font-bold text-white text-xs shadow-lg transition-all"
-                        style="width: 100%; padding: 0.65rem 1rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.825rem; background: linear-gradient(135deg, #7c3aed, #9333ea); border: 1px solid rgba(168, 85, 247, 0.4); color: #ffffff; cursor: pointer; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35);"
-                        onmouseover="this.style.background='linear-gradient(135deg, #6d28d9, #7e22ce)';"
-                        onmouseout="this.style.background='linear-gradient(135deg, #7c3aed, #9333ea)';">
+                        class="w-full py-2.5 rounded-xl font-bold text-white text-xs shadow-md transition-all"
+                        style="width: 100%; padding: 0.65rem 1rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.825rem; background: #20165c; border: 1px solid #181045; color: #ffffff; cursor: pointer; box-shadow: 0 4px 15px rgba(32, 22, 92, 0.25);"
+                        onmouseover="this.style.background='#181045';"
+                        onmouseout="this.style.background='#20165c';">
                     <i class="bi bi-check2-circle me-1"></i> Understood & Dismiss
                 </button>
             </div>

@@ -55,15 +55,15 @@
 
     /* Hero Gradient & Animated Background Orbs */
     .hero-bg-gradient {
-        background: linear-gradient(135deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 60%, #f1f5f9 100%);
         position: relative;
     }
 
     .hero-radial-glow {
         background: 
-            radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.22) 0%, transparent 45%),
-            radial-gradient(circle at 82% 75%, rgba(255, 255, 255, 0.18) 0%, transparent 45%),
-            radial-gradient(circle at 50% 50%, rgba(159, 122, 234, 0.35) 0%, transparent 60%);
+            radial-gradient(circle at 18% 25%, rgba(32, 22, 92, 0.04) 0%, transparent 45%),
+            radial-gradient(circle at 82% 75%, rgba(244, 116, 2, 0.05) 0%, transparent 45%),
+            radial-gradient(circle at 50% 50%, rgba(32, 22, 92, 0.03) 0%, transparent 60%);
     }
 
     /* Animated Floating Background Orbs */
@@ -71,7 +71,7 @@
         position: absolute;
         border-radius: 50%;
         filter: blur(100px);
-        opacity: 0.28;
+        opacity: 0.35;
         pointer-events: none;
         z-index: 0;
     }
@@ -79,7 +79,7 @@
     .hero-orb-1 {
         width: 380px;
         height: 380px;
-        background: radial-gradient(circle, #EC4899 0%, #8B5CF6 100%);
+        background: radial-gradient(circle, rgba(32, 22, 92, 0.08) 0%, rgba(244, 116, 2, 0.04) 100%);
         top: -60px;
         left: -80px;
         animation: orbFloat1 12s ease-in-out infinite alternate;
@@ -88,7 +88,7 @@
     .hero-orb-2 {
         width: 440px;
         height: 440px;
-        background: radial-gradient(circle, #3B82F6 0%, #6C4CF1 100%);
+        background: radial-gradient(circle, rgba(244, 116, 2, 0.08) 0%, rgba(32, 22, 92, 0.04) 100%);
         bottom: -100px;
         right: -60px;
         animation: orbFloat2 14s ease-in-out infinite alternate;
@@ -97,7 +97,7 @@
     .hero-orb-3 {
         width: 300px;
         height: 300px;
-        background: radial-gradient(circle, #F59E0B 0%, #9F7AEA 100%);
+        background: radial-gradient(circle, rgba(32, 22, 92, 0.06) 0%, rgba(244, 116, 2, 0.05) 100%);
         top: 40%;
         left: 45%;
         animation: orbFloat3 10s ease-in-out infinite alternate;
@@ -118,28 +118,28 @@
 
     /* Glassmorphism Search Bar */
     .hero-search-box {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        background: #ffffff;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border: 1.5px solid #e2e8f0 !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     }
 
     .hero-search-box:focus-within {
-        box-shadow: 0 18px 40px -5px rgba(108, 76, 241, 0.35), 0 0 0 4px rgba(108, 76, 241, 0.25) !important;
-        transform: translateY(-3px);
+        box-shadow: 0 18px 30px -5px rgba(32, 22, 92, 0.12), 0 0 0 3px rgba(32, 22, 92, 0.15) !important;
+        transform: translateY(-2px);
+        border-color: #20165c !important;
     }
 
     .hero-search-box:focus-within .bi-search {
-        transform: scale(1.2) rotate(10deg);
-        color: #6C4CF1 !important;
+        transform: scale(1.15) rotate(5deg);
+        color: #20165c !important;
         transition: transform 0.3s ease;
     }
 
     /* Premium CTA Buttons */
     .btn-cta-primary {
-        background: linear-gradient(135deg, #ffffff 0%, #F8FAFC 100%);
-        color: #6C4CF1 !important;
+        background: #20165c;
+        color: #ffffff !important;
         border: none;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
@@ -147,60 +147,58 @@
     }
 
     .btn-cta-primary:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.25), 0 0 15px rgba(255, 255, 255, 0.4);
-        color: #5A3DE0 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px -5px rgba(32, 22, 92, 0.3);
+        background: #181045;
+        color: #ffffff !important;
     }
 
     .btn-cta-secondary {
-        background: rgba(255, 255, 255, 0.14);
-        color: #ffffff !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
-        backdrop-filter: blur(12px);
+        background: rgba(244, 116, 2, 0.06);
+        color: #f47402 !important;
+        border: 2px solid #f47402 !important;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .btn-cta-secondary:hover {
-        background: rgba(255, 255, 255, 0.25);
-        border-color: rgba(255, 255, 255, 0.6) !important;
-        transform: translateY(-3px) scale(1.02);
+        background: #f47402;
+        border-color: #f47402 !important;
+        transform: translateY(-2px);
         color: #ffffff !important;
     }
 
     .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
+        background: #20165c;
         color: #ffffff !important;
-        border: none;
+        border: 1px solid #181045;
         font-weight: 600;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 6px 16px -4px rgba(108, 76, 241, 0.35);
+        box-shadow: 0 4px 12px rgba(32, 22, 92, 0.2);
     }
 
     .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 12px 25px -4px rgba(108, 76, 241, 0.45);
+        background: #181045;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(32, 22, 92, 0.3);
         color: #ffffff !important;
     }
 
     /* Glass Illustration Card */
     .glass-mockup-card {
-        background: rgba(255, 255, 255, 0.16);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.35) !important;
-        box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.35);
+        background: #ffffff;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
         transition: all 0.4s ease;
     }
 
     .glass-mockup-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 35px 70px -10px rgba(15, 23, 42, 0.4);
+        box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.12);
     }
 
     /* Featured Template Section & Cards */
     .featured-templates-section {
-        background-color: #F8F7FF;
+        background-color: #F8FAFC;
         position: relative;
     }
 
@@ -210,27 +208,23 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 6px;
-        background: linear-gradient(90deg, #6C4CF1 0%, #8B5CF6 50%, #9F7AEA 100%);
+        height: 4px;
+        background: linear-gradient(90deg, #20165c 0%, #f47402 100%);
     }
 
     /* Floating Glassmorphism Filter Bar */
     .filter-bar-glass {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        box-shadow: 0 20px 40px -15px rgba(108, 76, 241, 0.12) !important;
+        background: #ffffff;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
     }
 
     /* Figma/Dribbble Category Chips */
     .cat-chip-pill {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        background: #ffffff;
         border-radius: 999px !important;
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        color: #4B5563;
+        border: 1px solid #e2e8f0 !important;
+        color: #64748b;
         font-weight: 600;
         font-size: 0.875rem;
         padding: 0.5rem 1.25rem;
@@ -240,59 +234,35 @@
     }
 
     .cat-chip-pill:hover {
-        border-color: rgba(108, 76, 241, 0.4) !important;
-        box-shadow: 0 0 15px rgba(108, 76, 241, 0.3);
-        color: #6C4CF1;
+        border-color: #20165c !important;
+        box-shadow: 0 4px 12px rgba(32, 22, 92, 0.1);
+        color: #20165c;
         transform: translateY(-1px);
     }
 
     .cat-chip-pill.active {
-        background: #6C4CF1 !important;
+        background: #20165c !important;
         color: #ffffff !important;
-        border-color: #6C4CF1 !important;
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.4) !important;
-        transform: scale(1.05) !important;
+        border-color: #20165c !important;
+        box-shadow: 0 6px 16px rgba(32, 22, 92, 0.25) !important;
+        transform: scale(1.03) !important;
     }
 
     /* Improved Template Cards with Shimmer Sweep & 24px Radius */
     .template-card-figma, .cat-card-figma, .trending-card-figma {
-        border-radius: 1.5rem !important; /* 24px Radius */
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 12px 35px -10px rgba(108, 76, 241, 0.1) !important;
+        border-radius: 1.25rem !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
         overflow: hidden;
         background: #ffffff;
         position: relative;
     }
 
-    .template-card-figma::after, .cat-card-figma::after, .trending-card-figma::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -60%;
-        width: 40%;
-        height: 200%;
-        background: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.25) 50%,
-            rgba(255, 255, 255, 0) 100%
-        );
-        transform: rotate(30deg);
-        transition: all 0.75s ease;
-        pointer-events: none;
-        opacity: 0;
-    }
-
-    .template-card-figma:hover::after, .cat-card-figma:hover::after, .trending-card-figma:hover::after {
-        left: 130%;
-        opacity: 1;
-    }
-
     .template-card-figma:hover, .cat-card-figma:hover, .trending-card-figma:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
-        border-color: rgba(108, 76, 241, 0.35) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08) !important;
+        border-color: #cbd5e1 !important;
     }
 
     .template-preview-area {
@@ -636,7 +606,7 @@
 
 
 <!-- PREMIUM FIGMA-LEVEL HERO SECTION WITH ANIMATED ORBS -->
-<section class="position-relative text-white py-5 py-lg-6 overflow-hidden hero-bg-gradient reveal-on-scroll">
+<section class="position-relative py-5 py-lg-6 overflow-hidden hero-bg-gradient reveal-on-scroll">
     <!-- Animated Floating Background Orbs -->
     <div class="hero-orb hero-orb-1"></div>
     <div class="hero-orb hero-orb-2"></div>
@@ -651,23 +621,23 @@
             <div class="col-lg-7 text-center text-lg-start">
 
                 <!-- Bilingual Headline -->
-                <h1 class="display-3 fw-extrabold text-white mb-3 tracking-tight lh-sm">
-                    {{ __('marketplace.hero_title') }}
+                <h1 class="display-3 fw-extrabold text-[#121826] mb-3 tracking-tight lh-sm">
+                    <span class="bg-gradient-to-r from-[#20165c] via-[#2c1e7a] to-[#f47402] bg-clip-text text-transparent">{{ __('marketplace.hero_title') }}</span>
                 </h1>
 
                 <!-- Subtitle -->
-                <p class="fs-5 text-white text-opacity-90 mb-4 me-lg-4 lh-base" style="max-width: 620px;">
+                <p class="fs-5 text-slate-600 mb-4 me-lg-4 lh-base" style="max-width: 620px;">
                     {{ __('marketplace.hero_subtitle') }}
                 </p>
 
                 <!-- Glassmorphism Search Bar -->
-                <div class="p-2 hero-search-box rounded-pill shadow-lg mb-4 text-start" style="max-width: 590px;">
+                <div class="p-2 hero-search-box rounded-pill shadow-sm mb-4 text-start" style="max-width: 590px;">
                     <form class="d-flex align-items-center" action="{{ route('search.index') }}" method="GET">
                         <span class="ps-3 text-muted fs-5">
-                            <i class="bi bi-search text-primary"></i>
+                            <i class="bi bi-search text-[#20165c]"></i>
                         </span>
-                        <input type="text" name="q" id="heroSearchInput" class="form-control border-0 shadow-none bg-transparent ps-3 text-dark fs-6" placeholder="{{ __('marketplace.search_placeholder') }}" aria-label="Search Marketplace">
-                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm btn-search-hero" type="submit" style="background: linear-gradient(135deg, #6C4CF1 0%, #4F46E5 100%);">
+                        <input type="text" name="q" id="heroSearchInput" class="form-control border-0 shadow-none bg-transparent ps-3 text-[#121826] fs-6" placeholder="{{ __('marketplace.search_placeholder') }}" aria-label="Search Marketplace">
+                        <button class="btn text-white rounded-pill px-4 py-2.5 fw-bold shadow-sm btn-search-hero" type="submit" style="background: #20165c;">
                             {{ __('app.search') }}
                         </button>
                     </form>
@@ -695,21 +665,20 @@
                     @endguest
                 </div>
 
-
                 <!-- Bottom Statistics Grid with Animated Counters -->
-                <div class="pt-4 border-top border-white border-opacity-20">
+                <div class="pt-4 border-top border-slate-200">
                     <div class="row g-3 text-center text-lg-start">
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="{{ $templatesStat['target'] ?? $templatesCount }}" data-suffix="{{ $templatesStat['suffix'] ?? '' }}">{{ $formattedTemplatesCount ?? $templatesCount }}</div>
-                            <div class="small text-white text-opacity-80 fw-semibold">Templates</div>
+                            <div class="fw-extrabold fs-2 text-[#121826] mb-0 stat-counter" data-target="{{ $templatesStat['target'] ?? $templatesCount }}" data-suffix="{{ $templatesStat['suffix'] ?? '' }}">{{ $formattedTemplatesCount ?? $templatesCount }}</div>
+                            <div class="small text-slate-500 fw-semibold">Templates</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="{{ $creatorsStat['target'] ?? $creatorsCount }}" data-suffix="{{ $creatorsStat['suffix'] ?? '' }}">{{ $formattedCreatorsCount ?? $creatorsCount }}</div>
-                            <div class="small text-white text-opacity-80 fw-semibold">Creators</div>
+                            <div class="fw-extrabold fs-2 text-[#121826] mb-0 stat-counter" data-target="{{ $creatorsStat['target'] ?? $creatorsCount }}" data-suffix="{{ $creatorsStat['suffix'] ?? '' }}">{{ $formattedCreatorsCount ?? $creatorsCount }}</div>
+                            <div class="small text-slate-500 fw-semibold">Creators</div>
                         </div>
                         <div class="col-4">
-                            <div class="fw-extrabold fs-2 text-white mb-0 stat-counter" data-target="{{ $downloadsStat['target'] ?? $downloadsCount }}" data-suffix="{{ $downloadsStat['suffix'] ?? '' }}">{{ $formattedDownloadsCount ?? $downloadsCount }}</div>
-                            <div class="small text-white text-opacity-80 fw-semibold">Downloads</div>
+                            <div class="fw-extrabold fs-2 text-[#121826] mb-0 stat-counter" data-target="{{ $downloadsStat['target'] ?? $downloadsCount }}" data-suffix="{{ $downloadsStat['suffix'] ?? '' }}">{{ $formattedDownloadsCount ?? $downloadsCount }}</div>
+                            <div class="small text-slate-500 fw-semibold">Downloads</div>
                         </div>
                     </div>
                 </div>
@@ -720,41 +689,41 @@
                 <div class="position-relative animate-float">
                     @if(isset($heroShowcase) && $heroShowcase)
                         <!-- Glassmorphism Container Card -->
-                        <div class="p-4 rounded-4 glass-mockup-card">
+                        <div class="p-4 rounded-4 glass-mockup-card border border-slate-200 bg-white shadow-xl">
                             
                             <!-- Studio Header Bar -->
-                            <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-white border-opacity-20">
+                            <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-slate-200">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="rounded-circle bg-danger" style="width: 10px; height: 10px;"></div>
                                     <div class="rounded-circle bg-warning" style="width: 10px; height: 10px;"></div>
                                     <div class="rounded-circle bg-success" style="width: 10px; height: 10px;"></div>
-                                    <span class="small fw-semibold text-white ms-2 text-truncate" style="max-width: 180px;">{{ $heroShowcase->title }}</span>
+                                    <span class="small fw-semibold text-[#121826] ms-2 text-truncate" style="max-width: 180px;">{{ $heroShowcase->title }}</span>
                                 </div>
-                                <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-2.5 py-1 small border border-white border-opacity-25 animate-badge-float">
-                                    <i class="bi bi-patch-check-fill text-warning me-1"></i> Featured Asset
+                                <span class="badge rounded-pill px-2.5 py-1 small animate-badge-float" style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.15);">
+                                    <i class="bi bi-patch-check-fill text-[#f47402] me-1"></i> Featured Asset
                                 </span>
                             </div>
 
                             <!-- Canvas Workspace Showcase -->
-                            <div class="bg-white bg-opacity-20 rounded-3 p-3 mb-3 border border-white border-opacity-20 hero-canvas-workspace">
+                            <div class="rounded-3 p-3 mb-3 border border-slate-200 bg-slate-50 hero-canvas-workspace">
                                 <div class="d-flex align-items-center gap-3 mb-3">
                                     @if($heroShowcase->preview_image)
                                         <img src="{{ $heroShowcase->thumbnail_url }}" alt="{{ $heroShowcase->title }}" class="rounded-3 shadow-sm object-fit-cover" style="width: 52px; height: 52px;">
                                     @else
-                                        <div class="p-3 bg-white text-primary rounded-3 shadow-sm d-flex align-items-center justify-content-center hero-tool-icon" style="width: 52px; height: 52px;">
+                                        <div class="p-3 bg-white text-[#20165c] rounded-3 shadow-sm d-flex align-items-center justify-content-center hero-tool-icon" style="width: 52px; height: 52px;">
                                             <i class="bi bi-layers-fill fs-3"></i>
                                         </div>
                                     @endif
                                     <div class="flex-grow-1 overflow-hidden">
-                                        <a href="{{ route('resource.show', $heroShowcase->slug ?? $heroShowcase->id) }}" class="h6 fw-bold text-white mb-0 text-decoration-none d-block text-truncate hover-underline">
+                                        <a href="{{ route('resource.show', $heroShowcase->slug ?? $heroShowcase->id) }}" class="h6 fw-bold text-[#121826] mb-0 text-decoration-none d-block text-truncate hover-underline">
                                             {{ $heroShowcase->title }}
                                         </a>
-                                        <div class="small text-white text-opacity-75 text-truncate">
+                                        <div class="small text-slate-500 text-truncate">
                                             {{ $heroShowcase->category?->name ?? 'Design Asset' }} • by {{ $heroShowcase->owner?->name ?? 'Noksha Creator' }}
                                         </div>
                                     </div>
                                     @if($heroShowcase->status === 'approved')
-                                        <span class="badge bg-success text-white rounded-pill px-2.5 py-1 animate-badge-float">Verified</span>
+                                        <span class="badge bg-emerald-600 text-white rounded-pill px-2.5 py-1 animate-badge-float">Verified</span>
                                     @endif
                                 </div>
 
@@ -762,13 +731,13 @@
                                 <div class="d-flex flex-wrap gap-2">
                                     @if(!empty($heroShowcase->tags) && is_array($heroShowcase->tags))
                                         @foreach(array_slice($heroShowcase->tags, 0, 4) as $tag)
-                                            <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ ltrim($tag, '#') }}</span>
+                                            <span class="badge bg-slate-200 text-slate-700 border border-slate-300">#{{ ltrim($tag, '#') }}</span>
                                         @endforeach
                                     @elseif(!empty($heroShowcase->file_type))
-                                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ strtoupper($heroShowcase->file_type) }}</span>
-                                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ $heroShowcase->category?->name ?? 'Design' }}</span>
+                                        <span class="badge bg-slate-200 text-slate-700 border border-slate-300">#{{ strtoupper($heroShowcase->file_type) }}</span>
+                                        <span class="badge bg-slate-200 text-slate-700 border border-slate-300">#{{ $heroShowcase->category?->name ?? 'Design' }}</span>
                                     @else
-                                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-20">#{{ $heroShowcase->category?->name ?? 'Design' }}</span>
+                                        <span class="badge bg-slate-200 text-slate-700 border border-slate-300">#{{ $heroShowcase->category?->name ?? 'Design' }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -776,67 +745,67 @@
                             <!-- Glass Mini Cards -->
                             <div class="row g-2">
                                 <div class="col-6">
-                                    <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
-                                        <div class="small text-white text-opacity-75 mb-1">Price</div>
-                                        <div class="fw-bold fs-5 text-white">
+                                    <div class="p-3 rounded-3 bg-slate-50 border border-slate-200 text-[#121826] hero-stat-mini-card">
+                                        <div class="small text-slate-500 mb-1">Price</div>
+                                        <div class="fw-bold fs-5 text-[#f47402]">
                                             @if($heroShowcase->is_paid && $heroShowcase->price > 0)
                                                 ৳{{ number_format($heroShowcase->price, 2) }}
                                             @else
-                                                <span class="text-white">Free</span>
+                                                <span class="text-emerald-600">Free</span>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="p-3 rounded-3 bg-white bg-opacity-20 border border-white border-opacity-25 text-white hero-stat-mini-card">
-                                        <div class="small text-white text-opacity-75 mb-1">Downloads</div>
-                                        <div class="fw-bold fs-5"><i class="bi bi-download me-1"></i> {{ number_format($heroShowcase->downloads ?? 0) }}</div>
+                                    <div class="p-3 rounded-3 bg-slate-50 border border-slate-200 text-[#121826] hero-stat-mini-card">
+                                        <div class="small text-slate-500 mb-1">Downloads</div>
+                                        <div class="fw-bold fs-5 text-[#121826]"><i class="bi bi-download me-1 text-[#20165c]"></i> {{ number_format($heroShowcase->downloads ?? 0) }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Decorative Floating Badges with Real Context -->
-                        <div class="position-absolute top-0 end-0 translate-middle-y me-n2 mt-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(4deg);">
-                            <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                        <div class="position-absolute top-0 end-0 translate-middle-y me-n2 mt-n2 p-2.5 bg-white text-[#121826] rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-slate-200 hero-floating-pill" style="transform: rotate(4deg);">
+                            <div class="p-2 bg-[#20165c]/10 text-[#20165c] rounded-3">
                                 <i class="bi bi-lightning-charge-fill"></i>
                             </div>
                             <div>
                                 <div class="fw-bold small mb-0">{{ $heroShowcase->is_paid ? 'Commercial License' : 'Free Download' }}</div>
-                                <div class="text-muted extra-small">Instant Digital Delivery</div>
+                                <div class="text-slate-500 extra-small">Instant Digital Delivery</div>
                             </div>
                         </div>
 
-                        <div class="position-absolute bottom-0 start-0 translate-middle-y ms-n2 mb-n2 p-2.5 bg-white text-dark rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-light hero-floating-pill" style="transform: rotate(-3deg);">
-                            <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                        <div class="position-absolute bottom-0 start-0 translate-middle-y ms-n2 mb-n2 p-2.5 bg-white text-[#121826] rounded-4 shadow-lg d-none d-sm-flex align-items-center gap-2 border border-slate-200 hero-floating-pill" style="transform: rotate(-3deg);">
+                            <div class="p-2 bg-emerald-50 text-emerald-600 rounded-3">
                                 <i class="bi bi-shield-check"></i>
                             </div>
                             <div>
                                 <div class="fw-bold small mb-0">100% Quality Checked</div>
-                                <div class="text-muted extra-small">Admin Verified Asset</div>
+                                <div class="text-slate-500 extra-small">Admin Verified Asset</div>
                             </div>
                         </div>
                     @else
                         <!-- Production Clean Empty State (When 0 assets exist) -->
-                        <div class="p-4 p-md-5 rounded-4 glass-mockup-card text-center py-5">
-                            <div class="p-3 bg-white bg-opacity-10 text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                        <div class="p-4 p-md-5 rounded-4 glass-mockup-card border border-slate-200 bg-white text-center py-5 shadow-xl">
+                            <div class="p-3 bg-[#20165c]/10 text-[#20165c] rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
                                 <i class="bi bi-palette2 fs-2"></i>
                             </div>
-                            <h5 class="fw-bold text-white mb-2">Bangladeshi Creator Marketplace</h5>
-                            <p class="small text-white text-opacity-80 mb-4 px-2" style="max-width: 380px; margin: 0 auto;">
+                            <h5 class="fw-bold text-[#121826] mb-2">Bangladeshi Creator Marketplace</h5>
+                            <p class="small text-slate-500 mb-4 px-2" style="max-width: 380px; margin: 0 auto;">
                                 Be the first creator to upload and publish design assets on Noksha.
                             </p>
                             @guest
-                                <a href="{{ route('register') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                                <a href="{{ route('register') }}" class="btn btn-cta-primary rounded-pill px-4 py-2.5 fw-bold shadow-sm">
                                     <i class="bi bi-person-plus-fill me-1"></i> Join Creator Community
                                 </a>
                             @else
                                 @if(auth()->user()->isContributor())
-                                    <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                                    <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-cta-primary rounded-pill px-4 py-2.5 fw-bold shadow-sm">
                                         <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload First Template
                                     </a>
                                 @else
-                                    <a href="{{ route('contributor.apply') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
+                                    <a href="{{ route('contributor.apply') }}" class="btn btn-cta-primary rounded-pill px-4 py-2.5 fw-bold shadow-sm">
                                         <i class="bi bi-patch-check-fill me-1"></i> Become a Contributor
                                     </a>
                                 @endif
@@ -855,36 +824,36 @@
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
-                <i class="bi bi-stars me-1"></i> Featured Showcase
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.2);">
+                <i class="bi bi-stars me-1 text-[#f47402]"></i> Featured Showcase
             </span>
-            <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
-                Featured Templates <span class="text-primary"></span>
+            <h2 class="display-6 fw-extrabold text-[#121826] mt-2 mb-2">
+                Featured Templates
             </h2>
-            <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
+            <p class="text-slate-600 fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
                 Hand-picked premium and free design assets.
             </p>
         </div>
 
         <!-- FLOATING GLASSMORPHISM FILTER BAR -->
-        <div class="card p-3.5 p-md-4 border-0 shadow-lg mb-4 rounded-4 filter-bar-glass position-relative overflow-hidden">
+        <div class="card p-3.5 p-md-4 border border-slate-200 shadow-sm mb-4 rounded-4 filter-bar-glass position-relative overflow-hidden">
             <!-- Top Row: Search Input (Left) & Sort Dropdown (Right) -->
             <div class="row g-3 align-items-center mb-3">
                 <!-- Search Input (Left) -->
                 <div class="col-12 col-md-7 col-lg-8">
                     <div class="input-group">
-                        <span class="input-group-text bg-white bg-opacity-75 border-end-0 text-muted ps-3.5 rounded-pill-start">
-                            <i class="bi bi-search text-primary fs-6"></i>
+                        <span class="input-group-text bg-white border-end-0 text-muted ps-3.5 rounded-pill-start">
+                            <i class="bi bi-search text-[#20165c] fs-6"></i>
                         </span>
-                        <input type="text" id="filterSearchInput" class="form-control bg-white bg-opacity-75 border-start-0 shadow-none ps-1 rounded-pill-end fs-6 text-dark" placeholder="Search templates, categories, keywords..." aria-label="Search">
+                        <input type="text" id="filterSearchInput" class="form-control bg-white border-start-0 shadow-none ps-1 rounded-pill-end fs-6 text-[#121826]" placeholder="Search templates, categories, keywords..." aria-label="Search">
                     </div>
                 </div>
 
                 <!-- Sort Dropdown (Right) -->
                 <div class="col-12 col-md-5 col-lg-4">
                     <div class="d-flex align-items-center gap-2">
-                        <span class="small fw-bold text-muted text-nowrap d-none d-sm-inline"><i class="bi bi-sort-down text-primary me-1"></i> Sort:</span>
-                        <select id="sortSelect" class="form-select bg-white bg-opacity-75 border shadow-none rounded-pill text-dark fw-semibold fs-6">
+                        <span class="small fw-bold text-muted text-nowrap d-none d-sm-inline"><i class="bi bi-sort-down text-[#20165c] me-1"></i> Sort:</span>
+                        <select id="sortSelect" class="form-select bg-white border border-slate-200 shadow-none rounded-pill text-[#121826] fw-semibold fs-6">
                             <option value="popular">Most Popular</option>
                             <option value="newest">Newest First</option>
                             <option value="price-asc">Price: Low to High</option>
@@ -895,8 +864,8 @@
             </div>
 
             <!-- Separate Row: Premium Category Chips -->
-            <div class="d-flex align-items-center gap-2.5 overflow-x-auto pt-3 border-top border-purple-subtle pb-1 no-scrollbar">
-                <span class="small fw-bold text-muted text-uppercase tracking-wider me-2 flex-shrink-0"><i class="bi bi-funnel-fill text-primary me-1"></i> Category:</span>
+            <div class="d-flex align-items-center gap-2.5 overflow-x-auto pt-3 border-top border-slate-200 pb-1 no-scrollbar">
+                <span class="small fw-bold text-muted text-uppercase tracking-wider me-2 flex-shrink-0"><i class="bi bi-funnel-fill text-[#20165c] me-1"></i> Category:</span>
                 <button type="button" class="btn cat-chip-pill active" data-cat="All">All</button>
                 @foreach($categories as $cat)
                     <button type="button" class="btn cat-chip-pill" data-cat="{{ $cat->name }}">{{ $cat->name }}</button>
@@ -981,13 +950,13 @@
                                     {{ Str::limit($resource->description, 90) }}
                                 </p>
 
-                                <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle">
+                                <div class="d-flex align-items-center justify-content-between pt-3 border-top border-slate-200">
                                     <div>
-                                        <span class="text-muted extra-small d-block fw-semibold text-uppercase">Price</span>
+                                        <span class="text-slate-500 extra-small d-block fw-semibold text-uppercase">Price</span>
                                         @if($resource->is_paid && $resource->price > 0)
-                                            <span class="fw-extrabold text-dark fs-5">৳{{ number_format($resource->price, 2) }}</span>
+                                            <span class="fw-extrabold text-[#f47402] fs-5">৳{{ number_format($resource->price, 2) }}</span>
                                         @else
-                                            <span class="fw-extrabold text-success fs-5">Free</span>
+                                            <span class="fw-extrabold text-emerald-600 fs-5">Free</span>
                                         @endif
                                     </div>
                                     <div class="d-flex align-items-center gap-1.5">
@@ -1038,17 +1007,17 @@
 
 
 <!-- PROFESSIONAL CATEGORIES SECTION (DYNAMIC DATABASE CATEGORIES) -->
-<section id="categories" class="py-5 py-lg-6 reveal-on-scroll" style="background-color: #F8F5FF;">
+<section id="categories" class="py-5 py-lg-6 reveal-on-scroll" style="background-color: #ffffff;">
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
-                <i class="bi bi-grid-fill me-1"></i> Categories
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.2);">
+                <i class="bi bi-grid-fill me-1 text-[#f47402]"></i> Categories
             </span>
-            <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
-                Explore Categories <span class="text-primary"></span>
+            <h2 class="display-6 fw-extrabold text-[#121826] mt-2 mb-2">
+                Explore Categories
             </h2>
-            <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
+            <p class="text-slate-600 fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
                 Find templates by design type.
             </p>
         </div>
@@ -1094,17 +1063,17 @@
 
 
 <!-- TRENDING RESOURCES & FEATURED SPOTLIGHT (DYNAMIC DATABASE TRENDING) -->
-<section id="trending" class="py-5 py-lg-6 reveal-on-scroll" style="background: linear-gradient(180deg, #FFFFFF 0%, #F8F5FF 100%);">
+<section id="trending" class="py-5 py-lg-6 reveal-on-scroll" style="background-color: #f8fafc;">
     <div class="container py-3">
         <!-- Section Header -->
         <div class="text-center mb-5">
-            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(108, 76, 241, 0.08); color: #6C4CF1; border: 1px solid rgba(108, 76, 241, 0.2);">
-                <i class="bi bi-fire me-1 text-danger"></i> Trending
+            <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-2 animate-badge-float" style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.2);">
+                <i class="bi bi-fire me-1 text-[#f47402]"></i> Trending
             </span>
-            <h2 class="display-6 fw-extrabold text-dark mt-2 mb-2">
-                Trending Resources <span class="text-primary"></span>
+            <h2 class="display-6 fw-extrabold text-[#121826] mt-2 mb-2">
+                Trending Resources
             </h2>
-            <p class="text-secondary fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
+            <p class="text-slate-600 fs-6 mb-0" style="max-width: 580px; margin: 0 auto;">
                 Curated high-performing assets loved by creators and creative teams.
             </p>
         </div>
@@ -1118,7 +1087,7 @@
                         $tGrad = 'card-grad-' . (($loop->index % 4) + 1);
                     @endphp
                     <div class="col-12 col-md-4">
-                        <div class="card h-100 template-card-figma border-0 shadow-sm">
+                        <div class="card h-100 template-card-figma border border-slate-200 shadow-sm bg-white">
                             <div class="template-preview-area p-0 position-relative overflow-hidden" style="height: 220px; background: #1E1B4B;">
                                 @if($trending->preview_image)
                                     <img src="{{ $trending->thumbnail_url }}" class="w-100 h-100 object-fit-cover" alt="{{ $trending->title }}">
@@ -1135,17 +1104,17 @@
                             </div>
                             <div class="card-body p-3.5 d-flex flex-column">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <span class="badge bg-light text-primary border">{{ $tCat }}</span>
-                                    <span class="small text-muted"><i class="bi bi-download me-1"></i> {{ number_format($trending->downloads) }}</span>
+                                    <span class="badge bg-slate-100 text-[#20165c] border border-slate-200">{{ $tCat }}</span>
+                                    <span class="small text-slate-500"><i class="bi bi-download me-1 text-[#20165c]"></i> {{ number_format($trending->downloads) }}</span>
                                 </div>
-                                <h6 class="fw-bold text-dark text-truncate mb-2">
-                                    <a href="{{ route('resource.show', $trending->slug ?? $trending->id) }}" class="text-dark text-decoration-none hover-underline">
+                                <h6 class="fw-bold text-[#121826] text-truncate mb-2">
+                                    <a href="{{ route('resource.show', $trending->slug ?? $trending->id) }}" class="text-[#121826] text-decoration-none hover-underline">
                                         {{ $trending->title }}
                                     </a>
                                 </h6>
-                                <div class="small text-muted mb-3">by {{ $trending->owner?->name ?? 'Creator' }}</div>
-                                <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
-                                    <span class="fw-extrabold {{ $trending->is_paid && $trending->price > 0 ? 'text-dark' : 'text-success' }}">
+                                <div class="small text-slate-500 mb-3">by {{ $trending->owner?->name ?? 'Creator' }}</div>
+                                <div class="mt-auto pt-2 border-top border-slate-200 d-flex align-items-center justify-content-between">
+                                    <span class="fw-extrabold {{ $trending->is_paid && $trending->price > 0 ? 'text-[#f47402]' : 'text-emerald-600' }}">
                                         {{ $trending->is_paid && $trending->price > 0 ? '৳' . number_format($trending->price, 2) : 'Free' }}
                                     </span>
                                     <a href="{{ route('resource.show', $trending->slug ?? $trending->id) }}" class="btn btn-sm btn-purple-cta rounded-pill px-3">

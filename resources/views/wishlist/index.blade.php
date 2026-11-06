@@ -40,12 +40,12 @@
     .card-grad-3 { background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%); }
 </style>
 
-<div class="min-h-screen bg-[#070b14] py-12 px-4 sm:px-6 lg:px-8 text-white">
+<div class="min-h-screen bg-[#ffffff] py-12 px-4 sm:px-6 lg:px-8 text-slate-800">
     <div class="max-w-7xl mx-auto">
         
         <!-- BREADCRUMB NAVIGATION -->
         <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small fw-semibold text-gray-400 mb-0">
+            <ol class="breadcrumb small fw-semibold text-slate-500 mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-indigo-400 hover:text-indigo-300"><i class="bi bi-house-door me-1"></i>Home</a></li>
                 <li class="breadcrumb-item active text-gray-300" aria-current="page">Saved Wishlist</li>
             </ol>
@@ -57,9 +57,9 @@
                 <span class="badge px-3 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold extra-small bg-rose-500/10 text-rose-400 border border-rose-500/20">
                     <i class="bi bi-heart-fill me-1"></i> Saved Templates
                 </span>
-                <h2 class="display-6 fw-extrabold text-white mt-1 mb-0">My Saved Wishlist</h2>
+                <h2 class="display-6 fw-extrabold text-[#121826] mt-1 mb-0">My Saved Wishlist</h2>
             </div>
-            <span class="small fw-bold text-gray-400 font-monospace">{{ $wishlistItems->count() }} items saved</span>
+            <span class="small fw-bold text-slate-500 font-monospace">{{ $wishlistItems->count() }} items saved</span>
         </div>
 
         @if($wishlistItems->count() > 0)
@@ -74,7 +74,7 @@
                                     @if($res->preview_image)
                                         <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $res->title }}">
                                     @else
-                                        <div class="w-100 h-100 card-grad-3 p-4 d-flex align-items-center justify-content-center text-white">
+                                        <div class="w-100 h-100 card-grad-3 p-4 d-flex align-items-center justify-content-center text-[#121826]">
                                             <i class="bi bi-heart-fill fs-1 opacity-75"></i>
                                         </div>
                                     @endif
@@ -83,13 +83,13 @@
                                     <form action="{{ route('wishlist.destroy', $res->id) }}" method="POST" class="position-absolute top-0 end-0 m-2.5">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-dark btn-sm rounded-circle shadow-md p-1.5 bg-slate-900/90 text-rose-400 border border-slate-700/80 hover:bg-rose-600 hover:text-white transition-all" title="Remove from wishlist">
+                                        <button type="submit" class="btn btn-dark btn-sm rounded-circle shadow-md p-1.5 bg-white text-rose-600 border border-slate-200 shadow-sm hover:bg-rose-600 hover:text-[#121826] transition-all" title="Remove from wishlist">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
                                     </form>
 
                                     <!-- Category Badge -->
-                                    <span class="position-absolute top-0 start-0 m-2.5 badge bg-slate-900/90 text-gray-200 border border-slate-700/80 rounded-pill shadow-sm px-2.5 py-1 extra-small fw-bold backdrop-blur-sm">
+                                    <span class="position-absolute top-0 start-0 m-2.5 badge bg-white/90 text-slate-800 border border-slate-200 shadow-sm rounded-pill shadow-sm px-2.5 py-1 extra-small fw-bold backdrop-blur-sm">
                                         {{ $res->category ? $res->category->name : 'General' }}
                                     </span>
                                 </div>
@@ -97,8 +97,8 @@
                                 <!-- Card Content -->
                                 <div class="card-body p-3.5 d-flex flex-column justify-content-between" style="background: #0d1527;">
                                     <div>
-                                        <h6 class="fw-bold text-white mb-1 text-truncate hover:text-indigo-400 transition-colors" title="{{ $res->title }}">{{ $res->title }}</h6>
-                                        <div class="extra-small text-gray-400 font-monospace mb-3">by {{ $res->owner ? $res->owner->name : 'Noksha Creator' }}</div>
+                                        <h6 class="fw-bold text-[#121826] mb-1 text-truncate hover:text-indigo-400 transition-colors" title="{{ $res->title }}">{{ $res->title }}</h6>
+                                        <div class="extra-small text-slate-500 font-monospace mb-3">by {{ $res->owner ? $res->owner->name : 'Noksha Creator' }}</div>
                                     </div>
 
                                     <div class="d-flex align-items-center justify-content-between pt-3 border-t border-gray-800">
@@ -108,7 +108,7 @@
                                         <div class="d-flex align-items-center gap-1.5">
                                             <form action="{{ route('cart.store', $res->id) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" class="btn rounded-pill btn-sm px-2.5 py-1 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600 hover:text-white transition-all" title="Add to Cart">
+                                                <button type="submit" class="btn rounded-pill btn-sm px-2.5 py-1 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600 hover:text-[#121826] transition-all" title="Add to Cart">
                                                     <i class="bi bi-cart-plus-fill"></i>
                                                 </button>
                                             </form>
@@ -125,12 +125,12 @@
             </div>
         @else
             <!-- EMPTY STATE FOR WISHLIST -->
-            <div class="bg-[#0b1329] border border-gray-800/80 rounded-2xl p-10 text-center my-4 shadow-2xl">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-10 text-center my-4 shadow-sm">
                 <div class="p-4 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 90px; height: 90px;">
                     <i class="bi bi-heartbreak fs-1"></i>
                 </div>
-                <h4 class="fw-extrabold text-white mb-2">Your Saved Wishlist is Empty</h4>
-                <p class="text-gray-400 small mb-4" style="max-width: 460px; margin: 0 auto;">
+                <h4 class="fw-extrabold text-[#121826] mb-2">Your Saved Wishlist is Empty</h4>
+                <p class="text-slate-500 small mb-4" style="max-width: 460px; margin: 0 auto;">
                     You haven't saved any templates yet. Click the heart icon on any design card to bookmark assets for later inspection or checkout.
                 </p>
                 <div>

@@ -17,19 +17,9 @@
     }
     .wallet-credit-badge:hover {
         background: #FFFFFF;
-        border-color: #8B5CF6;
+        border-color: #20165c;
         transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.15) !important;
-    }
-    .dark .wallet-credit-badge,
-    [data-bs-theme="dark"] .wallet-credit-badge {
-        background: #0F172A;
-        border-color: #334155;
-    }
-    .dark .wallet-credit-badge:hover,
-    [data-bs-theme="dark"] .wallet-credit-badge:hover {
-        background: #1E293B;
-        border-color: #A78BFA;
+        box-shadow: 0 4px 14px rgba(32, 22, 92, 0.12) !important;
     }
 </style>
 
@@ -48,7 +38,7 @@
                          class="noksha-brand-logo h-10 w-auto object-contain flex-shrink-0"
                          height="40"
                          style="height: 40px; width: auto; max-height: 40px; object-fit: contain; display: block;">
-                    <span class="fw-bold fs-4 tracking-tight text-dark dark:text-white text-nowrap">
+                    <span class="fw-bold fs-4 tracking-tight text-[#121826] text-nowrap">
                         Noksha
                     </span>
                 </a>
@@ -63,15 +53,15 @@
                 </a>
 
                 <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
-                    <i class="bi bi-people-fill me-1.5 text-indigo-400"></i> Creators
+                    <i class="bi bi-people-fill me-1.5 text-[#20165c]"></i> Creators
                 </a>
 
                 <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
-                    <i class="bi bi-trophy-fill me-1.5 text-warning"></i> Contests
+                    <i class="bi bi-trophy-fill me-1.5 text-[#f47402]"></i> Contests
                 </a>
 
                 <a class="nav-link-custom {{ request()->routeIs('contact.*') ? 'active' : '' }}" href="{{ route('contact.index') }}">
-                    <i class="bi bi-headset me-1.5 text-primary"></i> Contact Us
+                    <i class="bi bi-headset me-1.5 text-[#20165c]"></i> Contact Us
                 </a>
             </div>
 

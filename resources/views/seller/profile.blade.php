@@ -151,7 +151,7 @@
     }
 </style>
 
-<div class="min-h-screen bg-[#070b14] text-gray-100">
+<div class="min-h-screen bg-[#ffffff] text-slate-800">
 
     <!-- HERO COVER BANNER -->
     @php
@@ -172,7 +172,7 @@
     </section>
 
     <!-- SELLER HEADER & PROFILE INFO -->
-    <section class="bg-[#0b1329] border-b border-gray-800/80 pb-6 text-gray-100">
+    <section class="bg-white border-b border-slate-200/80 pb-6 text-slate-800">
         <div class="container">
             <div class="row align-items-end g-4">
                 
@@ -186,9 +186,9 @@
                                 <img src="{{ $avatarUrl }}" 
                                      alt="{{ $user->name ?? 'Creator' }}" 
                                      class="seller-avatar-img ring-4 ring-[#0b1329] rounded-circle object-fit-cover"
-                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-white fw-bold fs-2\' style=\'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);\'>{{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}</div>';">
+                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-[#121826] fw-bold fs-2\' style=\'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);\'>{{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}</div>';">
                             @else
-                                <div class="seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-white fw-bold fs-2" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                                <div class="seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-[#121826] fw-bold fs-2" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
                                     {{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}
                                 </div>
                             @endif
@@ -198,7 +198,7 @@
                         <!-- Name & Badges -->
                         <div class="pb-1">
                             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1.5">
-                                <h2 class="fw-extrabold text-white mb-0">{{ $user->name ?? 'Creator' }}</h2>
+                                <h2 class="fw-extrabold text-[#121826] mb-0">{{ $user->name ?? 'Creator' }}</h2>
                                 @if($user && $user->isContributor())
                                     <span class="badge rounded-pill px-3 py-1 fw-bold small text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 shadow-sm">
                                         <i class="bi bi-patch-check-fill text-emerald-400 me-1"></i> Verified Creator
@@ -210,10 +210,10 @@
                                     </span>
                                 @endif
                             </div>
-                            <p class="text-gray-300 fw-semibold mb-2">
+                            <p class="text-slate-700 fw-semibold mb-2">
                                 {{ $user->headline ?? 'Digital Creator & Template Designer' }}
                             </p>
-                            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-3 small text-gray-400">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-3 small text-slate-500">
                                 <span><i class="bi bi-geo-alt-fill text-indigo-400 me-1"></i> {{ $user->location ?? 'Bangladesh' }}</span>
                                 <span><i class="bi bi-calendar3 me-1"></i> Member since {{ $user && $user->created_at ? $user->created_at->format('M Y') : 'Recent' }}</span>
                             </div>
@@ -256,7 +256,7 @@
             <div class="row g-4 mt-3">
                 <div class="col-12 col-lg-8">
                     <!-- Bio -->
-                    <p class="text-gray-300 lh-lg mb-3">
+                    <p class="text-slate-700 lh-lg mb-3">
                         {{ $user->bio ?? 'Creative digital designer and template author on Noksha Marketplace.' }}
                     </p>
 
@@ -281,16 +281,16 @@
                     <div class="glass-stat-box p-3.5">
                         <div class="row g-2 text-center">
                             <div class="col-4">
-                                <div class="fw-extrabold fs-4 text-white mb-0" id="followerCount">{{ number_format($followersCount) }}</div>
-                                <div class="extra-small text-gray-400 fw-semibold">Followers</div>
+                                <div class="fw-extrabold fs-4 text-[#121826] mb-0" id="followerCount">{{ number_format($followersCount) }}</div>
+                                <div class="extra-small text-slate-500 fw-semibold">Followers</div>
                             </div>
-                            <div class="col-4 border-start border-end border-gray-800">
-                                <div class="fw-extrabold fs-4 text-white mb-0">{{ number_format($totalResourcesCount) }}</div>
-                                <div class="extra-small text-gray-400 fw-semibold">Resources</div>
+                            <div class="col-4 border-start border-end border-slate-200">
+                                <div class="fw-extrabold fs-4 text-[#121826] mb-0">{{ number_format($totalResourcesCount) }}</div>
+                                <div class="extra-small text-slate-500 fw-semibold">Resources</div>
                             </div>
                             <div class="col-4">
-                                <div class="fw-extrabold fs-4 text-white mb-0">{{ number_format($totalDownloadsCount) }}</div>
-                                <div class="extra-small text-gray-400 fw-semibold">Downloads</div>
+                                <div class="fw-extrabold fs-4 text-[#121826] mb-0">{{ number_format($totalDownloadsCount) }}</div>
+                                <div class="extra-small text-slate-500 fw-semibold">Downloads</div>
                             </div>
                         </div>
                     </div>
@@ -300,7 +300,7 @@
     </section>
 
     <!-- PORTFOLIO GRID SECTION -->
-    <section class="py-8 sm:py-12 bg-[#070b14] min-h-[500px]">
+    <section class="py-8 sm:py-12 bg-[#ffffff] min-h-[500px]">
         <div class="container">
             
             <!-- Filter Bar & Section Title -->
@@ -309,12 +309,12 @@
                     <span class="badge px-3 py-1 rounded-pill text-uppercase fw-bold small mb-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                         Author Portfolio
                     </span>
-                    <h3 class="fw-extrabold text-white mb-0">Created Resources</h3>
+                    <h3 class="fw-extrabold text-[#121826] mb-0">Created Resources</h3>
                 </div>
 
                 <!-- Category Filter Tabs -->
                 <div class="d-flex align-items-center gap-2 overflow-x-auto pb-1">
-                    <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" class="btn {{ empty($selectedCategory) ? 'btn-purple-cta' : 'btn-outline-dark text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white' }} rounded-pill btn-sm px-3.5 py-1.5 text-nowrap">
+                    <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" class="btn {{ empty($selectedCategory) ? 'btn-purple-cta' : 'btn-outline-dark text-slate-700 border-slate-200 hover:bg-gray-800 hover:text-[#121826]' }} rounded-pill btn-sm px-3.5 py-1.5 text-nowrap">
                         All Assets ({{ $totalResourcesCount }})
                     </a>
                     @foreach($categories as $category)
@@ -322,7 +322,7 @@
                             $catCount = $user ? $user->templates()->where('status', 'approved')->where('category_id', $category->id)->count() : 0;
                         @endphp
                         @if($catCount > 0 || empty($user))
-                            <a href="{{ request()->fullUrlWithQuery(['category' => $category->id]) }}" class="btn {{ (string)$selectedCategory === (string)$category->id ? 'btn-purple-cta' : 'btn-outline-dark text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white' }} rounded-pill btn-sm px-3.5 py-1.5 text-nowrap">
+                            <a href="{{ request()->fullUrlWithQuery(['category' => $category->id]) }}" class="btn {{ (string)$selectedCategory === (string)$category->id ? 'btn-purple-cta' : 'btn-outline-dark text-slate-700 border-slate-200 hover:bg-gray-800 hover:text-[#121826]' }} rounded-pill btn-sm px-3.5 py-1.5 text-nowrap">
                                 {{ $category->name }} ({{ $catCount }})
                             </a>
                         @endif
@@ -337,7 +337,7 @@
                         <div class="card h-100 template-card-figma">
                             <div class="template-preview-area p-0 overflow-hidden position-relative" style="height: 220px; background-color: #070d1e;">
                                 <img src="{{ $template->thumbnail_url }}" alt="{{ $template->title }}" class="w-100 h-100 object-fit-cover" onerror="this.src='{{ asset('images/logo.png') }}'">
-                                <span class="position-absolute top-0 start-0 m-3 badge bg-[#0b1329]/80 text-gray-200 border border-gray-700/60 rounded-pill shadow-sm px-3 py-1.5 fw-bold small backdrop-blur">
+                                <span class="position-absolute top-0 start-0 m-3 badge bg-white/80 text-slate-800 border border-slate-200/60 rounded-pill shadow-sm px-3 py-1.5 fw-bold small backdrop-blur">
                                     {{ $template->category?->name ?? 'Design' }}
                                 </span>
                             </div>
@@ -346,12 +346,12 @@
                                     <span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-pill">
                                         <i class="bi bi-star-fill text-amber-400 me-1"></i>5.0
                                     </span>
-                                    <span class="text-gray-400 font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($template->downloads) }}</span>
+                                    <span class="text-slate-500 font-monospace"><i class="bi bi-download me-1"></i>{{ number_format($template->downloads) }}</span>
                                 </div>
-                                <h5 class="card-title fw-bold text-white mb-1 text-truncate" title="{{ $template->title }}">{{ $template->title }}</h5>
-                                <p class="card-text text-gray-400 small mb-4 flex-grow-1 line-clamp-2">{{ Str::limit($template->description ?? 'Creative digital design asset published on Noksha.', 90) }}</p>
-                                <div class="d-flex align-items-center justify-content-between pt-3 border-t border-gray-800">
-                                    <span class="fw-extrabold text-white fs-5">{{ $template->price == 0 ? 'Free' : '৳' . number_format($template->price, 2) }}</span>
+                                <h5 class="card-title fw-bold text-[#121826] mb-1 text-truncate" title="{{ $template->title }}">{{ $template->title }}</h5>
+                                <p class="card-text text-slate-500 small mb-4 flex-grow-1 line-clamp-2">{{ Str::limit($template->description ?? 'Creative digital design asset published on Noksha.', 90) }}</p>
+                                <div class="d-flex align-items-center justify-content-between pt-3 border-t border-slate-200">
+                                    <span class="fw-extrabold text-[#121826] fs-5">{{ $template->price == 0 ? 'Free' : '৳' . number_format($template->price, 2) }}</span>
                                     <a href="{{ route('templates.show', $template->id) }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm">View Details</a>
                                 </div>
                             </div>
@@ -359,12 +359,12 @@
                     </div>
                 @empty
                     <div class="col-12 text-center py-5">
-                        <div class="p-5 rounded-4 bg-[#0b1329] border border-gray-800 text-center mx-auto" style="max-width: 540px;">
+                        <div class="p-5 rounded-4 bg-white border border-slate-200 text-center mx-auto" style="max-width: 540px;">
                             <div class="w-16 h-16 rounded-circle bg-indigo-600/10 text-indigo-400 mx-auto mb-3 d-flex align-items-center justify-content-center fs-2" style="width: 64px; height: 64px; margin: 0 auto;">
                                 <i class="bi bi-folder2-open"></i>
                             </div>
-                            <h4 class="fw-bold text-white mb-2">No creations published yet</h4>
-                            <p class="text-gray-400 small mb-4">Upload your first design asset to start showcasing your portfolio and earning royalties.</p>
+                            <h4 class="fw-bold text-[#121826] mb-2">No creations published yet</h4>
+                            <p class="text-slate-500 small mb-4">Upload your first design asset to start showcasing your portfolio and earning royalties.</p>
                             @if($isOwnProfile || auth()->check())
                                 <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
                                     <i class="bi bi-cloud-arrow-up-fill me-1.5"></i> Upload New Asset

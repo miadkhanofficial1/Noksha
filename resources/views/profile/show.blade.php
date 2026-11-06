@@ -39,10 +39,10 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        border: 4px solid #0b1329;
+        border: 4px solid #ffffff;
         box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
         object-fit: cover;
-        background: #0b1329;
+        background: #ffffff;
         display: block;
     }
 
@@ -50,7 +50,7 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        border: 4px solid #0b1329;
+        border: 4px solid #ffffff;
         box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
         background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         color: #ffffff;
@@ -67,7 +67,7 @@
         right: 10px;
         width: 24px;
         height: 24px;
-        border: 3px solid #0b1329;
+        border: 3px solid #ffffff;
         border-radius: 50%;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     }
@@ -82,15 +82,15 @@
 
     /* Metric Badges Strip */
     .metric-chip {
-        background: #070d1e;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
         border-radius: 0.75rem;
         padding: 0.5rem 1rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         font-size: 0.85rem;
-        color: #e2e8f0;
+        color: #1e293b;
     }
 
     /* Showcase Tabs Nav */
@@ -109,7 +109,7 @@
         padding: 0.85rem 1.25rem;
         font-weight: 700;
         font-size: 0.925rem;
-        color: #94a3b8;
+        color: #64748b;
         transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
@@ -119,12 +119,12 @@
     }
 
     .showcase-tab-btn:hover {
-        color: #a5b4fc;
+        color: #20165c;
     }
 
     .showcase-tab-btn.active {
-        color: #818cf8;
-        border-bottom-color: #6366f1;
+        color: #20165c;
+        border-bottom-color: #20165c;
     }
 
     .showcase-tab-counter {
@@ -138,14 +138,14 @@
 
     .showcase-tab-btn.active .showcase-tab-counter {
         background: rgba(99, 102, 241, 0.2);
-        color: #a5b4fc;
+        color: #20165c;
     }
 
     /* Asset Grid Card */
     .asset-card {
         border-radius: 1.25rem;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background: #0b1329;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
         box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.4);
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         overflow: hidden;
@@ -163,7 +163,7 @@
     .asset-thumb-box {
         height: 190px;
         position: relative;
-        background: #070d1e;
+        background: #f8fafc;
         overflow: hidden;
     }
 
@@ -195,7 +195,7 @@
     /* Skill Chip */
     .skill-badge-item {
         background: rgba(99, 102, 241, 0.15);
-        color: #a5b4fc;
+        color: #20165c;
         border: 1px solid rgba(99, 102, 241, 0.3);
         padding: 0.45rem 1.1rem;
         border-radius: 999px;
@@ -215,14 +215,14 @@
 
     /* Social Link Cards */
     .social-link-card {
-        background: #070d1e;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
         border-radius: 0.85rem;
         padding: 0.75rem 1rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: #e2e8f0;
+        color: #1e293b;
         text-decoration: none;
         transition: all 0.2s ease;
         font-weight: 600;
@@ -258,7 +258,7 @@
     }
 </style>
 
-<div class="min-h-screen bg-[#070b14] text-gray-100">
+<div class="min-h-screen bg-[#ffffff] text-slate-800">
 
     <!-- HERO IDENTITY BANNER -->
     @php
@@ -279,7 +279,7 @@
     </section>
 
     <!-- HERO IDENTITY HEADER BAR -->
-    <section class="bg-[#0b1329] border-b border-gray-800/80 pb-6 mb-8 text-gray-100">
+    <section class="bg-white border-b border-slate-200/80 pb-6 mb-8 text-slate-800">
         <div class="container">
             <div class="row align-items-end g-4">
                 
@@ -306,18 +306,18 @@
                         <!-- Name, Handle & Headline -->
                         <div class="pb-1">
                             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1">
-                                <h2 class="fw-extrabold text-white mb-0">{{ $user->name }}</h2>
+                                <h2 class="fw-extrabold text-[#121826] mb-0">{{ $user->name }}</h2>
                                 
                                 @if($user->isContributor())
-                                    <span class="badge bg-emerald-950/40 text-emerald-400 border border-emerald-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                        <i class="bi bi-patch-check-fill me-1 text-emerald-400"></i> Verified Creator
+                                    <span class="badge bg-emerald-950/40 text-[#f47402] border border-emerald-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                        <i class="bi bi-patch-check-fill me-1 text-[#f47402]"></i> Verified Creator
                                     </span>
                                 @elseif($user->isAdmin())
                                     <span class="badge bg-purple-950/40 text-purple-300 border border-purple-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                         <i class="bi bi-shield-lock-fill me-1 text-purple-400"></i> Admin
                                     </span>
                                 @else
-                                    <span class="badge bg-gray-800 text-gray-300 border border-gray-700 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                    <span class="badge bg-gray-800 text-slate-700 border border-gray-700 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                         Member
                                     </span>
                                 @endif
@@ -330,11 +330,11 @@
                             </div>
 
                             <!-- Username Handle & Headline -->
-                            <div class="text-gray-400 small mb-2">
+                            <div class="text-slate-500 small mb-2">
                                 <span class="font-monospace text-indigo-400 fw-bold">&#64;{{ $user->username }}</span>
                                 @if($user->headline)
                                     <span class="mx-1.5">•</span>
-                                    <span class="fw-semibold text-gray-200">{{ $user->headline }}</span>
+                                    <span class="fw-semibold text-slate-800">{{ $user->headline }}</span>
                                 @endif
                             </div>
 
@@ -342,26 +342,26 @@
                             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2">
                                 <div class="metric-chip">
                                     <i class="bi bi-trophy-fill text-warning"></i>
-                                    <span class="fw-bold text-white">{{ $totalWinsCount }}</span>
-                                    <span class="text-gray-400 extra-small">Wins</span>
+                                    <span class="fw-bold text-[#121826]">{{ $totalWinsCount }}</span>
+                                    <span class="text-slate-500 extra-small">Wins</span>
                                 </div>
 
                                 <div class="metric-chip">
                                     <i class="bi bi-star-fill text-warning"></i>
-                                    <span class="fw-bold text-white">{{ number_format($averageRating, 1) }}</span>
-                                    <span class="text-gray-400 extra-small">({{ $totalReviewsCount }} reviews)</span>
+                                    <span class="fw-bold text-[#121826]">{{ number_format($averageRating, 1) }}</span>
+                                    <span class="text-slate-500 extra-small">({{ $totalReviewsCount }} reviews)</span>
                                 </div>
 
                                 <div class="metric-chip">
                                     <i class="bi bi-collection-fill text-indigo-400"></i>
-                                    <span class="fw-bold text-white">{{ $totalAssetsCount }}</span>
-                                    <span class="text-gray-400 extra-small">Assets</span>
+                                    <span class="fw-bold text-[#121826]">{{ $totalAssetsCount }}</span>
+                                    <span class="text-slate-500 extra-small">Assets</span>
                                 </div>
 
                                 <div class="metric-chip">
                                     <i class="bi bi-people-fill text-sky-400"></i>
-                                    <span class="fw-bold text-white" id="followersCountVal">{{ $followersCount }}</span>
-                                    <span class="text-gray-400 extra-small">Followers</span>
+                                    <span class="fw-bold text-[#121826]" id="followersCountVal">{{ $followersCount }}</span>
+                                    <span class="text-slate-500 extra-small">Followers</span>
                                 </div>
                             </div>
 
@@ -373,7 +373,7 @@
                 <div class="col-12 col-lg-5 text-center text-lg-end">
                     <div class="d-inline-flex flex-wrap align-items-center justify-content-center justify-content-lg-end gap-2 pb-1">
                         @if($isOwnProfile)
-                            <a href="{{ route('settings.profile') }}" class="btn btn-outline-dark text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
+                            <a href="{{ route('settings.profile') }}" class="btn btn-outline-dark text-slate-700 border-gray-700 hover:bg-gray-800 hover:text-[#121826] rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
                                 <i class="bi bi-gear-fill"></i>
                                 <span>Edit Profile</span>
                             </a>
@@ -384,7 +384,7 @@
                         @else
                             <!-- Follow Toggle Button -->
                             @auth
-                                <button type="button" class="btn btn-follow-toggle {{ $isFollowing ? 'btn-success text-white' : 'btn-purple-cta' }} px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2" id="followBtn" onclick="toggleFollow('{{ $user->username }}')">
+                                <button type="button" class="btn btn-follow-toggle {{ $isFollowing ? 'btn-success text-[#121826]' : 'btn-purple-cta' }} px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2" id="followBtn" onclick="toggleFollow('{{ $user->username }}')">
                                     <i class="bi {{ $isFollowing ? 'bi-check2' : 'bi-plus-lg' }}" id="followBtnIcon"></i>
                                     <span id="followBtnText">{{ $isFollowing ? 'Following' : 'Follow' }}</span>
                                 </button>
@@ -396,7 +396,7 @@
                             @endauth
 
                             <!-- Send Message Button -->
-                            <a href="{{ route('inbox.show', $user->id) }}" class="btn btn-outline-dark text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
+                            <a href="{{ route('inbox.show', $user->id) }}" class="btn btn-outline-dark text-slate-700 border-gray-700 hover:bg-gray-800 hover:text-[#121826] rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
                                 <i class="bi bi-chat-dots-fill text-indigo-400"></i>
                                 <span>Send Message</span>
                             </a>
@@ -475,7 +475,7 @@
 
                                         <!-- Category Pill -->
                                         <div class="position-absolute top-0 start-0 m-2.5">
-                                            <span class="badge bg-[#0b1329]/80 text-gray-200 border border-gray-700/60 rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm backdrop-blur">
+                                            <span class="badge bg-white/80 text-slate-800 border border-gray-700/60 rounded-pill px-2.5 py-1 extra-small fw-bold shadow-sm backdrop-blur">
                                                 {{ $asset->category->name ?? 'Design' }}
                                             </span>
                                         </div>
@@ -483,24 +483,24 @@
 
                                     <div class="p-3.5 d-flex flex-column flex-grow-1 justify-content-between">
                                         <div>
-                                            <h6 class="fw-bold text-white text-truncate mb-1" title="{{ $asset->title }}">
-                                                <a href="{{ route('resource.show', $asset->slug) }}" class="text-white text-decoration-none hover-primary">
+                                            <h6 class="fw-bold text-[#121826] text-truncate mb-1" title="{{ $asset->title }}">
+                                                <a href="{{ route('resource.show', $asset->slug) }}" class="text-[#121826] text-decoration-none hover-primary">
                                                     {{ $asset->title }}
                                                 </a>
                                             </h6>
-                                            <div class="extra-small text-gray-400 mb-2">
+                                            <div class="extra-small text-slate-500 mb-2">
                                                 <i class="bi bi-star-fill text-warning me-1"></i>
-                                                <span class="fw-bold text-white">{{ number_format($asset->reviews_avg_rating ?? 5.0, 1) }}</span>
+                                                <span class="fw-bold text-[#121826]">{{ number_format($asset->reviews_avg_rating ?? 5.0, 1) }}</span>
                                                 <span>({{ $asset->reviews_count }} ratings)</span>
                                             </div>
                                         </div>
 
-                                        <div class="pt-3 border-t border-gray-800 d-flex align-items-center justify-content-between">
+                                        <div class="pt-3 border-t border-slate-200 d-flex align-items-center justify-content-between">
                                             <div>
                                                 @if($asset->is_free || $asset->price <= 0)
-                                                    <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 fw-bold rounded-pill px-2.5 py-1 extra-small">Free</span>
+                                                    <span class="badge bg-emerald-500/10 text-[#f47402] border border-emerald-500/20 fw-bold rounded-pill px-2.5 py-1 extra-small">Free</span>
                                                 @else
-                                                    <span class="fw-extrabold text-white fs-6 font-monospace">৳{{ number_format($asset->price, 0) }}</span>
+                                                    <span class="fw-extrabold text-[#121826] fs-6 font-monospace">৳{{ number_format($asset->price, 0) }}</span>
                                                 @endif
                                             </div>
 
@@ -518,12 +518,12 @@
                         {{ $assets->links() }}
                     </div>
                 @else
-                    <div class="card border border-gray-800 rounded-4 p-5 text-center my-3 bg-[#0b1329]">
+                    <div class="card border border-slate-200 rounded-4 p-5 text-center my-3 bg-white">
                         <div class="p-4 bg-indigo-600/10 text-indigo-400 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 72px; height: 72px; margin: 0 auto;">
                             <i class="bi bi-collection fs-2"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-1">No Published Assets Yet</h5>
-                        <p class="text-gray-400 small mb-3" style="max-width: 420px; margin: 0 auto;">
+                        <h5 class="fw-bold text-[#121826] mb-1">No Published Assets Yet</h5>
+                        <p class="text-slate-500 small mb-3" style="max-width: 420px; margin: 0 auto;">
                             This creator hasn't published downloadable assets to the marketplace yet. Check back soon or explore their contest entries!
                         </p>
                     </div>
@@ -540,14 +540,14 @@
                     <div class="mb-5">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <i class="bi bi-trophy-fill text-warning fs-4"></i>
-                            <h5 class="fw-extrabold text-white mb-0">Winning Challenge Submissions ({{ $totalWinsCount }})</h5>
+                            <h5 class="fw-extrabold text-[#121826] mb-0">Winning Challenge Submissions ({{ $totalWinsCount }})</h5>
                         </div>
 
                         <div class="row g-4">
                             @foreach($contestWins as $win)
                                 <div class="col-12 col-md-6 col-lg-4">
-                                    <div class="card border border-amber-500/40 rounded-4 overflow-hidden h-100 bg-[#0b1329]">
-                                        <div class="position-relative" style="height: 220px; background: #070d1e;">
+                                    <div class="card border border-amber-500/40 rounded-4 overflow-hidden h-100 bg-white">
+                                        <div class="position-relative" style="height: 220px; background: #f8fafc;">
                                             @if($win->watermarked_preview_image)
                                                 <img src="{{ asset('storage/' . ltrim(str_replace('storage/', '', $win->watermarked_preview_image), '/')) }}" alt="Winning Entry" class="w-100 h-100 object-fit-cover" onerror="this.src='{{ asset('images/logo.png') }}'">
                                             @else
@@ -573,9 +573,9 @@
                                         </div>
 
                                         <div class="p-3.5">
-                                            <h6 class="fw-bold text-white text-truncate mb-1">
+                                            <h6 class="fw-bold text-[#121826] text-truncate mb-1">
                                                 @if($win->contest)
-                                                    <a href="{{ route('contests.show', $win->contest->slug) }}" class="text-white text-decoration-none hover-primary">
+                                                    <a href="{{ route('contests.show', $win->contest->slug) }}" class="text-[#121826] text-decoration-none hover-primary">
                                                         {{ $win->contest->title }}
                                                     </a>
                                                 @else
@@ -590,20 +590,20 @@
                                                             <i class="bi {{ $i <= $win->client_rating ? 'bi-star-fill' : 'bi-star' }}"></i>
                                                         @endfor
                                                     </span>
-                                                    <span class="fw-bold text-white font-monospace">{{ $win->client_rating }}.0</span>
-                                                    <span class="text-gray-400">• Buyer Rating</span>
+                                                    <span class="fw-bold text-[#121826] font-monospace">{{ $win->client_rating }}.0</span>
+                                                    <span class="text-slate-500">• Buyer Rating</span>
                                                 </div>
                                             @endif
 
                                             @if($win->client_feedback)
-                                                <p class="text-gray-300 extra-small fst-italic mb-2 p-2.5 bg-[#070d1e] border border-gray-800 rounded-3">
+                                                <p class="text-slate-700 extra-small fst-italic mb-2 p-2.5 bg-slate-50 border border-slate-200 rounded-3">
                                                     "{{ Str::limit($win->client_feedback, 120) }}"
                                                 </p>
                                             @endif
 
                                             @if($win->contest)
-                                                <div class="text-end pt-2 border-t border-gray-800">
-                                                    <a href="{{ route('contests.show', $win->contest->slug) }}" class="btn btn-sm btn-outline-dark text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white rounded-pill px-3 py-1 extra-small fw-bold">
+                                                <div class="text-end pt-2 border-t border-slate-200">
+                                                    <a href="{{ route('contests.show', $win->contest->slug) }}" class="btn btn-sm btn-outline-dark text-slate-700 border-gray-700 hover:bg-gray-800 hover:text-[#121826] rounded-pill px-3 py-1 extra-small fw-bold">
                                                         View Challenge
                                                     </a>
                                                 </div>
@@ -619,16 +619,16 @@
                 <!-- SECTION 2B: ALL CONTEST SUBMISSIONS -->
                 <div>
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="fw-bold text-white mb-0">Contest Entries Gallery</h5>
-                        <span class="extra-small text-gray-400 font-monospace">{{ $contestEntries->total() }} Designs Submitted</span>
+                        <h5 class="fw-bold text-[#121826] mb-0">Contest Entries Gallery</h5>
+                        <span class="extra-small text-slate-500 font-monospace">{{ $contestEntries->total() }} Designs Submitted</span>
                     </div>
 
                     @if($contestEntries->count() > 0)
                         <div class="row g-3">
                             @foreach($contestEntries as $entry)
                                 <div class="col-6 col-md-4 col-lg-3">
-                                    <div class="card border border-gray-800 rounded-4 overflow-hidden h-100 bg-[#0b1329]">
-                                        <div class="position-relative" style="height: 180px; background: #070d1e;">
+                                    <div class="card border border-slate-200 rounded-4 overflow-hidden h-100 bg-white">
+                                        <div class="position-relative" style="height: 180px; background: #f8fafc;">
                                             @if($entry->watermarked_preview_image)
                                                 <img src="{{ asset('storage/' . ltrim(str_replace('storage/', '', $entry->watermarked_preview_image), '/')) }}" alt="Entry" class="w-100 h-100 object-fit-cover" onerror="this.src='{{ asset('images/logo.png') }}'">
                                             @else
@@ -648,12 +648,12 @@
 
                                         <div class="p-2.5">
                                             @if($entry->contest)
-                                                <div class="extra-small fw-bold text-truncate text-white mb-1">
-                                                    <a href="{{ route('contests.show', $entry->contest->slug) }}" class="text-white text-decoration-none hover-primary">
+                                                <div class="extra-small fw-bold text-truncate text-[#121826] mb-1">
+                                                    <a href="{{ route('contests.show', $entry->contest->slug) }}" class="text-[#121826] text-decoration-none hover-primary">
                                                         {{ $entry->contest->title }}
                                                     </a>
                                                 </div>
-                                                <div class="extra-small text-gray-400 font-monospace">
+                                                <div class="extra-small text-slate-500 font-monospace">
                                                     Prize: ৳{{ number_format($entry->contest->prize_amount, 0) }}
                                                 </div>
                                             @endif
@@ -667,8 +667,8 @@
                             {{ $contestEntries->links() }}
                         </div>
                     @else
-                        <div class="card border border-gray-800 rounded-4 p-5 text-center bg-[#0b1329]">
-                            <p class="text-gray-400 small mb-0">No public design entries submitted yet.</p>
+                        <div class="card border border-slate-200 rounded-4 p-5 text-center bg-white">
+                            <p class="text-slate-500 small mb-0">No public design entries submitted yet.</p>
                         </div>
                     @endif
                 </div>
@@ -681,21 +681,21 @@
             <div class="tab-pane fade" id="tab-reviews" role="tabpanel" aria-labelledby="tab-reviews-btn">
                 
                 <!-- Summary Rating Box -->
-                <div class="card border border-gray-800 rounded-4 p-4 mb-4 bg-[#0b1329]">
+                <div class="card border border-slate-200 rounded-4 p-4 mb-4 bg-white">
                     <div class="row align-items-center g-3">
-                        <div class="col-auto text-center border-end border-gray-800 pe-4">
-                            <div class="display-5 fw-extrabold text-white font-monospace mb-0">{{ number_format($averageRating, 1) }}</div>
+                        <div class="col-auto text-center border-end border-slate-200 pe-4">
+                            <div class="display-5 fw-extrabold text-[#121826] font-monospace mb-0">{{ number_format($averageRating, 1) }}</div>
                             <div class="text-warning small mb-1">
                                 @for($i = 1; $i <= 5; $i++)
                                     <i class="bi {{ $i <= round($averageRating) ? 'bi-star-fill' : 'bi-star' }}"></i>
                                 @endfor
                             </div>
-                            <div class="extra-small text-gray-400 fw-bold">Overall Rating</div>
+                            <div class="extra-small text-slate-500 fw-bold">Overall Rating</div>
                         </div>
 
                         <div class="col">
-                            <h6 class="fw-bold text-white mb-1">Client & Buyer Satisfaction</h6>
-                            <p class="text-gray-300 small mb-0">
+                            <h6 class="fw-bold text-[#121826] mb-1">Client & Buyer Satisfaction</h6>
+                            <p class="text-slate-700 small mb-0">
                                 Based on {{ $totalReviewsCount }} verified customer reviews across Noksha digital assets and contest handovers.
                             </p>
                         </div>
@@ -706,15 +706,15 @@
                 @if($reviews->count() > 0)
                     <div class="d-flex flex-column gap-3">
                         @foreach($reviews as $rev)
-                            <div class="card border border-gray-800 rounded-4 p-4 bg-[#0b1329]">
+                            <div class="card border border-slate-200 rounded-4 p-4 bg-white">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-2">
                                     <div class="d-flex align-items-center gap-2.5">
                                         <div class="avatar-placeholder rounded-circle bg-indigo-600/20 text-indigo-400 fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                             {{ strtoupper(substr($rev->user->name ?? 'Buyer', 0, 1)) }}
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-white small mb-0">{{ $rev->user->name ?? 'Verified Buyer' }}</div>
-                                            <div class="extra-small text-gray-400">{{ $rev->created_at->format('M d, Y') }}</div>
+                                            <div class="fw-bold text-[#121826] small mb-0">{{ $rev->user->name ?? 'Verified Buyer' }}</div>
+                                            <div class="extra-small text-slate-500">{{ $rev->created_at->format('M d, Y') }}</div>
                                         </div>
                                     </div>
 
@@ -725,14 +725,14 @@
                                     </div>
                                 </div>
 
-                                <p class="text-gray-300 small mb-2">
+                                <p class="text-slate-700 small mb-2">
                                     "{{ $rev->review }}"
                                 </p>
 
                                 @if($rev->resource)
-                                    <div class="extra-small text-gray-400 font-monospace border-t border-gray-800 pt-2">
+                                    <div class="extra-small text-slate-500 font-monospace border-t border-slate-200 pt-2">
                                         <i class="bi bi-box-seam me-1 text-indigo-400"></i>
-                                        <a href="{{ route('resource.show', $rev->resource->slug) }}" class="text-decoration-none text-gray-400 hover-primary">
+                                        <a href="{{ route('resource.show', $rev->resource->slug) }}" class="text-decoration-none text-slate-500 hover-primary">
                                             {{ $rev->resource->title }}
                                         </a>
                                     </div>
@@ -745,12 +745,12 @@
                         {{ $reviews->links() }}
                     </div>
                 @else
-                    <div class="card border border-gray-800 rounded-4 p-5 text-center bg-[#0b1329]">
+                    <div class="card border border-slate-200 rounded-4 p-5 text-center bg-white">
                         <div class="p-3 bg-amber-500/10 text-amber-400 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; margin: 0 auto;">
                             <i class="bi bi-chat-quote fs-3"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-1">No Customer Reviews Yet</h5>
-                        <p class="text-gray-400 small mb-0">Client feedback and verified reviews will populate as orders and contest handovers are finalized.</p>
+                        <h5 class="fw-bold text-[#121826] mb-1">No Customer Reviews Yet</h5>
+                        <p class="text-slate-500 small mb-0">Client feedback and verified reviews will populate as orders and contest handovers are finalized.</p>
                     </div>
                 @endif
 
@@ -765,20 +765,20 @@
                     <!-- Left: Bio & Skills -->
                     <div class="col-12 col-lg-8">
                         <!-- Bio Card -->
-                        <div class="card border border-gray-800 rounded-4 p-4 p-md-5 bg-[#0b1329] mb-4">
-                            <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <div class="card border border-slate-200 rounded-4 p-4 p-md-5 bg-white mb-4">
+                            <h5 class="fw-bold text-[#121826] mb-3 d-flex align-items-center gap-2">
                                 <i class="bi bi-person-badge text-indigo-400"></i>
                                 <span>About the Designer</span>
                             </h5>
 
-                            <div class="text-gray-300 lh-lg mb-0" style="white-space: pre-line;">
+                            <div class="text-slate-700 lh-lg mb-0" style="white-space: pre-line;">
                                 {{ $user->bio ?? 'This creator has not added a detailed biography yet. Reach out directly for project inquiries and design collaborations!' }}
                             </div>
                         </div>
 
                         <!-- Skills & Creative Tools -->
-                        <div class="card border border-gray-800 rounded-4 p-4 p-md-5 bg-[#0b1329]">
-                            <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <div class="card border border-slate-200 rounded-4 p-4 p-md-5 bg-white">
+                            <h5 class="fw-bold text-[#121826] mb-3 d-flex align-items-center gap-2">
                                 <i class="bi bi-tools text-indigo-400"></i>
                                 <span>Core Competencies & Tools</span>
                             </h5>
@@ -800,7 +800,7 @@
                                     @endforeach
                                 </div>
                             @else
-                                <p class="text-gray-400 small mb-0">No specific skills listed yet.</p>
+                                <p class="text-slate-500 small mb-0">No specific skills listed yet.</p>
                             @endif
                         </div>
                     </div>
@@ -809,8 +809,8 @@
                     <div class="col-12 col-lg-4">
                         
                         <!-- Social & Portfolio Presence -->
-                        <div class="card border border-gray-800 rounded-4 p-4 bg-[#0b1329] mb-4">
-                            <h6 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <div class="card border border-slate-200 rounded-4 p-4 bg-white mb-4">
+                            <h6 class="fw-bold text-[#121826] mb-3 d-flex align-items-center gap-2">
                                 <i class="bi bi-globe2 text-indigo-400"></i>
                                 <span>Online Presence</span>
                             </h6>
@@ -826,7 +826,7 @@
                                             <i class="bi bi-behance text-indigo-400 fs-5"></i>
                                             <span>Behance</span>
                                         </div>
-                                        <i class="bi bi-box-arrow-up-right extra-small text-gray-400"></i>
+                                        <i class="bi bi-box-arrow-up-right extra-small text-slate-500"></i>
                                     </a>
                                 @endif
 
@@ -836,17 +836,17 @@
                                             <i class="bi bi-dribbble text-pink-400 fs-5"></i>
                                             <span>Dribbble</span>
                                         </div>
-                                        <i class="bi bi-box-arrow-up-right extra-small text-gray-400"></i>
+                                        <i class="bi bi-box-arrow-up-right extra-small text-slate-500"></i>
                                     </a>
                                 @endif
 
                                 @if(!empty($links['website']))
                                     <a href="{{ $links['website'] }}" target="_blank" rel="noopener noreferrer" class="social-link-card">
                                         <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-globe fs-5 text-gray-300"></i>
+                                            <i class="bi bi-globe fs-5 text-slate-700"></i>
                                             <span>Studio Website</span>
                                         </div>
-                                        <i class="bi bi-box-arrow-up-right extra-small text-gray-400"></i>
+                                        <i class="bi bi-box-arrow-up-right extra-small text-slate-500"></i>
                                     </a>
                                 @endif
 
@@ -856,66 +856,66 @@
                                             <i class="bi bi-linkedin text-sky-400 fs-5"></i>
                                             <span>LinkedIn</span>
                                         </div>
-                                        <i class="bi bi-box-arrow-up-right extra-small text-gray-400"></i>
+                                        <i class="bi bi-box-arrow-up-right extra-small text-slate-500"></i>
                                     </a>
                                 @endif
 
                                 @if(!empty($links['twitter']))
                                     <a href="{{ $links['twitter'] }}" target="_blank" rel="noopener noreferrer" class="social-link-card">
                                         <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-twitter-x text-white fs-5"></i>
+                                            <i class="bi bi-twitter-x text-[#121826] fs-5"></i>
                                             <span>Twitter / X</span>
                                         </div>
-                                        <i class="bi bi-box-arrow-up-right extra-small text-gray-400"></i>
+                                        <i class="bi bi-box-arrow-up-right extra-small text-slate-500"></i>
                                     </a>
                                 @endif
 
                                 @if(!empty($links['github']))
                                     <a href="{{ $links['github'] }}" target="_blank" rel="noopener noreferrer" class="social-link-card">
                                         <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-github text-white fs-5"></i>
+                                            <i class="bi bi-github text-[#121826] fs-5"></i>
                                             <span>GitHub</span>
                                         </div>
-                                        <i class="bi bi-box-arrow-up-right extra-small text-gray-400"></i>
+                                        <i class="bi bi-box-arrow-up-right extra-small text-slate-500"></i>
                                     </a>
                                 @endif
 
                                 @if(empty(array_filter($links)))
-                                    <p class="text-gray-400 extra-small mb-0">No external portfolio links provided.</p>
+                                    <p class="text-slate-500 extra-small mb-0">No external portfolio links provided.</p>
                                 @endif
                             </div>
                         </div>
 
                         <!-- Creator Trust & Verification Summary -->
-                        <div class="card border border-gray-800 rounded-4 p-4 bg-[#0b1329]">
-                            <h6 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
-                                <i class="bi bi-shield-check text-emerald-400"></i>
+                        <div class="card border border-slate-200 rounded-4 p-4 bg-white">
+                            <h6 class="fw-bold text-[#121826] mb-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-shield-check text-[#f47402]"></i>
                                 <span>Verified Badges & Status</span>
                             </h6>
 
                             <div class="d-flex flex-column gap-2.5 small">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-gray-400">Account Status:</span>
-                                    <span class="fw-bold text-white">{{ $user->getRoleBadgeLabel() }}</span>
+                                    <span class="text-slate-500">Account Status:</span>
+                                    <span class="fw-bold text-[#121826]">{{ $user->getRoleBadgeLabel() }}</span>
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-gray-400">Trust Score:</span>
-                                    <span class="fw-extrabold text-emerald-400 font-monospace">{{ number_format($user->trust_score ?? 100, 1) }}%</span>
+                                    <span class="text-slate-500">Trust Score:</span>
+                                    <span class="fw-extrabold text-[#f47402] font-monospace">{{ number_format($user->trust_score ?? 100, 1) }}%</span>
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-gray-400">Freelance Availability:</span>
+                                    <span class="text-slate-500">Freelance Availability:</span>
                                     @if($user->is_available)
-                                        <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-pill px-2.5 py-1 extra-small fw-bold">Available</span>
+                                        <span class="badge bg-emerald-500/10 text-[#f47402] border border-emerald-500/20 rounded-pill px-2.5 py-1 extra-small fw-bold">Available</span>
                                     @else
-                                        <span class="badge bg-gray-800 text-gray-400 border border-gray-700 rounded-pill px-2.5 py-1 extra-small fw-bold">Busy</span>
+                                        <span class="badge bg-gray-800 text-slate-500 border border-gray-700 rounded-pill px-2.5 py-1 extra-small fw-bold">Busy</span>
                                     @endif
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-gray-400">Member Since:</span>
-                                    <span class="fw-semibold text-white font-monospace">{{ $user->created_at->format('M Y') }}</span>
+                                    <span class="text-slate-500">Member Since:</span>
+                                    <span class="fw-semibold text-[#121826] font-monospace">{{ $user->created_at->format('M Y') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -932,31 +932,31 @@
                     <div class="row g-4">
                         @foreach($organizedContests as $c)
                             <div class="col-12 col-md-6 col-lg-4">
-                                <div class="card border border-gray-800 rounded-4 p-4 h-100 bg-[#0b1329] d-flex flex-column justify-content-between">
+                                <div class="card border border-slate-200 rounded-4 p-4 h-100 bg-white d-flex flex-column justify-content-between">
                                     <div>
                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                             <span class="badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                 {{ $c->display_category }}
                                             </span>
-                                            <span class="badge bg-[#070d1e] text-gray-300 border border-gray-800 rounded-pill px-2.5 py-1 extra-small font-monospace text-uppercase">
+                                            <span class="badge bg-slate-50 text-slate-700 border border-slate-200 rounded-pill px-2.5 py-1 extra-small font-monospace text-uppercase">
                                                 {{ $c->status }}
                                             </span>
                                         </div>
 
-                                        <h6 class="fw-bold text-white mb-2 text-truncate" title="{{ $c->title }}">
-                                            <a href="{{ route('contests.show', $c->slug) }}" class="text-white text-decoration-none hover-primary">
+                                        <h6 class="fw-bold text-[#121826] mb-2 text-truncate" title="{{ $c->title }}">
+                                            <a href="{{ route('contests.show', $c->slug) }}" class="text-[#121826] text-decoration-none hover-primary">
                                                 {{ $c->title }}
                                             </a>
                                         </h6>
-                                        <p class="text-gray-300 extra-small mb-3 line-clamp-2">
+                                        <p class="text-slate-700 extra-small mb-3 line-clamp-2">
                                             {{ Str::limit($c->description, 100) }}
                                         </p>
                                     </div>
 
-                                    <div class="pt-3 border-t border-gray-800 d-flex align-items-center justify-content-between">
+                                    <div class="pt-3 border-t border-slate-200 d-flex align-items-center justify-content-between">
                                         <div>
-                                            <div class="extra-small text-gray-400 text-uppercase fw-bold">Prize Bounty</div>
-                                            <div class="fw-extrabold text-emerald-400 font-monospace">৳{{ number_format($c->prize_amount, 0) }}</div>
+                                            <div class="extra-small text-slate-500 text-uppercase fw-bold">Prize Bounty</div>
+                                            <div class="fw-extrabold text-[#f47402] font-monospace">৳{{ number_format($c->prize_amount, 0) }}</div>
                                         </div>
                                         <a href="{{ route('contests.show', $c->slug) }}" class="btn btn-sm btn-purple-cta rounded-pill px-3 py-1 extra-small fw-bold">
                                             View Challenge
@@ -977,16 +977,16 @@
 <!-- CONTACT / HIRE MODAL -->
 <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
-        <div class="modal-content bg-[#0b1329] border border-gray-800 text-gray-100 rounded-4 overflow-hidden shadow-2xl">
+        <div class="modal-content bg-white border border-slate-200 text-slate-800 rounded-4 overflow-hidden shadow-2xl">
             <div class="modal-header border-0 pb-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold text-white" id="contactModalLabel">
+                <h5 class="modal-title fw-bold text-[#121826]" id="contactModalLabel">
                     <i class="bi bi-chat-quote-fill text-indigo-400 me-2"></i>Contact {{ $user->name }}
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <div class="modal-body px-4 pt-3 pb-4">
-                <div class="d-flex align-items-center gap-3 p-3 bg-[#070d1e] border border-gray-800 rounded-3 mb-3">
+                <div class="d-flex align-items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-3 mb-3">
                     <div class="profile-avatar-wrapper m-0">
                         @php
                             $modalAvatarSrc = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : $user->avatar_url;
@@ -994,15 +994,15 @@
                         <img src="{{ $modalAvatarSrc }}" alt="{{ $user->name }}" class="rounded-circle ring-2 ring-indigo-500/50" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff';">
                     </div>
                     <div>
-                        <div class="fw-bold text-white">{{ $user->name }}</div>
-                        <div class="extra-small text-gray-400 font-monospace">&#64;{{ $user->username }}</div>
-                        <div class="extra-small {{ $user->is_available ? 'text-emerald-400' : 'text-gray-400' }} fw-bold">
+                        <div class="fw-bold text-[#121826]">{{ $user->name }}</div>
+                        <div class="extra-small text-slate-500 font-monospace">&#64;{{ $user->username }}</div>
+                        <div class="extra-small {{ $user->is_available ? 'text-[#f47402]' : 'text-slate-500' }} fw-bold">
                             <i class="bi bi-record-fill me-1"></i>{{ $user->is_available ? 'Available for Custom Projects' : 'Currently Busy' }}
                         </div>
                     </div>
                 </div>
 
-                <p class="text-gray-300 small mb-4">
+                <p class="text-slate-700 small mb-4">
                     Send an email inquiry directly to {{ $user->name }} regarding freelance design services, custom template requests, or design collaboration.
                 </p>
 
@@ -1011,7 +1011,7 @@
                         <i class="bi bi-chat-dots-fill"></i>
                         <span>Start Chat on Noksha</span>
                     </a>
-                    <a href="mailto:{{ $user->email }}?subject=Project%20Inquiry%20from%20Noksha%20Community" class="btn btn-outline-dark text-gray-200 border-gray-700 hover:bg-gray-800 hover:text-white rounded-pill py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <a href="mailto:{{ $user->email }}?subject=Project%20Inquiry%20from%20Noksha%20Community" class="btn btn-outline-dark text-slate-800 border-gray-700 hover:bg-gray-800 hover:text-[#121826] rounded-pill py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2">
                         <i class="bi bi-envelope-fill"></i>
                         <span>Send Email to {{ $user->email }}</span>
                     </a>
@@ -1059,7 +1059,7 @@
             btn.disabled = false;
             if (data && data.success) {
                 if (data.is_following) {
-                    btn.className = 'btn btn-follow-toggle btn-success text-white px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2';
+                    btn.className = 'btn btn-follow-toggle btn-success text-[#121826] px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2';
                     icon.className = 'bi bi-check2';
                     text.textContent = 'Following';
                 } else {
