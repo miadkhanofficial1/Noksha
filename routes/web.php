@@ -48,6 +48,7 @@ use App\Http\Controllers\InboxController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerVerificationController;
+use App\Http\Controllers\KycController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\WalletController;
@@ -216,25 +217,25 @@ Route::get('/refund-policy', [LegalController::class, 'refunds'])->name('legal.r
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    // Registration Flow (Two-Step Signup with 6-Digit Email OTP)
+    // Registration Flow (Two-Step Signup with 6-Digit Email OTP - Throttled: 5 attempts per min)
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
-    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:5,1')->name('register.store');
     Route::get('/register/verify-otp', [RegisterController::class, 'showVerifyOtp'])->name('register.verify.otp');
-    Route::post('/register/verify-otp', [RegisterController::class, 'verifyOtp'])->name('register.verify.otp.submit');
-    Route::post('/register/resend-otp', [RegisterController::class, 'resendOtp'])->name('register.resend.otp');
+    Route::post('/register/verify-otp', [RegisterController::class, 'verifyOtp'])->middleware('throttle:5,1')->name('register.verify.otp.submit');
+    Route::post('/register/resend-otp', [RegisterController::class, 'resendOtp'])->middleware('throttle:4,1')->name('register.resend.otp');
 
-    // Login
+    // Login (Brute-force protection: 5 attempts per min)
     Route::get('/login', [LoginController::class, 'create'])->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1')->name('login.store');
 
-    // Modern 6-Digit Email OTP Password Recovery Flow
+    // Modern 6-Digit Email OTP Password Recovery Flow (Throttled: 4 attempts per min)
     Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->middleware('throttle:4,1')->name('password.email');
     Route::get('/password/verify-otp', [ForgotPasswordController::class, 'showVerifyOtp'])->name('password.otp.view');
-    Route::post('/password/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.otp.verify');
-    Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.otp.resend');
+    Route::post('/password/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->middleware('throttle:4,1')->name('password.otp.verify');
+    Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->middleware('throttle:4,1')->name('password.otp.resend');
     Route::get('/password/reset-password', [ResetPasswordController::class, 'create'])->name('password.reset.view');
-    Route::post('/password/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+    Route::post('/password/reset-password', [ResetPasswordController::class, 'store'])->middleware('throttle:4,1')->name('password.update');
     Route::get('/reset-password/{token}', function () {
         return redirect()->route('password.request')->withErrors([
             'email' => 'Password recovery now uses secure 6-digit OTP verification. Please enter your email to receive a code.'
@@ -257,8 +258,8 @@ Route::middleware('auth')->group(function () {
 
     // Email Verification Routes (6-Digit OTP & Legacy Signed URLs)
     Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
-    Route::post('/email/verify-otp', [VerificationController::class, 'verifyOtp'])->name('verification.verify.otp');
-    Route::post('/email/resend-otp', [VerificationController::class, 'resendOtp'])->name('verification.resend.otp');
+    Route::post('/email/verify-otp', [VerificationController::class, 'verifyOtp'])->middleware('throttle:5,1')->name('verification.verify.otp');
+    Route::post('/email/resend-otp', [VerificationController::class, 'resendOtp'])->middleware('throttle:4,1')->name('verification.resend.otp');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
@@ -266,10 +267,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // OTP Architecture Placeholder Routes
+    // OTP Architecture Placeholder Routes (Rate Limited)
     Route::get('/otp/verify', [OtpController::class, 'showForm'])->name('otp.form');
-    Route::post('/otp/send', [OtpController::class, 'send'])->name('otp.send');
-    Route::post('/otp/verify', [OtpController::class, 'verify'])->name('otp.verify');
+    Route::post('/otp/send', [OtpController::class, 'send'])->middleware('throttle:4,1')->name('otp.send');
+    Route::post('/otp/verify', [OtpController::class, 'verify'])->middleware('throttle:5,1')->name('otp.verify');
 
     // Mode Switcher (Buyer <-> Contributor/Seller)
     Route::post('/user/mode/switch', [DashboardController::class, 'switchMode'])->name('user.switch-mode');
@@ -340,6 +341,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/contributor/apply', [SellerVerificationController::class, 'store'])->name('contributor.store');
     Route::get('/seller/verification', [SellerVerificationController::class, 'create'])->name('seller.verification.create');
     Route::post('/seller/verification', [SellerVerificationController::class, 'store'])->name('seller.verification.store');
+    Route::get('/kyc/verify', [KycController::class, 'create'])->name('kyc.verify');
+    Route::post('/kyc/verify', [KycController::class, 'store'])->name('kyc.store');
+    Route::post('/kyc/upload', [KycController::class, 'store'])->name('kyc.upload');
 
     // Cart Routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -395,8 +399,6 @@ Route::middleware('auth')->group(function () {
     // AJAX / Dedicated route: Mark a single notification as read
     Route::match(['post', 'patch'], '/notifications/{notification}/mark-as-read', [NotificationController::class, 'markSingleAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/ajax-read/{notification}', [NotificationController::class, 'markSingleAsRead'])->name('notifications.ajaxRead');
-    // Admin: Broadcast history page
-    Route::get('/admin/broadcast-history', [NotificationController::class, 'broadcastHistory'])->name('admin.broadcastHistory')->middleware('admin');
 
     // AI Template Customizer Workspace Routes
     Route::get('/templates/{id}/ai-edit', [AiEditorController::class, 'edit'])->name('templates.ai-edit');
@@ -418,8 +420,10 @@ Route::middleware('auth')->group(function () {
 
     // ==========================================
     // SUPER ADMIN PROTECTED ROUTES (auth + admin)
+    // Environment-driven Admin Route Prefix Obfuscation
     // ==========================================
-    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+    $adminPrefix = env('ADMIN_ROUTE_PREFIX', 'noksha-hq-secure-panel');
+    Route::middleware(['admin'])->prefix($adminPrefix)->name('admin.')->group(function () {
         // Direct redirect /admin -> /admin/dashboard
         Route::get('/', function () {
             return redirect()->route('admin.dashboard');
@@ -428,6 +432,7 @@ Route::middleware('auth')->group(function () {
         // 1. Executive Dashboard & Metrics
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::post('/broadcast', [AdminDashboardController::class, 'broadcastNotification'])->name('broadcast');
+        Route::get('/broadcast-history', [\App\Http\Controllers\NotificationController::class, 'broadcastHistory'])->name('broadcastHistory');
 
         // 2. Resource Moderation Center
         Route::get('/resources', [AdminResourceController::class, 'index'])->name('resources.index');
@@ -483,6 +488,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/support-messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('support-messages.reply');
         Route::delete('/messages/{id}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
     });
+
+    // Scanner Trap / Honeypot: Automated scanners targeting legacy /admin path get instantly deflected to root
+    Route::any('/admin/{any?}', function () {
+        return redirect('/')->with('error', 'Access denied: Administrative endpoint not found.');
+    })->where('any', '.*');
 });
 
 Route::get('/run-noksha-seed', function () {

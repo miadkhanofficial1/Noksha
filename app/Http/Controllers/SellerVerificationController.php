@@ -40,6 +40,24 @@ class SellerVerificationController extends Controller
             return redirect()->to(route('dashboard') . '?mode=seller')->with('error', $msg);
         }
 
+        // 1. Anti-Malware Executable Extension Drop Guard (.php, .phtml, .exe, .sh, .bat, .js, .phar)
+        $maliciousExtensions = ['php', 'phtml', 'phar', 'exe', 'sh', 'bat', 'js', 'cmd', 'vbs', 'cgi', 'pl', 'asp', 'aspx'];
+        foreach ($request->allFiles() as $fieldKey => $fileItem) {
+            if (!$fileItem) continue;
+            $filesToCheck = is_array($fileItem) ? $fileItem : [$fileItem];
+            foreach ($filesToCheck as $f) {
+                $ext = strtolower($f->getClientOriginalExtension());
+                $origName = strtolower($f->getClientOriginalName());
+                foreach ($maliciousExtensions as $badExt) {
+                    if ($ext === $badExt || str_ends_with($origName, '.' . $badExt) || str_contains($origName, '.' . $badExt . '.')) {
+                        return back()->withErrors([
+                            $fieldKey => 'Files with executable or malicious extensions (.php, .phtml, .exe, .sh, .bat, .js, .phar) are strictly prohibited.'
+                        ])->withInput();
+                    }
+                }
+            }
+        }
+
         $existing = SellerVerification::where('user_id', auth()->id())->first();
 
         // 2. Strict Anti-Fraud Validation Rules

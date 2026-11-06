@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\RegistrationOtpMail;
 use App\Models\User;
+use App\Rules\NotDisposableEmail;
 use App\Services\BrevoMailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -54,6 +55,7 @@ class RegisterController extends Controller
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->whereNull('deleted_at'),
+                new NotDisposableEmail(),
             ],
             'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],

@@ -16,12 +16,12 @@ class EnsureUserIsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check()) {
-            return redirect()->route('login')->with('warning', 'Please log in to access administrative pages.');
+            return redirect('/')->with('error', 'Unauthorized access. Administrative security checkpoint triggered.');
         }
 
         $user = auth()->user();
         if (!$user->isAdmin() && !in_array($user->role ?? 'user', ['admin', 'super_admin'])) {
-            abort(403, 'Unauthorized access. Super Admin privileges required.');
+            return redirect('/')->with('error', 'Access denied. You do not possess administrative privileges.');
         }
 
         return $next($request);

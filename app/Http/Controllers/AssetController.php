@@ -32,13 +32,33 @@ class AssetController extends Controller
             ])->withInput();
         }
 
+        // 1. Anti-Malware Executable Extension Drop Guard (.php, .phtml, .exe, .sh, .bat, .js, .phar)
+        $maliciousExtensions = ['php', 'phtml', 'phar', 'exe', 'sh', 'bat', 'js', 'cmd', 'vbs', 'cgi', 'pl', 'asp', 'aspx'];
+        foreach ($request->allFiles() as $fieldKey => $fileItem) {
+            if (!$fileItem) continue;
+            $filesToCheck = is_array($fileItem) ? $fileItem : [$fileItem];
+            foreach ($filesToCheck as $f) {
+                $ext = strtolower($f->getClientOriginalExtension());
+                $origName = strtolower($f->getClientOriginalName());
+                foreach ($maliciousExtensions as $badExt) {
+                    if ($ext === $badExt || str_ends_with($origName, '.' . $badExt) || str_contains($origName, '.' . $badExt . '.')) {
+                        return back()->withErrors([
+                            $fieldKey => 'Files with executable or malicious extensions (.php, .phtml, .exe, .sh, .bat, .js, .phar) are strictly prohibited.'
+                        ])->withInput();
+                    }
+                }
+            }
+        }
+
         // Safely verify file validity before calling store
-        if (!$request->hasFile('asset_file') || !$request->file('asset_file')->isValid()) {
+        $assetFile = $request->file('asset_file') ?? $request->file('asset_archive');
+        if (!$assetFile || !$assetFile->isValid()) {
             return back()->withErrors([
                 'asset_file' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.'
             ])->withInput();
         }
 
+        // 2. Strict Multipart MIME-Type & Extension Enforcement
         $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'nullable|string',
@@ -48,13 +68,18 @@ class AssetController extends Controller
             'description' => 'nullable|string',
             'dimensions' => 'nullable|string',
             'tags' => 'nullable|string',
-            'cover_image' => 'nullable|image|max:15360',
-            'asset_file' => 'required|file|max:102400', // 100MB limit
+            'cover_image' => 'required|file|mimes:jpeg,png,webp,jpg|max:5120',
+            'asset_file' => 'required_without:asset_archive|file|mimetypes:application/zip,application/x-zip-compressed,multipart/x-zip|max:102400',
+            'asset_archive' => 'nullable|file|mimetypes:application/zip,application/x-zip-compressed,multipart/x-zip|max:102400',
         ], [
-            'asset_file.required' => 'Digital asset source file (e.g., .psd, .ai, .fig, .pdf, .eps, .zip) is required.',
-            'asset_file.file' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.',
-            'asset_file.uploaded' => 'The asset file could not be uploaded. Please ensure the file is under 100MB and try again.',
-            'asset_file.max' => 'The asset file may not be greater than 100MB.',
+            'cover_image.required' => 'Cover image is required.',
+            'cover_image.mimes' => 'Cover image must be a JPEG, PNG, WEBP, or JPG image.',
+            'cover_image.max' => 'Cover image may not be greater than 5MB.',
+            'asset_file.required' => 'Encapsulated asset archive (.zip) is required.',
+            'asset_file.mimetypes' => 'The asset source file must be a valid encapsulated archive (.zip).',
+            'asset_file.max' => 'The asset archive may not be greater than 100MB.',
+            'asset_archive.mimetypes' => 'The asset source file must be a valid encapsulated archive (.zip).',
+            'asset_archive.max' => 'The asset archive may not be greater than 100MB.',
         ]);
 
         // Cover Image
@@ -64,7 +89,6 @@ class AssetController extends Controller
         }
 
         // Asset File
-        $assetFile = $request->file('asset_file');
         $extension = strtolower($assetFile->getClientOriginalExtension() ?: 'zip');
         $filename = time() . '_' . uniqid() . '.' . $extension;
         $filePath = $assetFile->storeAs('templates/packages', $filename, 'public');

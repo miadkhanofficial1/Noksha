@@ -8,17 +8,17 @@
         <!-- Cover Image Dropzone -->
         <div class="lg:col-span-5">
             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
-                Cover Preview Image
+                Cover Preview Image <span class="text-rose-500">*</span>
             </label>
 
             <div class="p-6 border-2 border-dashed border-slate-300 hover:border-[#20165c] rounded-2xl text-center bg-slate-50 cursor-pointer min-h-[260px] flex flex-col items-center justify-center transition-colors" id="dashImageDropZone" onclick="document.getElementById('cover_image_input').click();">
                 <svg class="w-10 h-10 text-[#20165c] mb-2 shrink-0" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <div class="font-semibold text-slate-900 text-sm mb-1">Click to upload cover image</div>
-                <div class="text-xs text-slate-500 mb-3">PNG, JPG, or WEBP (Max 15MB)</div>
+                <div class="text-xs text-slate-500 mb-3">PNG, JPG, or WEBP (Max 5MB)</div>
                 <span class="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#20165c] bg-[#20165c]/10 border border-[#20165c]/20">
                     Select Image
                 </span>
-                <input type="file" name="cover_image" id="cover_image_input" accept="image/*" class="hidden" onchange="handleCoverImageSelect(this)">
+                <input type="file" name="cover_image" id="cover_image_input" accept="image/jpeg,image/png,image/webp,image/jpg" required class="hidden" onchange="handleCoverImageSelect(this)">
             </div>
 
             <div id="dashImagePreviewBox" class="hidden mt-3">
@@ -77,10 +77,10 @@
             <!-- Source Digital Asset File Upload -->
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Source Digital Asset File (.PSD, .AI, .FIG, .PDF, .EPS, .ZIP) <span class="text-rose-500">*</span>
+                    Encapsulated Asset Archive (.ZIP) <span class="text-rose-500">*</span>
                 </label>
 
-                <input type="file" name="asset_file" id="asset_file_input" accept=".psd,.ai,.fig,.pdf,.eps,.zip,.rar,.png,.jpg" required class="hidden" onchange="handleAssetFileSelect(this)">
+                <input type="file" name="asset_file" id="asset_file_input" accept=".zip,application/zip,application/x-zip-compressed,multipart/x-zip" required class="hidden" onchange="handleAssetFileSelect(this)">
 
                 <div class="p-4 border-2 border-dashed border-slate-300 hover:border-[#20165c] rounded-xl bg-slate-50 transition-colors flex items-center justify-between gap-4 cursor-pointer" onclick="document.getElementById('asset_file_input').click();">
                     <div class="flex items-center gap-3 min-w-0">
@@ -88,15 +88,15 @@
                             <svg class="w-5 h-5 shrink-0" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                         </div>
                         <div class="min-w-0">
-                            <div id="assetFileNameDisplay" class="text-sm font-semibold text-slate-900 truncate">Click to select digital asset file</div>
-                            <div id="assetFileSizeDisplay" class="text-xs text-slate-500">Supports .PSD, .AI, .FIG, .PDF, .EPS, .ZIP, .RAR (Max 100MB)</div>
+                            <div id="assetFileNameDisplay" class="text-sm font-semibold text-slate-900 truncate">Click to select encapsulated .ZIP archive</div>
+                            <div id="assetFileSizeDisplay" class="text-xs text-slate-500">Supports Encapsulated Asset Archive (.ZIP) (Max 100MB)</div>
                         </div>
                     </div>
                     <button type="button" class="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer" onclick="event.stopPropagation(); document.getElementById('asset_file_input').click();">
                         Choose File
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-1">Upload your raw creative project file (Photoshop .PSD, Illustrator .AI, Figma, PDF or Archive).</p>
+                <p class="text-[11px] text-slate-500 mt-1">Package your raw creative project files (.PSD, .AI, .FIG, fonts, documentation) inside an encapsulated .ZIP archive.</p>
             </div>
 
             <div class="pt-2">
