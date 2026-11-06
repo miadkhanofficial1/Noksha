@@ -127,7 +127,7 @@
                                             </td>
                                             <td class="py-3.5 px-4 text-right whitespace-nowrap">
                                                 <div class="flex justify-end">
-                                                    <a href="{{ route('resource.download', $res->id) }}" class="bg-[#20165c] hover:bg-[#181045] text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-xs inline-flex items-center gap-2 transition text-decoration-none">
+                                                    <a href="{{ route('orders.download.resource', ['order' => $order->id, 'asset' => $item->id ?? $order->template_id ?? $res->id]) }}" class="bg-[#20165c] hover:bg-[#181045] text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-xs inline-flex items-center gap-2 transition text-decoration-none">
                                                         <i class="bi bi-download"></i>
                                                         <span>Download Asset</span>
                                                     </a>

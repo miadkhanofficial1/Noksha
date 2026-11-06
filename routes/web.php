@@ -359,6 +359,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
+    Route::get('/orders/{order}/download/{asset}', [OrderController::class, 'downloadResource'])->name('orders.download.resource')->middleware('auth');
     Route::get('/download/{resource}', [OrderController::class, 'download'])->name('resource.download');
 
     // Reviews & Ratings Routes
