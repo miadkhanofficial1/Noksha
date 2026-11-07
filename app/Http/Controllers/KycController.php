@@ -68,3 +68,4 @@ class KycController extends Controller
         return app(SellerVerificationController::class)->store($request);
     }
 }
+

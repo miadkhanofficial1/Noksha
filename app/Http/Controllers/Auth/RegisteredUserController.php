@@ -9,3 +9,4 @@ class RegisteredUserController extends RegisterController
 {
     // Inherits store and validation logic from RegisterController
 }
+

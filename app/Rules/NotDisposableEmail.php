@@ -36,3 +36,4 @@ class NotDisposableEmail implements ValidationRule
         }
     }
 }
+

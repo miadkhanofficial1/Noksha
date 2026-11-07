@@ -9,3 +9,4 @@ class AuthenticatedSessionController extends LoginController
 {
     // Inherits create, store, and destroy actions from LoginController
 }
+

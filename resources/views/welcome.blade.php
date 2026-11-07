@@ -839,8 +839,8 @@
             </p>
         </div>
 
-        <!-- FLOATING GLASSMORPHISM FILTER BAR -->
-        <div class="card p-3.5 p-md-4 border border-slate-200 shadow-sm mb-4 rounded-4 filter-bar-glass position-sticky top-20 z-10 bg-white/95 backdrop-blur-md">
+        <!-- FLOATING FILTER BAR (Standard Flow with Clear Separation) -->
+        <div class="card p-4 border border-slate-200 shadow-sm rounded-4 filter-bar-glass relative w-full mb-10 py-6 bg-white/95 backdrop-blur-md">
             <!-- Top Row: Search Input (Left) & Sort Dropdown (Right) -->
             <div class="row g-3 align-items-center mb-3">
                 <!-- Search Input (Left) -->
@@ -885,12 +885,12 @@
         </div>
 
         <!-- SKELETON LOADERS (Subtle In-App Content Transition Placeholders) -->
-        <div id="templateSkeletonGrid" class="d-none mb-4">
+        <div id="templateSkeletonGrid" class="d-none mb-4 mt-8">
             @include('partials.skeleton-cards', ['count' => 6])
         </div>
 
         <!-- DYNAMIC DATABASE APPROVED TEMPLATE CARDS GRID -->
-        <div class="row g-4" id="templateCardsContainer">
+        <div class="row g-4 mt-8 relative z-0" id="templateCardsContainer">
             @if($resources->count() > 0)
                 @foreach($resources as $resource)
                     @php

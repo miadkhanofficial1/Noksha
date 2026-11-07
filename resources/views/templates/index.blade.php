@@ -6,8 +6,8 @@
 <div class="min-h-screen bg-[#ffffff] text-slate-800 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto space-y-8">
 
-        <!-- HEADER HERO -->
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+        <!-- HEADER HERO (Standard Flow with Clear Separation) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm relative w-full mb-10 py-6">
             <div class="max-w-4xl">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-[#20165c] border border-purple-200 mb-3">
                     <svg class="w-3.5 h-3.5 shrink-0 text-[#f47402]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -46,7 +46,7 @@
         </div>
 
         <!-- TEMPLATES GRID -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 relative z-0">
             @forelse($templates as $template)
                 <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-[#20165c]/30 transition duration-200 flex flex-col justify-between group">
                     <div>
