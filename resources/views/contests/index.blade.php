@@ -15,40 +15,40 @@
     }
 
     .contest-card-figma {
-        background: #0d1527;
+        background: #ffffff;
         border-radius: 1.5rem !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05) !important;
         transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
     }
 
     .contest-card-figma:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 45px -10px rgba(99, 102, 241, 0.25) !important;
-        border-color: rgba(99, 102, 241, 0.45) !important;
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px -8px rgba(32, 22, 92, 0.12) !important;
+        border-color: rgba(32, 22, 92, 0.35) !important;
     }
 
     .btn-purple-cta {
-        background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+        background: #20165c;
         color: #ffffff !important;
         border: none;
         font-weight: 600;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.35);
+        box-shadow: 0 4px 14px rgba(32, 22, 92, 0.25);
     }
 
     .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 12px 25px -4px rgba(99, 102, 241, 0.45);
+        background: #181045;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(32, 22, 92, 0.35);
         color: #ffffff !important;
     }
 
     .leaderboard-card-glass {
-        background: #0b1329;
+        background: #ffffff;
         border-radius: 1rem !important;
-        border: 1px solid rgba(31, 41, 55, 0.8) !important;
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7) !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
     }
 
     .filter-pill {
@@ -64,21 +64,21 @@
     }
 
     .filter-pill.active {
-        background: #6366F1;
+        background: #20165c;
         color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 4px 14px rgba(32, 22, 92, 0.3);
     }
 
     .filter-pill:not(.active) {
-        background: #0d1527;
-        color: #9CA3AF;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
     }
 
     .filter-pill:not(.active):hover {
-        background: #131d36;
-        color: #ffffff;
-        border-color: rgba(99, 102, 241, 0.3);
+        background: #f1f5f9;
+        color: #20165c;
+        border-color: #cbd5e1;
     }
 
     .cat-chip {
@@ -88,15 +88,15 @@
         font-weight: 600;
         text-decoration: none;
         transition: all 0.2s;
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        background: rgba(99, 102, 241, 0.08);
-        color: #A5B4FC;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #64748b;
     }
 
     .cat-chip.active, .cat-chip:hover {
-        background: #6366F1;
+        background: #20165c;
         color: #ffffff;
-        border-color: #6366F1;
+        border-color: #20165c;
     }
 
     .rank-badge-gold { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; }
@@ -121,7 +121,7 @@
         </div>
 
         <!-- HERO BANNER -->
-        <div class="contest-hero p-4 p-md-5 mb-5 text-[#121826] shadow-lg">
+        <div class="contest-hero p-4 p-md-5 mb-5 text-white shadow-lg">
             <div class="row align-items-center g-4">
                 <div class="col-lg-8">
                     <div class="d-flex align-items-center gap-2 mb-3">
@@ -132,8 +132,8 @@
                             <i class="bi bi-shield-fill-check me-1 text-warning"></i> 100% Guaranteed Escrow
                         </span>
                     </div>
-                    <h1 class="display-5 fw-extrabold text-[#121826] mb-3">Noksha Design Contests</h1>
-                    <p class="fs-5 text-slate-700 mb-4" style="max-width: 620px;">
+                    <h1 class="display-5 fw-extrabold text-white mb-3">Noksha Design Contests</h1>
+                    <p class="fs-5 text-purple-100 mb-4" style="max-width: 620px;">
                         Compete in real design challenges, submit original vectors, branding, & UI assets, win verified BDT prize pools, and rank on the national creator leaderboard.
                     </p>
                     <div class="d-flex flex-wrap gap-3">
@@ -146,11 +146,11 @@
                     </div>
                 </div>
                 <div class="col-lg-4 text-lg-end">
-                    <div class="p-4 bg-white/5 rounded-2xl border border-white/10 text-center backdrop-blur">
-                        <div class="extra-small text-uppercase fw-bold text-slate-500">Verified Prize Pool</div>
+                    <div class="p-4 bg-white/10 rounded-2xl border border-white/20 text-center backdrop-blur">
+                        <div class="extra-small text-uppercase fw-bold text-purple-200">Verified Prize Pool</div>
                         <div class="display-5 fw-extrabold text-[#f47402] my-1 font-monospace">৳{{ number_format($totalPrizePool, 0) }}</div>
-                        <div class="extra-small text-slate-700">
-                            <span class="fw-bold text-[#121826]">{{ $activeContestsCount }}</span> Active Challenges • <span class="fw-bold text-[#121826]">{{ $totalCompleted }}</span> Completed
+                        <div class="extra-small text-purple-200">
+                            <span class="fw-bold text-white">{{ $activeContestsCount }}</span> Active Challenges • <span class="fw-bold text-white">{{ $totalCompleted }}</span> Completed
                         </div>
                     </div>
                 </div>
@@ -246,31 +246,31 @@
                                 <div>
                                     <!-- Badges Row -->
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-                                        <span class="badge bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 rounded-pill px-3 py-1.5 fw-bold extra-small">
+                                        <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 rounded-pill px-3 py-1.5 fw-bold extra-small">
                                             {{ $contest->display_category }}
                                         </span>
 
                                         <div class="d-flex align-items-center gap-1.5">
                                             @if($contest->is_guaranteed)
-                                                <span class="badge bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold" title="Prize pool verified & locked in Noksha Escrow">
-                                                    <i class="bi bi-shield-fill-check text-emerald-400 me-0.5"></i> Guaranteed
+                                                <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 extra-small fw-bold" title="Prize pool verified & locked in Noksha Escrow">
+                                                    <i class="bi bi-shield-fill-check text-emerald-600 me-0.5"></i> Guaranteed
                                                 </span>
                                             @endif
 
                                             @if($contest->status === 'active')
-                                                <span class="badge bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                                <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-record-fill me-1"></i> Active
                                                 </span>
                                             @elseif($contest->status === 'handover')
-                                                <span class="badge bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                                <span class="badge bg-orange-50 text-[#f47402] border border-orange-200 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-shield-lock-fill text-[#f47402] me-1"></i> Handover
                                                 </span>
                                             @elseif($contest->status === 'judging')
-                                                <span class="badge bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                                <span class="badge bg-amber-50 text-amber-700 border border-amber-200 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-hourglass-split me-1"></i> Judging
                                                 </span>
                                             @elseif($contest->status === 'completed')
-                                                <span class="badge bg-gray-700/50 text-slate-700 border border-gray-600/50 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                                <span class="badge bg-slate-100 text-slate-700 border border-slate-200 rounded-pill px-2.5 py-1 extra-small fw-bold">
                                                     <i class="bi bi-check-circle-fill me-1"></i> Completed
                                                 </span>
                                             @endif
@@ -291,11 +291,11 @@
 
                                     <!-- Live Remaining Countdown Pill -->
                                     <div class="d-flex align-items-center gap-2 mb-3">
-                                        <span class="badge bg-[#111c35] text-gray-200 border border-slate-300/60 rounded-pill px-2.5 py-1 extra-small fw-bold font-monospace">
+                                        <span class="badge bg-slate-100 text-slate-700 border border-slate-200 rounded-pill px-2.5 py-1 extra-small fw-bold font-monospace">
                                             <i class="bi bi-clock me-1 text-[#20165c]"></i> {{ $contest->remaining_time }}
                                         </span>
                                         @if($contest->required_dimensions)
-                                            <span class="badge bg-[#111c35] text-slate-500 border border-slate-300/60 rounded-pill px-2 py-1 extra-small font-monospace" title="Format / Dimensions">
+                                            <span class="badge bg-slate-100 text-slate-600 border border-slate-200 rounded-pill px-2 py-1 extra-small font-monospace" title="Format / Dimensions">
                                                 <i class="bi bi-aspect-ratio me-1"></i>{{ Str::limit($contest->required_dimensions, 16) }}
                                             </span>
                                         @endif
@@ -304,14 +304,14 @@
 
                                 <!-- Bottom Card Meta & CTA -->
                                 <div>
-                                    <div class="p-3 bg-[#080d1a] border border-slate-200 rounded-xl mb-3 d-flex align-items-center justify-content-between">
+                                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl mb-3 d-flex align-items-center justify-content-between">
                                         <div>
                                             <div class="extra-small text-slate-500 text-uppercase fw-bold">Prize Bounty</div>
-                                            <div class="fw-extrabold text-emerald-400 fs-5 font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</div>
+                                            <div class="fw-extrabold text-[#20165c] fs-5 font-monospace">৳{{ number_format($contest->prize_amount, 0) }}</div>
                                         </div>
                                         <div class="text-end">
                                             <div class="extra-small text-slate-500 text-uppercase fw-bold">Entries</div>
-                                            <div class="fw-bold text-gray-200 font-monospace">
+                                            <div class="fw-bold text-slate-700 font-monospace">
                                                 <i class="bi bi-file-earmark-image me-1 text-[#20165c]"></i>
                                                 {{ $contest->entries->count() ?: $contest->submissions->count() }} designs
                                             </div>
@@ -333,19 +333,15 @@
                     {{ $contests->links() }}
                 </div>
             @else
-                <div class="bg-[#0d1527] border border-slate-200 shadow-2xl rounded-2xl p-5 text-center my-4 text-[#121826]">
-                    <div class="p-4 bg-indigo-500/10 text-[#20165c] rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <i class="bi bi-trophy fs-1"></i>
+                <div class="w-full bg-[#f8fafc] border border-dashed border-slate-300 rounded-3xl p-12 text-center my-8 shadow-sm">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-50 text-[#20165c] flex items-center justify-center text-2xl">
+                        <i class="bi bi-trophy"></i>
                     </div>
-                    <h4 class="fw-bold text-[#121826] mb-2">No Contests Match Your Filter</h4>
-                    <p class="text-slate-500 small mb-4" style="max-width: 440px; margin: 0 auto;">
-                        There are currently no contests matching your search or category filter. Check back soon or launch your own contest!
-                    </p>
-                    <div>
-                        <a href="{{ route('contests.create') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                            <i class="bi bi-plus-circle me-1"></i> Launch a Design Contest
-                        </a>
-                    </div>
+                    <h3 class="text-xl font-bold text-[#121826] mb-2">No Contests Match Your Filter</h3>
+                    <p class="text-sm text-slate-500 max-w-md mx-auto mb-6">There are currently no contests matching your search or category filter. Check back soon or launch your own contest!</p>
+                    <a href="{{ route('contests.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#20165c] hover:bg-[#181045] text-white font-semibold rounded-xl shadow-md transition">
+                        <span>Launch a Design Contest</span>
+                    </a>
                 </div>
             @endif
         </div>
@@ -379,9 +375,9 @@
                                 <th class="py-3.5 px-4 text-end">Dynamic Tier</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-800/60 text-sm">
+                        <tbody class="divide-y divide-slate-100 text-sm">
                             @foreach($topCreators as $creator)
-                                <tr class="border-b border-slate-200/60 hover:bg-[#111c38]/50 transition duration-150">
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 transition duration-150">
                                     <td class="py-4 px-4 text-center">
                                         @if($creator->rank === 1)
                                             <span class="badge rank-badge-gold rounded-circle p-2 fw-extrabold d-inline-flex align-items-center justify-content-center shadow-lg" style="width:34px; height:34px;">#1</span>
@@ -409,33 +405,33 @@
                                         </a>
                                     </td>
                                     <td class="py-4 px-4 text-center">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/20">
                                             <i class="bi bi-trophy-fill text-[#f47402]"></i> {{ $creator->contest_wins ?? 0 }} {{ Str::plural('Win', $creator->contest_wins ?? 0) }}
                                         </span>
                                     </td>
                                     <td class="py-4 px-4 text-center">
-                                        <span class="font-semibold text-gray-200 text-sm font-mono">
+                                        <span class="font-semibold text-slate-700 text-sm font-mono">
                                             <i class="bi bi-layers text-[#20165c] me-1"></i>{{ $creator->published_assets ?? 0 }} Assets
                                         </span>
                                     </td>
                                     <td class="py-4 px-4 text-end">
                                         <div>
-                                            <span class="font-extrabold text-emerald-400 font-mono text-sm">৳{{ number_format($creator->total_withdrawn ?? 0, 2) }}</span>
+                                            <span class="font-extrabold text-emerald-600 font-mono text-sm">৳{{ number_format($creator->total_withdrawn ?? 0, 2) }}</span>
                                             <div class="text-[11px] text-slate-500 font-mono">Score: {{ number_format($creator->ranking_score ?? 0, 0) }}</div>
                                         </div>
                                     </td>
                                     <td class="py-4 px-4 text-end">
                                         @if($creator->rank === 1)
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-sm">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 border border-amber-500/30 shadow-sm">
                                                 <i class="bi bi-star-fill text-[#f47402]"></i> Elite Creator
                                             </span>
                                         @elseif($creator->rank <= 3)
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 shadow-sm">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-[#20165c] border border-purple-200 shadow-sm">
                                                 <i class="bi bi-patch-check-fill text-[#20165c]"></i> Pro Contributor
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm">
-                                                <i class="bi bi-shield-check text-emerald-400"></i> Verified Seller
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
+                                                <i class="bi bi-shield-check text-emerald-600"></i> Verified Seller
                                             </span>
                                         @endif
                                     </td>
@@ -458,7 +454,7 @@
                         <a href="{{ route('seller.verification.create') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2">
                             <i class="bi bi-patch-check-fill"></i> Become a Verified Contributor
                         </a>
-                        <a href="{{ route('contests.create') }}" class="btn btn-outline-light rounded-pill px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2">
+                        <a href="{{ route('contests.create') }}" class="border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-pill px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2 transition">
                             <i class="bi bi-plus-circle"></i> Launch a Contest
                         </a>
                     </div>
