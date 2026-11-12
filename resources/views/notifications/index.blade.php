@@ -28,7 +28,7 @@
     }
 </style>
 
-<div class="min-h-screen bg-[#ffffff] py-10 px-4 sm:px-6 lg:px-8 text-[#121826]">
+<div class="min-h-screen bg-[#f8fafc] py-10 px-4 sm:px-6 lg:px-8 text-[#121826]">
     <div class="max-w-4xl mx-auto">
         
         <!-- BREADCRUMB NAVIGATION -->
@@ -51,8 +51,8 @@
             @if(isset($unreadCount) && $unreadCount > 0)
                 <form action="{{ route('notifications.readAll') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn rounded-pill btn-sm px-3.5 py-2 fw-bold text-[#20165c] border border-purple-200 bg-purple-50 hover:bg-purple-100 transition-all shadow-sm">
-                        <i class="bi bi-check2-all me-1"></i> Mark All as Read
+                    <button type="submit" class="btn rounded-pill btn-sm px-4 py-2 fw-bold text-white bg-[#20165c] hover:bg-[#181045] transition-all shadow-sm">
+                        <i class="bi bi-check2-all me-1.5"></i> Mark All as Read
                     </button>
                 </form>
             @endif

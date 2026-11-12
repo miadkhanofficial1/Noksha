@@ -202,33 +202,75 @@
                             <div class="list-group list-group-flush" style="max-height: 340px; overflow-y: auto;">
                                 @forelse(($recentNotifs ?? collect()) as $rn)
                                     @php
-                                        $type = $rn->type ?? 'system';
-                                        $isBroadcast = in_array($type, ['broadcast', 'admin']) ||
-                                                       str_contains(strtolower($rn->title), 'broadcast') ||
-                                                       str_contains(strtolower($rn->title), 'announcement');
-                                        $isContest = in_array($type, ['contest', 'success']) ||
-                                                       str_contains(strtolower($rn->title), 'contest');
+                                        $rawType = strtolower($rn->type ?? 'system');
+                                        $rawTitle = strtolower($rn->title ?? '');
+
+                                        $isBroadcast = in_array($rawType, ['broadcast', 'admin', 'announcement']) ||
+                                                       str_contains($rawTitle, 'broadcast') ||
+                                                       str_contains($rawTitle, 'announcement');
+
+                                        $isSale = in_array($rawType, ['sale', 'template_sale', 'seller', 'order', 'buyer', 'purchase']) ||
+                                                  str_contains($rawTitle, 'sold') ||
+                                                  str_contains($rawTitle, 'sale') ||
+                                                  str_contains($rawTitle, 'order') ||
+                                                  str_contains($rawTitle, 'purchased');
+
+                                        $isUpload = in_array($rawType, ['upload', 'resource', 'asset']) ||
+                                                    str_contains($rawTitle, 'asset') ||
+                                                    str_contains($rawTitle, 'submission') ||
+                                                    str_contains($rawTitle, 'approved') ||
+                                                    str_contains($rawTitle, 'declined') ||
+                                                    str_contains($rawTitle, 'template upload');
+
+                                        $isWallet = in_array($rawType, ['wallet', 'finance', 'payout', 'withdrawal']) ||
+                                                    str_contains($rawTitle, 'payout') ||
+                                                    str_contains($rawTitle, 'withdrawal') ||
+                                                    str_contains($rawTitle, 'balance') ||
+                                                    str_contains($rawTitle, 'earnings');
+
+                                        $isKyc = in_array($rawType, ['kyc', 'verification', 'contributor']) ||
+                                                 str_contains($rawTitle, 'verification') ||
+                                                 str_contains($rawTitle, 'identity') ||
+                                                 str_contains($rawTitle, 'contributor');
+
+                                        $isContest = in_array($rawType, ['contest', 'success']) ||
+                                                     str_contains($rawTitle, 'contest');
 
                                         if ($isBroadcast) {
                                             $itemClass = 'notif-item-broadcast';
-                                            $iconClass = 'bi-megaphone-fill text-indigo-500';
-                                            $iconBg = 'background: rgba(99, 102, 241, 0.12); color: #6366f1;';
-                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-size: 0.62rem;"><i class="bi bi-megaphone-fill me-1"></i>Broadcast</span>';
+                                            $iconContainerClass = 'bg-indigo-100 text-indigo-600';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200" style="font-size: 0.62rem;"><i class="bi bi-megaphone-fill me-1"></i>Broadcast</span>';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>';
+                                        } elseif ($isSale) {
+                                            $itemClass = 'notif-item-standard ' . (!$rn->is_read ? 'bg-light' : '');
+                                            $iconContainerClass = 'bg-emerald-100 text-emerald-600';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200" style="font-size: 0.62rem;"><i class="bi bi-bag-check-fill me-1"></i>Sale / Order</span>';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>';
+                                        } elseif ($isUpload) {
+                                            $itemClass = 'notif-item-standard ' . (!$rn->is_read ? 'bg-light' : '');
+                                            $iconContainerClass = 'bg-purple-100 text-[#20165c]';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5 bg-purple-50 text-[#20165c] border border-purple-200" style="font-size: 0.62rem;"><i class="bi bi-cloud-arrow-up-fill me-1"></i>Asset</span>';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>';
+                                        } elseif ($isWallet) {
+                                            $itemClass = 'notif-item-standard ' . (!$rn->is_read ? 'bg-light' : '');
+                                            $iconContainerClass = 'bg-orange-100 text-[#f47402]';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5 bg-orange-50 text-[#f47402] border border-orange-200" style="font-size: 0.62rem;"><i class="bi bi-wallet2 me-1"></i>Finance</span>';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>';
+                                        } elseif ($isKyc) {
+                                            $itemClass = 'notif-item-standard ' . (!$rn->is_read ? 'bg-light' : '');
+                                            $iconContainerClass = 'bg-sky-100 text-sky-600';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200" style="font-size: 0.62rem;"><i class="bi bi-shield-check me-1"></i>KYC</span>';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>';
                                         } elseif ($isContest) {
                                             $itemClass = 'notif-item-contest';
-                                            $iconClass = 'bi-trophy-fill text-amber-500';
-                                            $iconBg = 'background: rgba(245, 158, 11, 0.12); color: #f59e0b;';
-                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5" style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: #fff; font-size: 0.62rem;"><i class="bi bi-trophy-fill me-1"></i>Contest Alert</span>';
+                                            $iconContainerClass = 'bg-amber-100 text-amber-600';
+                                            $typeBadge = '<span class="badge rounded-pill px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200" style="font-size: 0.62rem;"><i class="bi bi-trophy-fill me-1"></i>Contest</span>';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2 0h4m5-18v4m-2-2h4m3 6v1a6 6 0 01-6 6H9a6 6 0 01-6-6V7h14zm0 0a3 3 0 003-3V3.5a.5.5 0 00-.5-.5h-2.5M7 7H4.5a.5.5 0 00-.5.5V5a3 3 0 003 3z"/></svg>';
                                         } else {
                                             $itemClass = 'notif-item-standard ' . (!$rn->is_read ? 'bg-light' : '');
-                                            $iconClass = match($type) {
-                                                'seller' => 'bi-shop-fill text-primary',
-                                                'buyer'  => 'bi-bag-check-fill text-success',
-                                                'warning'=> 'bi-exclamation-triangle-fill text-warning',
-                                                default  => 'bi-bell-fill text-info',
-                                            };
-                                            $iconBg = 'background: rgba(108, 76, 241, 0.08);';
+                                            $iconContainerClass = 'bg-slate-100 text-slate-600';
                                             $typeBadge = '';
+                                            $iconSvg = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>';
                                         }
                                     @endphp
 
@@ -244,16 +286,16 @@
                                          data-redirect-url="{{ $rn->action_url ? url(parse_url($rn->action_url, PHP_URL_PATH) ?: '/') : '' }}"
                                          style="cursor: pointer; transition: all 0.2s ease;">
                                         <div class="d-flex align-items-start gap-2.5">
-                                            {{-- Type Icon --}}
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                                 style="width: 36px; height: 36px; {{ $iconBg }}">
-                                                <i class="bi {{ $iconClass }} fs-6"></i>
+                                            {{-- Type Icon (SVG guaranteed to render) --}}
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 {{ $iconContainerClass }}"
+                                                 style="width: 36px; height: 36px;">
+                                                {!! $iconSvg !!}
                                             </div>
 
                                             <div class="flex-grow-1 min-w-0">
                                                 <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
                                                     <span class="fw-bold extra-small text-dark text-truncate">{{ $rn->title }}</span>
-                                                    {{-- Glowing green dot for unread --}}
+                                                    {{-- Glowing dot for unread --}}
                                                     @if(!$rn->is_read)
                                                         <span class="notif-unread-dot flex-shrink-0" title="Unread"></span>
                                                     @endif

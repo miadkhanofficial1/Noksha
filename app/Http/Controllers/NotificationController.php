@@ -15,6 +15,17 @@ class NotificationController extends Controller
      */
     public function index(Request $request): View
     {
+        // Automatically mark all notifications as read if mark_read query is passed
+        if ($request->query('mark_read')) {
+            Notification::where('user_id', auth()->id())
+                ->where('is_read', false)
+                ->update([
+                    'is_read' => true,
+                    'is_seen' => true,
+                    'read_at' => now(),
+                ]);
+        }
+
         $notifications = Notification::where('user_id', auth()->id())
             ->latest()
             ->get();
@@ -57,6 +68,13 @@ class NotificationController extends Controller
                 $parsed = parse_url($notification->action_url);
                 $path   = $parsed['path'] ?? null;
 
+                if ($path && (str_contains($path, 'seller/dashboard') || str_contains($path, 'seller/payouts') || str_contains($path, 'creator/dashboard'))) {
+                    session(['dashboard_mode' => 'seller']);
+                    if (auth()->check() && auth()->user()->isApprovedContributor()) {
+                        auth()->user()->update(['active_mode' => 'seller']);
+                    }
+                }
+
                 if ($path && $path !== '/' && $path !== '') {
                     $queryString = isset($parsed['query'])    ? '?' . $parsed['query']    : '';
                     $fragment    = isset($parsed['fragment']) ? '#' . $parsed['fragment'] : '';
@@ -98,6 +116,14 @@ class NotificationController extends Controller
             try {
                 $parsed = parse_url($notification->action_url);
                 $path   = $parsed['path'] ?? null;
+
+                if ($path && (str_contains($path, 'seller/dashboard') || str_contains($path, 'seller/payouts') || str_contains($path, 'creator/dashboard'))) {
+                    session(['dashboard_mode' => 'seller']);
+                    if (auth()->check() && auth()->user()->isApprovedContributor()) {
+                        auth()->user()->update(['active_mode' => 'seller']);
+                    }
+                }
+
                 if ($path && $path !== '' && $path !== '/') {
                     $queryString    = isset($parsed['query'])    ? '?' . $parsed['query']    : '';
                     $fragment       = isset($parsed['fragment']) ? '#' . $parsed['fragment'] : '';

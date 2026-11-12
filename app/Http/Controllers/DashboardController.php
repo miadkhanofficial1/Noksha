@@ -138,11 +138,11 @@ class DashboardController extends Controller
         // Active mode (seller or buyer)
         $tabParam = $request->query('tab');
         $isApproved = ($isUserAdmin || $isUserContributor);
-        $defaultMode = $isApproved ? ($user->active_mode ?? 'seller') : 'buyer';
+        $defaultMode = $isApproved ? session('dashboard_mode', $user->active_mode ?? 'seller') : 'buyer';
         if (in_array($tabParam, ['upload', 'designs', 'wallet']) && $isApproved) {
             $initialMode = 'seller';
         } else {
-            $requestedMode = $request->query('mode', $defaultMode);
+            $requestedMode = $request->query('mode', session('dashboard_mode', $defaultMode));
             $initialMode = ($requestedMode === 'seller' && $isApproved) ? 'seller' : 'buyer';
         }
 

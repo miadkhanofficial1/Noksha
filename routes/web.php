@@ -281,12 +281,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/resource/upload', [ResourceController::class, 'store'])->name('resource.store');
         Route::post('/creator/assets', [AssetController::class, 'store'])->name('creator.assets.store');
         Route::post('/templates', [TemplateController::class, 'store'])->name('templates.store');
-        Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
         Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
         Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
         Route::post('/seller/payouts/withdraw', [PayoutController::class, 'requestWithdrawal'])->name('seller.payouts.withdraw');
         Route::get('/creator/guidelines/download', [ResourceController::class, 'downloadGuidelines'])->name('guidelines.download-pdf');
     });
+
+    // Dedicated Seller Dashboard Route: Switches session mode to 'seller' and cleanly resolves to /dashboard
+    Route::get('/seller/dashboard', function (\Illuminate\Http\Request $request) {
+        session(['dashboard_mode' => 'seller']);
+        if (auth()->check() && auth()->user()->isApprovedContributor()) {
+            auth()->user()->update(['active_mode' => 'seller']);
+        }
+        $query = $request->getQueryString();
+        return redirect()->to(route('dashboard') . ($query ? '?' . $query : ''));
+    })->name('seller.dashboard');
 
     // Seller Earnings & Payouts Interface (Accessible to Auth users; non-contributors redirect cleanly to wallet)
     Route::get('/seller/payouts', [PayoutController::class, 'index'])->name('seller.payouts');
