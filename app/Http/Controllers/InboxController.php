@@ -806,4 +806,12 @@ class InboxController extends Controller
 
         return $query->orderByDesc('last_message_at')->get();
     }
+
+    /**
+     * Delete a conversation thread (delegates to MessageController@destroy).
+     */
+    public function destroy(Request $request, Conversation|string|int $conversation): RedirectResponse|JsonResponse
+    {
+        return app(MessageController::class)->destroy($request, $conversation);
+    }
 }

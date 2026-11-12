@@ -323,6 +323,9 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
     Route::get('/inbox/{identifier}', [InboxController::class, 'show'])->name('inbox.show');
+    Route::delete('/inbox/{conversation}', [MessageController::class, 'destroy'])->name('inbox.destroy');
+    Route::delete('/chat/{conversation}', [MessageController::class, 'destroy'])->name('chat.destroy');
+    Route::delete('/conversations/{conversation}', [MessageController::class, 'destroy'])->name('conversations.destroy');
     Route::get('/inbox/{conversation}/poll', [InboxController::class, 'pollMessages'])->name('inbox.poll');
     Route::post('/inbox/{conversation}/messages', [MessageController::class, 'store'])->name('inbox.messages.store');
     Route::post('/inbox/{conversation}/send', [MessageController::class, 'store'])->name('chat.send');

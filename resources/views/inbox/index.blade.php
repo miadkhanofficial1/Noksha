@@ -88,11 +88,11 @@
                             $isSupport = $conv->conversation_type === 'system_support';
                             $unread = $conv->unread_count ?? 0;
                         @endphp
-                        <a href="{{ route('inbox.show', $conv->id) }}" class="conversation-thread-item block p-3.5 hover:bg-slate-100 transition-colors {{ $isActive ? 'bg-purple-50/80 border-l-4 border-[#20165c]' : '' }}" data-search-name="{{ strtolower($convOther->name ?? 'support') }}" data-search-text="{{ strtolower($latestMsg->body ?? '') }}">
+                        <div class="conversation-thread-item group relative p-3 hover:bg-slate-100 transition-colors {{ $isActive ? 'bg-purple-50/80 border-l-4 border-[#20165c]' : '' }}" data-search-name="{{ strtolower($convOther->name ?? 'support') }}" data-search-text="{{ strtolower($latestMsg->body ?? '') }}">
                             <div class="flex items-center gap-3">
                                 
                                 {{-- Avatar & Online dot --}}
-                                <div class="relative shrink-0">
+                                <a href="{{ route('inbox.show', $conv->id) }}" class="relative shrink-0 text-decoration-none">
                                     @if($isSupport)
                                         <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -108,17 +108,28 @@
                                     @if(!$isSupport)
                                         <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full {{ ($convOther->is_available ?? true) ? 'bg-emerald-500' : 'bg-slate-500' }} border-2 border-white" title="{{ ($convOther->is_available ?? true) ? 'Available' : 'Offline' }}"></span>
                                     @endif
-                                </div>
+                                </a>
 
                                 {{-- Details --}}
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between gap-1 mb-1">
-                                        <h4 class="text-xs font-bold text-[#121826] truncate mb-0">
+                                        <a href="{{ route('inbox.show', $conv->id) }}" class="text-xs font-bold text-[#121826] hover:text-[#20165c] truncate mb-0 text-decoration-none">
                                             {{ $isSupport ? 'Official System Notice' : ($convOther->name ?? 'User') }}
-                                        </h4>
-                                        <span class="text-[10px] text-slate-500 shrink-0">
-                                            {{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}
-                                        </span>
+                                        </a>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            <span class="text-[10px] text-slate-500">
+                                                {{ $conv->last_message_at ? $conv->last_message_at->diffForHumans(null, true) : '' }}
+                                            </span>
+
+                                            {{-- Delete Chat Option Button --}}
+                                            <form action="{{ route('inbox.destroy', $conv->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this chat?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-slate-400 hover:text-red-500 p-0.5 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-red-50 cursor-pointer" title="Delete this chat">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
 
                                     <div class="flex items-center gap-1.5 mb-1">
@@ -130,14 +141,12 @@
                                             <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">Buyer</span>
                                         @endif
 
-                                        @if($conv->is_frozen)
-                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Frozen</span>
-                                        @elseif($conv->activeOrder && $conv->activeOrder->isFunded())
+                                        @if($conv->activeOrder && $conv->activeOrder->isFunded())
                                             <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Escrow Funded</span>
                                         @endif
                                     </div>
 
-                                    <div class="flex items-center justify-between gap-2">
+                                    <a href="{{ route('inbox.show', $conv->id) }}" class="flex items-center justify-between gap-2 text-decoration-none">
                                         <p class="text-[11px] text-slate-500 truncate mb-0 max-w-[190px]">
                                             @if($latestMsg)
                                                 {{ $latestMsg->sender_id === auth()->id() ? 'You: ' : '' }}{{ $latestMsg->body }}
@@ -150,11 +159,11 @@
                                                 {{ $unread }}
                                             </span>
                                         @endif
-                                    </div>
+                                    </a>
                                 </div>
 
                             </div>
-                        </a>
+                        </div>
                     @empty
                         <div class="p-8 text-center text-slate-500">
                             <svg class="w-10 h-10 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
@@ -172,7 +181,6 @@
                 @if($activeConversation)
                     @php
                         $isSupportThread = $activeConversation->conversation_type === 'system_support';
-                        $isFrozen = (bool) $activeConversation->is_frozen;
                         $activeOrder = $activeConversation->activeOrder;
                         $isFunded = $activeOrder && $activeOrder->isFunded();
                         $isFundedInProgress = $activeOrder && $activeOrder->status === 'funded_in_progress';
@@ -229,57 +237,24 @@
                             </div>
                         </div>
 
-                        {{-- Header Actions: Proposal Trigger & Freeze / Leave Chat --}}
+                        {{-- Header Actions: Proposal Trigger & Delete Chat --}}
                         <div class="flex items-center gap-2">
                             {{-- Service Proposal Button --}}
-                            @if(!$isSupportThread && !$isFrozen)
+                            @if(!$isSupportThread)
                                 <button type="button" onclick="openProposalModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                     <span>{{ $isSeller ? 'Propose Custom Service' : 'Pick Seller Service' }}</span>
                                 </button>
                             @endif
 
-                            {{-- Leave Chat / Reopen Action --}}
-                            @if($isFrozen)
-                                @if($activeConversation->reopen_status === 'requested')
-                                    @if((int) $activeConversation->reopen_requested_by !== (int) auth()->id())
-                                        <form action="{{ route('inbox.reopen-respond', $activeConversation->id) }}" method="POST" class="inline flex items-center gap-1">
-                                            @csrf
-                                            <input type="hidden" name="action" value="approve">
-                                            <button type="submit" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all">
-                                                ✅ Approve Re-open
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('inbox.reopen-respond', $activeConversation->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <input type="hidden" name="action" value="decline">
-                                            <button type="submit" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:text-slate-900 transition-all">
-                                                Decline
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
-                                            ⏳ Re-open Requested
-                                        </span>
-                                    @endif
-                                @else
-                                    <form action="{{ route('inbox.reopen-request', $activeConversation->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#f47402]/10 text-[#f47402] border border-[#f47402]/30 hover:bg-indigo-500/20 transition-all cursor-pointer">
-                                            🔓 Request to Re-open
-                                        </button>
-                                    </form>
-                                @endif
-                            @else
-                                @if(!$isSupportThread)
-                                    <form action="{{ route('inbox.freeze', $activeConversation->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to leave and freeze this conversation?');">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-300 transition-all cursor-pointer" title="Leave Chat">
-                                            Leave Chat
-                                        </button>
-                                    </form>
-                                @endif
-                            @endif
+                            {{-- Delete Conversation Action in Header --}}
+                            <form action="{{ route('inbox.destroy', $activeConversation->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this chat?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 border border-slate-200 transition-all cursor-pointer" title="Delete conversation">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </form>
                         </div>
                     </header>
 
@@ -426,7 +401,16 @@
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
                                 $isSystem = in_array($msg->message_type, ['system_notice', 'order_status']);
                                 $isProposal = $msg->message_type === 'service_proposal';
+
+                                $bodyLower = strtolower($msg->body ?? '');
+                                $isFreezeNotice = str_contains($bodyLower, 'left the conversation') ||
+                                                  str_contains($bodyLower, 're-open') ||
+                                                  str_contains($bodyLower, 'frozen');
                             @endphp
+
+                            @if($isFreezeNotice)
+                                @continue
+                            @endif
 
                             @if($isSystem)
                                 {{-- Centered System / Order Status Notice --}}
@@ -631,25 +615,9 @@
                             🔒 This is an official system notice. Replies are disabled.
                         </div>
                     @else
-                        @if($isFrozen)
-                            <div class="px-4 py-2 bg-amber-500/10 border-t border-amber-500/20 text-center text-xs text-amber-300 font-medium flex items-center justify-center gap-3 shrink-0">
-                                <span>❄️ Conversation was frozen.</span>
-                                @if($activeConversation->reopen_status !== 'requested')
-                                    <form action="{{ route('inbox.reopen-request', $activeConversation->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="underline font-bold text-amber-400 hover:text-amber-200 cursor-pointer">
-                                            Request to Re-open
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="text-slate-400">(Re-open request pending approval)</span>
-                                @endif
-                            </div>
-                        @endif
-
-                        <!-- Chat Input Area -->
+                        <!-- Chat Input Area (Always Active & Frictionless) -->
                         <div class="p-4 bg-white border-t border-slate-200 sticky bottom-0 z-20 shrink-0">
-                            <form id="chatMessageForm" action="{{ route('chat.send', $conversation->id ?? 115542) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-3">
+                            <form id="chatMessageForm" action="{{ route('chat.send', $activeConversation->id) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-3">
                                 @csrf
                                 <input type="hidden" name="is_funded" id="isFundedFlag" value="{{ $isFunded ? '1' : '0' }}">
                                 <input type="hidden" name="is_funded_in_progress" id="isFundedInProgressFlag" value="{{ $isFundedInProgress ? '1' : '0' }}">
@@ -661,7 +629,7 @@
                                 </label>
 
                                 <!-- Text Input Field -->
-                                <input type="text" name="message" id="messageInput" placeholder="Type your message to {{ $counterpart->name ?? 'MD. MIAD IBNA NOOR' }}..." required
+                                <input type="text" name="message" id="messageInput" placeholder="Type your message to {{ $counterpart->name ?? 'recipient' }}..." required
                                        class="flex-1 bg-slate-50 border border-slate-300 focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition">
 
                                 <!-- Send Button -->
@@ -697,9 +665,9 @@
 </div>
 
 {{-- ======================================================== --}}
-{{-- 3. PROPOSE / PICK SERVICE MODAL (DARK THEME)             --}}
+{{-- 3. PROPOSE / PICK SERVICE MODAL                          --}}
 {{-- ======================================================== --}}
-@if($activeConversation && !$activeConversation->is_frozen)
+@if($activeConversation)
 <div id="serviceProposalModal" data-modal="service-proposal" data-service-modal style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
     <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
@@ -1044,6 +1012,10 @@ function appendPolledMessage(msg, container) {
     div.dataset.msgId = msg.id;
 
     if (msg.message_type === 'system_notice' || msg.message_type === 'order_status') {
+        const bodyLower = (msg.body || '').toLowerCase();
+        if (bodyLower.includes('left the conversation') || bodyLower.includes('re-open') || bodyLower.includes('frozen')) {
+            return;
+        }
         const isOrder = msg.message_type === 'order_status';
         div.className = 'flex justify-center my-3';
         div.innerHTML = `

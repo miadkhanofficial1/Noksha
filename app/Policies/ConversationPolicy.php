@@ -124,16 +124,7 @@ class ConversationPolicy
             return false;
         }
 
-        // If thread is frozen, messages cannot be posted until reopened
-        if ($conversation->isFrozen()) {
-            return false;
-        }
-
-        // Escrow chat locking policy: chat is locked if activeOrder is missing/not funded
-        if ($conversation->isChatLocked($user)) {
-            return false;
-        }
-
+        // Always allow messaging between participants
         return true;
     }
 

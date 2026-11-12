@@ -58,13 +58,14 @@ class MessageController extends Controller
             );
         }
 
-        // 3. Enforce frozen conversation policy
-        if ($conversation->isFrozen() && !$user->isAdmin()) {
-            return $this->respondError(
-                'Conversation is frozen. Please request to re-open to send messages.',
-                $request,
-                403
-            );
+        // 3. Auto-unfreeze conversation if previously flagged, ensuring frictionless messaging
+        if ($conversation->isFrozen()) {
+            $conversation->update([
+                'is_frozen' => false,
+                'left_by_user_id' => null,
+                'reopen_status' => 'approved',
+                'reopen_requested_by' => null,
+            ]);
         }
 
         // Validate payload
@@ -181,6 +182,59 @@ class MessageController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * Delete a conversation thread and its messages.
+     * Verifies the authenticated user is a participant.
+     */
+    public function destroy(Request $request, Conversation|string|int $conversation): RedirectResponse|JsonResponse
+    {
+        if (!$conversation instanceof Conversation) {
+            $conversation = Conversation::find($conversation);
+            if (!$conversation) {
+                return $this->respondError('Conversation not found.', $request, 404);
+            }
+        }
+
+        $user = Auth::user();
+
+        // 1. Authorize thread participant or administrator
+        if (!$conversation->isParticipant($user) && !$user->isAdmin()) {
+            abort(403, 'Unauthorized access to delete this conversation.');
+        }
+
+        // 2. Safely remove message attachment files from storage
+        try {
+            $conversation->load('messages.attachments');
+            $disk = config('filesystems.default', 's3');
+            foreach ($conversation->messages as $msg) {
+                foreach ($msg->attachments as $att) {
+                    if ($att->file_path && Storage::disk($disk)->exists($att->file_path)) {
+                        Storage::disk($disk)->delete($att->file_path);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Continue deletion even if storage driver fails
+        }
+
+        // 3. Clear active order foreign key reference to prevent circular FK constraint violation
+        $conversation->update(['active_order_id' => null]);
+
+        // 4. Delete messages and conversation
+        $conversation->messages()->delete();
+        $conversation->delete();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Conversation deleted successfully.',
+            ]);
+        }
+
+        return redirect()->route('inbox.index')
+            ->with('success', 'Conversation deleted successfully.');
     }
 
     /**

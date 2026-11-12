@@ -115,26 +115,10 @@ class Conversation extends Model
 
     /**
      * Determine if chat interaction is locked.
-     * Returns true if is_frozen is true OR activeOrder is missing/not funded.
+     * Always returns false to ensure frictionless chat between participants.
      */
     public function isChatLocked(?User $user = null): bool
     {
-        // Admin interacting in live_agent support mode bypasses lock
-        if ($user && $user->isAdmin() && $this->conversation_type === 'live_agent') {
-            return false;
-        }
-
-        // 1. Thread is explicitly frozen
-        if ($this->is_frozen) {
-            return true;
-        }
-
-        // 2. Active order is missing or not funded
-        $order = $this->activeOrder;
-        if (!$order || !$order->isFunded()) {
-            return true;
-        }
-
         return false;
     }
 
