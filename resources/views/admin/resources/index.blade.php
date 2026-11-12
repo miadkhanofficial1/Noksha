@@ -8,17 +8,17 @@
 <div class="space-y-6">
 
     <!-- TOP FILTER & TABS BAR -->
-    <div class="bg-white dark:bg-[#0F1623] rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-4">
         
         <!-- Status Tabs -->
-        <div class="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-gray-100 dark:border-gray-800">
+        <div class="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-100">
             <div class="flex items-center gap-2 overflow-x-auto">
                 <!-- All -->
                 <a href="{{ route('admin.resources.index', array_merge(request()->query(), ['status' => 'all'])) }}"
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2
-                   {{ $activeTab === 'all' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700' }}">
+                   {{ $activeTab === 'all' ? 'bg-[#20165c] text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                     <span>All Resources</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'all' ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
                         {{ $totalCount }}
                     </span>
                 </a>
@@ -26,9 +26,9 @@
                 <!-- Pending -->
                 <a href="{{ route('admin.resources.index', array_merge(request()->query(), ['status' => 'pending'])) }}"
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2
-                   {{ $activeTab === 'pending' ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700' }}">
+                   {{ $activeTab === 'pending' ? 'bg-[#f47402] text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                     <span>Pending Moderation</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold' }}">
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'pending' ? 'bg-white/20 text-white' : 'bg-orange-100 text-[#f47402] font-bold' }}">
                         {{ $pendingCount }}
                     </span>
                 </a>
@@ -36,9 +36,9 @@
                 <!-- Approved -->
                 <a href="{{ route('admin.resources.index', array_merge(request()->query(), ['status' => 'approved'])) }}"
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2
-                   {{ $activeTab === 'approved' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700' }}">
+                   {{ $activeTab === 'approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                     <span>Approved & Live</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'approved' ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'approved' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
                         {{ $approvedCount }}
                     </span>
                 </a>
@@ -46,17 +46,17 @@
                 <!-- Rejected -->
                 <a href="{{ route('admin.resources.index', array_merge(request()->query(), ['status' => 'rejected'])) }}"
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2
-                   {{ $activeTab === 'rejected' ? 'bg-rose-600 text-white shadow-md shadow-rose-500/20' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700' }}">
+                   {{ $activeTab === 'rejected' ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                     <span>Rejected</span>
-                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'rejected' ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }}">
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $activeTab === 'rejected' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
                         {{ $rejectedCount }}
                     </span>
                 </a>
             </div>
 
             <!-- Upload count stats -->
-            <div class="text-xs text-gray-500 dark:text-gray-400">
-                Displaying <span class="font-bold text-gray-900 dark:text-white">{{ $resources->total() }}</span> records
+            <div class="text-xs text-slate-500">
+                Displaying <span class="font-bold text-[#121826]">{{ $resources->total() }}</span> records
             </div>
         </div>
 
@@ -66,17 +66,17 @@
             
             <!-- Search Keyword -->
             <div class="sm:col-span-6 relative">
-                <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                 <input type="text"
                        name="search"
                        value="{{ request('search') }}"
                        placeholder="Search title, creator name, email, or category..."
-                       class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-brand-500">
+                       class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-[#121826] placeholder-slate-400 focus:bg-white focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c]">
             </div>
 
             <!-- Category Filter -->
             <div class="sm:col-span-4">
-                <select name="category_id" class="w-full px-3 py-2 text-xs rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-brand-500">
+                <select name="category_id" class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-[#121826] focus:bg-white focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c]">
                     <option value="">All Categories</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
@@ -88,11 +88,11 @@
 
             <!-- Buttons -->
             <div class="sm:col-span-2 flex items-center gap-2">
-                <button type="submit" class="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition-colors shadow-sm">
+                <button type="submit" class="w-full py-2 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-bold text-xs transition-colors shadow-sm">
                     Filter
                 </button>
                 @if(request()->has('search') || request()->has('category_id'))
-                    <a href="{{ route('admin.resources.index', ['status' => $activeTab]) }}" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-rose-500 text-xs" title="Reset Filters">
+                    <a href="{{ route('admin.resources.index', ['status' => $activeTab]) }}" class="p-2 rounded-xl bg-slate-100 text-slate-600 hover:text-rose-500 text-xs border border-slate-200" title="Reset Filters">
                         <i class="bi bi-x-circle"></i>
                     </a>
                 @endif
@@ -101,10 +101,10 @@
     </div>
 
     <!-- MAIN RESOURCES DATA TABLE -->
-    <div class="bg-white dark:bg-[#0F1623] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-                <thead class="bg-gray-50/80 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold border-b border-gray-100 dark:border-gray-800">
+                <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
                     <tr>
                         <th class="px-4 py-3.5">Thumbnail</th>
                         <th class="px-4 py-3.5">Resource Details</th>
@@ -116,17 +116,20 @@
                         <th class="px-4 py-3.5 text-right">Moderation Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                <tbody class="divide-y divide-slate-100">
                     @forelse($resources as $res)
-                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                        <tr class="hover:bg-slate-50/60 transition-colors">
                             
                             <!-- Thumbnail -->
                             <td class="px-4 py-3.5 w-16">
-                                <div class="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex-shrink-0 cursor-pointer" onclick="previewImageModal('{{ asset('storage/' . $res->preview_image) }}', '{{ addslashes($res->title) }}')">
+                                <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 cursor-pointer" onclick="previewImageModal('{{ asset('storage/' . $res->preview_image) }}', '{{ addslashes($res->title) }}')">
                                     @if($res->preview_image)
-                                        <img src="{{ asset('storage/' . $res->preview_image) }}" class="w-full h-full object-cover hover:scale-110 transition-transform" alt="{{ $res->title }}">
+                                        <img src="{{ asset('storage/' . $res->preview_image) }}"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/100x100/20165c/ffffff?text=PSD';"
+                                             class="w-full h-full object-cover hover:scale-110 transition-transform"
+                                             alt="{{ $res->title }}">
                                     @else
-                                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                        <div class="w-full h-full flex items-center justify-center text-slate-400">
                                             <i class="bi bi-file-earmark-image text-xl"></i>
                                         </div>
                                     @endif
@@ -135,18 +138,18 @@
 
                             <!-- Title & Slug -->
                             <td class="px-4 py-3.5 max-w-xs">
-                                <a href="{{ route('resource.show', $res->slug) }}" target="_blank" class="font-bold text-gray-900 dark:text-white hover:text-brand-500 transition-colors block truncate" title="{{ $res->title }}">
+                                <a href="{{ route('resource.show', $res->slug) }}" target="_blank" class="font-bold text-[#121826] hover:text-[#20165c] transition-colors block truncate" title="{{ $res->title }}">
                                     {{ $res->title }}
                                 </a>
-                                <div class="text-[11px] text-gray-400 font-mono flex items-center gap-1.5 mt-0.5">
-                                    <span class="uppercase font-semibold text-brand-500">{{ $res->file_type }}</span>
+                                <div class="text-[11px] text-slate-500 font-mono flex items-center gap-1.5 mt-0.5">
+                                    <span class="uppercase font-semibold text-[#20165c]">{{ $res->file_type }}</span>
                                     <span>•</span>
                                     <span>{{ number_format($res->downloads) }} downloads</span>
                                     <span>•</span>
                                     <span>{{ number_format($res->views) }} views</span>
                                 </div>
                                 @if($res->rejection_reason && $res->status === 'rejected')
-                                    <div class="mt-1 p-1.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px]">
+                                    <div class="mt-1 p-1.5 rounded bg-rose-50 text-rose-700 text-[10px] border border-rose-200">
                                         <strong>Reason:</strong> {{ $res->rejection_reason }}
                                     </div>
                                 @endif
@@ -154,13 +157,13 @@
 
                             <!-- Creator -->
                             <td class="px-4 py-3.5">
-                                <div class="font-semibold text-gray-900 dark:text-gray-200">{{ $res->owner->name ?? 'Unknown' }}</div>
-                                <div class="text-[11px] text-gray-400 font-mono">{{ $res->owner->email ?? 'No email' }}</div>
+                                <div class="font-semibold text-[#121826]">{{ $res->owner->name ?? 'Unknown' }}</div>
+                                <div class="text-[11px] text-slate-500 font-mono">{{ $res->owner->email ?? 'No email' }}</div>
                             </td>
 
                             <!-- Category -->
                             <td class="px-4 py-3.5">
-                                <span class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium border border-slate-200">
                                     {{ $res->category->name ?? 'Uncategorized' }}
                                 </span>
                             </td>
@@ -168,34 +171,34 @@
                             <!-- Price -->
                             <td class="px-4 py-3.5 font-semibold">
                                 @if($res->is_paid)
-                                    <span class="text-teal-600 dark:text-teal-400 font-mono font-bold">
+                                    <span class="text-[#20165c] font-mono font-bold">
                                         ৳{{ number_format($res->price, 2) }}
                                     </span>
                                 @else
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
                                         Free
                                     </span>
                                 @endif
                             </td>
 
                             <!-- Upload Date -->
-                            <td class="px-4 py-3.5 text-gray-500 dark:text-gray-400 text-[11px] whitespace-nowrap">
+                            <td class="px-4 py-3.5 text-slate-500 text-[11px] whitespace-nowrap">
                                 <div>{{ $res->created_at->format('M d, Y') }}</div>
-                                <div class="text-[10px] text-gray-400">{{ $res->created_at->diffForHumans() }}</div>
+                                <div class="text-[10px] text-slate-400">{{ $res->created_at->diffForHumans() }}</div>
                             </td>
 
                             <!-- Status Badge -->
                             <td class="px-4 py-3.5 whitespace-nowrap">
                                 @if($res->status === 'approved')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                         <i class="bi bi-check-circle-fill"></i> Approved
                                     </span>
                                 @elseif($res->status === 'rejected')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                         <i class="bi bi-x-circle-fill"></i> Rejected
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 animate-pulse">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 animate-pulse">
                                         <i class="bi bi-hourglass-split"></i> Pending
                                     </span>
                                 @endif
@@ -224,14 +227,14 @@
                                                 'status' => $res->status
                                             ]) }})"
                                             title="Inspect Asset Details"
-                                            class="p-1.5 rounded-lg text-gray-500 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-500/10 dark:text-gray-400 transition-colors">
+                                            class="p-1.5 rounded-lg text-slate-500 hover:text-[#20165c] hover:bg-purple-50 transition-colors">
                                         <i class="bi bi-eye-fill text-sm"></i>
                                     </button>
 
                                     <!-- Admin Free Download (Bypasses paywall) -->
                                     <a href="{{ route('admin.resources.download', $res->id) }}"
                                        title="Super Admin Free Download (Bypasses paywall)"
-                                       class="p-1.5 rounded-lg text-teal-600 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-500/10 transition-colors">
+                                       class="p-1.5 rounded-lg text-[#20165c] hover:bg-purple-50 transition-colors">
                                         <i class="bi bi-download text-sm"></i>
                                     </a>
 
@@ -254,9 +257,9 @@
                                         <button type="button"
                                                 onclick="openRejectModal('{{ $res->id }}', '{{ addslashes($res->title) }}')"
                                                 title="Reject Asset"
-                                                class="px-2.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white font-bold text-xs transition-colors border border-rose-500/30 flex items-center gap-1">
-                                            <i class="bi bi-x-lg"></i>
-                                            <span class="hidden sm:inline">Reject</span>
+                                                class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold text-xs transition-colors border border-rose-200 flex items-center gap-1">
+                                                <i class="bi bi-x-lg"></i>
+                                                <span class="hidden sm:inline">Reject</span>
                                         </button>
                                     @endif
 
@@ -267,7 +270,7 @@
                                         <button type="submit"
                                                 onclick="return confirm('⚠️ PERMANENT ACTION: Are you sure you want to permanently delete \"{{ addslashes($res->title) }}\" and wipe its files from storage?')"
                                                 title="Delete Permanently"
-                                                class="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors">
+                                                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors">
                                             <i class="bi bi-trash-fill text-sm"></i>
                                         </button>
                                     </form>
@@ -277,8 +280,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
-                                <i class="bi bi-folder-x text-4xl text-gray-400 block mb-2"></i>
+                            <td colspan="8" class="px-4 py-12 text-center text-slate-500">
+                                <i class="bi bi-folder-x text-4xl text-slate-400 block mb-2"></i>
                                 <span class="font-semibold text-sm">No resources match the selected criteria.</span>
                             </td>
                         </tr>
@@ -289,7 +292,7 @@
 
         <!-- Pagination -->
         @if($resources->hasPages())
-            <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+            <div class="p-4 border-t border-slate-100">
                 {{ $resources->links() }}
             </div>
         @endif
@@ -298,33 +301,33 @@
 </div>
 
 <!-- REJECTION MODAL -->
-<div id="rejectResourceModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-[#0F1623] rounded-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-800 shadow-2xl">
-        <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800 mb-4">
-            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+<div id="rejectResourceModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 border border-slate-200 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <h3 class="font-bold text-sm text-[#121826] flex items-center gap-2">
                 <i class="bi bi-exclamation-triangle-fill text-rose-500"></i> Reject Resource Asset
             </h3>
-            <button type="button" onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+            <button type="button" onclick="closeRejectModal()" class="text-slate-400 hover:text-slate-600">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
 
         <form id="rejectResourceForm" method="POST" action="">
             @csrf
-            <p class="text-xs text-gray-600 dark:text-gray-300 mb-3">
-                Specify the rationale for declining <strong id="rejectResourceTitle" class="text-gray-900 dark:text-white"></strong>:
+            <p class="text-xs text-slate-600 mb-3">
+                Specify the rationale for declining <strong id="rejectResourceTitle" class="text-[#121826]"></strong>:
             </p>
 
             <div class="mb-4">
-                <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Feedback for Creator</label>
-                <textarea name="rejection_reason" rows="3" required placeholder="e.g., Preview cover quality does not meet our minimum resolution guidelines, or missing design artboards." class="w-full px-3 py-2 rounded-xl text-xs bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:border-rose-500"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Feedback for Creator</label>
+                <textarea name="rejection_reason" rows="3" required placeholder="e.g., Preview cover quality does not meet our minimum resolution guidelines, or missing design artboards." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 text-[#121826] placeholder-slate-400 focus:bg-white focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"></textarea>
             </div>
 
             <div class="flex items-center justify-end gap-2">
-                <button type="button" onclick="closeRejectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <button type="button" onclick="closeRejectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
                     Cancel
                 </button>
-                <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors">
+                <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors shadow-sm">
                     Confirm Rejection
                 </button>
             </div>
@@ -333,38 +336,38 @@
 </div>
 
 <!-- QUICK ASSET INSPECTION MODAL -->
-<div id="quickPreviewModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-[#0F1623] rounded-2xl max-w-2xl w-full p-6 border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden">
-        <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800 mb-4">
-            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                <i class="bi bi-shield-check text-brand-500"></i> Asset Detailed Inspection
+<div id="quickPreviewModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 border border-slate-200 shadow-2xl overflow-hidden">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <h3 class="font-bold text-sm text-[#121826] flex items-center gap-2">
+                <i class="bi bi-shield-check text-[#20165c]"></i> Asset Detailed Inspection
             </h3>
-            <button type="button" onclick="closeQuickPreview()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+            <button type="button" onclick="closeQuickPreview()" class="text-slate-400 hover:text-slate-600">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
 
         <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
-            <div class="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 h-56 flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                <img id="modalPreviewImg" src="" class="w-full h-full object-contain" alt="">
+            <div class="rounded-xl overflow-hidden bg-slate-100 h-56 flex items-center justify-center border border-slate-200">
+                <img id="modalPreviewImg" src="" onerror="this.onerror=null; this.src='https://placehold.co/400x300/20165c/ffffff?text=No+Preview';" class="w-full h-full object-contain" alt="">
             </div>
 
             <div>
-                <h4 id="modalTitle" class="text-base font-extrabold text-gray-900 dark:text-white mb-1"></h4>
-                <div class="flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-400">
-                    <span>Creator: <strong id="modalCreator" class="text-gray-800 dark:text-gray-200"></strong></span>
+                <h4 id="modalTitle" class="text-base font-extrabold text-[#121826] mb-1"></h4>
+                <div class="flex flex-wrap gap-2 text-xs text-slate-500">
+                    <span>Creator: <strong id="modalCreator" class="text-slate-800"></strong></span>
                     <span>•</span>
-                    <span>Category: <strong id="modalCategory" class="text-gray-800 dark:text-gray-200"></strong></span>
+                    <span>Category: <strong id="modalCategory" class="text-slate-800"></strong></span>
                     <span>•</span>
-                    <span>Format: <strong id="modalFormat" class="text-brand-500 uppercase font-mono"></strong></span>
+                    <span>Format: <strong id="modalFormat" class="text-[#20165c] uppercase font-mono"></strong></span>
                     <span>•</span>
-                    <span>Pricing: <strong id="modalPrice" class="text-teal-500 font-mono"></strong></span>
+                    <span>Pricing: <strong id="modalPrice" class="text-[#20165c] font-mono"></strong></span>
                 </div>
             </div>
 
             <div>
-                <h5 class="text-xs font-bold uppercase text-gray-400 mb-1">Description</h5>
-                <p id="modalDesc" class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"></p>
+                <h5 class="text-xs font-bold uppercase text-slate-400 mb-1">Description</h5>
+                <p id="modalDesc" class="text-xs text-slate-600 leading-relaxed whitespace-pre-line"></p>
             </div>
 
             <div id="modalTagsContainer" class="flex flex-wrap gap-1.5 pt-2">
@@ -372,13 +375,13 @@
             </div>
         </div>
 
-        <div class="mt-5 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-            <a id="modalDownloadBtn" href="" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors">
+        <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <a id="modalDownloadBtn" href="" class="px-4 py-2 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm">
                 <i class="bi bi-download"></i> Admin Free Download
             </a>
 
             <div class="flex items-center gap-2">
-                <button type="button" onclick="closeQuickPreview()" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <button type="button" onclick="closeQuickPreview()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
                     Close
                 </button>
             </div>
@@ -412,7 +415,7 @@
         if (data.tags && Array.isArray(data.tags)) {
             data.tags.forEach(t => {
                 const badge = document.createElement('span');
-                badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 font-mono';
+                badge.className = 'px-2 py-0.5 rounded-full text-[10px] bg-purple-50 text-[#20165c] border border-purple-200 font-mono';
                 badge.textContent = '#' + t;
                 tagsContainer.appendChild(badge);
             });

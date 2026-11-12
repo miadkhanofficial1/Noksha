@@ -1,411 +1,348 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Admin Seller Verification Review Panel - Noksha')
+@section('title', 'Contributor Verification Hub - Noksha Admin HQ')
+@section('page_title', 'Seller Verifications')
+@section('page_heading', 'Contributor Verification Hub')
 
 @section('content')
+<div class="space-y-6">
 
-<!-- CUSTOM SUPER ADMIN VERIFICATION REVIEW STYLES -->
-<style>
-    .admin-verification-hero {
-        background: linear-gradient(135deg, #4C1D95 0%, #6C4CF1 50%, #8B5CF6 100%);
-        border-radius: 1.5rem !important;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 20px 45px -10px rgba(76, 29, 149, 0.3) !important;
-    }
-
-    .admin-verification-hero::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
-        background-size: 24px 24px;
-        opacity: 0.35;
-        pointer-events: none;
-    }
-
-    /* Stat Cards */
-    .admin-stat-card {
-        background: #ffffff;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        border-radius: 1.25rem !important;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.08) !important;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-    }
-
-    .admin-stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 18px 35px -8px rgba(108, 76, 241, 0.18) !important;
-        border-color: rgba(108, 76, 241, 0.3) !important;
-    }
-
-    .admin-stat-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-    }
-
-    /* Table Container */
-    .admin-table-card {
-        background: #ffffff;
-        border-radius: 1.5rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 15px 35px -10px rgba(108, 76, 241, 0.1) !important;
-        overflow: hidden;
-    }
-
-    /* Filter Pills */
-    .admin-filter-pill {
-        border-radius: 999px !important;
-        padding: 0.45rem 1.25rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        transition: all 0.25s ease;
-        text-decoration: none !important;
-    }
-
-    .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
-        color: #ffffff !important;
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.4);
-    }
-</style>
-
-<!-- ADMIN VERIFICATION HERO BANNER -->
-<section class="py-4 py-lg-5" style="background-color: #F8F7FF;">
-    <div class="container">
+    <!-- OVERVIEW STATS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
+        <!-- Pending -->
+        <a href="{{ route('admin.verifications.index', ['status' => 'pending']) }}" class="block group">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:border-[#f47402]/60 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Reviews</span>
+                    <div class="w-9 h-9 rounded-xl bg-orange-50 text-[#f47402] flex items-center justify-center">
+                        <i class="bi bi-clock-history text-lg"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="text-2xl font-black text-[#f47402]">{{ number_format($pendingCount) }}</div>
+                    <div class="text-[11px] text-slate-500 mt-1">Awaiting Super Admin inspection</div>
+                </div>
+            </div>
+        </a>
 
-        <!-- HERO BANNER -->
-        <div class="card admin-verification-hero p-4 p-md-5 text-white mb-4 position-relative">
-            <div class="row align-items-center g-4 position-relative" style="z-index: 1;">
-                <div class="col-lg-8">
-                    <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold mb-3 border border-white border-opacity-25">
-                        <i class="bi bi-shield-check-fill me-1 text-warning"></i> Super Admin Compliance Portal
-                    </span>
-                    <h2 class="display-6 fw-extrabold text-white mb-2">
-                        Contributor Identity Verification Panel
-                    </h2>
-                    <p class="text-white text-opacity-90 mb-0 small" style="max-width: 620px;">
-                        Inspect submitted government NIDs, passports, driving licenses, face selfies, and verification videos to approve contributor applications and unlock creator tools.
-                    </p>
+        <!-- Approved -->
+        <a href="{{ route('admin.verifications.index', ['status' => 'approved']) }}" class="block group">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:border-emerald-500/60 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Approved Sellers</span>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i class="bi bi-patch-check-fill text-lg"></i>
+                    </div>
                 </div>
-                <div class="col-lg-4 text-lg-end">
-                    <a href="{{ route('admin.resources.index') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
-                        <i class="bi bi-layers-fill me-1"></i> Asset Moderation Queue
-                    </a>
+                <div class="mt-3">
+                    <div class="text-2xl font-black text-emerald-600">{{ number_format($approvedCount) }}</div>
+                    <div class="text-[11px] text-slate-500 mt-1">Verified creator credentials</div>
                 </div>
+            </div>
+        </a>
+
+        <!-- Rejected -->
+        <a href="{{ route('admin.verifications.index', ['status' => 'rejected']) }}" class="block group">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:border-rose-500/60 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rejected Submissions</span>
+                    <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                        <i class="bi bi-x-circle-fill text-lg"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="text-2xl font-black text-rose-600">{{ number_format($rejectedCount) }}</div>
+                    <div class="text-[11px] text-slate-500 mt-1">Locked under 7-day cooldown</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Total -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Submissions</span>
+                <div class="w-9 h-9 rounded-xl bg-purple-50 text-[#20165c] flex items-center justify-center">
+                    <i class="bi bi-shield-person text-lg"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="text-2xl font-black text-[#121826]">{{ number_format($totalCount) }}</div>
+                <div class="text-[11px] text-slate-500 mt-1">All historical KYC applications</div>
             </div>
         </div>
 
-        <!-- TOP FOUR STATISTICS CARDS -->
-        <div class="row g-3 g-md-4 mb-5">
+    </div>
+
+    <!-- FILTER & SEARCH BAR -->
+    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+        <form action="{{ route('admin.verifications.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
             
-            <!-- Card 1: Pending Reviews -->
-            <div class="col-12 col-sm-6 col-lg-3">
-                <a href="{{ route('admin.verifications.index', ['status' => 'pending']) }}" class="text-decoration-none">
-                    <div class="card admin-stat-card p-3.5 border-start border-warning border-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted extra-small fw-bold text-uppercase tracking-wider mb-1">Pending Reviews</div>
-                                <div class="display-6 fw-extrabold text-warning mb-0">{{ $pendingCount }}</div>
-                            </div>
-                            <div class="admin-stat-icon bg-warning bg-opacity-10 text-warning">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Status Tabs / Filter Pills -->
+            <div class="md:col-span-7 flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold text-slate-500 me-1">Status:</span>
+                <a href="{{ route('admin.verifications.index') }}"
+                   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all
+                   {{ !request('status') ? 'bg-[#20165c] text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                    All ({{ $totalCount }})
+                </a>
+                <a href="{{ route('admin.verifications.index', ['status' => 'pending']) }}"
+                   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all
+                   {{ request('status') === 'pending' ? 'bg-[#f47402] text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                    Pending ({{ $pendingCount }})
+                </a>
+                <a href="{{ route('admin.verifications.index', ['status' => 'approved']) }}"
+                   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all
+                   {{ request('status') === 'approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                    Approved ({{ $approvedCount }})
+                </a>
+                <a href="{{ route('admin.verifications.index', ['status' => 'rejected']) }}"
+                   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all
+                   {{ request('status') === 'rejected' ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                    Rejected ({{ $rejectedCount }})
                 </a>
             </div>
 
-            <!-- Card 2: Approved Sellers -->
-            <div class="col-12 col-sm-6 col-lg-3">
-                <a href="{{ route('admin.verifications.index', ['status' => 'approved']) }}" class="text-decoration-none">
-                    <div class="card admin-stat-card p-3.5 border-start border-success border-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted extra-small fw-bold text-uppercase tracking-wider mb-1">Approved Sellers</div>
-                                <div class="display-6 fw-extrabold text-success mb-0">{{ $approvedCount }}</div>
-                            </div>
-                            <div class="admin-stat-icon bg-success bg-opacity-10 text-success">
-                                <i class="bi bi-patch-check-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Card 3: Rejected Sellers -->
-            <div class="col-12 col-sm-6 col-lg-3">
-                <a href="{{ route('admin.verifications.index', ['status' => 'rejected']) }}" class="text-decoration-none">
-                    <div class="card admin-stat-card p-3.5 border-start border-danger border-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="text-muted extra-small fw-bold text-uppercase tracking-wider mb-1">Rejected Sellers</div>
-                                <div class="display-6 fw-extrabold text-danger mb-0">{{ $rejectedCount }}</div>
-                            </div>
-                            <div class="admin-stat-icon bg-danger bg-opacity-10 text-danger">
-                                <i class="bi bi-x-circle-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Card 4: Total Verifications -->
-            <div class="col-12 col-sm-6 col-lg-3">
-                <div class="card admin-stat-card p-3.5 border-start border-primary border-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-muted extra-small fw-bold text-uppercase tracking-wider mb-1">Total Applications</div>
-                            <div class="display-6 fw-extrabold text-dark mb-0">{{ $totalCount }}</div>
-                        </div>
-                        <div class="admin-stat-icon bg-primary bg-opacity-10 text-primary">
-                            <i class="bi bi-shield-person"></i>
-                        </div>
-                    </div>
+            <!-- Search Field -->
+            <div class="md:col-span-5 flex items-center gap-2">
+                @if(request('status'))
+                    <input type="hidden" name="status" value="{{ request('status') }}">
+                @endif
+                <div class="relative flex-1">
+                    <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search name, country, or email..."
+                           class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-[#121826] placeholder-slate-400 focus:bg-white focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c]">
                 </div>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-bold text-xs transition-colors shadow-sm">
+                    Search
+                </button>
+                @if(request()->filled('search') || request()->filled('status'))
+                    <a href="{{ route('admin.verifications.index') }}" class="p-2 rounded-xl bg-slate-100 text-slate-600 hover:text-rose-600 text-xs border border-slate-200" title="Reset Filters">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                @endif
             </div>
 
+        </form>
+    </div>
+
+    <!-- VERIFICATIONS TABLE -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between flex-wrap gap-2">
+            <div>
+                <h3 class="font-bold text-sm text-[#121826]">Contributor Verification Applications</h3>
+                <p class="text-xs text-slate-500">Government identity documents & face selfie reviews</p>
+            </div>
+            <span class="text-xs text-slate-500">
+                Showing {{ $verifications->firstItem() ?? 0 }} - {{ $verifications->lastItem() ?? 0 }} of {{ $verifications->total() }} records
+            </span>
         </div>
 
-        <!-- SEARCH AND FILTER BAR SECTION -->
-        <div class="card p-3.5 border-0 shadow-sm rounded-4 bg-white mb-4">
-            <form action="{{ route('admin.verifications.index') }}" method="GET" class="row g-3 align-items-center">
-                <!-- Status Filter Pills -->
-                <div class="col-12 col-lg-7 d-flex flex-wrap align-items-center gap-2">
-                    <span class="small fw-bold text-muted me-2"><i class="bi bi-funnel-fill text-primary me-1"></i> Filter Status:</span>
-                    <a href="{{ route('admin.verifications.index') }}" class="btn admin-filter-pill {{ !request('status') ? 'btn-primary text-white' : 'btn-light border text-dark' }}">
-                        All ({{ $totalCount }})
-                    </a>
-                    <a href="{{ route('admin.verifications.index', ['status' => 'pending']) }}" class="btn admin-filter-pill {{ request('status') === 'pending' ? 'btn-warning text-dark' : 'btn-light border text-dark' }}">
-                        Pending ({{ $pendingCount }})
-                    </a>
-                    <a href="{{ route('admin.verifications.index', ['status' => 'approved']) }}" class="btn admin-filter-pill {{ request('status') === 'approved' ? 'btn-success text-white' : 'btn-light border text-dark' }}">
-                        Approved ({{ $approvedCount }})
-                    </a>
-                    <a href="{{ route('admin.verifications.index', ['status' => 'rejected']) }}" class="btn admin-filter-pill {{ request('status') === 'rejected' ? 'btn-danger text-white' : 'btn-light border text-dark' }}">
-                        Rejected ({{ $rejectedCount }})
-                    </a>
-                </div>
-
-                <!-- Search Input Field -->
-                <div class="col-12 col-lg-5">
-                    <div class="input-group">
-                        @if(request('status'))
-                            <input type="hidden" name="status" value="{{ request('status') }}">
-                        @endif
-                        <span class="input-group-text bg-light border-end-0 text-muted ps-3">
-                            <i class="bi bi-search text-primary"></i>
-                        </span>
-                        <input type="text" name="search" class="form-control bg-light border-start-0 ps-1 rounded-end fs-6" placeholder="Search by name, country, or email..." value="{{ request('search') }}">
-                        <button type="submit" class="btn btn-purple-cta rounded-end px-4 fw-bold">Search</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- VERIFICATION TABLE CONTAINER -->
-        <div class="admin-table-card mb-5">
-            <div class="p-4 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <h5 class="fw-extrabold text-dark mb-0">Seller Identity Verification Applications</h5>
-                <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill small fw-semibold">
-                    Showing {{ $verifications->firstItem() ?? 0 }} - {{ $verifications->lastItem() ?? 0 }} of {{ $verifications->total() }} Records
-                </span>
-            </div>
-
-            @if($verifications->count() > 0)
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light text-muted extra-small text-uppercase tracking-wider">
-                            <tr>
-                                <th class="ps-4">Applicant</th>
-                                <th>NID / Passport</th>
-                                <th>Portfolio Link</th>
-                                <th>KYC Document</th>
-                                <th>Submitted Date</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($verifications as $item)
-                                <tr>
-                                    <!-- Applicant -->
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; font-size: 1.1rem;">
-                                                {{ strtoupper(substr($item->full_name ?? ($item->user ? $item->user->name : 'C'), 0, 1)) }}
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold text-dark fs-6">{{ $item->full_name }}</div>
-                                                <div class="extra-small text-muted">{{ $item->user ? $item->user->email : 'N/A' }}</div>
-                                                @if($item->user && $item->user->phone)
-                                                    <div class="extra-small text-secondary font-monospace">{{ $item->user->phone }}</div>
-                                                @endif
-                                            </div>
+        @if($verifications->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+                        <tr>
+                            <th class="px-5 py-3.5">Applicant</th>
+                            <th class="px-4 py-3.5">NID / Document Number</th>
+                            <th class="px-4 py-3.5">Portfolio</th>
+                            <th class="px-4 py-3.5">KYC Document</th>
+                            <th class="px-4 py-3.5">Submitted</th>
+                            <th class="px-4 py-3.5">Status</th>
+                            <th class="px-5 py-3.5 text-right">Moderation Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach($verifications as $item)
+                            <tr class="hover:bg-slate-50/60 transition-colors">
+                                <!-- Applicant -->
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-full bg-purple-100 text-[#20165c] flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                            {{ strtoupper(substr($item->full_name ?? ($item->user ? $item->user->name : 'C'), 0, 1)) }}
                                         </div>
-                                    </td>
-
-                                    <!-- NID / Passport -->
-                                    <td>
-                                        <div class="font-monospace fw-bold small text-dark">
-                                            {{ $item->id_number ?? $item->user?->nid_or_passport_number ?? 'N/A' }}
+                                        <div>
+                                            <div class="font-bold text-[#121826]">{{ $item->full_name }}</div>
+                                            <div class="text-[11px] text-slate-500 font-mono">{{ $item->user ? $item->user->email : 'N/A' }}</div>
+                                            @if($item->user && $item->user->phone)
+                                                <div class="text-[10px] text-slate-400 font-mono">{{ $item->user->phone }}</div>
+                                            @endif
                                         </div>
-                                        <span class="badge bg-light text-primary border rounded-pill px-2 py-0.5 extra-small text-uppercase">
-                                            {{ $item->document_type ?? 'NID' }}
+                                    </div>
+                                </td>
+
+                                <!-- NID / Document -->
+                                <td class="px-4 py-3.5">
+                                    <div class="font-mono font-bold text-[#121826]">
+                                        {{ $item->id_number ?? $item->user?->nid_or_passport_number ?? 'N/A' }}
+                                    </div>
+                                    <span class="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                        {{ $item->document_type ?? 'NID' }}
+                                    </span>
+                                </td>
+
+                                <!-- Portfolio Link -->
+                                <td class="px-4 py-3.5">
+                                    @php
+                                        $portfolio = $item->portfolio_link ?? $item->user?->portfolio_link;
+                                    @endphp
+                                    @if($portfolio)
+                                        <a href="{{ $portfolio }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-[#20165c] font-semibold hover:underline">
+                                            <i class="bi bi-box-arrow-up-right"></i>
+                                            <span>{{ Str::limit(str_replace(['https://', 'http://', 'www.'], '', $portfolio), 20) }}</span>
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400 text-[11px]">—</span>
+                                    @endif
+                                </td>
+
+                                <!-- KYC Document -->
+                                <td class="px-4 py-3.5">
+                                    @php
+                                        $idPath = $item->id_file_path ?? $item->id_document_path ?? $item->document_file ?? $item->user?->kyc_document_path;
+                                    @endphp
+                                    @if($idPath)
+                                        <a href="{{ route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-50 text-[#20165c] hover:bg-purple-100 text-[11px] font-semibold border border-purple-200/50 transition">
+                                            <i class="bi bi-file-earmark-arrow-down-fill text-emerald-600"></i>
+                                            <span>Download ID</span>
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400 text-[11px]">No file</span>
+                                    @endif
+                                </td>
+
+                                <!-- Submitted Date -->
+                                <td class="px-4 py-3.5 text-slate-500 whitespace-nowrap text-[11px] font-mono">
+                                    {{ $item->submitted_at ? $item->submitted_at->format('M d, Y h:i A') : $item->created_at->format('M d, Y') }}
+                                </td>
+
+                                <!-- Status -->
+                                <td class="px-4 py-3.5 whitespace-nowrap">
+                                    @if($item->status === 'approved')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <i class="bi bi-check-circle-fill"></i> Approved
                                         </span>
-                                    </td>
+                                    @elseif($item->status === 'pending')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 animate-pulse">
+                                            <i class="bi bi-clock-history"></i> Pending
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                            <i class="bi bi-x-circle-fill"></i> Rejected
+                                        </span>
+                                    @endif
+                                </td>
 
-                                    <!-- Portfolio Link -->
-                                    <td>
-                                        @php
-                                            $portfolio = $item->portfolio_link ?? $item->user?->portfolio_link;
-                                        @endphp
-                                        @if($portfolio)
-                                            <a href="{{ $portfolio }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 extra-small fw-bold d-inline-flex align-items-center gap-1">
-                                                <i class="bi bi-box-arrow-up-right"></i>
-                                                <span>{{ Str::limit(str_replace(['https://', 'http://', 'www.'], '', $portfolio), 20) }}</span>
-                                            </a>
-                                        @else
-                                            <span class="text-muted extra-small">None provided</span>
-                                        @endif
-                                    </td>
+                                <!-- Actions -->
+                                <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <!-- Review Details Button -->
+                                        <a href="{{ route('admin.verifications.show', $item->id) }}" class="px-2.5 py-1.5 rounded-lg bg-slate-100 text-[#20165c] hover:bg-purple-50 text-xs font-semibold transition border border-slate-200 flex items-center gap-1">
+                                            <i class="bi bi-eye-fill"></i> Details
+                                        </a>
 
-                                    <!-- KYC Document -->
-                                    <td>
-                                        @php
-                                            $idPath = $item->id_file_path ?? $item->id_document_path ?? $item->document_file ?? $item->user?->kyc_document_path;
-                                        @endphp
-                                        @if($idPath)
-                                            <a href="{{ route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) }}" target="_blank" class="btn btn-sm btn-light border rounded-pill px-2.5 py-1 extra-small fw-bold text-dark d-inline-flex align-items-center gap-1">
-                                                <i class="bi bi-file-earmark-arrow-down-fill text-success"></i>
-                                                <span>Download ID</span>
-                                            </a>
-                                        @else
-                                            <span class="badge bg-light text-muted border rounded-pill px-2 py-1 extra-small">No file</span>
-                                        @endif
-                                    </td>
-
-                                    <!-- Submitted Date -->
-                                    <td class="small text-muted font-monospace">
-                                        {{ $item->submitted_at ? $item->submitted_at->format('M d, Y h:i A') : $item->created_at->format('M d, Y') }}
-                                    </td>
-
-                                    <!-- Status -->
-                                    <td>
-                                        @if($item->status === 'approved')
-                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold">
-                                                <i class="bi bi-check-circle-fill me-1"></i> Approved
-                                            </span>
-                                        @elseif($item->status === 'pending')
-                                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-pill px-3 py-1 fw-bold">
-                                                <i class="bi bi-clock-history me-1"></i> Pending
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1 fw-bold">
-                                                <i class="bi bi-x-circle-fill me-1"></i> Rejected
-                                            </span>
-                                        @endif
-                                    </td>
-
-                                    <!-- Actions -->
-                                    <td class="text-end pe-4">
-                                        <div class="d-inline-flex gap-1.5">
-                                            <!-- Review Details Trigger Button -->
-                                            <a href="{{ route('admin.verifications.show', $item->id) }}" class="btn btn-light border btn-sm rounded-pill px-3 fw-bold text-primary">
-                                                <i class="bi bi-eye-fill me-1"></i> Review Details
-                                            </a>
-
-                                            <!-- Direct Approve Button -->
-                                            @if($item->status !== 'approved')
-                                                <form action="{{ route('admin.verifications.approve', $item->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-success btn-sm rounded-pill px-2.5 fw-bold" title="Approve Verification">
-                                                        <i class="bi bi-check-lg"></i> Approve
-                                                    </button>
-                                                </form>
-                                            @endif
-
-                                            <!-- Direct Reject Trigger Modal -->
-                                            @if($item->status !== 'rejected')
-                                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 fw-bold" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $item->id }}" title="Reject Verification">
-                                                    <i class="bi bi-x-lg"></i> Reject
+                                        @if($item->status !== 'approved')
+                                            <!-- Approve -->
+                                            <form action="{{ route('admin.verifications.approve', $item->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" onclick="return confirm('Approve verification for {{ addslashes($item->full_name) }}?')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1 shadow-sm">
+                                                    <i class="bi bi-check-lg"></i> Approve
                                                 </button>
-                                            @endif
-                                        </div>
+                                            </form>
+                                        @endif
 
-                                        <!-- REJECT REASON MODAL -->
-                                        <div class="modal fade text-start" id="rejectModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content rounded-4 border-0 shadow-lg">
-                                                    <form action="{{ route('admin.verifications.reject', $item->id) }}" method="POST">
-                                                        @csrf
-                                                        <div class="modal-header border-0 pb-0">
-                                                            <h5 class="modal-title fw-bold text-dark"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Reject Seller Verification</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body py-3">
-                                                            <p class="text-secondary small mb-3">
-                                                                Provide a clear rejection reason for seller <strong>"{{ $item->full_name }}"</strong>:
-                                                            </p>
-                                                            <textarea name="admin_note" class="form-control rounded-3 border fs-6" rows="3" placeholder="e.g. Document image is blurry or NID numbers do not match legal full name." required>{{ $item->admin_note }}</textarea>
-                                                        </div>
-                                                        <div class="modal-footer border-0 pt-0">
-                                                            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">Reject Verification</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @if($item->status !== 'rejected')
+                                            <!-- Reject Trigger -->
+                                            <button type="button" onclick="openRejectVerificationModal('{{ $item->id }}', '{{ addslashes($item->full_name) }}', '{{ addslashes($item->admin_note ?? '') }}')" class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white text-xs font-bold transition border border-rose-200 flex items-center gap-1">
+                                                <i class="bi bi-x-lg"></i> Reject
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- PAGINATION CONTROLS -->
-                <div class="p-4 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <div class="small text-muted">
+            <!-- Pagination -->
+            @if($verifications->hasPages())
+                <div class="p-4 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                    <div class="text-xs text-slate-500">
                         Showing {{ $verifications->firstItem() ?? 0 }} to {{ $verifications->lastItem() ?? 0 }} of {{ $verifications->total() }} records
                     </div>
                     <div>
                         {{ $verifications->links() }}
                     </div>
                 </div>
-            @else
-                <!-- EMPTY STATE WHEN ZERO RECORDS MATCH -->
-                <div class="p-5 text-center">
-                    <div class="p-4 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                        <i class="bi bi-shield-slash fs-1"></i>
-                    </div>
-                    <h4 class="fw-bold text-dark mb-2">No Verification Applications Found</h4>
-                    <p class="text-secondary small mb-3" style="max-width: 450px; margin: 0 auto;">
-                        There are currently no seller verification submissions matching the selected status or search filter.
-                    </p>
-                    <a href="{{ route('admin.verifications.index') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold btn-sm">
-                        Reset Filters
-                    </a>
-                </div>
             @endif
+        @else
+            <!-- Empty State -->
+            <div class="p-12 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-50 text-[#20165c] flex items-center justify-center text-2xl">
+                    <i class="bi bi-shield-slash"></i>
+                </div>
+                <h4 class="font-bold text-[#121826] text-base mb-1">No Verification Applications Found</h4>
+                <p class="text-xs text-slate-500 max-w-md mx-auto mb-4">
+                    There are currently no contributor verification submissions matching the selected status or search filter.
+                </p>
+                <a href="{{ route('admin.verifications.index') }}" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200">
+                    Reset Filters
+                </a>
+            </div>
+        @endif
+    </div>
+
+</div>
+
+<!-- REJECT REASON MODAL -->
+<div id="rejectVerificationModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 border border-slate-200 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <h3 class="font-bold text-sm text-[#121826] flex items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill text-rose-500"></i> Reject Contributor Verification
+            </h3>
+            <button type="button" onclick="closeRejectVerificationModal()" class="text-slate-400 hover:text-slate-600">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
 
-    </div>
-</section>
+        <form id="rejectVerificationForm" method="POST" action="">
+            @csrf
+            <p class="text-xs text-slate-600 mb-3">
+                Provide a clear rejection feedback for applicant <strong id="rejectVerificationName" class="text-[#121826]"></strong> (User will be locked under 7-day cooldown):
+            </p>
 
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Compliance Feedback</label>
+                <textarea id="rejectVerificationNote" name="admin_note" rows="3" required placeholder="e.g., Document image is blurry, expired ID, or full name does not match government record." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 text-[#121826] placeholder-slate-400 focus:bg-white focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" onclick="closeRejectVerificationModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm">
+                    Reject Application & Lock
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openRejectVerificationModal(id, name, note) {
+        document.getElementById('rejectVerificationName').textContent = `"${name}"`;
+        document.getElementById('rejectVerificationNote').value = note || '';
+        document.getElementById('rejectVerificationForm').action = `/admin/verifications/${id}/reject`;
+        document.getElementById('rejectVerificationModal').classList.remove('hidden');
+    }
+
+    function closeRejectVerificationModal() {
+        document.getElementById('rejectVerificationModal').classList.add('hidden');
+    }
+</script>
 @endsection

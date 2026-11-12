@@ -1,292 +1,289 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Verification Details - ' . $verification->full_name . ' - Noksha')
+@section('title', 'Verification Review - ' . $verification->full_name . ' - Noksha Admin HQ')
+@section('page_title', 'KYC Review')
+@section('page_heading', 'Contributor Verification Details')
 
 @section('content')
+<div class="space-y-6">
 
-<!-- CUSTOM GLASSMORPHISM DETAILS STYLES -->
-<style>
-    .verification-details-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        border-radius: 1.5rem !important;
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.15) !important;
-    }
-
-    .preview-media-box {
-        background: #F8F5FF;
-        border: 1px solid rgba(108, 76, 241, 0.15);
-        border-radius: 1.25rem;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .preview-media-box img, .preview-media-box video {
-        width: 100%;
-        max-height: 380px;
-        object-fit: contain;
-        background: #000000;
-    }
-
-    .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
-        color: #ffffff !important;
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-2px);
-    }
-</style>
-
-<!-- VERIFICATION DETAILS HEADER -->
-<section class="py-4 py-lg-5 text-white" style="background: linear-gradient(135deg, #4C1D95 0%, #6C4CF1 50%, #8B5CF6 100%);">
-    <div class="container py-2">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1.5 small fw-bold border border-white border-opacity-25">
-                        <i class="bi bi-shield-check-fill me-1 text-warning"></i> KYC Compliance Details
+    <!-- TOP BAR -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-1.5">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-[#20165c] border border-purple-200">
+                    <i class="bi bi-shield-check me-1"></i> Contributor Application
+                </span>
+                @if($verification->status === 'approved')
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i class="bi bi-check-circle-fill me-1"></i> Approved
                     </span>
-                    @if($verification->status === 'approved')
-                        <span class="badge bg-success text-white rounded-pill px-3 py-1.5 small fw-bold">
-                            <i class="bi bi-check-circle-fill me-1"></i> Status: Approved
-                        </span>
-                    @elseif($verification->status === 'pending')
-                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 small fw-bold">
-                            <i class="bi bi-clock-history me-1"></i> Status: Pending Review
-                        </span>
-                    @else
-                        <span class="badge bg-danger text-white rounded-pill px-3 py-1.5 small fw-bold">
-                            <i class="bi bi-x-circle-fill me-1"></i> Status: Rejected
-                        </span>
-                    @endif
-                </div>
-
-                <h1 class="display-6 fw-extrabold text-white mb-2">
-                    {{ $verification->full_name }}
-                </h1>
-                <p class="text-white text-opacity-90 mb-0 small">
-                    <i class="bi bi-person-fill me-1"></i> Registered Account: {{ $verification->user ? $verification->user->email : 'N/A' }} | 
-                    <i class="bi bi-geo-alt-fill me-1 text-warning"></i> {{ $verification->country }}
-                </p>
+                @elseif($verification->status === 'pending')
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 animate-pulse">
+                        <i class="bi bi-clock-history me-1"></i> Pending Review
+                    </span>
+                @else
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        <i class="bi bi-x-circle-fill me-1"></i> Rejected
+                    </span>
+                @endif
             </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="{{ route('admin.verifications.index') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Back to Review Queue
-                </a>
+            <h2 class="text-xl font-black text-[#121826]">{{ $verification->full_name }}</h2>
+            <div class="text-xs text-slate-500 font-mono mt-0.5">
+                Account: <span class="text-[#20165c] font-semibold">{{ $verification->user ? $verification->user->email : 'N/A' }}</span> • Country: {{ $verification->country ?? 'Bangladesh' }}
             </div>
         </div>
+
+        <div>
+            <a href="{{ route('admin.verifications.index') }}" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition border border-slate-200 inline-flex items-center gap-1.5">
+                <i class="bi bi-arrow-left"></i> Back to Review Queue
+            </a>
+        </div>
     </div>
-</section>
 
-<!-- MAIN DETAILS CONTENT SECTION -->
-<section class="py-5" style="background-color: #F8F7FF;">
-    <div class="container py-2" style="max-width: 1100px;">
+    <!-- MAIN TWO COLUMN GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-
-        <div class="row g-4">
+        <!-- LEFT COLUMN: APPLICANT METADATA & ACTIONS (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
             
-            <!-- LEFT COLUMN: PERSONAL METADATA & ACTIONS -->
-            <div class="col-12 col-lg-5">
-                <div class="card verification-details-card p-4 mb-4">
-                    <h5 class="fw-extrabold text-dark mb-4 pb-2 border-bottom">
-                        <i class="bi bi-person-vcard-fill text-primary me-2"></i> Identity Details
-                    </h5>
+            <!-- Metadata Card -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+                <h4 class="font-bold text-sm text-[#121826] pb-3 border-b border-slate-100 flex items-center gap-2">
+                    <i class="bi bi-person-vcard text-[#20165c]"></i> Identity Details
+                </h4>
 
-                    <div class="mb-3">
-                        <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Full Legal Name</span>
-                        <div class="fw-bold text-dark fs-6">{{ $verification->full_name }}</div>
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Full Legal Name</span>
+                    <div class="text-sm font-bold text-[#121826]">{{ $verification->full_name }}</div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Government ID Number</span>
+                    <div class="text-sm font-mono font-bold text-[#20165c]">
+                        {{ $verification->id_number ?? $verification->user?->nid_or_passport_number ?? 'N/A' }}
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Date of Birth</span>
-                        <div class="fw-bold text-dark fs-6">
-                            {{ $verification->date_of_birth ? $verification->date_of_birth->format('F d, Y') : 'N/A' }}
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Country of Residence</span>
-                        <div class="fw-bold text-dark fs-6">{{ $verification->country }}</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Government ID Type</span>
-                        <span class="badge bg-light text-primary border rounded-pill px-3 py-1.5 fw-bold text-uppercase">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">ID Type</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 uppercase border border-slate-200">
                             {{ $verification->document_type ?? 'NID' }}
                         </span>
                     </div>
-
-                    <div class="mb-3">
-                        <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Submission Timestamp</span>
-                        <div class="small text-secondary font-monospace">
-                            {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y h:i A') }}
-                        </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Country</span>
+                        <div class="text-xs font-semibold text-slate-800">{{ $verification->country ?? 'Bangladesh' }}</div>
                     </div>
+                </div>
 
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Date of Birth</span>
+                    <div class="text-xs text-slate-700">
+                        {{ $verification->date_of_birth ? $verification->date_of_birth->format('F d, Y') : 'N/A' }}
+                    </div>
+                </div>
+
+                @if($verification->portfolio_link)
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Portfolio Link</span>
+                        <a href="{{ $verification->portfolio_link }}" target="_blank" class="text-xs font-semibold text-[#20165c] hover:underline flex items-center gap-1">
+                            <i class="bi bi-box-arrow-up-right"></i> {{ $verification->portfolio_link }}
+                        </a>
+                    </div>
+                @endif
+
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 text-[11px] text-slate-500 font-mono">
+                    <div>
+                        <span class="block text-[10px] text-slate-400 uppercase font-sans">Submitted</span>
+                        {{ $verification->submitted_at ? $verification->submitted_at->format('M d, Y h:i A') : $verification->created_at->format('M d, Y') }}
+                    </div>
                     @if($verification->reviewed_at)
-                        <div class="mb-3">
-                            <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Reviewed Timestamp</span>
-                            <div class="small text-secondary font-monospace">
-                                {{ $verification->reviewed_at->format('M d, Y h:i A') }}
-                            </div>
+                        <div>
+                            <span class="block text-[10px] text-slate-400 uppercase font-sans">Reviewed</span>
+                            {{ $verification->reviewed_at->format('M d, Y h:i A') }}
                         </div>
                     @endif
+                </div>
 
-                    @if($verification->admin_note)
-                        <div class="mb-3">
-                            <span class="text-muted extra-small fw-bold text-uppercase d-block mb-1">Admin Rejection Note</span>
-                            <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3 small">
-                                {{ $verification->admin_note }}
+                @if($verification->admin_note)
+                    <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
+                        <strong class="font-bold text-rose-900 block mb-1">Previous Rejection Note:</strong>
+                        {{ $verification->admin_note }}
+                    </div>
+                @endif
+            </div>
+
+            <!-- Decisions & Action Buttons -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+                <h4 class="font-bold text-sm text-[#121826] pb-3 border-b border-slate-100 flex items-center gap-2">
+                    <i class="bi bi-shield-lock text-[#20165c]"></i> Compliance Decisions
+                </h4>
+
+                @if($verification->status !== 'approved')
+                    <form action="{{ route('admin.verifications.approve', $verification->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" onclick="return confirm('Approve this contributor and grant full creator selling tools?')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                            <i class="bi bi-patch-check-fill text-base"></i>
+                            <span>Approve & Verify Contributor</span>
+                        </button>
+                    </form>
+                @endif
+
+                @if($verification->status !== 'rejected')
+                    <button type="button" onclick="openShowRejectModal()" class="w-full py-2.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold text-xs transition border border-rose-200 flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="bi bi-x-circle-fill text-base"></i>
+                        <span>Reject Application (7-Day Lock)</span>
+                    </button>
+                @endif
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: DOCUMENT, SELFIE & VIDEO MEDIA PREVIEWS (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+            @php
+                $idPath = $verification->id_file_path ?? $verification->id_document_path ?? $verification->document_file ?? null;
+                $docUrl = $idPath ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) : null;
+                $isPdf = $idPath && str_ends_with(strtolower($idPath), '.pdf');
+                $selfie = $verification->selfie_file_path ?? $verification->selfie_path ?? $verification->selfie_file ?? null;
+                $selfieUrl = $selfie ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfie)]) : null;
+                $videoFile = $verification->video_file ?? $verification->video_file_path ?? null;
+                $videoUrl = $videoFile ? route('admin.kyc.document', ['type' => 'videos', 'filename' => basename($videoFile)]) : null;
+            @endphp
+
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-6">
+                <h4 class="font-bold text-sm text-[#121826] pb-3 border-b border-slate-100 flex items-center gap-2">
+                    <i class="bi bi-images text-[#20165c]"></i> KYC Document Media Previews
+                </h4>
+
+                <!-- 1. Government ID Preview -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <i class="bi bi-file-earmark-person text-[#20165c]"></i> 1. Government Identity Document
+                        </span>
+                        @if($docUrl)
+                            <a href="{{ $docUrl }}" target="_blank" class="text-xs font-semibold text-[#20165c] hover:underline flex items-center gap-1">
+                                <i class="bi bi-box-arrow-up-right"></i> Open Original
+                            </a>
+                        @endif
+                    </div>
+                    <div class="h-64 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center p-2">
+                        @if($docUrl)
+                            @if($isPdf)
+                                <div class="text-center p-4">
+                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-5xl mb-2 block"></i>
+                                    <div class="font-bold text-slate-800 text-xs mb-2">PDF Document Attached</div>
+                                    <a href="{{ $docUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold text-xs shadow-sm hover:bg-rose-700 transition">
+                                        <i class="bi bi-file-arrow-down-fill"></i> Download / View PDF Scan
+                                    </a>
+                                </div>
+                            @else
+                                <img src="{{ $docUrl }}" alt="Government ID" class="w-full h-full object-contain cursor-zoom-in" onclick="window.open(this.src, '_blank')" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
+                            @endif
+                        @else
+                            <div class="text-slate-400 text-xs text-center">
+                                <i class="bi bi-file-earmark-x text-3xl block mb-1 opacity-50"></i>
+                                No document file uploaded
                             </div>
-                        </div>
-                    @endif
-
-                    <hr class="my-4 opacity-10">
-
-                    <!-- MODERATION ACTION CONTROL PANEL -->
-                    <h6 class="fw-extrabold text-dark mb-3"><i class="bi bi-shield-slash text-primary me-1"></i> Compliance Decisions</h6>
-
-                    <div class="d-flex flex-column gap-2">
-                        @if($verification->status !== 'approved')
-                            <form action="{{ route('admin.verifications.approve', $verification->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold w-100 py-2.5">
-                                    <i class="bi bi-patch-check-fill me-2"></i> Approve & Verify Seller
-                                </button>
-                            </form>
-                        @endif
-
-                        @if($verification->status !== 'rejected')
-                            <button type="button" class="btn btn-outline-danger btn-lg rounded-pill fw-bold w-100 py-2.5" data-bs-toggle="modal" data-bs-target="#showRejectModal">
-                                <i class="bi bi-x-circle-fill me-2"></i> Reject Application
-                            </button>
                         @endif
                     </div>
-
                 </div>
-            </div>
 
-            <!-- RIGHT COLUMN: DOCUMENT, SELFIE & VIDEO PREVIEWS -->
-            <div class="col-12 col-lg-7">
-                @php
-                    $idPath = $verification->id_file_path ?? $verification->id_document_path ?? $verification->document_file ?? null;
-                    $docUrl = $idPath ? route('admin.kyc.document', ['type' => 'ids', 'filename' => basename($idPath)]) : null;
-                    $selfie = $verification->selfie_file_path ?? $verification->selfie_path ?? $verification->selfie_file ?? null;
-                    $selfieUrl = $selfie ? route('admin.kyc.document', ['type' => 'selfies', 'filename' => basename($selfie)]) : null;
-                    $videoFile = $verification->video_file ?? $verification->video_file_path ?? null;
-                    $videoUrl = $videoFile ? route('admin.kyc.document', ['type' => 'videos', 'filename' => basename($videoFile)]) : null;
-                @endphp
-                <div class="card verification-details-card p-4">
-                    <h5 class="fw-extrabold text-dark mb-4 pb-2 border-bottom">
-                        <i class="bi bi-images text-primary me-2"></i> KYC Document Media Previews
-                    </h5>
-
-                    <!-- 1. Government ID Document Preview -->
-                    <div class="mb-4">
-                        <label class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
-                            <span><i class="bi bi-file-earmark-person text-primary me-1"></i> Government ID Document</span>
-                            @if($docUrl)
-                                <a href="{{ $docUrl }}" target="_blank" class="extra-small text-primary fw-bold">
-                                    <i class="bi bi-box-arrow-up-right me-1"></i> Open Fullscreen / Download
-                                </a>
-                            @endif
-                        </label>
-                        <div class="preview-media-box p-2 text-center">
-                            @if($docUrl)
-                                @if(str_ends_with(strtolower($docFile), '.pdf'))
-                                    <div class="p-4 bg-light text-center">
-                                        <i class="bi bi-file-earmark-pdf-fill text-danger display-4 mb-2 d-block"></i>
-                                        <span class="fw-bold text-dark d-block mb-2">PDF Document Uploaded</span>
-                                        <a href="{{ $docUrl }}" target="_blank" class="btn btn-primary btn-sm rounded-pill px-3">
-                                            View PDF Document
-                                        </a>
-                                    </div>
-                                @else
-                                    <img src="{{ $docUrl }}" alt="Government ID" class="img-fluid rounded-3" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
-                                @endif
-                            @else
-                                <div class="p-4 text-muted small">No document file uploaded.</div>
-                            @endif
-                        </div>
+                <!-- 2. Face Selfie Preview -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <i class="bi bi-camera text-[#20165c]"></i> 2. Face Selfie Photo
+                        </span>
+                        @if($selfieUrl)
+                            <a href="{{ $selfieUrl }}" target="_blank" class="text-xs font-semibold text-[#20165c] hover:underline flex items-center gap-1">
+                                <i class="bi bi-box-arrow-up-right"></i> Open Original
+                            </a>
+                        @endif
                     </div>
-
-                    <!-- 2. Face Selfie Photo Preview -->
-                    <div class="mb-4">
-                        <label class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
-                            <span><i class="bi bi-camera-fill text-primary me-1"></i> Face Selfie Photo</span>
-                            @if($selfieUrl)
-                                <a href="{{ $selfieUrl }}" target="_blank" class="extra-small text-primary fw-bold">
-                                    <i class="bi bi-box-arrow-up-right me-1"></i> View Full Image
-                                </a>
-                            @endif
-                        </label>
-                        <div class="preview-media-box p-2 text-center">
-                            @if($selfieUrl)
-                                <img src="{{ $selfieUrl }}" alt="Selfie Photo" class="img-fluid rounded-3" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
-                            @else
-                                <div class="p-4 text-muted small">No selfie photo uploaded.</div>
-                            @endif
-                        </div>
+                    <div class="h-64 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center p-2">
+                        @if($selfieUrl)
+                            <img src="{{ $selfieUrl }}" alt="Face Selfie" class="w-full h-full object-contain cursor-zoom-in" onclick="window.open(this.src, '_blank')" onerror="this.onerror=null; this.src='/assets/images/placeholder-avatar.png';">
+                        @else
+                            <div class="text-slate-400 text-xs text-center">
+                                <i class="bi bi-person-bounding-box text-3xl block mb-1 opacity-50"></i>
+                                No selfie photo uploaded
+                            </div>
+                        @endif
                     </div>
-
-                    <!-- 3. Short Video Verification Preview -->
-                    <div class="mb-3">
-                        <label class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
-                            <span><i class="bi bi-record-circle-fill text-primary me-1"></i> Video Verification (Max 15s)</span>
-                            @if($videoUrl)
-                                <a href="{{ $videoUrl }}" download class="extra-small text-primary fw-bold">
-                                    <i class="bi bi-download me-1"></i> Download Video
-                                </a>
-                            @endif
-                        </label>
-                        <div class="preview-media-box p-2 text-center">
-                            @if($videoUrl)
-                                <video controls class="w-100 rounded-3">
-                                    <source src="{{ $videoUrl }}" type="video/mp4">
-                                    Your browser does not support HTML5 video playback.
-                                </video>
-                            @else
-                                <div class="p-4 text-muted small">No video clip uploaded.</div>
-                            @endif
-                        </div>
-                    </div>
-
                 </div>
-            </div>
 
+                <!-- 3. Video Verification Preview -->
+                @if($videoUrl)
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                                <i class="bi bi-record-circle text-[#20165c]"></i> 3. Verification Video (Max 15s)
+                            </span>
+                            <a href="{{ $videoUrl }}" download class="text-xs font-semibold text-[#20165c] hover:underline flex items-center gap-1">
+                                <i class="bi bi-download"></i> Download Video
+                            </a>
+                        </div>
+                        <div class="rounded-xl bg-slate-100 border border-slate-200 overflow-hidden p-2 text-center">
+                            <video controls class="w-full rounded-lg max-h-60 mx-auto">
+                                <source src="{{ $videoUrl }}" type="video/mp4">
+                                Your browser does not support HTML5 video playback.
+                            </video>
+                        </div>
+                    </div>
+                @endif
+
+            </div>
         </div>
 
     </div>
-</section>
 
-<!-- REJECT MODAL FOR SHOW VIEW -->
-<div class="modal fade text-start" id="showRejectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 border-0 shadow-lg">
-            <form action="{{ route('admin.verifications.reject', $verification->id) }}" method="POST">
-                @csrf
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold text-dark"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Reject Verification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body py-3">
-                    <p class="text-secondary small mb-3">Provide a clear reason for declining seller identity application:</p>
-                    <textarea name="admin_note" class="form-control rounded-3 border fs-6" rows="3" placeholder="e.g. Document photo is blurry or full name does not match government record." required>{{ $verification->admin_note }}</textarea>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">Reject Application</button>
-                </div>
-            </form>
+</div>
+
+<!-- REJECT REASON MODAL -->
+<div id="showRejectModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 border border-slate-200 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <h3 class="font-bold text-sm text-[#121826] flex items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill text-rose-500"></i> Reject Contributor Verification
+            </h3>
+            <button type="button" onclick="closeShowRejectModal()" class="text-slate-400 hover:text-slate-600">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
+
+        <form action="{{ route('admin.verifications.reject', $verification->id) }}" method="POST">
+            @csrf
+            <p class="text-xs text-slate-600 mb-3">
+                Provide a clear reason for declining seller identity application (Applicant will be locked for 7 days):
+            </p>
+
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Rejection Feedback</label>
+                <textarea name="admin_note" rows="3" required placeholder="e.g. Document image is blurry or NID numbers do not match legal full name." class="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 text-[#121826] placeholder-slate-400 focus:bg-white focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500">{{ $verification->admin_note }}</textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2">
+                <button type="button" onclick="closeShowRejectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm">
+                    Confirm Rejection & Lock 7 Days
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
+<script>
+    function openShowRejectModal() {
+        document.getElementById('showRejectModal').classList.remove('hidden');
+    }
+    function closeShowRejectModal() {
+        document.getElementById('showRejectModal').classList.add('hidden');
+    }
+</script>
 @endsection
