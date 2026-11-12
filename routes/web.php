@@ -321,8 +321,8 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     // NOKSHA REAL-TIME ESCROW INBOX & MESSAGING
     // ==========================================
-    Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
-    Route::get('/inbox/{identifier}', [InboxController::class, 'show'])->name('inbox.show');
+    Route::get('/inbox', [MessageController::class, 'index'])->name('inbox.index');
+    Route::get('/inbox/{conversation}', [MessageController::class, 'show'])->name('inbox.show');
     Route::delete('/inbox/{conversation}', [MessageController::class, 'destroy'])->name('inbox.destroy');
     Route::delete('/chat/{conversation}', [MessageController::class, 'destroy'])->name('chat.destroy');
     Route::delete('/conversations/{conversation}', [MessageController::class, 'destroy'])->name('conversations.destroy');
@@ -330,8 +330,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/inbox/{conversation}/messages', [MessageController::class, 'store'])->name('inbox.messages.store');
     Route::post('/inbox/{conversation}/send', [MessageController::class, 'store'])->name('chat.send');
     Route::post('/chat/{conversation}/send', [MessageController::class, 'store'])->name('chat.send.direct');
-    Route::get('/chat/{identifier}', [InboxController::class, 'show'])->name('chat.show');
-    Route::get('/chat', [InboxController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{identifier}', [MessageController::class, 'show'])->name('chat.show');
+    Route::get('/chat', [MessageController::class, 'index'])->name('chat.index');
     Route::post('/inbox/{conversation}/freeze', [InboxController::class, 'freeze'])->name('inbox.freeze');
     Route::post('/inbox/{conversation}/reopen-request', [InboxController::class, 'requestReopen'])->name('inbox.reopen-request');
     Route::post('/inbox/{conversation}/reopen-respond', [InboxController::class, 'respondReopen'])->name('inbox.reopen-respond');

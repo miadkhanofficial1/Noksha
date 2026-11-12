@@ -58,6 +58,14 @@ class Conversation extends Model
     }
 
     /**
+     * Virtual status attribute for backwards/forwards compatibility.
+     */
+    public function getStatusAttribute(): string
+    {
+        return $this->is_frozen ? 'frozen' : 'active';
+    }
+
+    /**
      * Seller / Creator participant in the conversation.
      */
     public function seller(): BelongsTo

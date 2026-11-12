@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class MessageController extends Controller
 {
@@ -28,6 +29,47 @@ class MessageController extends Controller
      * Regex pattern to detect external links and social channels.
      */
     protected const EXTERNAL_LINKS_REGEX = '/(https?:\/\/|www\.|wa\.me|wa\.link|facebook\.com|fb\.com|t\.me|telegram|whatsapp|instagram\.com|discord\.gg|linkedin\.com|skype|zoom\.us)/i';
+
+    /**
+     * Display the main Inbox hub or auto-create/open thread when ?recipient={id} is provided.
+     */
+    public function index(Request $request): View|RedirectResponse
+    {
+        if ($request->filled('recipient')) {
+            $recipientId = (int) $request->query('recipient');
+            $authId = (int) auth()->id();
+
+            if ($recipientId && $recipientId !== $authId) {
+                $conversation = Conversation::where(function ($q) use ($authId, $recipientId) {
+                    $q->where('buyer_id', $authId)->where('seller_id', $recipientId);
+                })->orWhere(function ($q) use ($authId, $recipientId) {
+                    $q->where('buyer_id', $recipientId)->where('seller_id', $authId);
+                })->first();
+
+                if (!$conversation) {
+                    $conversation = Conversation::create([
+                        'buyer_id' => $authId,
+                        'seller_id' => $recipientId,
+                        'conversation_type' => 'direct',
+                        'is_frozen' => false,
+                        'last_message_at' => now(),
+                    ]);
+                }
+
+                return redirect()->route('inbox.show', $conversation->id);
+            }
+        }
+
+        return app(InboxController::class)->index($request);
+    }
+
+    /**
+     * Display a specific conversation or delegate to InboxController.
+     */
+    public function show(string|int $identifier, Request $request): View|RedirectResponse
+    {
+        return app(InboxController::class)->show($identifier, $request);
+    }
 
     /**
      * Store and dispatch a new message within a conversation.

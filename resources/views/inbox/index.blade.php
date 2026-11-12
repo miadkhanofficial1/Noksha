@@ -399,24 +399,30 @@
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
-                                $isSystem = in_array($msg->message_type, ['system_notice', 'order_status']);
+                                $isSystemNotice = $msg->message_type === 'system_notice';
+                                $isOrderStatus = $msg->message_type === 'order_status';
                                 $isProposal = $msg->message_type === 'service_proposal';
 
                                 $bodyLower = strtolower($msg->body ?? '');
-                                $isFreezeNotice = str_contains($bodyLower, 'left the conversation') ||
-                                                  str_contains($bodyLower, 're-open') ||
-                                                  str_contains($bodyLower, 'frozen');
+                                $isClutterNotice = $isSystemNotice ||
+                                                   str_contains($bodyLower, 'left the conversation') ||
+                                                   str_contains($bodyLower, 're-open') ||
+                                                   str_contains($bodyLower, 'frozen') ||
+                                                   str_contains($bodyLower, 'declined the re-open') ||
+                                                   str_contains($bodyLower, 'approved the re-open') ||
+                                                   str_contains($bodyLower, 'welcome to noksha');
                             @endphp
 
-                            @if($isFreezeNotice)
+                            {{-- Strip all system event bubbles --}}
+                            @if($isClutterNotice)
                                 @continue
                             @endif
 
-                            @if($isSystem)
-                                {{-- Centered System / Order Status Notice --}}
+                            @if($isOrderStatus)
+                                {{-- Centered Clean Order Status Notice --}}
                                 <div class="flex justify-center my-1.5" data-msg-id="{{ $msg->id }}">
-                                    <div class="px-3 py-1.5 rounded-xl text-xs font-semibold {{ $msg->message_type === 'order_status' ? 'bg-purple-50 border border-[#20165c]/20 text-[#20165c]' : 'bg-slate-50 border border-slate-200 text-slate-600' }} flex items-center gap-2 shadow-sm max-w-lg text-center">
-                                        <svg class="w-3.5 h-3.5 {{ $msg->message_type === 'order_status' ? 'text-indigo-400' : 'text-slate-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 border border-[#20165c]/20 text-[#20165c] flex items-center gap-2 shadow-sm max-w-lg text-center">
+                                        <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <span>{{ $msg->body }}</span>
                                         <span class="text-[9px] text-slate-500 font-mono shrink-0">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
                                     </div>
@@ -863,11 +869,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const now = new Date().getTime();
             const distance = deadline - now;
             if (distance < 0) {
-                countdownEl.innerHTML = '<span class="text-rose-400 font-bold">⚠️ Delivery Overdue - Late Penalty Protection Active</span>';
-                const overdueBtn = document.getElementById('overdueCancelAction');
-                if (overdueBtn) {
-                    overdueBtn.classList.remove('hidden');
-                }
+                countdownEl.innerHTML = '<span class="text-slate-500 font-medium">Delivery due</span>';
                 return;
             }
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -1011,15 +1013,18 @@ function appendPolledMessage(msg, container) {
     const div = document.createElement('div');
     div.dataset.msgId = msg.id;
 
-    if (msg.message_type === 'system_notice' || msg.message_type === 'order_status') {
-        const bodyLower = (msg.body || '').toLowerCase();
-        if (bodyLower.includes('left the conversation') || bodyLower.includes('re-open') || bodyLower.includes('frozen')) {
-            return;
-        }
-        const isOrder = msg.message_type === 'order_status';
+    if (msg.message_type === 'system_notice') {
+        return;
+    }
+    const bodyLower = (msg.body || '').toLowerCase();
+    if (bodyLower.includes('left the conversation') || bodyLower.includes('re-open') || bodyLower.includes('frozen') || bodyLower.includes('declined') || bodyLower.includes('welcome to noksha')) {
+        return;
+    }
+
+    if (msg.message_type === 'order_status') {
         div.className = 'flex justify-center my-3';
         div.innerHTML = `
-            <div class="px-4 py-2 rounded-2xl text-xs font-semibold ${isOrder ? 'bg-purple-50 border border-[#20165c]/20 text-[#20165c]' : 'bg-slate-50 border border-slate-200 text-slate-600'} flex items-center gap-2 shadow-sm max-w-lg text-center">
+            <div class="px-4 py-2 rounded-2xl text-xs font-semibold bg-purple-50 border border-[#20165c]/20 text-[#20165c] flex items-center gap-2 shadow-sm max-w-lg text-center">
                 <span>${escapeHtml(msg.body)}</span>
                 <span class="text-[9px] text-slate-500 font-mono shrink-0">${msg.created_at_human || ''}</span>
             </div>

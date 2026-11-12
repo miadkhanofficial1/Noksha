@@ -26,6 +26,32 @@ class InboxController extends Controller
     {
         $user = Auth::user();
 
+        // 1. Auto-Create or Open Conversation When ?recipient={id} is Passed
+        if ($request->filled('recipient')) {
+            $recipientId = (int) $request->query('recipient');
+            $authId = (int) $user->id;
+
+            if ($recipientId && $recipientId !== $authId) {
+                $conversation = Conversation::where(function ($q) use ($authId, $recipientId) {
+                    $q->where('buyer_id', $authId)->where('seller_id', $recipientId);
+                })->orWhere(function ($q) use ($authId, $recipientId) {
+                    $q->where('buyer_id', $recipientId)->where('seller_id', $authId);
+                })->first();
+
+                if (!$conversation) {
+                    $conversation = Conversation::create([
+                        'buyer_id' => $authId,
+                        'seller_id' => $recipientId,
+                        'conversation_type' => 'direct',
+                        'is_frozen' => false,
+                        'last_message_at' => now(),
+                    ]);
+                }
+
+                return redirect()->route('inbox.show', $conversation->id);
+            }
+        }
+
         $conversations = $this->getUserConversations($user, $request->input('search'));
 
         // If user already has threads, open the most recent active thread
