@@ -157,7 +157,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isSellerMode(): bool
     {
-        return $this->isContributor() && ($this->active_mode === 'seller' || $this->isAdmin());
+        if (!$this->isApprovedContributor()) {
+            return false;
+        }
+
+        // If explicitly set, respect the active mode. Otherwise default to seller for approved contributors.
+        return ($this->active_mode ?? 'seller') === 'seller';
     }
 
     /**

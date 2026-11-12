@@ -21,9 +21,15 @@ class PayoutController extends Controller
     /**
      * Display the Seller Earnings & Withdrawal management dashboard.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         $user = auth()->user();
+
+        // If not an approved contributor, redirect cleanly to wallet financial hub with payouts tab
+        if (!$user || !$user->isApprovedContributor()) {
+            return redirect()->route('wallet.index', ['tab' => 'payouts']);
+        }
+
         $wallet = $user->wallet;
 
         // 1. Calculate Gross Sales from completed orders containing this user's resources

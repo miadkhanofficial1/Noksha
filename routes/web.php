@@ -284,10 +284,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/seller/dashboard', [DashboardController::class, 'index'])->name('seller.dashboard');
         Route::post('/seller/payout/request', [DashboardController::class, 'requestPayout'])->name('seller.payout.request');
         Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
-        Route::get('/seller/payouts', [PayoutController::class, 'index'])->name('seller.payouts.index');
         Route::post('/seller/payouts/withdraw', [PayoutController::class, 'requestWithdrawal'])->name('seller.payouts.withdraw');
         Route::get('/creator/guidelines/download', [ResourceController::class, 'downloadGuidelines'])->name('guidelines.download-pdf');
     });
+
+    // Seller Earnings & Payouts Interface (Accessible to Auth users; non-contributors redirect cleanly to wallet)
+    Route::get('/seller/payouts', [PayoutController::class, 'index'])->name('seller.payouts');
+    Route::get('/seller/payouts-ledger', [PayoutController::class, 'index'])->name('seller.payouts.index');
     Route::redirect('/contributor/upload', '/dashboard?tab=upload');
     Route::redirect('/seller/upload', '/dashboard?tab=upload');
     Route::redirect('/upload', '/dashboard?tab=upload');

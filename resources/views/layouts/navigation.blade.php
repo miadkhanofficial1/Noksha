@@ -489,27 +489,27 @@
                                     </a>
                                 </li>
 
-                                @if($user->isApprovedContributor())
-                                    <!-- Creator Studio / Upload Asset (Approved Contributors Only) -->
+                                @if($user->isApprovedContributor() && $user->isSellerMode())
+                                    <!-- Creator Studio / Upload Asset (Contributor Mode Only) -->
                                     <li>
                                         <a class="dropdown-item small py-2 fw-semibold text-amber-500" href="{{ route('dashboard', ['tab' => 'upload']) }}">
                                             <i class="bi bi-cloud-arrow-up-fill me-2 text-amber-500"></i> Creator Studio (Upload Asset)
                                         </a>
                                     </li>
 
-                                    <!-- Seller Earnings & Payouts (Approved Contributors Only) -->
+                                    <!-- Seller Earnings & Payouts (Contributor Mode Only) -->
                                     <li>
-                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.payouts.index') }}">
+                                        <a class="dropdown-item small py-2 fw-semibold" href="{{ route('seller.payouts') }}">
                                             <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
                                         </a>
                                     </li>
-                                @elseif($user->contributor_status === 'pending')
+                                @elseif(!$user->isApprovedContributor() && $user->contributor_status === 'pending')
                                     <li>
                                         <a class="dropdown-item small py-2 text-warning-emphasis fw-semibold" href="{{ route('dashboard', ['tab' => 'upload']) }}">
                                             <i class="bi bi-hourglass-split me-2 text-warning"></i> Contributor KYC (Pending)
                                         </a>
                                     </li>
-                                @else
+                                @elseif(!$user->isApprovedContributor())
                                     <li>
                                         <a class="dropdown-item small py-2 fw-semibold text-primary" href="{{ route('contributor.apply') }}">
                                             <i class="bi bi-award-fill me-2"></i> Become a Contributor
@@ -685,12 +685,14 @@
                                     </span>
                                 </button>
                             </form>
-                            <a class="nav-link-custom text-primary" href="{{ route('dashboard', ['tab' => 'upload']) }}">
-                                <i class="bi bi-cloud-arrow-up-fill me-2 text-amber-500"></i> Creator Studio (Upload)
-                            </a>
-                            <a class="nav-link-custom text-success" href="{{ route('seller.payouts.index') }}">
-                                <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
-                            </a>
+                            @if($user->isSellerMode())
+                                <a class="nav-link-custom text-primary" href="{{ route('dashboard', ['tab' => 'upload']) }}">
+                                    <i class="bi bi-cloud-arrow-up-fill me-2 text-amber-500"></i> Creator Studio (Upload)
+                                </a>
+                                <a class="nav-link-custom text-success" href="{{ route('seller.payouts') }}">
+                                    <i class="bi bi-cash-stack me-2 text-emerald-500"></i> Seller Earnings & Payouts
+                                </a>
+                            @endif
                         @elseif($user->contributor_status === 'pending')
                             <div class="p-2.5 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-3 mb-2 d-flex align-items-center gap-2">
                                 <i class="bi bi-hourglass-split text-warning"></i>

@@ -41,14 +41,14 @@
 
     /* Primary Balance Hero Card */
     .balance-hero-card {
-        background: linear-gradient(135deg, #20165c 0%, #2d1f7d 100%);
-        border: 1px solid #20165c;
+        background: linear-gradient(135deg, #20165c 0%, #2b1d7a 50%, #120c38 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
         border-radius: 1.25rem;
         padding: 2.25rem 2rem;
         position: relative;
         overflow: hidden;
         box-shadow: 0 10px 25px -5px rgba(32, 22, 92, 0.35);
-        color: #ffffff;
+        color: #ffffff !important;
     }
 
     .balance-hero-glow-accent {
@@ -304,7 +304,7 @@
         <!-- ========================================================= -->
         <!-- 1. STREAMLINED AVAILABLE WALLET BALANCE CARD             -->
         <!-- ========================================================= -->
-        <div class="bg-gradient-to-r from-[#20165c] to-[#2d1f7d] text-white p-6 sm:p-8 rounded-2xl shadow-lg mb-4 position-relative overflow-hidden">
+        <div class="bg-gradient-to-br from-[#20165c] via-[#2b1d7a] to-[#120c38] text-white shadow-lg balance-hero-card p-6 sm:p-8 rounded-2xl mb-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #20165c 0%, #2b1d7a 50%, #120c38 100%) !important; color: #ffffff !important;">
             <div class="balance-hero-glow-accent"></div>
 
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 position-relative z-1">
@@ -498,16 +498,16 @@
                                     <!-- Status -->
                                     <td class="text-center">
                                         @if($tx->status === 'completed')
-                                            <span class="badge bg-success bg-opacity-20 text-success rounded-pill extra-small font-monospace border border-success border-opacity-25 px-2.5 py-1">
-                                                Completed
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                {{ strtoupper($tx->status) }}
                                             </span>
                                         @elseif($tx->status === 'pending')
-                                            <span class="badge bg-warning bg-opacity-20 text-warning rounded-pill extra-small font-monospace border border-warning border-opacity-25 px-2.5 py-1">
-                                                Pending
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                                {{ strtoupper($tx->status) }}
                                             </span>
                                         @else
-                                            <span class="badge bg-danger bg-opacity-20 text-danger rounded-pill extra-small font-monospace border border-danger border-opacity-25 px-2.5 py-1">
-                                                {{ ucfirst($tx->status) }}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                                                {{ strtoupper($tx->status) }}
                                             </span>
                                         @endif
                                     </td>

@@ -181,24 +181,24 @@
                 @endif
             </button>
 
-            @if($user->isApprovedContributor())
+            @if($user->isApprovedContributor() && $user->isSellerMode())
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
                     <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     <span>Upload Asset</span>
                 </button>
-            @elseif($user->contributor_status === 'pending')
+            @elseif(!$user->isApprovedContributor() && $user->contributor_status === 'pending')
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
                     <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>KYC Pending</span>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">Review</span>
                 </button>
-            @elseif($user->contributor_status === 'rejected')
+            @elseif(!$user->isApprovedContributor() && $user->contributor_status === 'rejected')
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
                     <svg class="w-4 h-4 shrink-0 text-rose-500" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     <span>Contributor KYC</span>
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">Action Needed</span>
                 </button>
-            @else
+            @elseif(!$user->isApprovedContributor())
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
                     <svg class="w-4 h-4 shrink-0 text-[#20165c]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     <span>Become a Contributor</span>
@@ -234,7 +234,7 @@
                                 <span>৳{{ number_format(auth()->user()->wallet?->balance ?? 0, 2) }}</span>
                                 <span class="text-sm font-semibold text-white/70 font-sans">BDT</span>
                             </div>
-                            @if($user->isApprovedContributor())
+                            @if($user->isApprovedContributor() && $user->isSellerMode())
                                 <div class="mt-2 text-xs text-white/80 flex items-center gap-2">
                                     <span>Royalty Earnings: <strong class="text-[#f47402]">৳{{ number_format($user->earnings_balance ?? 0, 2) }}</strong></span>
                                     <span>•</span>
@@ -255,8 +255,8 @@
                             <span>Add Funds / Deposit</span>
                         </a>
 
-                        @if($user->isApprovedContributor())
-                            <a href="{{ route('seller.payouts.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/20 transition-all">
+                        @if($user->isApprovedContributor() && $user->isSellerMode())
+                            <a href="{{ route('seller.payouts') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/20 transition-all">
                                 <i class="bi bi-cash-stack"></i>
                                 <span>Request Payout</span>
                             </a>

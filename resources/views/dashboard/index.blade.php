@@ -146,11 +146,11 @@
 
             <!-- Header Action CTA -->
             <div class="col-lg-4 text-lg-end">
-                @if($isContributor)
+                @if($isContributor && $user->isSellerMode())
                     <a href="{{ route('resource.create') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-lg">
                         <i class="bi bi-cloud-arrow-up-fill me-1.5"></i> {{ __('dashboard.upload') }}
                     </a>
-                @else
+                @elseif(!$isContributor)
                     <a href="{{ route('contributor.apply') }}" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold text-primary shadow-lg">
                         <i class="bi bi-award-fill me-1.5"></i> Become a Contributor
                     </a>
@@ -247,8 +247,8 @@
         </div>
     </div>
 
-    <!-- CONTRIBUTOR SECTION (Visible ONLY for Approved Contributor Users) -->
-    @if($isContributor)
+    <!-- CONTRIBUTOR SECTION (Visible ONLY for Approved Contributor Users in Seller Mode) -->
+    @if($isContributor && $user->isSellerMode())
         <div class="card dash-glass-card border-0 rounded-4 mb-4 p-4 p-md-5">
             <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
                 <div class="d-flex align-items-center gap-2">
