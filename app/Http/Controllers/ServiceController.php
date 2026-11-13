@@ -217,7 +217,7 @@ class ServiceController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || ($service->user_id !== $user->id && !$user->isAdmin())) {
+        if (!$user || $service->user_id !== $user->id) {
             abort(403, 'Unauthorized access to modify this service.');
         }
 
@@ -292,7 +292,7 @@ class ServiceController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || ($service->user_id !== $user->id && !$user->isAdmin())) {
+        if (!$user || $service->user_id !== $user->id) {
             abort(403, 'Unauthorized access to delete this service.');
         }
 
@@ -318,7 +318,7 @@ class ServiceController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || ($service->user_id !== $user->id && !$user->isAdmin())) {
+        if (!$user || $service->user_id !== $user->id) {
             abort(403, 'Unauthorized access to toggle this service.');
         }
 

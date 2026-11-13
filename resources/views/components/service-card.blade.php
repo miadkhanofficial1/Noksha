@@ -2,7 +2,7 @@
 
 @php
     $creator = $service->user;
-    $isOwner = auth()->check() && (auth()->id() === $service->user_id || auth()->user()->isAdmin());
+    $isOwner = auth()->check() && (auth()->id() === $service->user_id);
     $previewImages = is_array($service->preview_images) ? array_filter($service->preview_images) : [];
     $imgCount = count($previewImages);
     $availableSlots = max(0, ($service->max_slots ?? 3) - ($service->active_orders_count ?? 0));
