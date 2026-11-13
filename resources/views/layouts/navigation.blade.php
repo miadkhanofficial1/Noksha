@@ -47,40 +47,39 @@
             <!-- ========================================================= -->
             <!-- 2. CENTER SECTION: CENTRAL DISCOVERY SEARCH & NAV LINKS   -->
             <!-- ========================================================= -->
-            <div class="d-none d-lg-flex align-items-center gap-3 flex-grow-1 mx-3 mx-xl-4 justify-content-center">
+            <div class="d-none d-lg-flex align-items-center gap-3 lg:gap-5 flex-1 mx-3 mx-xl-4 justify-content-center">
                 <!-- Navigation Links -->
-                <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
-                    <a class="nav-link-custom {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
+                <div class="d-flex align-items-center gap-1 lg:gap-2 flex-shrink-0 text-sm whitespace-nowrap">
+                    <a class="nav-link-custom text-sm whitespace-nowrap px-2.5 py-1.5 {{ request()->routeIs('resources.*') || request()->is('templates*') || request()->is('resource*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
                         <i class="bi bi-grid me-1 text-slate-500"></i> Templates
                     </a>
 
-                    <a class="nav-link-custom {{ request()->routeIs('services.*') ? 'active' : '' }}" href="{{ route('services.index') }}">
+                    <a class="nav-link-custom text-sm whitespace-nowrap px-2.5 py-1.5 {{ request()->routeIs('services.*') ? 'active' : '' }}" href="{{ route('services.index') }}">
                         <i class="bi bi-briefcase-fill me-1 text-[#20165c]"></i> Services
                     </a>
 
-                    <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
+                    <a class="nav-link-custom text-sm whitespace-nowrap px-2.5 py-1.5 {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
                         <i class="bi bi-people-fill me-1 text-[#20165c]"></i> Creators
                     </a>
 
-                    <a class="nav-link-custom {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
+                    <a class="nav-link-custom text-sm whitespace-nowrap px-2.5 py-1.5 {{ request()->routeIs('contests.*') ? 'active' : '' }}" href="{{ route('contests.index') }}">
                         <i class="bi bi-trophy-fill me-1 text-[#f47402]"></i> Contests
                     </a>
                 </div>
 
                 <!-- Central Discovery Search Bar -->
-                <div class="w-100 max-w-sm" style="max-width: 320px;">
-                    <form action="{{ route('resources.index') }}" method="GET" class="m-0 position-relative">
-                        <div class="d-flex align-items-center bg-slate-50 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#20165c] rounded-full px-3 py-1.5 transition-all shadow-sm">
-                            <i class="bi bi-search text-slate-400 me-2 small"></i>
+                <div class="flex-1 max-w-md min-w-[220px] lg:min-w-[280px]">
+                    <form action="{{ route('resources.index') }}" method="GET" class="m-0 w-full position-relative">
+                        <div class="d-flex align-items-center bg-slate-50 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#20165c] rounded-full px-3.5 py-1.5 transition-all shadow-xs w-full">
+                            <i class="bi bi-search text-slate-400 me-2.5 small flex-shrink-0"></i>
                             <input type="text" 
                                    name="q" 
                                    id="globalNavSearchInput" 
                                    value="{{ request('q') }}" 
-                                   placeholder="Search templates, mockups..." 
-                                   class="form-control form-control-sm border-0 bg-transparent p-0 text-slate-800 shadow-none" 
+                                   placeholder="Search templates, services, creators..." 
+                                   class="form-control form-control-sm border-0 bg-transparent p-0 text-slate-800 shadow-none w-full" 
                                    style="font-size: 0.8125rem;"
                                    aria-label="Search Marketplace">
-                            <kbd class="d-none d-xl-inline-block px-1.5 py-0.5 text-[10px] font-mono bg-slate-100 border border-slate-200 rounded text-slate-500 flex-shrink-0 ms-1.5">Ctrl K</kbd>
                         </div>
                     </form>
                 </div>
