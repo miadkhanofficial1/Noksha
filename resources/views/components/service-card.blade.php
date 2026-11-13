@@ -88,12 +88,12 @@
         <!-- Floating Live Slot Availability Badge -->
         <div class="absolute top-2.5 right-2.5">
             @if(!$isBookedOut)
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/90 text-white backdrop-blur-md shadow-xs">
-                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                    <span>🟢 {{ $availableSlots }} Slot{{ $availableSlots > 1 ? 's' : '' }} Left</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>{{ $availableSlots }} Slot{{ $availableSlots > 1 ? 's' : '' }} Left</span>
                 </span>
             @else
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-600/90 text-white backdrop-blur-md shadow-xs" title="Creator is currently at capacity. You may still inquire for the next queue slot.">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200 backdrop-blur-md shadow-xs" title="Creator is currently at capacity. You may still inquire for the next queue slot.">
                     <span>🔴 Booked Out</span>
                 </span>
             @endif
@@ -113,7 +113,7 @@
                         {{ $creator->name }}
                     </span>
                     @if($creator->isContributor() || $creator->is_verified)
-                        <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <svg class="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20" title="Verified Creator"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                     @endif
                     @if($creator->hasReliabilityWarning())
                         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-300 shrink-0" title="Reliability Warning: Accrued demerit points or late deliveries">
@@ -154,9 +154,9 @@
 
         <!-- Service Specifications Row -->
         <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 mb-3.5 flex-wrap gap-1">
-            <span class="inline-flex items-center gap-1">
-                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <span>{{ $service->delivery_days }}d Delivery</span>
+            <span class="inline-flex items-center gap-1 text-emerald-700 font-medium">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>{{ $service->delivery_days }}d On-Time Delivery</span>
             </span>
             <span class="text-slate-300">•</span>
             <span class="inline-flex items-center gap-1">

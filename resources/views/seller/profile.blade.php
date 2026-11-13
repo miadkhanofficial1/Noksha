@@ -200,8 +200,8 @@
                             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1.5">
                                 <h2 class="fw-extrabold text-[#121826] mb-0">{{ $user->name ?? 'Creator' }}</h2>
                                 @if($user && $user->isContributor())
-                                    <span class="badge rounded-pill px-3 py-1 fw-bold small text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 shadow-sm">
-                                        <i class="bi bi-patch-check-fill text-emerald-400 me-1"></i> Verified Creator
+                                    <span class="badge rounded-pill px-3 py-1 fw-bold small text-emerald-700 bg-emerald-50 border border-emerald-200 shadow-sm">
+                                        <i class="bi bi-patch-check-fill text-emerald-600 me-1"></i> Verified Creator
                                     </span>
                                 @endif
                                 @if($user && $user->isAdmin())

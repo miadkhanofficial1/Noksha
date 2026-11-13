@@ -172,8 +172,8 @@
                     <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1.5 fw-bold small">
                         <i class="bi bi-grid-fill me-1"></i> {{ isset($resource) && $resource->category ? $resource->category->name : 'Design Asset' }}
                     </span>
-                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1.5 fw-bold small">
-                        <i class="bi bi-patch-check-fill me-1"></i> Verified Marketplace Asset
+                    <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-3 py-1.5 fw-bold small">
+                        <i class="bi bi-patch-check-fill me-1 text-emerald-600"></i> Verified Marketplace Asset
                     </span>
                     @if(isset($resource) && $resource->owner)
                         <span class="text-secondary small ms-1 d-inline-flex align-items-center gap-1">
@@ -616,8 +616,8 @@
                                                 <div>
                                                     <div class="d-flex align-items-center gap-1.5 flex-wrap">
                                                         <span class="fw-bold text-dark small mb-0">{{ $revName }}</span>
-                                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-0.5 extra-small">
-                                                            <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                                                        <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2 py-0.5 extra-small">
+                                                            <i class="bi bi-patch-check-fill me-1 text-emerald-600"></i> Verified Buyer
                                                         </span>
                                                         @if(isset($rev->is_complaint) && $rev->is_complaint)
                                                             <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5 extra-small">
@@ -674,7 +674,7 @@
                             <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 rounded-pill px-3 py-1.5 fw-bold extra-small">
                                 Commercial License
                             </span>
-                            <span class="small text-slate-500 font-monospace"><i class="bi bi-shield-check text-emerald-600 me-1"></i>Verified Asset</span>
+                            <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 extra-small font-semibold"><i class="bi bi-shield-check text-emerald-600 me-1"></i>Verified Asset</span>
                         </div>
 
                         <!-- Price Tag -->

@@ -366,7 +366,7 @@
                                             @if($isBuyer)
                                                 <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Accept delivery and release escrow funds to creator? (15% platform commission will be deducted).');">
                                                     @csrf
-                                                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all cursor-pointer">
+                                                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer">
                                                         ✅ Approve & Complete
                                                     </button>
                                                 </form>
@@ -389,14 +389,14 @@
                                         @if($isBuyer)
                                             <form action="{{ route('inbox.orders.fund', $activeOrder->id) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
+                                                <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer">
                                                     💳 Accept & Pay (৳{{ number_format($orderAmountDisplay, 2) }})
                                                 </button>
                                             </form>
                                         @endif
                                     @elseif($activeOrder->status === 'completed')
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/30">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
                                                 ✅ Completed & Escrow Released
                                             </span>
                                             <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-3 py-1 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white transition-colors">
@@ -455,16 +455,16 @@
 
                             {{-- ORDER COMPLETED BANNER --}}
                             @if(isset($meta['type']) && $meta['type'] === 'order_completed_banner')
-                                <div class="my-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-emerald-50/50 to-purple-50 border border-purple-200 shadow-sm text-center max-w-xl mx-auto" data-msg-id="{{ $msg->id }}">
+                                <div class="my-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm text-center max-w-xl mx-auto" data-msg-id="{{ $msg->id }}">
                                     <div class="flex items-center justify-center gap-2 mb-1.5">
                                         <span class="text-xl">🎉</span>
-                                        <span class="text-xs font-black text-[#121826] uppercase tracking-wider">Project Successfully Completed</span>
+                                        <span class="text-xs font-black text-emerald-800 uppercase tracking-wider">Project Successfully Completed</span>
                                         <span class="text-xl">✅</span>
                                     </div>
-                                    <h4 class="text-sm font-bold text-[#20165c] mb-1">
-                                        {{ $meta['service_title'] ?? 'Creative Service' }}
+                                    <h4 class="text-sm font-bold text-emerald-900 mb-1">
+                                        ✅ {{ $meta['service_title'] ?? 'Creative Service' }} — Completed
                                     </h4>
-                                    <p class="text-xs text-slate-600 mb-3 font-mono">
+                                    <p class="text-xs text-emerald-700/80 mb-3 font-mono">
                                         #{{ $meta['order_code'] ?? 'COMPLETED' }}
                                     </p>
                                     <div class="flex items-center justify-center gap-2.5 flex-wrap">
@@ -472,7 +472,7 @@
                                             🔄 Order Again
                                         </button>
                                         @if(isset($meta['order_id']))
-                                            <a href="{{ route('inbox.orders.download-delivery', $meta['order_id']) }}" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all">
+                                            <a href="{{ route('inbox.orders.download-delivery', $meta['order_id']) }}" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all">
                                                 📥 Download Full ZIP
                                             </a>
                                             <button type="button" onclick="openReviewModal({{ $meta['order_id'] }})" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 transition-all cursor-pointer">
@@ -578,7 +578,7 @@
                                                 @if($isBuyer)
                                                     <form action="{{ route('inbox.orders.fund', $propOrder->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5">
+                                                        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5">
                                                             <span>💳 Accept & Pay (৳{{ number_format($propOrder->amount ?? $propOrder->total_amount, 2) }})</span>
                                                         </button>
                                                     </form>
@@ -725,7 +725,7 @@
                                     <div class="flex items-center gap-2.5 flex-wrap">
                                         <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="flex-1 min-w-[140px]" onsubmit="return confirm('Approve delivery and release escrow funds to creator? (15% platform commission deducted). Full source files will be unlocked.');">
                                             @csrf
-                                            <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all cursor-pointer">
+                                            <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer">
                                                 ✅ Approve & Complete
                                             </button>
                                         </form>

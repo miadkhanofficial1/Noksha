@@ -259,10 +259,9 @@
 
         <!-- Flash Alerts -->
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show rounded-4 border-0 shadow-lg py-3 px-4 mb-4 d-flex align-items-center gap-3"
-                 style="background-color: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.35) !important;" role="alert">
-                <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                <div class="fw-semibold text-emerald-300 small">{{ session('success') }}</div>
+            <div class="alert bg-emerald-50 border border-emerald-200 text-emerald-800 alert-dismissible fade show rounded-4 shadow-sm py-3 px-4 mb-4 d-flex align-items-center gap-3" role="alert">
+                <i class="bi bi-check-circle-fill text-emerald-600 fs-4"></i>
+                <div class="fw-semibold small">{{ session('success') }}</div>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
@@ -433,8 +432,8 @@
                                     <!-- Type -->
                                     <td>
                                         @if($tx->type === 'deposit')
-                                            <span class="badge rounded-pill extra-small fw-semibold" style="background: rgba(16, 185, 129, 0.18); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                                <i class="bi bi-arrow-down-circle-fill me-1 text-success"></i> Deposit
+                                            <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill extra-small fw-semibold">
+                                                <i class="bi bi-arrow-down-circle-fill me-1 text-emerald-600"></i> Deposit
                                             </span>
                                         @elseif($tx->type === 'template_purchase')
                                             <span class="badge rounded-pill extra-small fw-semibold" style="background: rgba(59, 130, 246, 0.18); color: #93C5FD; border: 1px solid rgba(59, 130, 246, 0.3);">
@@ -453,8 +452,8 @@
                                                 <i class="bi bi-shield-lock-fill me-1 text-purple-400"></i> Service Escrow
                                             </span>
                                         @elseif($tx->type === 'credit')
-                                            <span class="badge rounded-pill extra-small fw-semibold" style="background: rgba(16, 185, 129, 0.18); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                                <i class="bi bi-plus-circle me-1 text-success"></i> Credit
+                                            <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill extra-small fw-semibold">
+                                                <i class="bi bi-plus-circle me-1 text-emerald-600"></i> Credit
                                             </span>
                                         @elseif($tx->type === 'debit')
                                             <span class="badge rounded-pill extra-small fw-semibold" style="background: rgba(239, 68, 68, 0.18); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.3);">
@@ -487,7 +486,7 @@
                                     <!-- Amount -->
                                     <td class="text-end font-monospace fw-bold">
                                         @if($isCredit)
-                                            <span class="text-emerald-400 fs-6">+৳{{ number_format($tx->amount, 2) }}</span>
+                                            <span class="text-emerald-600 fs-6">+৳{{ number_format($tx->amount, 2) }}</span>
                                         @elseif($tx->amount > 0)
                                             <span class="text-rose-400 fs-6">-৳{{ number_format($tx->amount, 2) }}</span>
                                         @else
@@ -498,7 +497,7 @@
                                     <!-- Status -->
                                     <td class="text-center">
                                         @if($tx->status === 'completed')
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 {{ strtoupper($tx->status) }}
                                             </span>
                                         @elseif($tx->status === 'pending')

@@ -271,8 +271,8 @@
         @endif
         <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
             @if($user->is_available)
-                <span class="badge bg-black/40 text-amber-300 backdrop-blur border border-amber-500/30 rounded-pill px-3 py-1.5 extra-small fw-bold">
-                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Open for Custom Work
+                <span class="badge bg-emerald-500/15 text-emerald-400 backdrop-blur border border-emerald-500/30 rounded-pill px-3 py-1.5 extra-small fw-bold">
+                    <i class="bi bi-lightning-charge-fill text-emerald-400 me-1"></i> Open for Custom Work
                 </span>
             @endif
         </div>
@@ -309,8 +309,8 @@
                                 <h2 class="fw-extrabold text-[#121826] mb-0">{{ $user->name }}</h2>
                                 
                                 @if($user->isContributor())
-                                    <span class="badge bg-emerald-950/40 text-[#f47402] border border-emerald-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                        <i class="bi bi-patch-check-fill me-1 text-[#f47402]"></i> Verified Creator
+                                    <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                        <i class="bi bi-patch-check-fill me-1 text-emerald-600"></i> Verified Creator
                                     </span>
                                 @elseif($user->isAdmin())
                                     <span class="badge bg-purple-950/40 text-purple-300 border border-purple-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
@@ -1020,15 +1020,15 @@
 
                                 <div class="d-flex align-items-center justify-content-between">
                                     <span class="text-slate-500">Trust Score:</span>
-                                    <span class="fw-extrabold text-[#f47402] font-monospace">{{ number_format($user->trust_score ?? 100, 1) }}%</span>
+                                    <span class="fw-extrabold {{ ($user->trust_score ?? 100) >= 90 ? 'text-emerald-600' : 'text-[#f47402]' }} font-monospace">{{ number_format($user->trust_score ?? 100, 1) }}%</span>
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-between">
                                     <span class="text-slate-500">Freelance Availability:</span>
                                     @if($user->is_available)
-                                        <span class="badge bg-emerald-500/10 text-[#f47402] border border-emerald-500/20 rounded-pill px-2.5 py-1 extra-small fw-bold">Available</span>
+                                        <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 extra-small fw-bold">Available</span>
                                     @else
-                                        <span class="badge bg-gray-800 text-slate-500 border border-gray-700 rounded-pill px-2.5 py-1 extra-small fw-bold">Busy</span>
+                                        <span class="badge bg-gray-100 text-slate-500 border border-slate-200 rounded-pill px-2.5 py-1 extra-small fw-bold">Busy</span>
                                     @endif
                                 </div>
 
@@ -1115,7 +1115,7 @@
                     <div>
                         <div class="fw-bold text-[#121826]">{{ $user->name }}</div>
                         <div class="extra-small text-slate-500 font-monospace">&#64;{{ $user->username }}</div>
-                        <div class="extra-small {{ $user->is_available ? 'text-[#f47402]' : 'text-slate-500' }} fw-bold">
+                        <div class="extra-small {{ $user->is_available ? 'text-emerald-600' : 'text-slate-500' }} fw-bold">
                             <i class="bi bi-record-fill me-1"></i>{{ $user->is_available ? 'Available for Custom Projects' : 'Currently Busy' }}
                         </div>
                     </div>
