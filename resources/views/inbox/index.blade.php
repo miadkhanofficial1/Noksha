@@ -428,9 +428,97 @@
                                     </div>
                                 </div>
                             @elseif($isProposal)
-                                {{-- In-Chat Service Widget Card --}}
                                 @php $meta = $msg->metadata ?? []; @endphp
-                                <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-1.5">
+
+                                @if(isset($meta['type']) && $meta['type'] === 'service_inquiry')
+                                    {{-- IN-CHAT SERVICE INQUIRY BRIEF CARD --}}
+                                    <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-2" data-msg-id="{{ $msg->id }}">
+                                        <div class="max-w-lg w-full bg-white border border-purple-200 rounded-3xl p-4 shadow-md relative overflow-hidden">
+                                            <div class="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl pointer-events-none"></div>
+
+                                            <!-- CARD HEADER -->
+                                            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 mb-3">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-sm">
+                                                        📋
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="text-xs font-bold text-[#121826] mb-0">Project Inquiry Brief</h4>
+                                                        <span class="text-[10px] text-slate-400 font-medium">Submitted by {{ $meta['buyer_name'] ?? 'Client' }}</span>
+                                                    </div>
+                                                </div>
+                                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20">
+                                                    Budget: ৳{{ number_format($meta['budget'] ?? 600, 2) }}
+                                                </span>
+                                            </div>
+
+                                            <!-- SERVICE REFERENCE -->
+                                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 mb-3 flex items-center gap-2.5">
+                                                <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 text-xs shrink-0 overflow-hidden">
+                                                    @if(!empty($meta['preview_images']) && count($meta['preview_images']) > 0)
+                                                        @php
+                                                            $pThumb = $meta['preview_images'][0];
+                                                            $pThumbUrl = str_starts_with($pThumb, 'http') ? $pThumb : asset('storage/' . ltrim($pThumb, '/'));
+                                                        @endphp
+                                                        <img src="{{ $pThumbUrl }}" class="w-full h-full object-cover" alt="Preview">
+                                                    @else
+                                                        🎨
+                                                    @endif
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">{{ $meta['category'] ?? 'Creative' }}</span>
+                                                    <h5 class="text-xs font-bold text-[#121826] truncate mb-0">{{ $meta['service_title'] ?? 'Custom Creative Service' }}</h5>
+                                                </div>
+                                            </div>
+
+                                            <!-- QUICK CHIPS / REQUIREMENTS -->
+                                            @if(!empty($meta['chips']) && is_array($meta['chips']))
+                                                <div class="flex flex-wrap gap-1.5 mb-3">
+                                                    @foreach($meta['chips'] as $chip)
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-[#20165c] border border-purple-200">
+                                                            {{ $chip }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
+                                            <!-- BRIEF MESSAGE -->
+                                            <div class="bg-slate-50/60 p-3 rounded-xl border border-slate-200 mb-3 text-xs text-slate-700 leading-relaxed whitespace-pre-line font-normal">
+                                                {{ $meta['brief_text'] ?? $msg->body }}
+                                            </div>
+
+                                            <!-- TIMELINE & ATTACHMENT -->
+                                            <div class="flex items-center justify-between text-[11px] text-slate-500 flex-wrap gap-2 pt-1 border-t border-slate-100">
+                                                <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
+                                                    ⏱️ Timeline: <strong>{{ $meta['desired_days'] ?? 3 }} Days</strong>
+                                                </span>
+
+                                                @if(!empty($meta['reference_file_path']))
+                                                    @php
+                                                        $refUrl = asset('storage/' . ltrim($meta['reference_file_path'], '/'));
+                                                    @endphp
+                                                    <a href="{{ $refUrl }}" target="_blank" download class="inline-flex items-center gap-1 text-[#20165c] hover:underline font-bold">
+                                                        📎 <span>View Reference File</span>
+                                                    </a>
+                                                @endif
+                                            </div>
+
+                                            <!-- ACTION CTA -->
+                                            @if($isSeller)
+                                                <div class="mt-3 pt-2.5 border-t border-slate-100">
+                                                    <button type="button" 
+                                                            onclick="prefillCustomProposal('{{ addslashes($meta['service_title'] ?? '') }}', {{ (float)($meta['budget'] ?? 600) }}, {{ (int)($meta['desired_days'] ?? 3) }})" 
+                                                            class="w-full py-2 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                                        <span>Send Custom Proposal to Client</span>
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                                    </button>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @else
+                                    {{-- In-Chat Service Widget Card --}}
+                                    <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-1.5">
                                     <div class="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-3.5 shadow-md relative overflow-hidden">
                                         <div class="absolute -top-12 -right-12 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
                                         
@@ -1114,6 +1202,16 @@ function openProposalModal() {
         modal.classList.add('flex');
         modal.style.display = 'flex';
     }
+}
+
+function prefillCustomProposal(title, budget, days) {
+    openProposalModal();
+    const titleInput = document.getElementById('proposalTitle') || document.querySelector('input[name="title"]') || document.querySelector('input[name="custom_title"]');
+    const amountInput = document.getElementById('proposalAmount') || document.querySelector('input[name="total_amount"]') || document.querySelector('input[name="amount"]') || document.querySelector('input[name="price"]');
+    const daysInput = document.getElementById('proposalDays') || document.querySelector('input[name="duration_days"]') || document.querySelector('input[name="delivery_days"]');
+    if (titleInput && title) titleInput.value = title;
+    if (amountInput && budget) amountInput.value = budget;
+    if (daysInput && days) daysInput.value = days;
 }
 
 function handleModalClose() {

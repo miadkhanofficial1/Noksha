@@ -33,6 +33,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminResourceController;
 use App\Http\Controllers\AdminVerificationController;
@@ -194,6 +195,10 @@ Route::get('/templates/{id}', [TemplateController::class, 'show'])->name('templa
 // Verified Creator Directory & Discovery Routes
 Route::get('/creators', [CreatorDirectoryController::class, 'index'])->name('creators.index');
 
+// On-Demand Creator Services Discovery Routes
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+Route::post('/services/{service}/inquire', [ServiceController::class, 'inquire'])->name('services.inquire')->middleware('auth');
+
 // Public Support & Contact Us Routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::get('/contact-us', [ContactController::class, 'index'])->name('contact');
@@ -285,6 +290,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('/seller/resource/{resource}', [DashboardController::class, 'destroyResource'])->name('seller.resource.destroy');
         Route::post('/seller/payouts/withdraw', [PayoutController::class, 'requestWithdrawal'])->name('seller.payouts.withdraw');
         Route::get('/creator/guidelines/download', [ResourceController::class, 'downloadGuidelines'])->name('guidelines.download-pdf');
+
+        // Creator Service Studio Management
+        Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+        Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+        Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+        Route::post('/services/{service}/toggle-status', [ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
     });
 
     // Dedicated Seller Dashboard Route: Switches session mode to 'seller' and cleanly resolves to /dashboard

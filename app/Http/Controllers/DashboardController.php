@@ -85,6 +85,10 @@ class DashboardController extends Controller
         // Verification application record
         $verification = SellerVerification::where('user_id', $user->id)->first();
 
+        // Creative Services (Max 5 per creator)
+        $creatorServices = \App\Models\Service::where('user_id', $user->id)->withCount('orders')->latest()->get();
+        $creatorServicesCount = $creatorServices->count();
+
         // Seller Reviews
         $sellerReviews = Review::whereIn('resource_id', $sellerResourceIds)
             ->with(['user', 'resource'])
@@ -139,7 +143,7 @@ class DashboardController extends Controller
         $tabParam = $request->query('tab');
         $isApproved = ($isUserAdmin || $isUserContributor);
         $defaultMode = $isApproved ? session('dashboard_mode', $user->active_mode ?? 'seller') : 'buyer';
-        if (in_array($tabParam, ['upload', 'designs', 'wallet']) && $isApproved) {
+        if (in_array($tabParam, ['upload', 'designs', 'services', 'wallet']) && $isApproved) {
             $initialMode = 'seller';
         } else {
             $requestedMode = $request->query('mode', session('dashboard_mode', $defaultMode));
@@ -181,7 +185,9 @@ class DashboardController extends Controller
             'isUserKycRejectedInCooldown',
             'kycCooldownDate',
             'kycRejectionReason',
-            'userBadgeLabel'
+            'userBadgeLabel',
+            'creatorServices',
+            'creatorServicesCount'
         ));
     }
 

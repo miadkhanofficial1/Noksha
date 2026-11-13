@@ -54,6 +54,10 @@
                         <i class="bi bi-grid me-1 text-slate-500"></i> Templates
                     </a>
 
+                    <a class="nav-link-custom {{ request()->routeIs('services.*') ? 'active' : '' }}" href="{{ route('services.index') }}">
+                        <i class="bi bi-briefcase-fill me-1 text-[#20165c]"></i> Services
+                    </a>
+
                     <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
                         <i class="bi bi-people-fill me-1 text-[#20165c]"></i> Creators
                     </a>
@@ -114,6 +118,15 @@
                             <div>
                                 <div class="small fw-semibold">Templates</div>
                                 <div class="extra-small text-muted" style="font-size: 0.68rem;">UI Kits, Vectors, Graphics</div>
+                            </div>
+                        </a>
+                        <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->routeIs('services.*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('services.index') }}">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: rgba(32, 22, 92, 0.12); color: #20165c;">
+                                <i class="bi bi-briefcase-fill small"></i>
+                            </div>
+                            <div>
+                                <div class="small fw-semibold">Services</div>
+                                <div class="extra-small text-muted" style="font-size: 0.68rem;">Custom Design Projects</div>
                             </div>
                         </a>
                         <a class="dropdown-item py-2 px-2.5 rounded-3 d-flex align-items-center gap-2.5 {{ request()->routeIs('creators.*') ? 'active bg-primary bg-opacity-10 text-primary fw-bold' : '' }}" href="{{ route('creators.index') }}">
@@ -651,6 +664,9 @@
             <div class="d-flex flex-column gap-1 mb-3">
                 <a class="nav-link-custom {{ request()->routeIs('resources.*') ? 'active' : '' }}" href="{{ route('resources.index') }}">
                     <i class="bi bi-grid me-2 text-secondary"></i> Templates
+                </a>
+                <a class="nav-link-custom {{ request()->routeIs('services.*') ? 'active' : '' }}" href="{{ route('services.index') }}">
+                    <i class="bi bi-briefcase-fill me-2 text-[#20165c]"></i> Services
                 </a>
                 <a class="nav-link-custom {{ request()->routeIs('creators.*') ? 'active' : '' }}" href="{{ route('creators.index') }}">
                     <i class="bi bi-people-fill me-2 text-indigo-400"></i> Creators

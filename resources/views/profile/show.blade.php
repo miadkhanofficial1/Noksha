@@ -420,6 +420,13 @@
                 <span class="showcase-tab-counter">{{ $totalAssetsCount }}</span>
             </button>
 
+            <!-- Tab: Creator Services -->
+            <button class="showcase-tab-btn" id="tab-services-btn" data-bs-toggle="tab" data-bs-target="#tab-services" type="button" role="tab" aria-controls="tab-services" aria-selected="false">
+                <i class="bi bi-briefcase-fill text-[#20165c]"></i>
+                <span>Services</span>
+                <span class="showcase-tab-counter">{{ $servicesCount ?? 0 }}</span>
+            </button>
+
             <!-- Tab 2: Contest Wins & Submissions -->
             <button class="showcase-tab-btn" id="tab-contests-btn" data-bs-toggle="tab" data-bs-target="#tab-contests" type="button" role="tab" aria-controls="tab-contests" aria-selected="false">
                 <i class="bi bi-trophy-fill text-warning"></i>
@@ -526,6 +533,65 @@
                         <p class="text-slate-500 small mb-3" style="max-width: 420px; margin: 0 auto;">
                             This creator hasn't published downloadable assets to the marketplace yet. Check back soon or explore their contest entries!
                         </p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- ============================================== -->
+            <!-- TAB: CREATOR SERVICES                          -->
+            <!-- ============================================== -->
+            <div class="tab-pane fade" id="tab-services" role="tabpanel" aria-labelledby="tab-services-btn">
+                <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                    <div>
+                        <h4 class="fw-bold text-[#121826] mb-1">Custom Creative Services</h4>
+                        <p class="text-slate-500 small mb-0">Hire {{ $user->name }} for bespoke, milestone-protected projects</p>
+                    </div>
+
+                    @if($isOwnProfile)
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 px-3 py-2 rounded-pill font-mono fw-bold">
+                                Services Used: {{ $servicesCount ?? 0 }} / 5
+                            </span>
+                            @if(($servicesCount ?? 0) < 5)
+                                <button type="button" onclick="openCreateServiceModal()" class="btn btn-sm btn-purple-cta rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm">
+                                    <i class="bi bi-plus-lg"></i>
+                                    <span>Add New Service</span>
+                                </button>
+                            @else
+                                <button type="button" disabled class="btn btn-sm btn-light border text-muted rounded-pill px-3.5 py-2 fw-bold" title="Maximum limit of 5 services reached">
+                                    Max Limit (5/5)
+                                </button>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                @if(isset($services) && $services->count() > 0)
+                    <div class="row g-4">
+                        @foreach($services as $srv)
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <x-service-card :service="$srv" />
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="bg-white border border-dashed border-slate-300 rounded-4 p-5 text-center my-3">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-circle bg-purple-50 text-[#20165c] d-flex align-items-center justify-content-center fs-3">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <h5 class="fw-bold text-[#121826] mb-1">No Services Listed Yet</h5>
+                        <p class="text-slate-500 small mb-3">
+                            @if($isOwnProfile)
+                                You haven't added any custom services to your public profile yet. Offer custom design packages to receive client inquiries directly.
+                            @else
+                                {{ $user->name }} hasn't published any custom services yet. You can still message them directly for inquiries!
+                            @endif
+                        </p>
+                        @if($isOwnProfile)
+                            <button type="button" onclick="openCreateServiceModal()" class="btn btn-sm btn-purple-cta rounded-pill px-4 py-2 fw-bold">
+                                + Add Your First Service
+                            </button>
+                        @endif
                     </div>
                 @endif
             </div>
@@ -1078,4 +1144,8 @@
         });
     }
 </script>
+
+@include('services.partials.inquiry-modal')
+@include('services.partials.service-form-modal', ['userTemplates' => $userTemplates ?? collect()])
+@include('services.partials.image-preview-modal')
 @endsection

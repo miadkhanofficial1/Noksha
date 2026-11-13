@@ -182,6 +182,12 @@
             </button>
 
             @if($user->isApprovedContributor() && $user->isSellerMode())
+                <button type="button" onclick="switchDashboardTab('pane-services', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-services">
+                    <svg class="w-4 h-4 shrink-0 text-[#20165c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span>My Services</span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#20165c]">{{ $creatorServicesCount ?? 0 }}/5</span>
+                </button>
+
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
                     <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     <span>Upload Asset</span>
@@ -664,6 +670,64 @@
         </div>
 
         <!-- ========================================== -->
+        <!-- PANE: MY SERVICES (CREATOR STUDIO)         -->
+        <!-- ========================================== -->
+        <div id="pane-services" class="dash-content-pane d-none space-y-8">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <!-- Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-6 flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-[#121826] flex items-center gap-2 mb-0">
+                            <svg class="w-5 h-5 shrink-0 text-[#20165c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <span>Creator Service Studio — My Offerings</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1 mb-0">Offer bespoke design packages, take custom client orders, and earn protected escrow milestones</p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold {{ ($creatorServicesCount ?? 0) >= 5 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-purple-50 text-[#20165c] border border-purple-200' }}">
+                            Services Used: {{ $creatorServicesCount ?? 0 }} / 5
+                        </span>
+
+                        @if(($creatorServicesCount ?? 0) < 5)
+                            <button type="button" onclick="openCreateServiceModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-xs transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>+ Add New Service</span>
+                            </button>
+                        @else
+                            <button type="button" disabled class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 cursor-not-allowed" title="Limit reached (5/5). Edit or delete an existing service to add a new one.">
+                                <span>Max Limit Reached (5/5)</span>
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Services Grid -->
+                @if(isset($creatorServices) && $creatorServices->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($creatorServices as $service)
+                            <x-service-card :service="$service" />
+                        @endforeach
+                    </div>
+                @else
+                    <div class="border border-dashed border-slate-300 rounded-2xl p-10 text-center bg-slate-50">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-purple-50 text-[#20165c] flex items-center justify-center text-xl shadow-xs">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h4 class="text-sm font-bold text-[#121826] mb-1">No Services Created Yet</h4>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto mb-4">
+                            You can publish up to 5 custom design services (e.g. Logo Design, UI Kit, Mockups) and receive inquiries directly in your inbox.
+                        </p>
+                        <button type="button" onclick="openCreateServiceModal()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>+ Create Your First Service</span>
+                        </button>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- ========================================== -->
         <!-- PANE 5: UPLOAD ASSET / CONTRIBUTOR KYC PANE -->
         <!-- ========================================== -->
         <div id="pane-upload" class="dash-content-pane d-none space-y-8">
@@ -1116,7 +1180,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Modal Footer -->
         <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between flex-wrap gap-3">
-            <span class="text-xs text-slate-400">Noksha Creator Standards v2026.1</span>
+            <span class="text-xs text-slate-400">Noksha Creator Submission Standards</span>
             <div class="flex items-center gap-3">
                 <a href="{{ route('guidelines.download-pdf') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold text-xs shadow-sm transition-all">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -1129,6 +1193,10 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+
+@include('services.partials.inquiry-modal')
+@include('services.partials.service-form-modal', ['userTemplates' => $contributorResources ?? collect()])
+@include('services.partials.image-preview-modal')
 
 <script>
 if (localStorage.getItem('noksha_guidelines_seen') === 'true') {

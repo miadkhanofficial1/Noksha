@@ -1186,6 +1186,44 @@
     </div>
 </section>
 
+<!-- CREATOR SERVICES SHOWCASE SECTION -->
+<section id="services-showcase" class="py-5 py-lg-6 reveal-on-scroll bg-white border-top border-bottom border-slate-200">
+    <div class="container py-2">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 mb-lg-5 gap-3">
+            <div>
+                <span class="noksha-badge mb-2">
+                    <i class="bi bi-briefcase-fill me-1 text-[#20165c]"></i> On-Demand Creative Services
+                </span>
+                <h2 class="display-6 fw-bold text-[#121826] mb-2 tracking-tight">Hire Verified Creators for Custom Projects</h2>
+                <p class="text-slate-500 mb-0" style="max-width: 600px;">
+                    Need a tailored logo, custom UI system, or marketing package? Inquire directly with top creators and hire them with 100% Smart Escrow protection.
+                </p>
+            </div>
+            <a href="{{ route('services.index') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold shadow-sm text-nowrap d-inline-flex align-items-center gap-2">
+                <span>View All Services</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        @if(isset($services) && $services->count() > 0)
+            <div class="row g-4">
+                @foreach($services as $srv)
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <x-service-card :service="$srv" />
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center p-5 bg-slate-50 rounded-4 border border-dashed border-slate-300">
+                <div class="w-12 h-12 mx-auto mb-2 rounded-circle bg-purple-50 text-[#20165c] d-flex align-items-center justify-content-center fs-4">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+                <h5 class="fw-bold text-[#121826] mb-1">Creator Services Coming Soon</h5>
+                <p class="text-slate-500 small mb-0">Our verified contributors are crafting custom service packages. Check back soon!</p>
+            </div>
+        @endif
+    </div>
+</section>
 
 <!-- CREATOR CAPABILITIES SPOTLIGHT -->
 <section id="creator-features" class="py-5 bg-light reveal-on-scroll">
@@ -1503,5 +1541,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
+
+@include('services.partials.inquiry-modal')
+@include('services.partials.service-form-modal')
+@include('services.partials.image-preview-modal')
 
 @endsection

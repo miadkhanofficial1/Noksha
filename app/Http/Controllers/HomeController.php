@@ -90,6 +90,15 @@ class HomeController extends Controller
         $heroShowcase = $trendingResources->first() ?? $resources->first();
         $aiShowcase = $resources->skip(1)->first() ?? $resources->first();
 
+        // 5. Featured Creator Services (On-demand custom projects)
+        $services = \App\Models\Service::with(['user.receivedReviews'])
+            ->where(function ($q) {
+                $q->where('status', 'active')->orWhere('is_active', true);
+            })
+            ->latest()
+            ->take(6)
+            ->get();
+
         return view('welcome', compact(
             'resources',
             'trendingResources',
@@ -105,7 +114,8 @@ class HomeController extends Controller
             'downloadsStat',
             'formattedTemplatesCount',
             'formattedCreatorsCount',
-            'formattedDownloadsCount'
+            'formattedDownloadsCount',
+            'services'
         ));
     }
 }

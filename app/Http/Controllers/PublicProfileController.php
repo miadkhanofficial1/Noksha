@@ -83,6 +83,11 @@ class PublicProfileController extends Controller
             ->latest()
             ->get();
 
+        // 6. Creator Services (Max 5)
+        $services = $user->services()->with(['user'])->latest()->get();
+        $servicesCount = $services->count();
+        $userTemplates = $isOwnProfile ? $user->resources()->where('status', 'approved')->latest()->get() : collect();
+
         return view('profile.show', compact(
             'user',
             'isOwnProfile',
@@ -97,7 +102,10 @@ class PublicProfileController extends Controller
             'reviews',
             'totalReviewsCount',
             'averageRating',
-            'organizedContests'
+            'organizedContests',
+            'services',
+            'servicesCount',
+            'userTemplates'
         ));
     }
 
