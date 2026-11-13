@@ -13,7 +13,7 @@
 @endphp
 
 <!-- CREATE / EDIT SERVICE MODAL -->
-<div id="nokshaServiceFormModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden transition-all duration-300">
+<div id="nokshaServiceFormModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden transition-all duration-300">
     <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all my-8 max-h-[92vh] flex flex-col">
         <!-- HEADER -->
         <div class="px-6 py-4 bg-gradient-to-r from-purple-50 via-white to-orange-50/40 border-b border-slate-200 flex items-center justify-between">
@@ -203,7 +203,7 @@
 
 <!-- VISUAL GALLERY PICKER MODAL (SELECT EXISTING NOKSHA TEMPLATES) -->
 @if(isset($userTemplates) && $userTemplates->count() > 0)
-    <div id="nokshaGalleryPickerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm hidden transition-all">
+    <div id="nokshaGalleryPickerModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm hidden transition-all">
         <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 max-h-[85vh] flex flex-col">
             <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                 <div>
@@ -273,6 +273,8 @@ function openCreateServiceModal() {
     renderSamplePreviews();
 
     modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.style.display = 'flex';
 }
 
 function openEditServiceModal(service) {
@@ -312,16 +314,31 @@ function openEditServiceModal(service) {
 
     renderSamplePreviews();
     modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.style.display = 'flex';
 }
 
 function closeServiceFormModal() {
     var modal = document.getElementById('nokshaServiceFormModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
 }
 
 function toggleGalleryPickerModal() {
     var modal = document.getElementById('nokshaGalleryPickerModal');
-    if (modal) modal.classList.toggle('hidden');
+    if (!modal) return;
+    if (modal.style.display === 'none' || modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
 }
 
 function selectAssetImage(path, url) {

@@ -874,6 +874,9 @@ function closeCreatorInspector() {
 }
 
 function previewHubEvidence(url, title) {
+    if (!url || typeof url !== 'string' || url.trim() === '' || url.trim() === '#' || url === 'undefined' || url === 'null') {
+        return;
+    }
     const modal = document.getElementById('hubImagePreviewModal');
     const img = document.getElementById('hubPreviewImg');
     const titleEl = document.getElementById('hubPreviewTitle');

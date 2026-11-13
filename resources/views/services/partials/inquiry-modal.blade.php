@@ -1,5 +1,5 @@
 <!-- SMART BRIEF INQUIRY MODAL -->
-<div id="nokshaInquiryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden transition-all duration-300">
+<div id="nokshaInquiryModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden transition-all duration-300">
     <div class="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all my-8 max-h-[90vh] flex flex-col">
         <!-- MODAL HEADER -->
         <div class="px-6 py-4 bg-gradient-to-r from-purple-50 via-white to-orange-50/40 border-b border-slate-200 flex items-center justify-between">
@@ -187,11 +187,17 @@ function openInquiryModal(service) {
     });
 
     modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.style.display = 'flex';
 }
 
 function closeInquiryModal() {
     var modal = document.getElementById('nokshaInquiryModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
 }
 
 function toggleInquiryChip(btn, chipText) {
