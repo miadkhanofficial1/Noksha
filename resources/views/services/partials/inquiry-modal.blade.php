@@ -123,7 +123,7 @@
 
                 <!-- SUBMIT CTA -->
                 <div class="pt-2">
-                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-bold text-sm shadow-md transition cursor-pointer">
+                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-[#20165c] hover:bg-[#170f45] text-white font-medium rounded-xl px-4 py-2.5 shadow-sm transition-all duration-200 cursor-pointer">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                         <span>Send Project Inquiry</span>
                     </button>

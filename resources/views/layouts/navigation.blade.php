@@ -634,16 +634,16 @@
         <!-- ========================================================= -->
         <div class="collapse d-lg-none border-top mt-2 pt-3 pb-2" id="nokshaNavbarCollapse">
             <!-- Mobile Search Bar -->
-            <form action="{{ route('search.index') }}" method="GET" class="d-md-none mb-3" role="search">
-                <div class="input-group bg-light rounded-pill px-3 py-1 border">
-                    <span class="input-group-text bg-transparent border-0 text-muted ps-0 pe-2">
+            <form action="{{ route('resources.index') }}" method="GET" class="d-md-none mb-3" role="search">
+                <div class="input-group bg-light rounded-xl px-3 py-1.5 border border-slate-200">
+                    <span class="input-group-text bg-transparent border-0 text-slate-400 ps-0 pe-2">
                         <i class="bi bi-search"></i>
                     </span>
                     <input name="q" 
                            value="{{ request('q') }}" 
-                           class="form-control bg-transparent border-0 ps-0 small" 
+                           class="form-control bg-transparent border-0 ps-0 small text-slate-800" 
                            type="search" 
-                           placeholder="{{ __('app.search') }}..." 
+                           placeholder="Search templates, services, creators..." 
                            aria-label="Search">
                 </div>
             </form>

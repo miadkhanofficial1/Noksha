@@ -32,7 +32,7 @@
                                    placeholder="Search services (e.g. Logo Design, UI Kit, Fintech App, Mockups)..." 
                                    class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:border-[#20165c] focus:outline-none transition shadow-xs">
                         </div>
-                        <button type="submit" class="px-6 py-3 rounded-2xl bg-[#20165c] hover:bg-[#181045] text-white font-bold text-xs shadow-md transition shrink-0 cursor-pointer">
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-xs shadow-sm transition-all duration-200 shrink-0 cursor-pointer">
                             Search Services
                         </button>
                     </div>
@@ -113,7 +113,7 @@
 
             <!-- CREATOR STUDIO CTA -->
             @if(auth()->check() && auth()->user()->isApprovedContributor())
-                <button type="button" onclick="openCreateServiceModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-xs transition cursor-pointer">
+                <button type="button" onclick="openCreateServiceModal()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-medium text-white bg-[#20165c] hover:bg-[#170f45] shadow-sm transition-all duration-200 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>+ Add New Service</span>
                 </button>
@@ -133,7 +133,7 @@
                     <p class="text-xs text-slate-500 max-w-md mx-auto mb-5">
                         Try resetting your search query, adjusting your delivery timeline, or clearing the category filter to explore all available services.
                     </p>
-                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition">
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm transition-all duration-200">
                         Reset All Filters
                     </a>
                 </div>

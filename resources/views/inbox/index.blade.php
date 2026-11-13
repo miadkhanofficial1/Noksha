@@ -248,7 +248,7 @@
                         <div class="flex items-center gap-2">
                             {{-- Work History Drawer Trigger Button --}}
                             @if(!$isSupportThread)
-                                <button type="button" onclick="openWorkHistoryDrawer()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-[#20165c] border border-purple-200 shadow-xs transition-all cursor-pointer" title="View order history with this creator">
+                                <button type="button" onclick="openWorkHistoryDrawer()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all duration-200 cursor-pointer" title="View order history with this creator">
                                     <span>📋 Work History</span>
                                     <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#20165c] text-white">{{ $workHistoryCount ?? 0 }}</span>
                                 </button>
@@ -256,7 +256,7 @@
 
                             {{-- Service Proposal / Offer Button --}}
                             @if(!$isSupportThread)
-                                <button type="button" onclick="openProposalModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
+                                <button type="button" onclick="openProposalModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-[#20165c] hover:bg-[#170f45] text-white shadow-sm transition-all duration-200 cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                     <span>{{ $isSeller ? 'Offer Service' : 'Pick Seller Service' }}</span>
                                 </button>
@@ -366,14 +366,14 @@
                                             @if($isBuyer)
                                                 <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Accept delivery and release escrow funds to creator? (15% platform commission will be deducted).');">
                                                     @csrf
-                                                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer">
+                                                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all duration-200 cursor-pointer">
                                                         ✅ Approve & Complete
                                                     </button>
                                                 </form>
-                                                <button type="button" onclick="openRevisionModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 border border-amber-500/30 transition-all cursor-pointer">
+                                                <button type="button" onclick="openRevisionModal()" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all duration-200 cursor-pointer">
                                                     🔄 Request Revision
                                                 </button>
-                                                <button type="button" onclick="openFakeReportModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 transition-all cursor-pointer">
+                                                <button type="button" onclick="openFakeReportModal()" class="px-3.5 py-2 rounded-xl text-xs font-medium bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 transition-all duration-200 cursor-pointer">
                                                     🚨 Report Fake File
                                                 </button>
                                             @else
@@ -389,7 +389,7 @@
                                         @if($isBuyer)
                                             <form action="{{ route('inbox.orders.fund', $activeOrder->id) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer">
+                                                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all duration-200 cursor-pointer">
                                                     💳 Accept & Pay (৳{{ number_format($orderAmountDisplay, 2) }})
                                                 </button>
                                             </form>
@@ -578,7 +578,7 @@
                                                 @if($isBuyer)
                                                     <form action="{{ route('inbox.orders.fund', $propOrder->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5">
+                                                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5">
                                                             <span>💳 Accept & Pay (৳{{ number_format($propOrder->amount ?? $propOrder->total_amount, 2) }})</span>
                                                         </button>
                                                     </form>

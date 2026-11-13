@@ -143,11 +143,11 @@
 
     /* Asset Grid Card */
     .asset-card {
-        border-radius: 1.25rem;
-        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        border: 1px solid rgba(226, 232, 240, 0.9);
         background: #ffffff;
-        box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.4);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -155,9 +155,8 @@
     }
 
     .asset-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 16px 30px -8px rgba(99, 102, 241, 0.25);
-        border-color: rgba(99, 102, 241, 0.4);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
     }
 
     .asset-thumb-box {
@@ -171,11 +170,11 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.35s ease;
+        transition: opacity 0.2s ease;
     }
 
     .asset-card:hover .asset-thumb-img {
-        transform: scale(1.04);
+        opacity: 0.92;
     }
 
     /* Winning Entry Ribbon */
@@ -194,9 +193,9 @@
 
     /* Skill Chip */
     .skill-badge-item {
-        background: rgba(99, 102, 241, 0.15);
+        background: rgba(32, 22, 92, 0.06);
         color: #20165c;
-        border: 1px solid rgba(99, 102, 241, 0.3);
+        border: 1px solid rgba(32, 22, 92, 0.15);
         padding: 0.45rem 1.1rem;
         border-radius: 999px;
         font-weight: 600;
@@ -208,9 +207,8 @@
     }
 
     .skill-badge-item:hover {
-        background: #6366f1;
+        background: #20165c;
         color: #ffffff;
-        transform: translateY(-2px);
     }
 
     /* Social Link Cards */
@@ -230,31 +228,32 @@
     }
 
     .social-link-card:hover {
-        background: #131d36;
-        border-color: #6366f1;
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px -3px rgba(99, 102, 241, 0.2);
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #0f172a;
     }
 
     /* Follow Button */
     .btn-follow-toggle {
         min-width: 120px;
-        border-radius: 50rem;
-        font-weight: 700;
+        border-radius: 0.75rem;
+        font-weight: 500;
         transition: all 0.2s ease;
     }
 
     .btn-purple-cta {
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        background: #20165c !important;
         color: #FFFFFF !important;
         border: none;
-        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
 
     .btn-purple-cta:hover {
-        box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
-        transform: translateY(-1px);
+        background: #170f45 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        color: #ffffff !important;
     }
 </style>
 
@@ -379,31 +378,31 @@
                 <div class="col-12 col-lg-5 text-center text-lg-end">
                     <div class="d-inline-flex flex-wrap align-items-center justify-content-center justify-content-lg-end gap-2 pb-1">
                         @if($isOwnProfile)
-                            <a href="{{ route('settings.profile') }}" class="btn btn-outline-dark text-slate-700 border-gray-700 hover:bg-gray-800 hover:text-[#121826] rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
+                            <a href="{{ route('settings.profile') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
                                 <i class="bi bi-gear-fill"></i>
                                 <span>Edit Profile</span>
                             </a>
-                            <a href="{{ route('dashboard') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
+                            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
                                 <i class="bi bi-speedometer2"></i>
                                 <span>My Dashboard</span>
                             </a>
                         @else
                             <!-- Follow Toggle Button -->
                             @auth
-                                <button type="button" class="btn btn-follow-toggle {{ $isFollowing ? 'btn-success text-[#121826]' : 'btn-purple-cta' }} px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2" id="followBtn" onclick="toggleFollow('{{ $user->username }}')">
+                                <button type="button" class="btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 shadow-sm border-0 cursor-pointer {{ $isFollowing ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-[#20165c] hover:bg-[#170f45] text-white' }}" id="followBtn" onclick="toggleFollow('{{ $user->username }}')">
                                     <i class="bi {{ $isFollowing ? 'bi-check2' : 'bi-plus-lg' }}" id="followBtnIcon"></i>
                                     <span id="followBtnText">{{ $isFollowing ? 'Following' : 'Follow' }}</span>
                                 </button>
                             @else
-                                <a href="{{ route('login') }}" class="btn btn-purple-cta btn-follow-toggle px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
+                                <a href="{{ route('login') }}" class="btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
                                     <i class="bi bi-plus-lg"></i>
                                     <span>Follow</span>
                                 </a>
                             @endauth
 
                             <!-- Send Message Button -->
-                            <a href="{{ route('inbox.show', $user->id) }}" class="btn btn-outline-dark text-slate-700 border-gray-700 hover:bg-gray-800 hover:text-[#121826] rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
-                                <i class="bi bi-chat-dots-fill text-indigo-400"></i>
+                            <a href="{{ route('inbox.show', $user->id) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
+                                <i class="bi bi-chat-dots-fill text-[#20165c]"></i>
                                 <span>Send Message</span>
                             </a>
                         @endif
@@ -517,7 +516,7 @@
                                                 @endif
                                             </div>
 
-                                            <a href="{{ route('resource.show', $asset->slug) }}" class="btn btn-sm btn-purple-cta rounded-pill px-3 py-1 fw-bold extra-small">
+                                            <a href="{{ route('resource.show', $asset->slug) }}" class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-xs shadow-sm transition-all duration-200 text-decoration-none">
                                                 View Asset
                                             </a>
                                         </div>
@@ -559,12 +558,12 @@
                                 Services Used: {{ $servicesCount ?? 0 }} / 5
                             </span>
                             @if(($servicesCount ?? 0) < 5)
-                                <button type="button" onclick="openCreateServiceModal()" class="btn btn-sm btn-purple-cta rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-sm">
+                                <button type="button" onclick="openCreateServiceModal()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-xs shadow-sm transition-all duration-200 border-0 cursor-pointer">
                                     <i class="bi bi-plus-lg"></i>
                                     <span>Add New Service</span>
                                 </button>
                             @else
-                                <button type="button" disabled class="btn btn-sm btn-light border text-muted rounded-pill px-3.5 py-2 fw-bold" title="Maximum limit of 5 services reached">
+                                <button type="button" disabled class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-medium text-xs border border-slate-200 cursor-not-allowed" title="Maximum limit of 5 services reached">
                                     Max Limit (5/5)
                                 </button>
                             @endif

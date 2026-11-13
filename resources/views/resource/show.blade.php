@@ -75,76 +75,70 @@
     }
 
     .ai-tag-pill:hover {
-        background: #6C4CF1;
+        background: #20165c;
         color: #ffffff !important;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px -3px rgba(108, 76, 241, 0.4);
+        box-shadow: 0 4px 12px -2px rgba(32, 22, 92, 0.25);
     }
 
     /* Action Buttons */
     .btn-purple-cta {
-        background: linear-gradient(135deg, #20165c 0%, #2c1e7a 100%);
+        background: #20165c !important;
         color: #ffffff !important;
         border: none;
-        font-weight: 700;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 8px 20px -4px rgba(32, 22, 92, 0.35);
+        font-weight: 600;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
 
     .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #181045 0%, #20165c 100%);
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 14px 28px -4px rgba(32, 22, 92, 0.45);
+        background: #170f45 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         color: #ffffff !important;
     }
 
     .btn-outline-purple {
-        background: rgba(108, 76, 241, 0.05);
-        color: #6C4CF1 !important;
-        border: 1.5px solid rgba(108, 76, 241, 0.3) !important;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background: #ffffff;
+        color: #20165c !important;
+        border: 1px solid #e2e8f0 !important;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
 
     .btn-outline-purple:hover {
-        background: rgba(108, 76, 241, 0.12);
-        border-color: #6C4CF1 !important;
-        transform: translateY(-2px);
-        color: #5A3DE0 !important;
+        background: #f8fafc;
+        border-color: #cbd5e1 !important;
+        color: #170f45 !important;
     }
 
     .btn-ai-quick-edit {
-        background: linear-gradient(135deg, #1E1B4B 0%, #4338CA 50%, #7C3AED 100%);
-        color: #FFFFFF !important;
-        border: 1.5px solid rgba(167, 139, 250, 0.45) !important;
-        box-shadow: 0 8px 25px -4px rgba(124, 58, 237, 0.4);
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background: #ffffff;
+        color: #334155 !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
         position: relative;
         overflow: hidden;
     }
 
     .btn-ai-quick-edit:hover {
-        background: linear-gradient(135deg, #312E81 0%, #4F46E5 50%, #8B5CF6 100%);
-        transform: translateY(-2px) scale(1.015);
-        box-shadow: 0 14px 30px -4px rgba(124, 58, 237, 0.6);
-        border-color: rgba(196, 181, 253, 0.8) !important;
-        color: #FFFFFF !important;
+        background: #f8fafc;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
     }
 
     /* Template Cards for Related Section */
     .template-card-figma {
-        border-radius: 1.5rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 12px 35px -10px rgba(108, 76, 241, 0.1) !important;
-        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        border-radius: 1rem !important;
+        border: 1px solid rgba(226, 232, 240, 0.9) !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
         background: #ffffff;
     }
 
     .template-card-figma:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 45px -10px rgba(108, 76, 241, 0.22) !important;
-        border-color: rgba(108, 76, 241, 0.35) !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
     }
 
     .card-grad-1 { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
@@ -693,19 +687,19 @@
                         <!-- Main Action Buttons -->
                         <div class="d-grid gap-2.5 mb-3">
                             @if(isset($hasPurchased) && $hasPurchased)
-                                <div class="p-2.5 rounded-3 bg-emerald-50 border border-emerald-200 text-center mb-1">
+                                <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-center mb-1">
                                     <span class="text-emerald-700 extra-small fw-bold">
                                         <i class="bi bi-patch-check-fill me-1"></i> License Owned & Unlocked
                                     </span>
                                 </div>
-                                <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold text-decoration-none shadow-sm transition-all">
+                                <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-decoration-none shadow-sm transition-all duration-200">
                                     <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
                                     <span>Download Asset</span>
                                 </a>
                             @else
                                 @if(isset($resource) && $resource->is_paid && $resource->price > 0)
                                     <!-- Buy Template Direct with Wallet -->
-                                    <button type="button" onclick="handleBuyTemplate()" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-sm transition-all border-0 cursor-pointer">
+                                    <button type="button" onclick="handleBuyTemplate()" class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium shadow-sm transition-all duration-200 border-0 cursor-pointer">
                                         <i class="bi bi-wallet2"></i>
                                         <span>Download Asset — ৳{{ number_format($resource->price, 2) }}</span>
                                     </button>
@@ -713,7 +707,7 @@
                                     <!-- Add to Cart Alternative -->
                                     <form action="{{ route('cart.store', $resource->id ?? 1) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-outline-secondary rounded-xl py-2.5 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 extra-small cursor-pointer">
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium transition-all duration-200 text-xs cursor-pointer shadow-sm">
                                             <i class="bi bi-cart-plus"></i>
                                             <span>Add to Cart</span>
                                         </button>
@@ -722,7 +716,7 @@
                                     <!-- Free Download Direct -->
                                     <form action="{{ route('resource.buy-wallet', $resource->id ?? 1) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-sm transition-all border-0 cursor-pointer">
+                                        <button type="submit" class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium shadow-sm transition-all duration-200 border-0 cursor-pointer">
                                             <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
                                             <span>Download Asset (Free)</span>
                                         </button>
@@ -731,13 +725,13 @@
                             @endif
 
                             <!-- Studio Quick Customize Action Trigger -->
-                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-2.5 px-4 rounded-xl bg-white hover:bg-purple-50 text-[#20165c] border border-[#20165c]/30 hover:border-[#20165c] font-semibold text-decoration-none shadow-xs transition-all text-xs" title="Customize this template in the web editor">
-                                <i class="bi bi-palette2 fs-6 text-[#f47402]"></i>
+                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-decoration-none shadow-sm transition-all duration-200 text-xs" title="Customize this template in the web editor">
+                                <i class="bi bi-palette2 text-[#f47402]"></i>
                                 <span>Studio Quick Edit</span>
                             </a>
 
                             @if(isset($resource) && $resource->demo_link)
-                                <a href="{{ $resource->demo_link }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-100 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 hover:text-[#20165c] hover:bg-slate-50 font-semibold text-decoration-none text-xs transition-all">
+                                <a href="{{ $resource->demo_link }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-decoration-none text-xs shadow-sm transition-all duration-200">
                                     <i class="bi bi-box-arrow-up-right me-1"></i> Live Demo Preview
                                 </a>
                             @endif
@@ -825,10 +819,10 @@
                         </div>
 
                         <div class="d-flex flex-column gap-2 mt-3">
-                            <a href="{{ isset($resource) && $resource->owner ? route('inbox.index', ['recipient' => $resource->owner->id]) : route('seller.demo') }}" class="btn rounded-xl w-100 fw-bold btn-sm py-2 text-white bg-[#20165c] hover:bg-[#181045] transition shadow-xs">
-                                <i class="bi bi-chat-dots-fill me-1.5"></i> Hire for Custom Job
+                            <a href="{{ isset($resource) && $resource->owner ? route('inbox.index', ['recipient' => $resource->owner->id]) : route('seller.demo') }}" class="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-xs shadow-sm transition-all duration-200 text-decoration-none">
+                                <i class="bi bi-chat-dots-fill me-1"></i> Hire for Custom Job
                             </a>
-                            <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="btn btn-outline-secondary rounded-xl w-100 fw-bold btn-sm text-xs py-2">
+                            <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs shadow-sm transition-all duration-200 text-decoration-none">
                                 <i class="bi bi-person-circle me-1"></i> View Creator Profile
                             </a>
                         </div>

@@ -125,15 +125,12 @@
     }
 
     .hero-search-box:focus-within {
-        box-shadow: 0 18px 30px -5px rgba(32, 22, 92, 0.12), 0 0 0 3px rgba(32, 22, 92, 0.15) !important;
-        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(32, 22, 92, 0.12), 0 0 0 3px rgba(32, 22, 92, 0.15) !important;
         border-color: #20165c !important;
     }
 
     .hero-search-box:focus-within .bi-search {
-        transform: scale(1.15) rotate(5deg);
         color: #20165c !important;
-        transition: transform 0.3s ease;
     }
 
     /* Premium CTA Buttons */
@@ -141,45 +138,45 @@
         background: #20165c;
         color: #ffffff !important;
         border: none;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.2s ease;
         position: relative;
         overflow: hidden;
+        border-radius: 0.75rem;
     }
 
     .btn-cta-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 28px -5px rgba(32, 22, 92, 0.3);
-        background: #181045;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        background: #170f45;
         color: #ffffff !important;
     }
 
     .btn-cta-secondary {
-        background: rgba(244, 116, 2, 0.06);
+        background: #ffffff;
         color: #f47402 !important;
-        border: 2px solid #f47402 !important;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1.5px solid #f47402 !important;
+        transition: all 0.2s ease;
+        border-radius: 0.75rem;
     }
 
     .btn-cta-secondary:hover {
         background: #f47402;
         border-color: #f47402 !important;
-        transform: translateY(-2px);
         color: #ffffff !important;
     }
 
     .btn-purple-cta {
         background: #20165c;
         color: #ffffff !important;
-        border: 1px solid #181045;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 4px 12px rgba(32, 22, 92, 0.2);
+        border: 1px solid #170f45;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border-radius: 0.75rem;
     }
 
     .btn-purple-cta:hover {
-        background: #181045;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(32, 22, 92, 0.3);
+        background: #170f45;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         color: #ffffff !important;
     }
 
@@ -187,13 +184,13 @@
     .glass-mockup-card {
         background: #ffffff;
         border: 1px solid #e2e8f0 !important;
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
-        transition: all 0.4s ease;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
     }
 
     .glass-mockup-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.12);
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
     /* Featured Template Section & Cards */
@@ -228,7 +225,7 @@
         font-weight: 600;
         font-size: 0.875rem;
         padding: 0.5rem 1.25rem;
-        transition: all 0.25s ease;
+        transition: all 0.2s ease;
         white-space: nowrap;
         flex-shrink: 0;
     }
@@ -237,7 +234,6 @@
         border-color: #20165c !important;
         color: #20165c !important;
         box-shadow: 0 2px 8px rgba(32, 22, 92, 0.08);
-        transform: translateY(-1px);
     }
 
     .cat-chip-pill.active {
@@ -245,24 +241,22 @@
         color: #ffffff !important;
         border-color: #20165c !important;
         box-shadow: 0 4px 14px rgba(32, 22, 92, 0.25) !important;
-        transform: scale(1.02) !important;
     }
 
     /* Improved Template Cards with Shimmer Sweep & 24px Radius */
     .template-card-figma, .cat-card-figma, .trending-card-figma {
-        border-radius: 1.25rem !important;
-        border: 1px solid #e2e8f0 !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+        border-radius: 1rem !important;
+        border: 1px solid rgba(226, 232, 240, 0.9) !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
         background: #ffffff;
         position: relative;
     }
 
     .template-card-figma:hover, .cat-card-figma:hover, .trending-card-figma:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08) !important;
         border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
     }
 
     .template-preview-area {
@@ -272,28 +266,28 @@
     }
 
     .template-preview-area svg {
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.2s ease;
     }
 
     .template-card-figma:hover .template-preview-area svg {
-        transform: scale(1.08) rotate(-1deg);
+        opacity: 0.9;
     }
 
     /* Professional Categories Card Styling */
     .cat-icon-wrapper {
         width: 64px;
         height: 64px;
-        border-radius: 1.25rem;
+        border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #ffffff;
         font-size: 1.75rem;
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.2s ease;
     }
 
     .cat-card-figma:hover .cat-icon-wrapper {
-        transform: scale(1.12) rotate(-6deg);
+        opacity: 0.9;
     }
 
     .glass-trending-badge {

@@ -59,7 +59,7 @@
         @if($creators->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($creators as $creator)
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-[#20165c]/40 transition duration-300 flex flex-col justify-between group">
+                    <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
                         
                         <div>
                             <!-- Card Header: Avatar, Name, Verified Badge, Headline -->
@@ -68,7 +68,7 @@
                                     <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}">
                                         <img src="{{ $creator->avatar_url }}" 
                                              alt="{{ $creator->name }}" 
-                                             class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm group-hover:scale-105 transition-transform">
+                                             class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm transition-opacity">
                                     </a>
                                     <!-- Online Green Indicator Dot -->
                                     <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" title="Active on Noksha"></span>
@@ -111,7 +111,7 @@
                                         <div class="relative w-full h-full bg-slate-200 overflow-hidden">
                                             @if($tmpl->preview_image)
                                                 <a href="{{ route('resource.show', $tmpl->slug ?? $tmpl->id) }}" class="block w-full h-full" title="{{ $tmpl->title }}">
-                                                    <img src="{{ $tmpl->thumbnail_url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $tmpl->title }}">
+                                                    <img src="{{ $tmpl->thumbnail_url }}" class="w-full h-full object-cover transition-opacity duration-200 hover:opacity-90" alt="{{ $tmpl->title }}">
                                                 </a>
                                             @else
                                                 <div class="w-full h-full bg-gradient-to-br from-[#20165c]/10 to-purple-200 flex items-center justify-center text-[#20165c]">
@@ -154,13 +154,13 @@
 
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('inbox.index', ['recipient' => $creator->id]) }}" 
-                                   class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white text-xs font-bold transition shadow-sm">
+                                   class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white text-xs font-medium transition-all duration-200 shadow-sm">
                                     <i class="bi bi-chat-dots-fill small"></i>
                                     <span>Hire / Message</span>
                                 </a>
 
                                 <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}" 
-                                   class="p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:text-[#20165c] hover:bg-slate-50 transition shadow-sm"
+                                   class="p-2.5 rounded-xl border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-all duration-200 shadow-sm"
                                    title="View Full Portfolio">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                 </a>
