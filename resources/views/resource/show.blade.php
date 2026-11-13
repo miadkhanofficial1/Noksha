@@ -46,24 +46,17 @@
         box-shadow: 0 8px 20px -4px rgba(108, 76, 241, 0.3);
     }
 
-    /* Glassmorphism Pricing Sticky Card */
-    .glass-pricing-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(108, 76, 241, 0.2) !important;
-        border-radius: 1.5rem !important;
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.18) !important;
-        position: sticky;
-        top: 100px;
+    /* Sidebar Stack Cards (No conflicting individual sticky offsets) */
+    .glass-pricing-card, .tech-specs-card, .seller-card-figma {
+        background: #ffffff;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 1.25rem !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Seller Profile Card */
-    .seller-card-figma {
-        border-radius: 1.5rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        background: #ffffff;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.06) !important;
+    .glass-pricing-card:hover, .tech-specs-card:hover, .seller-card-figma:hover {
+        border-color: #cbd5e1 !important;
     }
     
     /* AI Tag Pills */
@@ -255,38 +248,83 @@
         }
     }
 
+    // Build complete gallery thumbnails array (up to 5 images)
+    $galleryImages = [];
+    if (!empty($coverUrl)) {
+        $galleryImages[] = $coverUrl;
+    }
+    if (isset($resource) && !empty($resource->preview_images)) {
+        $rawPreviews = is_array($resource->preview_images) ? $resource->preview_images : json_decode($resource->preview_images, true);
+        if (is_array($rawPreviews)) {
+            foreach ($rawPreviews as $pImg) {
+                if (empty($pImg)) continue;
+                $pUrl = str_starts_with($pImg, 'http://') || str_starts_with($pImg, 'https://')
+                    ? $pImg 
+                    : asset('storage/' . ltrim(str_replace('storage/', '', $pImg), '/'));
+                if (!in_array($pUrl, $galleryImages)) {
+                    $galleryImages[] = $pUrl;
+                }
+            }
+        }
+    }
+    $galleryImages = array_slice($galleryImages, 0, 5);
+
     // Filter out dummy/test strings (e.g. dlknfonsdof, asdf, etc.)
     $rawDesc = trim($resource->description ?? '');
     $isDummyDesc = empty($rawDesc) || strlen($rawDesc) < 15 || preg_match('/^[a-z]{8,}$/i', $rawDesc) || in_array(strtolower($rawDesc), ['test', 'asdf', 'dlknfonsdof', 'sample', 'description']);
     $cleanDesc = !$isDummyDesc 
         ? $rawDesc 
         : 'High-caliber digital design asset crafted with precision for professional UI/UX, brand identity, and modern digital workflows. Fully organized vector layers, global design tokens, and scalable components configured for instant production deployment.';
+
+    // Calculate source format label for Technical Specs & Badges
+    $rawExt = null;
+    if (!empty($resource->source_file_path)) {
+        $rawExt = pathinfo($resource->source_file_path, PATHINFO_EXTENSION);
+    } elseif (!empty($resource->file_path)) {
+        $rawExt = pathinfo($resource->file_path, PATHINFO_EXTENSION);
+    }
+    if (empty($rawExt) && !empty($resource->file_type)) {
+        $rawExt = $resource->file_type;
+    }
+    $rawExt = strtolower($rawExt ?? '');
+    if (in_array($rawExt, ['zip', 'rar', 'tar', 'gz']) || (count($galleryImages) > 1)) {
+        if (!empty($resource->source_file_path) && !in_array(strtolower(pathinfo($resource->source_file_path, PATHINFO_EXTENSION)), ['zip', 'rar', ''])) {
+            $sourceFormatLabel = strtoupper(pathinfo($resource->source_file_path, PATHINFO_EXTENSION));
+        } else {
+            $sourceFormatLabel = 'Multi-File Bundle';
+        }
+    } elseif (!empty($rawExt)) {
+        $sourceFormatLabel = strtoupper($rawExt);
+    } else {
+        $sourceFormatLabel = 'Multi-File Bundle';
+    }
 @endphp
 
-                <!-- Large Product Preview Gallery Frame (White/Slate-50 Frame) -->
-                <div class="resource-preview-main mb-4 bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                    <div id="mainPreviewDisplay" class="resource-preview-box p-0 position-relative overflow-hidden bg-slate-50 d-flex align-items-center justify-content-center" style="min-height: 440px;">
+                <!-- Compact Product Preview Gallery Frame (Max-h-[400px], Clean Slate-50 Canvas) -->
+                <div class="resource-preview-main mb-3 bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                    <div id="mainPreviewDisplay" class="resource-preview-box p-3 position-relative overflow-hidden bg-slate-50 d-flex align-items-center justify-content-center w-100" style="max-height: 400px; min-height: 320px; height: 380px;">
                         @if(!empty($coverUrl))
                             <img src="{{ $coverUrl }}" 
                                  id="resourceMainCoverImg"
-                                 class="w-100 h-100 object-fit-cover" 
+                                 class="w-100 h-100 rounded-xl transition-all duration-300" 
+                                 style="max-height: 370px; object-fit: contain;"
                                  alt="{{ $resource->title }}"
                                  onerror="this.onerror=null; this.classList.add('d-none'); document.getElementById('previewVectorFallback').classList.remove('d-none');">
                         @endif
 
                         <!-- Graceful Vector Showcase Fallback (When cover image is missing or broken) -->
-                        <div id="previewVectorFallback" class="{{ !empty($coverUrl) ? 'd-none' : '' }} w-100 h-100 p-5 d-flex flex-column align-items-center justify-content-center text-center bg-gradient-to-br from-purple-50/60 via-slate-50 to-amber-50/40" style="min-height: 440px;">
-                            <div class="rounded-2xl p-4 bg-white border border-purple-100 shadow-sm mb-3 text-[#20165c]">
-                                <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <div id="previewVectorFallback" class="{{ !empty($coverUrl) ? 'd-none' : '' }} w-100 h-100 p-4 d-flex flex-column align-items-center justify-content-center text-center bg-gradient-to-br from-purple-50/60 via-slate-50 to-amber-50/40 rounded-xl" style="max-height: 370px;">
+                            <div class="rounded-2xl p-3 bg-white border border-purple-100 shadow-sm mb-2 text-[#20165c]">
+                                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                                     <line x1="8" y1="21" x2="16" y2="21"></line>
                                     <line x1="12" y1="17" x2="12" y2="21"></line>
                                 </svg>
                             </div>
-                            <h4 class="fw-bold text-[#121826] mb-1.5">{{ isset($resource) ? $resource->title : 'Digital Asset Showcase' }}</h4>
+                            <h5 class="fw-bold text-[#121826] mb-1">{{ isset($resource) ? $resource->title : 'Digital Asset Showcase' }}</h5>
                             <div class="d-flex align-items-center gap-2 mt-1">
                                 <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 px-3 py-1 rounded-pill extra-small font-mono fw-bold">
-                                    {{ isset($resource) ? strtoupper($resource->file_type ?? 'VECTOR') : 'VECTOR' }} FORMAT
+                                    {{ $sourceFormatLabel }}
                                 </span>
                                 <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-pill extra-small font-mono fw-bold">
                                     VERIFIED ASSET
@@ -294,29 +332,23 @@
                             </div>
                         </div>
 
-                        <!-- Top Floating Badges -->
-                        <span class="position-absolute top-0 start-0 m-3 badge bg-white/95 backdrop-blur-md text-[#121826] border border-slate-200 rounded-pill shadow-sm px-3.5 py-2 fw-bold small">
+                        <!-- Top Floating Badges (Clean Editor's Choice only; ZIP Format Badge completely removed) -->
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-white/95 backdrop-blur-md text-[#121826] border border-slate-200 rounded-pill shadow-xs px-3.5 py-1.5 fw-bold small">
                             <i class="bi bi-award-fill text-[#20165c] me-1"></i> Editor's Choice
-                        </span>
-                        <span class="position-absolute top-0 end-0 m-3 badge bg-white/95 backdrop-blur-md text-[#20165c] border border-slate-200 rounded-pill px-3 py-1.5 small font-monospace fw-bold shadow-sm">
-                            {{ isset($resource) ? strtoupper($resource->file_type ?? 'ZIP') : 'FIGMA' }} Format
                         </span>
                     </div>
                 </div>
 
-                <!-- Multi-image Preview Gallery Thumbnails (if available) -->
-                @if(isset($resource) && !empty($resource->preview_images) && count((array)$resource->preview_images) > 1)
-                    <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-2">
-                        @foreach((array)$resource->preview_images as $idx => $pImg)
-                            @php
-                                $pUrl = str_starts_with($pImg, 'http') ? $pImg : asset('storage/' . ltrim(str_replace('storage/', '', $pImg), '/'));
-                            @endphp
+                <!-- Multi-image Preview Gallery Thumbnails (Up to 5 images) -->
+                @if(count($galleryImages) > 1)
+                    <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-1" id="previewGalleryStrip">
+                        @foreach($galleryImages as $idx => $thumbUrl)
                             <button type="button" 
-                                    onclick="document.getElementById('resourceMainCoverImg').src = '{{ $pUrl }}';" 
-                                    class="btn p-0 border border-slate-300 rounded-3 overflow-hidden shadow-xs hover-border-purple transition flex-shrink-0" 
-                                    style="width: 76px; height: 52px;"
-                                    title="View Slide {{ $idx + 1 }}">
-                                <img src="{{ $pUrl }}" class="w-100 h-100 object-fit-cover" alt="Slide {{ $idx + 1 }}">
+                                    onclick="switchMainPreview('{{ $thumbUrl }}', this)" 
+                                    class="gallery-thumb-btn p-1 rounded-xl border-2 transition-all cursor-pointer flex-shrink-0 bg-white {{ $idx === 0 ? 'border-[#20165c] shadow-xs' : 'border-slate-200 hover:border-purple-300 opacity-75 hover:opacity-100' }}" 
+                                    style="width: 72px; height: 50px;"
+                                    title="View Preview {{ $idx + 1 }}">
+                                <img src="{{ $thumbUrl }}" class="w-100 h-100 rounded-lg" style="object-fit: cover;" alt="Preview {{ $idx + 1 }}">
                             </button>
                         @endforeach
                     </div>
@@ -632,48 +664,48 @@
 
             </div>
 
-            <!-- RIGHT COLUMN: STICKY GLASSMORPHISM PRICE & SELLER SIDEBAR (4 COLUMNS) -->
+            <!-- RIGHT COLUMN: COORDINATED STACKED SIDEBAR (4 COLUMNS) -->
             <div class="col-12 col-lg-4">
-                <div class="d-flex flex-column gap-4">
+                <div class="d-flex flex-column gap-4 lg:sticky lg:top-24">
                     
-                    <!-- Glassmorphism Price Card -->
+                    <!-- Card 1: Pricing & Primary Download CTA Card -->
                     <div class="card glass-pricing-card p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1.5 fw-bold">
+                            <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 rounded-pill px-3 py-1.5 fw-bold extra-small">
                                 Commercial License
                             </span>
-                            <span class="small text-muted font-monospace"><i class="bi bi-shield-check me-1"></i>Verified Asset</span>
+                            <span class="small text-slate-500 font-monospace"><i class="bi bi-shield-check text-emerald-600 me-1"></i>Verified Asset</span>
                         </div>
 
                         <!-- Price Tag -->
                         <div class="mb-4">
-                            <div class="text-muted extra-small fw-bold text-uppercase tracking-wider">Marketplace Price</div>
+                            <div class="text-slate-500 extra-small fw-bold text-uppercase tracking-wider">Marketplace Price</div>
                             <div class="d-flex align-items-baseline gap-2">
                                 @if(isset($resource) && $resource->is_paid && $resource->price > 0)
-                                    <span class="display-5 fw-extrabold text-[#f47402]">৳{{ number_format($resource->price, 2) }}</span>
-                                    <span class="text-muted small fw-bold">BDT</span>
+                                    <span class="display-6 fw-extrabold text-[#f47402]">৳{{ number_format($resource->price, 2) }}</span>
+                                    <span class="text-slate-500 small fw-bold">BDT</span>
                                 @else
-                                    <span class="display-5 fw-extrabold text-emerald-600">Free</span>
+                                    <span class="display-6 fw-extrabold text-emerald-600">Free</span>
                                 @endif
                             </div>
                         </div>
 
                         <!-- Main Action Buttons -->
-                        <div class="d-grid gap-2.5 mb-4">
+                        <div class="d-grid gap-2.5 mb-3">
                             @if(isset($hasPurchased) && $hasPurchased)
                                 <div class="p-2.5 rounded-3 bg-emerald-50 border border-emerald-200 text-center mb-1">
                                     <span class="text-emerald-700 extra-small fw-bold">
                                         <i class="bi bi-patch-check-fill me-1"></i> License Owned & Unlocked
                                     </span>
                                 </div>
-                                <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold text-decoration-none shadow-md transition-all">
+                                <a href="{{ route('resource.download', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold text-decoration-none shadow-sm transition-all">
                                     <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
                                     <span>Download Asset</span>
                                 </a>
                             @else
                                 @if(isset($resource) && $resource->is_paid && $resource->price > 0)
                                     <!-- Buy Template Direct with Wallet -->
-                                    <button type="button" onclick="handleBuyTemplate()" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-md transition-all border-0">
+                                    <button type="button" onclick="handleBuyTemplate()" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-sm transition-all border-0 cursor-pointer">
                                         <i class="bi bi-wallet2"></i>
                                         <span>Download Asset — ৳{{ number_format($resource->price, 2) }}</span>
                                     </button>
@@ -681,7 +713,7 @@
                                     <!-- Add to Cart Alternative -->
                                     <form action="{{ route('cart.store', $resource->id ?? 1) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-outline-secondary rounded-xl py-2.5 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 extra-small">
+                                        <button type="submit" class="btn btn-outline-secondary rounded-xl py-2.5 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 extra-small cursor-pointer">
                                             <i class="bi bi-cart-plus"></i>
                                             <span>Add to Cart</span>
                                         </button>
@@ -690,7 +722,7 @@
                                     <!-- Free Download Direct -->
                                     <form action="{{ route('resource.buy-wallet', $resource->id ?? 1) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-md transition-all border-0">
+                                        <button type="submit" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white font-semibold shadow-sm transition-all border-0 cursor-pointer">
                                             <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
                                             <span>Download Asset (Free)</span>
                                         </button>
@@ -699,8 +731,8 @@
                             @endif
 
                             <!-- Studio Quick Customize Action Trigger -->
-                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-3 px-6 rounded-xl bg-white hover:bg-purple-50 text-[#20165c] border border-[#20165c]/30 hover:border-[#20165c] font-semibold text-decoration-none shadow-sm transition-all" title="Customize this template in the web editor">
-                                <i class="bi bi-palette2 fs-5 text-[#f47402]"></i>
+                            <a href="{{ route('templates.ai-edit', $resource->id ?? 1) }}" class="inline-flex items-center justify-center gap-2 w-100 py-2.5 px-4 rounded-xl bg-white hover:bg-purple-50 text-[#20165c] border border-[#20165c]/30 hover:border-[#20165c] font-semibold text-decoration-none shadow-xs transition-all text-xs" title="Customize this template in the web editor">
+                                <i class="bi bi-palette2 fs-6 text-[#f47402]"></i>
                                 <span>Studio Quick Edit</span>
                             </a>
 
@@ -712,90 +744,91 @@
                         </div>
 
                         <!-- Guarantee Badges -->
-                        <div class="pt-3 border-top border-light-subtle d-flex flex-column gap-2 text-secondary small">
+                        <div class="pt-3 border-top border-slate-100 d-flex flex-column gap-2 text-slate-600 extra-small">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
-                                <span><strong>Instant Delivery:</strong> Direct digital file download.</span>
+                                <i class="bi bi-lightning-charge-fill text-amber-500"></i>
+                                <span><strong>Instant Delivery:</strong> Direct digital file package.</span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-shield-check text-success fs-5"></i>
+                                <i class="bi bi-shield-check text-emerald-600"></i>
                                 <span><strong>Quality Checked:</strong> Verified by Noksha Compliance.</span>
-                            </div>
-                        </div>
-
-                        <!-- Technical Specifications Matrix -->
-                        <div class="pt-3 border-top border-light-subtle mt-2">
-                            <div class="text-muted extra-small fw-bold text-uppercase tracking-wider mb-2.5">
-                                <i class="bi bi-sliders text-[#20165c] me-1"></i> Technical Specifications
-                            </div>
-                            <div class="d-flex flex-column gap-2 text-xs">
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-slate-100">
-                                    <span class="text-slate-500">License</span>
-                                    <span class="fw-bold text-slate-800">Commercial Standard</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-slate-100">
-                                    <span class="text-slate-500">Resolution</span>
-                                    <span class="fw-bold text-slate-800">Vector Scalable / 3840×2160</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-slate-100">
-                                    <span class="text-slate-500">Source Format</span>
-                                    <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 font-mono">{{ isset($resource) ? strtoupper($resource->file_type ?? 'ZIP') : 'FIGMA' }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center py-1">
-                                    <span class="text-slate-500">Compatibility</span>
-                                    <span class="fw-bold text-slate-800">Figma, Illustrator, Photoshop</span>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Seller Profile Card -->
+                    <!-- Card 2: Dedicated Technical Specifications Card -->
+                    <div class="card tech-specs-card p-4">
+                        <div class="text-slate-700 extra-small fw-bold text-uppercase tracking-wider mb-3 d-flex align-items-center gap-1.5">
+                            <i class="bi bi-sliders text-[#20165c]"></i>
+                            <span>Technical Specifications</span>
+                        </div>
+                        <div class="d-flex flex-column gap-2 text-xs">
+                            <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom border-slate-100">
+                                <span class="text-slate-500">License</span>
+                                <span class="fw-bold text-[#121826]">Commercial Standard</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom border-slate-100">
+                                <span class="text-slate-500">Resolution</span>
+                                <span class="fw-bold text-[#121826]">Vector Scalable / 3840×2160</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom border-slate-100">
+                                <span class="text-slate-500">Source Format</span>
+                                <span class="badge bg-purple-50 text-[#20165c] border border-purple-200 font-mono">{{ $sourceFormatLabel }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center py-1.5">
+                                <span class="text-slate-500">Compatibility</span>
+                                <span class="fw-bold text-[#121826]">Figma, Illustrator, Photoshop</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Creator Profile Card -->
                     <div class="card seller-card-figma p-4">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="text-decoration-none">
                                 @if(isset($resource) && $resource->owner && $resource->owner->avatar)
-                                    <img src="{{ asset('storage/' . $resource->owner->avatar) }}" alt="{{ $resource->owner->name }}" class="rounded-circle border" style="width: 56px; height: 56px; object-fit: cover;">
+                                    <img src="{{ asset('storage/' . $resource->owner->avatar) }}" alt="{{ $resource->owner->name }}" class="rounded-circle border" style="width: 52px; height: 52px; object-fit: cover;">
                                 @else
-                                    <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 56px; height: 56px;">
+                                    <div class="avatar-placeholder bg-purple-50 text-[#20165c] border border-purple-200 rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5" style="width: 52px; height: 52px;">
                                         {{ strtoupper(substr(isset($resource) && $resource->owner ? $resource->owner->name : 'N', 0, 1)) }}
                                     </div>
                                 @endif
                             </a>
                             <div>
                                 <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                                    <h6 class="fw-bold text-dark mb-0">
-                                        <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="text-dark text-decoration-none hover-primary">
+                                    <h6 class="fw-bold text-[#121826] mb-0">
+                                        <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="text-[#121826] text-decoration-none hover:text-[#20165c]">
                                             {{ isset($resource) && $resource->owner ? $resource->owner->name : 'Noksha Creator' }}
                                         </a>
                                     </h6>
                                     @if(isset($resource) && $resource->owner && $resource->owner->isVerifiedCreator())
-                                        <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-emerald-700 bg-emerald-50 border border-emerald-300 shadow-sm" style="box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);" title="Verified Creator">
+                                        <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-emerald-700 bg-emerald-50 border border-emerald-300" title="Verified Creator">
                                             <i class="bi bi-patch-check-fill text-emerald-500"></i> Verified
                                         </span>
                                     @endif
                                 </div>
                                 <div class="d-flex align-items-center gap-1.5 mt-1 flex-wrap">
                                     @if(isset($resource) && $resource->owner && $resource->owner->isProAuthor())
-                                        <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-amber-700 bg-amber-50 border border-amber-300 shadow-sm" style="box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);">
+                                        <span class="badge rounded-pill px-2 py-0.5 extra-small fw-bold text-amber-700 bg-amber-50 border border-amber-300">
                                             <i class="bi bi-award-fill text-amber-500 me-0.5"></i> Pro Author
                                         </span>
                                     @else
-                                        <div class="small text-muted"><i class="bi bi-patch-check-fill text-primary me-1"></i> Author</div>
+                                        <div class="extra-small text-slate-500"><i class="bi bi-patch-check-fill text-[#20165c] me-1"></i> Author</div>
                                     @endif
                                 </div>
                                 @if(($totalReviews ?? 0) > 0)
-                                    <div class="small text-warning fw-bold mt-1"><i class="bi bi-star-fill me-1"></i>{{ number_format($avgRating, 1) }} ({{ $totalReviews }} {{ Str::plural('Review', $totalReviews) }})</div>
+                                    <div class="extra-small text-amber-600 fw-bold mt-1"><i class="bi bi-star-fill me-1"></i>{{ number_format($avgRating, 1) }} ({{ $totalReviews }} {{ Str::plural('Review', $totalReviews) }})</div>
                                 @else
-                                    <div class="small text-muted mt-1"><i class="bi bi-star me-1"></i>0.0 (No reviews yet)</div>
+                                    <div class="extra-small text-slate-400 mt-1"><i class="bi bi-star me-1"></i>0.0 (No reviews yet)</div>
                                 @endif
                             </div>
                         </div>
 
                         <div class="d-flex flex-column gap-2 mt-3">
-                            <a href="{{ isset($resource) && $resource->owner ? route('inbox.index', ['recipient' => $resource->owner->id]) : route('seller.demo') }}" class="btn rounded-pill w-100 fw-bold btn-sm py-2 text-white bg-[#20165c] hover:bg-[#181045] transition shadow-sm">
+                            <a href="{{ isset($resource) && $resource->owner ? route('inbox.index', ['recipient' => $resource->owner->id]) : route('seller.demo') }}" class="btn rounded-xl w-100 fw-bold btn-sm py-2 text-white bg-[#20165c] hover:bg-[#181045] transition shadow-xs">
                                 <i class="bi bi-chat-dots-fill me-1.5"></i> Hire for Custom Job
                             </a>
-                            <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="btn btn-outline-secondary rounded-pill w-100 fw-bold btn-sm">
+                            <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="btn btn-outline-secondary rounded-xl w-100 fw-bold btn-sm text-xs py-2">
                                 <i class="bi bi-person-circle me-1"></i> View Creator Profile
                             </a>
                         </div>
@@ -870,7 +903,7 @@
                                 </div>
                                 <div class="pt-3 border-top border-slate-100 d-flex align-items-center justify-content-between">
                                     <span class="badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded extra-small uppercase font-mono">
-                                        {{ strtoupper($rel->file_type ?? 'ZIP') }}
+                                        {{ (!empty($rel->file_type) && strtolower($rel->file_type) !== 'zip') ? strtoupper($rel->file_type) : 'BUNDLE' }}
                                     </span>
                                     <a href="{{ route('resource.show', $rel->slug ?? $rel->id) }}" class="btn btn-sm rounded-xl px-3 py-1.5 text-white bg-[#20165c] hover:bg-[#181045] font-semibold extra-small shadow-sm text-decoration-none">
                                         View Details
@@ -887,6 +920,23 @@
 
 <!-- INTERACTIVE GALLERY PREVIEW SCRIPT -->
 <script>
+function switchMainPreview(imgUrl, btn) {
+    const mainImg = document.getElementById('resourceMainCoverImg');
+    const fallback = document.getElementById('previewVectorFallback');
+    if (mainImg) {
+        mainImg.src = imgUrl;
+        mainImg.classList.remove('d-none');
+        if (fallback) fallback.classList.add('d-none');
+    }
+    document.querySelectorAll('.gallery-thumb-btn').forEach(b => {
+        b.classList.remove('border-[#20165c]', 'shadow-xs');
+        b.classList.add('border-slate-200', 'opacity-75');
+    });
+    if (btn) {
+        btn.classList.add('border-[#20165c]', 'shadow-xs');
+        btn.classList.remove('border-slate-200', 'opacity-75');
+    }
+}
 function switchPreview(gradClass, titleText) {
     const display = document.getElementById('mainPreviewDisplay');
     const canvas = document.getElementById('previewCanvas');

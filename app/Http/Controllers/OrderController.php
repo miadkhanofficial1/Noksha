@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
@@ -56,7 +57,7 @@ class OrderController extends Controller
     /**
      * Download purchased resource from specific order with verified delivery and fallback packaging.
      */
-    public function downloadResource(Order $order, $assetId)
+    public function downloadResource(Order $order, $assetId): BinaryFileResponse|StreamedResponse|RedirectResponse
     {
         // Verify user ownership or admin privileges
         if ($order->user_id !== auth()->id() && auth()->user()?->role !== 'admin' && !auth()->user()?->isAdmin()) {
@@ -79,7 +80,9 @@ class OrderController extends Controller
         $filesToBundle = [];
         if (is_array($asset->preview_images) && count($asset->preview_images) > 0) {
             foreach ($asset->preview_images as $prev) {
-                $filesToBundle[] = $prev;
+                if (!empty($prev)) {
+                    $filesToBundle[] = $prev;
+                }
             }
         } elseif ($asset->thumbnail_path || $asset->preview_image) {
             $filesToBundle[] = $asset->thumbnail_path ?? $asset->preview_image;
@@ -95,47 +98,19 @@ class OrderController extends Controller
             $filesToBundle[] = $asset->instruction_pdf_path;
         }
 
-        $creatorUsername = $asset->owner?->username ?? $asset->user?->name ?? 'creator';
+        $creatorUsername = $asset->user?->username ?? $asset->owner?->username ?? \Illuminate\Support\Str::slug($asset->user?->name ?? 'creator', '_');
 
-        if (!empty($filesToBundle)) {
-            try {
-                return \App\Services\NokshaFilePackagerService::streamZipDownload(
-                    $asset->title,
-                    $creatorUsername,
-                    $filesToBundle
-                );
-            } catch (\Throwable $e) {
-                // Fallback to single file streaming if packaging error occurs
-            }
-        }
-
-        $filePath = $asset->file_path;
-
-        // Check if file exists on disk
-        if ($filePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath)) {
-            return \Illuminate\Support\Facades\Storage::disk('public')->download($filePath, basename($filePath));
-        }
-        if ($filePath && \Illuminate\Support\Facades\Storage::disk('local')->exists($filePath)) {
-            return \Illuminate\Support\Facades\Storage::disk('local')->download($filePath, basename($filePath));
-        }
-
-        // Fallback: If physical file was wiped due to ephemeral container storage,
-        // generate an on-the-fly downloadable package with license and readme instead of hanging.
-        $dummyContent = "NOKSHA DIGITAL ASSET VERIFIED DELIVERY\n\nAsset: " . $asset->title . "\nLicensed to: " . auth()->user()->name . "\nOrder ID: " . $order->order_number . "\nTransaction Date: " . now()->toFormattedDateString() . "\n\nThank you for choosing Noksha Marketplace!";
-        $tempFileName = 'Noksha-' . \Illuminate\Support\Str::slug($asset->title) . '-License.txt';
-
-        return response()->streamDownload(function () use ($dummyContent) {
-            echo $dummyContent;
-        }, $tempFileName, [
-            'Content-Type' => 'text/plain',
-            'Content-Disposition' => 'attachment; filename="' . $tempFileName . '"',
-        ]);
+        return \App\Services\NokshaFilePackagerService::streamZipDownload(
+            $asset->title,
+            $creatorUsername,
+            $filesToBundle
+        );
     }
 
     /**
      * Handle direct digital resource file download.
      */
-    public function download(Resource $resource): StreamedResponse|RedirectResponse
+    public function download(Resource $resource): BinaryFileResponse|StreamedResponse|RedirectResponse
     {
         // Free resources are instantly downloadable; Paid resources require completed purchase or Admin role
         $hasPurchased = auth()->user()?->isAdmin() || !$resource->is_paid || Order::where('user_id', auth()->id())
@@ -156,7 +131,9 @@ class OrderController extends Controller
         $filesToBundle = [];
         if (is_array($resource->preview_images) && count($resource->preview_images) > 0) {
             foreach ($resource->preview_images as $prev) {
-                $filesToBundle[] = $prev;
+                if (!empty($prev)) {
+                    $filesToBundle[] = $prev;
+                }
             }
         } elseif ($resource->thumbnail_path || $resource->preview_image) {
             $filesToBundle[] = $resource->thumbnail_path ?? $resource->preview_image;
@@ -172,37 +149,12 @@ class OrderController extends Controller
             $filesToBundle[] = $resource->instruction_pdf_path;
         }
 
-        $creatorUsername = $resource->owner?->username ?? $resource->user?->name ?? 'creator';
+        $creatorUsername = $resource->user?->username ?? $resource->owner?->username ?? \Illuminate\Support\Str::slug($resource->user?->name ?? 'creator', '_');
 
-        if (!empty($filesToBundle)) {
-            try {
-                return \App\Services\NokshaFilePackagerService::streamZipDownload(
-                    $resource->title,
-                    $creatorUsername,
-                    $filesToBundle
-                );
-            } catch (\Throwable $e) {
-                // Fallback to single file streaming if packaging error occurs
-            }
-        }
-
-        if ($resource->file_path && Storage::disk('public')->exists($resource->file_path)) {
-            return Storage::disk('public')->download($resource->file_path, $resource->title . '.' . ($resource->file_type ?? 'zip'));
-        }
-        if ($resource->file_path && Storage::disk('local')->exists($resource->file_path)) {
-            return Storage::disk('local')->download($resource->file_path, $resource->title . '.' . ($resource->file_type ?? 'zip'));
-        }
-
-        // Fallback: If physical file is missing from ephemeral storage, stream downloadable license package
-        $userName = auth()->user()?->name ?? 'Noksha Member';
-        $dummyContent = "NOKSHA DIGITAL ASSET VERIFIED DELIVERY\n\nAsset: " . $resource->title . "\nLicensed to: " . $userName . "\nTransaction Date: " . now()->toFormattedDateString() . "\n\nThank you for choosing Noksha Marketplace!";
-        $tempFileName = 'Noksha-' . \Illuminate\Support\Str::slug($resource->title) . '-License.txt';
-
-        return response()->streamDownload(function () use ($dummyContent) {
-            echo $dummyContent;
-        }, $tempFileName, [
-            'Content-Type' => 'text/plain',
-            'Content-Disposition' => 'attachment; filename="' . $tempFileName . '"',
-        ]);
+        return \App\Services\NokshaFilePackagerService::streamZipDownload(
+            $resource->title,
+            $creatorUsername,
+            $filesToBundle
+        );
     }
 }

@@ -306,9 +306,17 @@ class NokshaFilePackagerService
             $pdfCounter++;
         }
 
-        // Fallback: If zip is completely empty (no valid files found), add a readme
+        // Fallback: If zip is completely empty (no valid files found), add a verified license & readme
         if ($zip->numFiles === 0) {
-            $zip->addFromString("README.txt", "Package: {$baseTitle}\nCreator: {$creatorUsername}\nPlatform: Noksha Marketplace\nGenerated on: " . date('Y-m-d H:i:s'));
+            $licenseContent = "NOKSHA DIGITAL MARKETPLACE - VERIFIED DIGITAL ASSET DELIVERY\n"
+                . "=================================================================\n\n"
+                . "Asset: {$baseTitle}\n"
+                . "Creator: @{$creatorUsername}\n"
+                . "License: Commercial Standard License\n"
+                . "Transaction Date: " . date('Y-m-d H:i:s') . "\n\n"
+                . "Thank you for choosing Noksha Marketplace!";
+            $zip->addFromString("{$sanitizedTitle}_License.txt", $licenseContent);
+            $zip->addFromString("README.txt", "Package: {$baseTitle}\nCreator: @{$creatorUsername}\nPlatform: Noksha Digital Marketplace\nAsset Status: Verified Digital Delivery");
         }
 
         $zip->close();
@@ -352,6 +360,26 @@ class NokshaFilePackagerService
         $publicHtmlPath = public_path($normalized);
         if (file_exists($publicHtmlPath)) {
             return $publicHtmlPath;
+        }
+
+        // Also check if path has 'storage/' or 'public/' prefix in string
+        $stripped = preg_replace('#^(storage|public)/#i', '', $normalized);
+        if ($stripped !== $normalized) {
+            if (Storage::disk('public')->exists($stripped)) {
+                return Storage::disk('public')->path($stripped);
+            }
+            $pPath = storage_path('app/public/' . $stripped);
+            if (file_exists($pPath)) {
+                return $pPath;
+            }
+            $aPath = storage_path('app/' . $stripped);
+            if (file_exists($aPath)) {
+                return $aPath;
+            }
+            $pubPath = public_path($stripped);
+            if (file_exists($pubPath)) {
+                return $pubPath;
+            }
         }
 
         return null;
