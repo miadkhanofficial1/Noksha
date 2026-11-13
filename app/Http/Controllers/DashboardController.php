@@ -50,6 +50,13 @@ class DashboardController extends Controller
         $downloadsCount = $orderDownloads->count();
         $wishlistCount = $wishlistItems->count();
 
+        // Hired Services (Buyer hired creators)
+        $hiredServices = \App\Models\ServiceOrder::where('buyer_id', $user->id)
+            ->with(['service', 'seller', 'reviews'])
+            ->latest()
+            ->get();
+        $hiredServicesCount = $hiredServices->count();
+
         // ==========================================
         // 2. CONTRIBUTOR / SELLER STUDIO DATA
         // ==========================================
@@ -187,7 +194,9 @@ class DashboardController extends Controller
             'kycRejectionReason',
             'userBadgeLabel',
             'creatorServices',
-            'creatorServicesCount'
+            'creatorServicesCount',
+            'hiredServices',
+            'hiredServicesCount'
         ));
     }
 

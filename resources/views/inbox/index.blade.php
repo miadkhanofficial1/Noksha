@@ -4,6 +4,9 @@
     $conversations = $conversations ?? collect();
     $counterpart = $counterpart ?? ($conversation ? $conversation->getOtherParticipant(auth()->user()) : null);
     $services = $services ?? collect();
+    $sellerServices = $sellerServices ?? $services;
+    $workHistoryOrders = $workHistoryOrders ?? collect();
+    $workHistoryCount = $workHistoryCount ?? $workHistoryOrders->count();
     $messages = $messages ?? ($conversation ? $conversation->messages : collect());
 @endphp
 
@@ -20,6 +23,11 @@
     html, body {
         overflow: hidden !important;
         height: 100vh !important;
+    }
+
+    /* Anti-theft Diagonal Watermark Overlay */
+    .noksha-watermark-overlay {
+        background-image: repeating-linear-gradient(-45deg, rgba(32, 22, 92, 0.08), rgba(32, 22, 92, 0.08) 25px, transparent 25px, transparent 50px);
     }
 </style>
 
@@ -142,7 +150,9 @@
                                         @endif
 
                                         @if($conv->activeOrder && $conv->activeOrder->isFunded())
-                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Escrow Funded</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-mono">
+                                                {{ $conv->activeOrder->order_code ?? $conv->activeOrder->order_number }}
+                                            </span>
                                         @endif
                                     </div>
 
@@ -166,7 +176,7 @@
                         </div>
                     @empty
                         <div class="p-8 text-center text-slate-500">
-                            <svg class="w-10 h-10 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <svg class="w-10 h-10 mx-auto mb-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                             <p class="text-xs mb-0">No conversations yet.</p>
                         </div>
                     @endforelse
@@ -183,7 +193,7 @@
                         $isSupportThread = $activeConversation->conversation_type === 'system_support';
                         $activeOrder = $activeConversation->activeOrder;
                         $isFunded = $activeOrder && $activeOrder->isFunded();
-                        $isFundedInProgress = $activeOrder && $activeOrder->status === 'funded_in_progress';
+                        $isFundedInProgress = $activeOrder && $activeOrder->isInProgress();
                         $isSeller = (int) auth()->id() === (int) $activeConversation->seller_id;
                         $isBuyer = (int) auth()->id() === (int) $activeConversation->buyer_id;
                     @endphp
@@ -197,7 +207,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
                                 @elseif($counterpart && $counterpart->avatar)
-                                    <img src="{{ asset('storage/' . $counterpart->avatar) }}" alt="{{ $counterpart->name }}" class="w-10 h-10 rounded-2xl object-cover border border-slate-700">
+                                    <img src="{{ asset('storage/' . $counterpart->avatar) }}" alt="{{ $counterpart->name }}" class="w-10 h-10 rounded-2xl object-cover border border-slate-200">
                                 @else
                                     <div class="w-10 h-10 rounded-2xl bg-[#20165c]/10 border border-[#20165c]/20 flex items-center justify-center text-[#20165c] font-bold text-sm">
                                         {{ strtoupper(substr($counterpart->name ?? 'C', 0, 1)) }}
@@ -215,14 +225,7 @@
                                     </h2>
                                     @if($counterpart && $counterpart->username)
                                         @php
-                                            $creatorUrl = '#';
-                                            if (\Illuminate\Support\Facades\Route::has('creator.show')) {
-                                                $creatorUrl = route('creator.show', $counterpart->username);
-                                            } elseif (\Illuminate\Support\Facades\Route::has('creators.show')) {
-                                                $creatorUrl = route('creators.show', $counterpart->username);
-                                            } else {
-                                                $creatorUrl = url('/creator/' . $counterpart->username);
-                                            }
+                                            $creatorUrl = route('creator.profile', $counterpart->username);
                                         @endphp
                                         <a href="{{ $creatorUrl }}" target="_blank" class="text-[11px] text-slate-500 hover:text-[#20165c]">
                                             &#64;{{ $counterpart->username }}
@@ -233,17 +236,29 @@
                                     <span>{{ ($counterpart->is_available ?? true) ? '🟢 Available for Hire' : '⚪ Currently Away' }}</span>
                                     <span>&bull;</span>
                                     <span>Escrow Protected</span>
+                                    @if($counterpart && $counterpart->hasReliabilityWarning())
+                                        <span>&bull;</span>
+                                        <span class="text-amber-600 font-bold">⚠️ Reliability Warning</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Header Actions: Proposal Trigger & Delete Chat --}}
+                        {{-- Header Actions: Work History, Proposal Trigger & Delete Chat --}}
                         <div class="flex items-center gap-2">
-                            {{-- Service Proposal Button --}}
+                            {{-- Work History Drawer Trigger Button --}}
+                            @if(!$isSupportThread)
+                                <button type="button" onclick="openWorkHistoryDrawer()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-[#20165c] border border-purple-200 shadow-xs transition-all cursor-pointer" title="View order history with this creator">
+                                    <span>📋 Work History</span>
+                                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#20165c] text-white">{{ $workHistoryCount ?? 0 }}</span>
+                                </button>
+                            @endif
+
+                            {{-- Service Proposal / Offer Button --}}
                             @if(!$isSupportThread)
                                 <button type="button" onclick="openProposalModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                    <span>{{ $isSeller ? 'Propose Custom Service' : 'Pick Seller Service' }}</span>
+                                    <span>{{ $isSeller ? 'Offer Service' : 'Pick Seller Service' }}</span>
                                 </button>
                             @endif
 
@@ -258,8 +273,47 @@
                         </div>
                     </header>
 
+                    {{-- 2.15 TOP SERVICE SHOWCASE PILLS (COMPACT HORIZONTAL STRIP) --}}
+                    @if(!$isSupportThread && isset($services) && $services->isNotEmpty())
+                        <div class="px-4 py-2 border-b border-slate-200 bg-white shrink-0 overflow-x-auto scrollbar-none">
+                            <div class="flex items-center gap-2.5 min-w-max">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
+                                    <span>⚡ Services:</span>
+                                </span>
+                                @foreach($services as $srvItem)
+                                    @php
+                                        $sSlots = max(0, ($srvItem->max_slots ?? 3) - ($srvItem->active_orders_count ?? 0));
+                                        $sThumb = !empty($srvItem->preview_images) && is_array($srvItem->preview_images) ? $srvItem->preview_images[0] : null;
+                                        $sThumbUrl = $sThumb ? (str_starts_with($sThumb, 'http') ? $sThumb : asset('storage/' . ltrim($sThumb, '/'))) : null;
+                                    @endphp
+                                    <button type="button" 
+                                            onclick="prefillCustomProposal('{{ addslashes($srvItem->title) }}', {{ (float)($srvItem->starting_price ?? $srvItem->price ?? 600) }}, {{ (int)($srvItem->delivery_days ?? $srvItem->duration_days ?? 3) }}, '{{ $srvItem->id }}', '{{ addslashes($srvItem->description ?? '') }}')"
+                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 hover:bg-purple-50 hover:border-purple-200 border border-slate-200 text-slate-800 transition-all cursor-pointer shrink-0 group">
+                                        @if($sThumbUrl)
+                                            <img src="{{ $sThumbUrl }}" alt="thumb" class="w-4 h-4 rounded object-cover shrink-0">
+                                        @else
+                                            <span class="text-[#20165c] text-xs">💼</span>
+                                        @endif
+                                        <span class="group-hover:text-[#20165c] max-w-[140px] truncate font-medium">{{ $srvItem->title }}</span>
+                                        <span class="font-bold text-[#20165c] font-mono text-[11px]">From ৳{{ number_format($srvItem->starting_price ?? $srvItem->price ?? 600, 0) }}</span>
+                                        @if($sSlots > 0)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" title="{{ $sSlots }} slots left"></span>
+                                        @else
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500" title="Booked out"></span>
+                                        @endif
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- 2.2 TOP ESCROW STATUS BANNER (CONDITIONAL) --}}
                     @if($activeOrder)
+                        @php
+                            $orderCodeDisplay = $activeOrder->order_code ?? $activeOrder->order_number;
+                            $orderAmountDisplay = (float) ($activeOrder->amount ?? $activeOrder->total_amount);
+                            $minorFixAvailable = $activeOrder->status === 'completed' && !$activeOrder->minor_fix_used && $activeOrder->completed_at && $activeOrder->completed_at->addHours(48)->isFuture();
+                        @endphp
                         <div class="px-4 py-3 border-b border-slate-200 bg-purple-50/40 shrink-0">
                             <div class="flex items-center justify-between flex-wrap gap-3">
                                 
@@ -269,23 +323,23 @@
                                     </div>
                                     <div>
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xs font-bold text-[#121826]">{{ $activeOrder->service->title ?? 'Custom Service' }}</span>
-                                            <span class="text-[10px] text-slate-400 font-mono">({{ $activeOrder->order_number }})</span>
+                                            <span class="text-xs font-bold text-[#121826]">{{ $activeOrder->custom_title ?? $activeOrder->service?->title ?? 'Custom Service' }}</span>
+                                            <span class="text-[10px] text-slate-500 font-mono font-bold">#{{ $orderCodeDisplay }}</span>
                                         </div>
-                                        <div class="text-[11px] text-slate-400">
-                                            Total: <strong class="text-[#121826]">৳{{ number_format($activeOrder->total_amount, 2) }}</strong>
+                                        <div class="text-[11px] text-slate-500">
+                                            Total: <strong class="text-[#121826]">৳{{ number_format($orderAmountDisplay, 2) }}</strong>
                                             &bull; Platform Fee: ৳{{ number_format($activeOrder->platform_fee, 2) }}
-                                            &bull; Payout: <strong class="text-emerald-600">৳{{ number_format($activeOrder->seller_payout_amount, 2) }}</strong>
+                                            &bull; Payout: <strong class="text-emerald-600">৳{{ number_format($activeOrder->seller_payout ?? $activeOrder->seller_payout_amount, 2) }}</strong>
                                         </div>
                                     </div>
                                 </div>
 
                                 {{-- Order Status Badge & Escrow Actions --}}
                                 <div class="flex items-center gap-2.5 flex-wrap justify-end">
-                                    @if($activeOrder->status === 'funded_in_progress')
+                                    @if($activeOrder->status === 'in_progress' || $activeOrder->status === 'funded_in_progress')
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
-                                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 flex items-center gap-1.5">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
                                                 <span>Funded & In Progress</span>
                                             </span>
                                             @if($activeOrder->deadline_at)
@@ -295,94 +349,74 @@
                                             @endif
                                             @if($isSeller)
                                                 <button type="button" onclick="openDeliveryModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
-                                                    📦 Deliver Final Work
+                                                    📦 Deliver Work
                                                 </button>
-                                            @endif
-                                            @if($isBuyer)
-                                                <form action="{{ route('inbox.orders.cancel', $activeOrder->id) }}" method="POST" id="overdueCancelAction" class="hidden inline" onsubmit="return confirm('Cancel this overdue order and process full refund to your balance?');">
-                                                    @csrf
-                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition-all cursor-pointer shadow-md shadow-rose-600/20">
-                                                        ⚠️ Request Cancellation & Refund
+                                                @if(!$activeOrder->extension_used)
+                                                    <button type="button" onclick="openExtensionModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-[#20165c] border border-purple-200 transition-all cursor-pointer">
+                                                        ⏳ Extend Deadline
                                                     </button>
-                                                </form>
+                                                @endif
                                             @endif
                                         </div>
-                                    @elseif($activeOrder->status === 'delivered')
+                                    @elseif($activeOrder->status === 'delivered_preview' || $activeOrder->status === 'delivered')
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
-                                                📦 Work Delivered
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-700 border border-blue-500/30">
+                                                📦 Work Delivered (Preview)
                                             </span>
-                                            <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-[#20165c] border border-slate-200 font-semibold transition-colors">
-                                                📥 Download Delivery (.ZIP)
-                                            </a>
                                             @if($isBuyer)
-                                                <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Release escrow funds to creator? 15% platform commission will be deducted.');">
+                                                <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Accept delivery and release escrow funds to creator? (15% platform commission will be deducted).');">
                                                     @csrf
-                                                    <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-all cursor-pointer">
-                                                        ✅ Accept & Release Funds
+                                                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all cursor-pointer">
+                                                        ✅ Approve & Complete
                                                     </button>
                                                 </form>
-                                                <button type="button" onclick="openRevisionModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer">
+                                                <button type="button" onclick="openRevisionModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 border border-amber-500/30 transition-all cursor-pointer">
                                                     🔄 Request Revision
                                                 </button>
+                                                <button type="button" onclick="openFakeReportModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 transition-all cursor-pointer">
+                                                    🚨 Report Fake File
+                                                </button>
                                             @else
-                                                <span class="text-[11px] text-slate-400 italic">
-                                                    Client reviewing (Auto-releases after 3 days)
+                                                <span class="text-[11px] text-slate-500 italic">
+                                                    Client reviewing previews (Auto-completes after 3 days)
                                                 </span>
                                             @endif
                                         </div>
-                                    @elseif($activeOrder->status === 'awaiting_payment')
-                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                    @elseif($activeOrder->status === 'awaiting_payment' || $activeOrder->status === 'pending_acceptance')
+                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/30">
                                             Awaiting Escrow Payment
                                         </span>
                                         @if($isBuyer)
                                             <form action="{{ route('inbox.orders.fund', $activeOrder->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
-                                                    💳 Proceed to Secure Escrow Payment (৳{{ number_format($activeOrder->total_amount, 2) }})
+                                                    💳 Accept & Pay (৳{{ number_format($orderAmountDisplay, 2) }})
                                                 </button>
                                             </form>
                                         @endif
                                     @elseif($activeOrder->status === 'completed')
-                                        <div class="flex items-center gap-2">
-                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/30">
                                                 ✅ Completed & Escrow Released
                                             </span>
-                                            @if($activeOrder->delivery_archive_path)
-                                                <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-2.5 py-1 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-[#20165c] border border-slate-200 font-semibold transition-colors">
-                                                    📥 Download Final Files
-                                                </a>
+                                            <a href="{{ route('inbox.orders.download-delivery', $activeOrder->id) }}" class="px-3 py-1 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white transition-colors">
+                                                📥 Download Full ZIP
+                                            </a>
+                                            @if($isBuyer && $minorFixAvailable)
+                                                <button type="button" onclick="openMinorFixModal()" class="px-3 py-1 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 transition-all cursor-pointer">
+                                                    🔧 Request Minor Fix (1 Left)
+                                                </button>
+                                            @endif
+                                            @if($isBuyer && $activeOrder->reviews->isEmpty())
+                                                <button type="button" onclick="openReviewModal({{ $activeOrder->id }})" class="px-3 py-1 rounded-xl text-xs font-bold bg-purple-50 hover:bg-purple-100 text-[#20165c] border border-purple-200 transition-all cursor-pointer">
+                                                    ⭐ Leave Review
+                                                </button>
                                             @endif
                                         </div>
-                                    @elseif(in_array($activeOrder->status, ['pending_approval', 'pending']))
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-                                                Pending Contributor Acceptance
-                                            </span>
-                                            @if($isSeller)
-                                                <form action="{{ route('inbox.orders.respond', $activeOrder->id) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <input type="hidden" name="action" value="accept">
-                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-all cursor-pointer">
-                                                        ✅ Accept Proposal
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('inbox.orders.respond', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Decline this proposal?');">
-                                                    @csrf
-                                                    <input type="hidden" name="action" value="decline">
-                                                    <button type="submit" class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer">
-                                                        ❌ Decline
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form action="{{ route('inbox.orders.cancel', $activeOrder->id) }}" method="POST" class="inline" onsubmit="return confirm('Withdraw this proposal?');">
-                                                    @csrf
-                                                    <button type="submit" class="px-2.5 py-1 rounded-xl text-xs font-medium text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer">
-                                                        🗑️ Withdraw Proposal
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </div>
+                                    @elseif($activeOrder->status === 'disputed')
+                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-300">
+                                            🚨 Arbitration Dispute Active
+                                        </span>
                                     @else
                                         <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 capitalize">
                                             {{ str_replace('_', ' ', $activeOrder->status) }}
@@ -395,13 +429,14 @@
                     @endif
 
                     {{-- 2.3 MESSAGE HISTORY STREAM (SCROLLABLE) --}}
-                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto max-h-[calc(100vh-280px)] p-4 space-y-2.5 scrollbar-thin scrollbar-thumb-slate-300 min-h-0 bg-white">
+                    <div id="messageHistoryContainer" data-poll-url="{{ route('inbox.poll', $activeConversation->id) }}" data-latest-id="{{ $messages->last()?->id ?? 0 }}" data-order-status="{{ $activeOrder->status ?? '' }}" class="flex-1 overflow-y-auto max-h-[calc(100vh-280px)] p-4 space-y-3 scrollbar-thin scrollbar-thumb-slate-300 min-h-0 bg-white">
                         @forelse($messages as $msg)
                             @php
                                 $isMe = (int) $msg->sender_id === (int) auth()->id();
                                 $isSystemNotice = $msg->message_type === 'system_notice';
                                 $isOrderStatus = $msg->message_type === 'order_status';
                                 $isProposal = $msg->message_type === 'service_proposal';
+                                $meta = $msg->metadata ?? [];
 
                                 $bodyLower = strtolower($msg->body ?? '');
                                 $isClutterNotice = $isSystemNotice ||
@@ -413,248 +448,156 @@
                                                    str_contains($bodyLower, 'welcome to noksha');
                             @endphp
 
-                            {{-- Strip all system event bubbles --}}
+                            {{-- Strip system clutter bubbles --}}
                             @if($isClutterNotice)
+                                @continue
+                            @endif
+
+                            {{-- ORDER COMPLETED BANNER --}}
+                            @if(isset($meta['type']) && $meta['type'] === 'order_completed_banner')
+                                <div class="my-4 p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-emerald-50/50 to-purple-50 border border-purple-200 shadow-sm text-center max-w-xl mx-auto" data-msg-id="{{ $msg->id }}">
+                                    <div class="flex items-center justify-center gap-2 mb-1.5">
+                                        <span class="text-xl">🎉</span>
+                                        <span class="text-xs font-black text-[#121826] uppercase tracking-wider">Project Successfully Completed</span>
+                                        <span class="text-xl">✅</span>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-[#20165c] mb-1">
+                                        {{ $meta['service_title'] ?? 'Creative Service' }}
+                                    </h4>
+                                    <p class="text-xs text-slate-600 mb-3 font-mono">
+                                        #{{ $meta['order_code'] ?? 'COMPLETED' }}
+                                    </p>
+                                    <div class="flex items-center justify-center gap-2.5 flex-wrap">
+                                        <button type="button" onclick="openProposalModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
+                                            🔄 Order Again
+                                        </button>
+                                        @if(isset($meta['order_id']))
+                                            <a href="{{ route('inbox.orders.download-delivery', $meta['order_id']) }}" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all">
+                                                📥 Download Full ZIP
+                                            </a>
+                                            <button type="button" onclick="openReviewModal({{ $meta['order_id'] }})" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 transition-all cursor-pointer">
+                                                ⭐ Leave Review
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                                @continue
+                            @endif
+
+                            {{-- EXTENSION REQUEST CARD --}}
+                            @if(isset($meta['type']) && $meta['type'] === 'extension_request')
+                                <div class="my-3 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 max-w-md mx-auto shadow-sm" data-msg-id="{{ $msg->id }}">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-base">⏳</span>
+                                        <h5 class="text-xs font-bold text-amber-900 mb-0">Deadline Extension Requested (+{{ $meta['extension_days'] ?? 1 }} Days)</h5>
+                                    </div>
+                                    <p class="text-xs text-slate-700 leading-relaxed mb-3">
+                                        <strong>Reason:</strong> {{ $meta['extension_reason'] ?? 'Additional creative refinement needed.' }}
+                                    </p>
+                                    @if($isBuyer && isset($meta['order_id']))
+                                        <div class="flex items-center gap-2">
+                                            <form action="{{ route('inbox.orders.respond-extension', $meta['order_id']) }}" method="POST" class="flex-1">
+                                                @csrf
+                                                <input type="hidden" name="action" value="accept">
+                                                <input type="hidden" name="days" value="{{ $meta['extension_days'] ?? 1 }}">
+                                                <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition cursor-pointer">
+                                                    ✅ Approve (+{{ $meta['extension_days'] ?? 1 }} Days)
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('inbox.orders.respond-extension', $meta['order_id']) }}" method="POST" class="flex-1">
+                                                @csrf
+                                                <input type="hidden" name="action" value="decline">
+                                                <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition cursor-pointer">
+                                                    ❌ Decline
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </div>
                                 @continue
                             @endif
 
                             @if($isOrderStatus)
                                 {{-- Centered Clean Order Status Notice --}}
                                 <div class="flex justify-center my-1.5" data-msg-id="{{ $msg->id }}">
-                                    <div class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 border border-[#20165c]/20 text-[#20165c] flex items-center gap-2 shadow-sm max-w-lg text-center">
-                                        <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 border border-[#20165c]/20 text-[#20165c] flex items-center gap-2 shadow-xs max-w-lg text-center">
+                                        <svg class="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <span>{{ $msg->body }}</span>
-                                        <span class="text-[9px] text-slate-500 font-mono shrink-0">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
+                                        <span class="text-[9px] text-slate-400 font-mono shrink-0">{{ $msg->created_at ? $msg->created_at->format('H:i') : '' }}</span>
                                     </div>
                                 </div>
                             @elseif($isProposal)
-                                @php $meta = $msg->metadata ?? []; @endphp
+                                {{-- IN-CHAT CUSTOM OFFER / PROPOSAL CARD --}}
+                                <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-2" data-msg-id="{{ $msg->id }}">
+                                    <div class="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-4 shadow-md relative overflow-hidden">
+                                        <div class="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl pointer-events-none"></div>
 
-                                @if(isset($meta['type']) && $meta['type'] === 'service_inquiry')
-                                    {{-- IN-CHAT SERVICE INQUIRY BRIEF CARD --}}
-                                    <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-2" data-msg-id="{{ $msg->id }}">
-                                        <div class="max-w-lg w-full bg-white border border-purple-200 rounded-3xl p-4 shadow-md relative overflow-hidden">
-                                            <div class="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl pointer-events-none"></div>
-
-                                            <!-- CARD HEADER -->
-                                            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 mb-3">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-sm">
-                                                        📋
-                                                    </div>
-                                                    <div>
-                                                        <h4 class="text-xs font-bold text-[#121826] mb-0">Project Inquiry Brief</h4>
-                                                        <span class="text-[10px] text-slate-400 font-medium">Submitted by {{ $meta['buyer_name'] ?? 'Client' }}</span>
-                                                    </div>
-                                                </div>
-                                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20">
-                                                    Budget: ৳{{ number_format($meta['budget'] ?? 600, 2) }}
-                                                </span>
-                                            </div>
-
-                                            <!-- SERVICE REFERENCE -->
-                                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 mb-3 flex items-center gap-2.5">
-                                                <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 text-xs shrink-0 overflow-hidden">
-                                                    @if(!empty($meta['preview_images']) && count($meta['preview_images']) > 0)
-                                                        @php
-                                                            $pThumb = $meta['preview_images'][0];
-                                                            $pThumbUrl = str_starts_with($pThumb, 'http') ? $pThumb : asset('storage/' . ltrim($pThumb, '/'));
-                                                        @endphp
-                                                        <img src="{{ $pThumbUrl }}" class="w-full h-full object-cover" alt="Preview">
-                                                    @else
-                                                        🎨
-                                                    @endif
-                                                </div>
-                                                <div class="min-w-0 flex-1">
-                                                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">{{ $meta['category'] ?? 'Creative' }}</span>
-                                                    <h5 class="text-xs font-bold text-[#121826] truncate mb-0">{{ $meta['service_title'] ?? 'Custom Creative Service' }}</h5>
-                                                </div>
-                                            </div>
-
-                                            <!-- QUICK CHIPS / REQUIREMENTS -->
-                                            @if(!empty($meta['chips']) && is_array($meta['chips']))
-                                                <div class="flex flex-wrap gap-1.5 mb-3">
-                                                    @foreach($meta['chips'] as $chip)
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-[#20165c] border border-purple-200">
-                                                            {{ $chip }}
-                                                        </span>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-
-                                            <!-- BRIEF MESSAGE -->
-                                            <div class="bg-slate-50/60 p-3 rounded-xl border border-slate-200 mb-3 text-xs text-slate-700 leading-relaxed whitespace-pre-line font-normal">
-                                                {{ $meta['brief_text'] ?? $msg->body }}
-                                            </div>
-
-                                            <!-- TIMELINE & ATTACHMENT -->
-                                            <div class="flex items-center justify-between text-[11px] text-slate-500 flex-wrap gap-2 pt-1 border-t border-slate-100">
-                                                <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
-                                                    ⏱️ Timeline: <strong>{{ $meta['desired_days'] ?? 3 }} Days</strong>
-                                                </span>
-
-                                                @if(!empty($meta['reference_file_path']))
-                                                    @php
-                                                        $refUrl = asset('storage/' . ltrim($meta['reference_file_path'], '/'));
-                                                    @endphp
-                                                    <a href="{{ $refUrl }}" target="_blank" download class="inline-flex items-center gap-1 text-[#20165c] hover:underline font-bold">
-                                                        📎 <span>View Reference File</span>
-                                                    </a>
-                                                @endif
-                                            </div>
-
-                                            <!-- ACTION CTA -->
-                                            @if($isSeller)
-                                                <div class="mt-3 pt-2.5 border-t border-slate-100">
-                                                    <button type="button" 
-                                                            onclick="prefillCustomProposal('{{ addslashes($meta['service_title'] ?? '') }}', {{ (float)($meta['budget'] ?? 600) }}, {{ (int)($meta['desired_days'] ?? 3) }})" 
-                                                            class="w-full py-2 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                                        <span>Send Custom Proposal to Client</span>
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                                    </button>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @else
-                                    {{-- In-Chat Service Widget Card --}}
-                                    <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} my-1.5">
-                                    <div class="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-3.5 shadow-md relative overflow-hidden">
-                                        <div class="absolute -top-12 -right-12 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
-                                        
-                                        <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 mb-2">
+                                        <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 mb-3">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-7 h-7 rounded-lg bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20 flex items-center justify-center font-bold text-xs">
-                                                    ৳
+                                                <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-sm">
+                                                    💼
                                                 </div>
                                                 <div>
-                                                    <h4 class="text-xs font-bold text-[#121826] mb-0">Custom Service Proposal</h4>
-                                                    <span class="text-[10px] text-slate-400">{{ $meta['order_number'] ?? 'Custom Order' }}</span>
+                                                    <h4 class="text-xs font-bold text-[#121826] mb-0">Custom Service Offer</h4>
+                                                    <span class="text-[10px] text-slate-400 font-mono font-bold">#{{ $meta['order_code'] ?? ($meta['order_number'] ?? 'NOK-SRV') }}</span>
                                                 </div>
                                             </div>
-                                            <span class="px-2 py-0.5 rounded-full text-xs font-extrabold bg-[#f47402]/10 text-[#f47402] border border-[#f47402]/30">
-                                                ৳{{ number_format($meta['price'] ?? 600, 2) }}
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20">
+                                                ৳{{ number_format($meta['price'] ?? ($meta['amount'] ?? 600), 2) }}
                                             </span>
                                         </div>
 
-                                        <h5 class="text-xs font-bold text-[#121826] mb-1">{{ $meta['title'] ?? 'Creative Service Package' }}</h5>
-                                        <p class="text-[11px] text-slate-400 leading-snug line-clamp-2 mb-2">
-                                            {{ $meta['description'] ?? 'Custom design project negotiated via Noksha escrow.' }}
-                                        </p>
+                                        <h5 class="text-xs font-bold text-[#121826] mb-1.5">{{ $meta['title'] ?? 'Creative Service Package' }}</h5>
+                                        @if(!empty($meta['description']))
+                                            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                                                {{ $meta['description'] }}
+                                            </p>
+                                        @endif
 
-                                        <div class="flex items-center gap-2 text-[10px] text-slate-400 mb-2.5 bg-slate-50 p-2 rounded-lg border border-slate-200">
-                                            <span>⏱️ <strong>{{ $meta['duration_days'] ?? 3 }} Days</strong> Delivery</span>
-                                            <span>&bull;</span>
-                                            <span>🛡️ 100% Escrow Protected</span>
+                                        <div class="grid grid-cols-3 gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-center mb-3">
+                                            <div>
+                                                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Delivery</span>
+                                                <span class="text-xs font-bold text-[#121826]">{{ $meta['delivery_days'] ?? ($meta['duration_days'] ?? 3) }} Days</span>
+                                            </div>
+                                            <div>
+                                                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Revisions</span>
+                                                <span class="text-xs font-bold text-[#121826]">{{ $meta['revisions_allowed'] ?? 2 }} Allowed</span>
+                                            </div>
+                                            <div>
+                                                <span class="block text-[10px] text-slate-400 uppercase font-semibold">Protection</span>
+                                                <span class="text-xs font-bold text-emerald-600">100% Escrow</span>
+                                            </div>
                                         </div>
 
-                                        {{-- Proposal Action Buttons --}}
+                                        {{-- Proposal Action Button --}}
                                         @if(isset($meta['order_id']))
                                             @php
                                                 $propOrder = \App\Models\ServiceOrder::find($meta['order_id']);
                                             @endphp
-                                            @if($propOrder && in_array($propOrder->status, ['pending_approval', 'pending']))
-                                                @if($isSeller)
-                                                    <div class="flex items-center gap-2">
-                                                        <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1">
-                                                            @csrf
-                                                            <input type="hidden" name="action" value="accept">
-                                                            <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20 cursor-pointer">
-                                                                ✅ Accept Proposal
-                                                            </button>
-                                                        </form>
-                                                        <form action="{{ route('inbox.orders.respond', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Decline this proposal?');">
-                                                            @csrf
-                                                            <input type="hidden" name="action" value="decline">
-                                                            <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer">
-                                                                ❌ Decline
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                @else
-                                                    <div class="space-y-1.5">
-                                                        <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs text-center font-medium">
-                                                            ⏳ Waiting for Contributor acceptance...
-                                                        </div>
-                                                        <form action="{{ route('inbox.orders.cancel', $propOrder->id) }}" method="POST" onsubmit="return confirm('Withdraw this service proposal?');">
-                                                            @csrf
-                                                            <button type="submit" class="w-full py-1 rounded-lg text-[10px] font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all cursor-pointer">
-                                                                🗑️ Withdraw Proposal
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                @endif
-                                            @elseif($propOrder && $propOrder->status === 'awaiting_payment')
+                                            @if($propOrder && in_array($propOrder->status, ['awaiting_payment', 'pending_acceptance']))
                                                 @if($isBuyer)
                                                     <form action="{{ route('inbox.orders.fund', $propOrder->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="w-full py-2 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white text-center shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
-                                                            💳 Proceed to Secure Escrow Payment (৳{{ number_format($propOrder->total_amount, 2) }})
+                                                        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5">
+                                                            <span>💳 Accept & Pay (৳{{ number_format($propOrder->amount ?? $propOrder->total_amount, 2) }})</span>
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <div class="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs text-center font-medium">
-                                                        Approved &bull; Waiting for client payment
+                                                    <div class="p-2.5 rounded-xl bg-purple-50 text-[#20165c] text-xs text-center font-semibold">
+                                                        ⏳ Waiting for client to accept & pay
                                                     </div>
                                                 @endif
-                                            @elseif($propOrder && $propOrder->status === 'funded_in_progress')
-                                                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold flex items-center justify-center gap-2">
-                                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                                    <span>Escrow Secured & Project Underway</span>
-                                                </div>
-                                            @elseif($propOrder && $propOrder->status === 'delivered')
-                                                <div class="space-y-2">
-                                                    <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs">
-                                                        <div class="font-bold flex items-center gap-1.5 mb-1">
-                                                            <span>📦 Work Delivered by Creator</span>
-                                                        </div>
-                                                        @if($propOrder->delivery_notes)
-                                                            <p class="text-[11px] text-slate-300 italic mb-1.5">"{{ $propOrder->delivery_notes }}"</p>
-                                                        @endif
-                                                        <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-[#20165c] border border-slate-200 font-semibold transition-colors">
-                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                                            <span>Download Source Delivery (.ZIP)</span>
-                                                        </a>
-                                                    </div>
-                                                    @if($isBuyer)
-                                                        <div class="flex items-center gap-2">
-                                                            <form action="{{ route('inbox.orders.release', $propOrder->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Accept delivery and release escrow funds to creator?');">
-                                                                @csrf
-                                                                <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all cursor-pointer">
-                                                                    ✅ Accept & Release Funds
-                                                                </button>
-                                                            </form>
-                                                            <button type="button" onclick="openRevisionModal()" class="flex-1 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer">
-                                                                🔄 Request Revision
-                                                            </button>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @elseif($propOrder && $propOrder->status === 'completed')
-                                                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
-                                                    🎉 Order Completed & Escrow Released
-                                                    @if($propOrder->delivery_archive_path)
-                                                        <div class="mt-1.5">
-                                                            <a href="{{ route('inbox.orders.download-delivery', $propOrder->id) }}" class="inline-flex items-center gap-1 text-[11px] text-indigo-400 underline hover:text-indigo-300">
-                                                                📥 Download Delivery Archive
-                                                            </a>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @elseif($propOrder && $propOrder->status === 'cancelled')
-                                                <div class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-center font-bold">
-                                                    ❌ Order Cancelled & Escrow Refunded
-                                                </div>
-                                            @elseif($propOrder && $propOrder->isFunded())
-                                                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
-                                                    ✅ Escrow Secured & Project Underway
+                                            @elseif($propOrder && $propOrder->isInProgress())
+                                                <div class="p-2 rounded-xl bg-emerald-50 text-emerald-700 text-xs text-center font-bold flex items-center justify-center gap-1.5">
+                                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                                                    <span>Escrow Funded & In Progress</span>
                                                 </div>
                                             @endif
                                         @endif
                                     </div>
                                 </div>
                             @else
-                                {{-- Regular Message Bubble --}}
+                                {{-- Regular Chat Message Bubble --}}
                                 <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} items-end gap-2.5">
                                     @if(!$isMe)
                                         <div class="w-7 h-7 rounded-xl bg-slate-200 border border-slate-300 flex items-center justify-center text-[10px] text-slate-700 font-bold shrink-0">
@@ -662,7 +605,7 @@
                                         </div>
                                     @endif
 
-                                    <div class="max-w-[75%] sm:max-w-md {{ $isMe ? 'bg-[#20165c] text-white rounded-2xl rounded-tr-sm shadow-sm' : 'bg-slate-100 text-slate-900 border border-slate-200 rounded-2xl rounded-tl-sm' }} p-3.5 shadow-lg">
+                                    <div class="max-w-[75%] sm:max-w-md {{ $isMe ? 'bg-[#20165c] text-white rounded-2xl rounded-tr-sm shadow-sm' : 'bg-slate-100 text-slate-900 border border-slate-200 rounded-2xl rounded-tl-sm' }} p-3.5 shadow-sm">
                                         @if(!$isMe)
                                             <div class="text-[10px] font-bold text-slate-500 mb-1">
                                                 {{ $msg->sender->name ?? 'User' }}
@@ -673,7 +616,7 @@
 
                                         {{-- File Attachments --}}
                                         @if($msg->attachments->isNotEmpty())
-                                            <div class="mt-2 pt-2 border-t {{ $isMe ? 'border-indigo-500/40' : 'border-slate-700/60' }} space-y-1.5">
+                                            <div class="mt-2 pt-2 border-t {{ $isMe ? 'border-indigo-500/40' : 'border-slate-300' }} space-y-1.5">
                                                 @foreach($msg->attachments as $att)
                                                     <a href="{{ $att->url }}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl {{ $isMe ? 'bg-white/15 hover:bg-white/25 text-white' : 'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200' }} transition-colors text-xs">
                                                         <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
@@ -697,10 +640,110 @@
                                 </div>
                                 <h3 class="text-sm font-bold text-slate-700 mb-1">Secure Escrow Conversation Started</h3>
                                 <p class="text-xs text-slate-500 max-w-sm mb-0">
-                                    Discuss project requirements, clarify scope, or pick a custom service package below.
+                                    Discuss requirements, agree on deliverables, or select a custom offer above.
                                 </p>
                             </div>
                         @endforelse
+
+                        {{-- IN-CHAT DELIVERED PREVIEWS & LOCKED MANIFEST CONTAINER --}}
+                        @if($activeOrder && in_array($activeOrder->status, ['delivered_preview', 'delivered']))
+                            <div class="my-4 p-4 rounded-3xl bg-white border-2 border-purple-200 shadow-md max-w-2xl mx-auto">
+                                <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-sm">
+                                            📦
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-[#121826] mb-0">Work Delivered for Client Review</h4>
+                                            <span class="text-[10px] text-slate-400 font-mono">#{{ $activeOrder->order_code ?? $activeOrder->order_number }}</span>
+                                        </div>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-300">
+                                        🔒 Source Files Locked
+                                    </span>
+                                </div>
+
+                                {{-- WATERMARKED PREVIEWS GALLERY --}}
+                                @if(!empty($activeOrder->delivery_preview_images) && is_array($activeOrder->delivery_preview_images))
+                                    <div class="mb-3">
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-2">Watermarked Preview Images:</label>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            @foreach($activeOrder->delivery_preview_images as $prevImg)
+                                                @php
+                                                    $pUrl = str_starts_with($prevImg, 'http') ? $prevImg : asset('storage/' . ltrim($prevImg, '/'));
+                                                @endphp
+                                                <div class="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 group select-none">
+                                                    {{-- Anti-theft diagonal watermark overlay --}}
+                                                    <div class="absolute inset-0 z-10 noksha-watermark-overlay flex items-center justify-center pointer-events-none p-4">
+                                                        <div class="transform -rotate-12 select-none text-center">
+                                                            <span class="text-xs font-black text-[#20165c]/40 tracking-widest uppercase block">
+                                                                NOKSHA PREVIEW
+                                                            </span>
+                                                            <span class="text-[9px] font-bold text-[#20165c]/30 uppercase block">
+                                                                ESCROW PROTECTED • DO NOT COPY
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <img src="{{ $pUrl }}" alt="Delivery Preview" class="w-full h-44 object-cover select-none pointer-events-none" oncontextmenu="return false;">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- LOCKED FILE MANIFEST --}}
+                                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl mb-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                                            <span>🗂️ Deliverable Package Manifest</span>
+                                        </span>
+                                        <span class="text-[10px] font-bold text-slate-500">Unlocks upon approval</span>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        @if(!empty($activeOrder->delivery_manifest) && is_array($activeOrder->delivery_manifest))
+                                            @foreach($activeOrder->delivery_manifest as $mItem)
+                                                <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 text-xs">
+                                                    <span class="font-mono text-[11px] text-slate-700 truncate max-w-[240px]">{{ $mItem['name'] ?? 'File' }}</span>
+                                                    <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                                        🔒 Locked
+                                                    </span>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-200 text-xs">
+                                                <span class="font-mono text-[11px] text-slate-700 truncate">Final Source Bundle (.ZIP)</span>
+                                                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                                    🔒 Locked
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                {{-- ACTION BUTTONS FOR BUYER --}}
+                                @if($isBuyer)
+                                    <div class="flex items-center gap-2.5 flex-wrap">
+                                        <form action="{{ route('inbox.orders.release', $activeOrder->id) }}" method="POST" class="flex-1 min-w-[140px]" onsubmit="return confirm('Approve delivery and release escrow funds to creator? (15% platform commission deducted). Full source files will be unlocked.');">
+                                            @csrf
+                                            <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-all cursor-pointer">
+                                                ✅ Approve & Complete
+                                            </button>
+                                        </form>
+                                        <button type="button" onclick="openRevisionModal()" class="flex-1 min-w-[140px] py-2.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 transition-all cursor-pointer">
+                                            🔄 Request Revision ({{ $activeOrder->revisions_used }}/{{ $activeOrder->revisions_allowed }})
+                                        </button>
+                                        <button type="button" onclick="openFakeReportModal()" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 transition-all cursor-pointer">
+                                            🚨 Report Fake File
+                                        </button>
+                                    </div>
+                                @else
+                                    <p class="text-xs text-slate-500 italic text-center mb-0">
+                                        Client is currently reviewing previews. Funds auto-release after 3 days if no disputes are opened.
+                                    </p>
+                                @endif
+                            </div>
+                        @endif
+
                     </div>
 
                     {{-- 2.4 CHAT INPUT AREA --}}
@@ -711,10 +754,18 @@
                     @else
                         <!-- Chat Input Area (Always Active & Frictionless) -->
                         <div class="p-4 bg-white border-t border-slate-200 sticky bottom-0 z-20 shrink-0">
-                            <form id="chatMessageForm" action="{{ route('chat.send', $activeConversation->id) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-3">
+                            <form id="chatMessageForm" action="{{ route('chat.send', $activeConversation->id) }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2.5">
                                 @csrf
                                 <input type="hidden" name="is_funded" id="isFundedFlag" value="{{ $isFunded ? '1' : '0' }}">
                                 <input type="hidden" name="is_funded_in_progress" id="isFundedInProgressFlag" value="{{ $isFundedInProgress ? '1' : '0' }}">
+
+                                <!-- Offer Service Button -->
+                                @if($isSeller || (!$isSupportThread && isset($services) && $services->isNotEmpty()))
+                                    <button type="button" onclick="openProposalModal()" class="p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-[#20165c] cursor-pointer border border-purple-200 transition shrink-0 flex items-center gap-1.5 text-xs font-bold" title="Recommend or offer a custom service package">
+                                        <span>💼</span>
+                                        <span class="hidden sm:inline">{{ $isSeller ? 'Offer Service' : 'Pick Service' }}</span>
+                                    </button>
+                                @endif
 
                                 <!-- Attachment Button -->
                                 <label for="chat_file" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer border border-slate-200 transition shrink-0" title="Attach file">
@@ -745,7 +796,7 @@
                         <p class="text-xs text-slate-400 max-w-sm mb-4 leading-relaxed">
                             Select a thread from the left sidebar to resume messaging, or visit a creator's public profile to send a direct project inquiry.
                         </p>
-                        <a href="{{ \Illuminate\Support\Facades\Route::has('creators.index') ? route('creators.index') : url('/creators') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/25">
+                        <a href="{{ route('creators.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[#20165c] hover:bg-[#181045] text-white transition-all shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             <span>Browse Verified Creators</span>
                         </a>
@@ -759,7 +810,7 @@
 </div>
 
 {{-- ======================================================== --}}
-{{-- 3. PROPOSE / PICK SERVICE MODAL                          --}}
+{{-- 3. PROPOSE / CUSTOM OFFER BUILDER MODAL                  --}}
 {{-- ======================================================== --}}
 @if($activeConversation)
 <div id="serviceProposalModal" data-modal="service-proposal" data-service-modal style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) handleModalClose()">
@@ -767,12 +818,12 @@
         
         <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
+                <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-xs">
                     💼
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-[#121826] mb-0">{{ $isSeller ? 'Propose Custom Service' : 'Request Creative Service' }}</h3>
-                    <p class="text-[11px] text-slate-400 mb-0">Minimum service threshold ৳600.00 BDT</p>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">{{ $isSeller ? 'Offer / Recommend Service' : 'Request Creative Service' }}</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Minimum order threshold ৳600.00 BDT &bull; 100% Escrow Protected</p>
                 </div>
             </div>
             <button type="button" onclick="handleModalClose()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer" title="Close">&times;</button>
@@ -782,14 +833,14 @@
             @csrf
 
             {{-- Optional: Pick an existing seller service --}}
-            @if($services->isNotEmpty())
+            @if(isset($services) && $services->isNotEmpty())
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Pick Existing Service (Optional)</label>
-                    <select name="service_id" id="serviceSelect" onchange="handleServiceSelect(this)" class="w-full px-3 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-indigo-500">
-                        <option value="">-- Propose Custom / Enter Details Below --</option>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Pick Service Template (Optional)</label>
+                    <select name="service_id" id="serviceSelect" onchange="handleServiceSelect(this)" class="w-full px-3 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#20165c]">
+                        <option value="">-- Custom Custom Offer / Scope Below --</option>
                         @foreach($services as $srv)
-                            <option value="{{ $srv->id }}" data-title="{{ $srv->title }}" data-price="{{ $srv->price }}" data-days="{{ $srv->duration_days }}" data-desc="{{ $srv->description }}">
-                                {{ $srv->title }} (৳{{ number_format($srv->price, 2) }} - {{ $srv->duration_days }} Days)
+                            <option value="{{ $srv->id }}" data-title="{{ $srv->title }}" data-price="{{ $srv->starting_price ?? $srv->price }}" data-days="{{ $srv->delivery_days ?? $srv->duration_days }}" data-desc="{{ $srv->description }}" data-revisions="{{ $srv->revisions_count ?? 2 }}">
+                                {{ $srv->title }} (৳{{ number_format($srv->starting_price ?? $srv->price, 0) }} - {{ $srv->delivery_days ?? $srv->duration_days }} Days)
                             </option>
                         @endforeach
                     </select>
@@ -798,35 +849,39 @@
 
             {{-- Title --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Service Title <span class="text-rose-400">*</span></label>
-                <input type="text" name="title" id="proposalTitleInput" required placeholder="e.g. Mobile App UI Kit & Figma Design System" class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Service Title <span class="text-rose-500">*</span></label>
+                <input type="text" name="title" id="proposalTitleInput" required placeholder="e.g. Modern Brand Identity & Vector Source Files" class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c]">
             </div>
 
-            {{-- Price & Delivery Days Grid --}}
-            <div class="grid grid-cols-2 gap-4">
+            {{-- Price, Delivery Days & Revisions Grid --}}
+            <div class="grid grid-cols-3 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Price (BDT ৳) <span class="text-rose-400">*</span></label>
-                    <input type="number" name="price" id="proposalPriceInput" min="600" step="10" value="600" required class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-indigo-500">
-                    <span class="text-[10px] text-slate-500">Min: ৳600.00 BDT</span>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Price (৳) <span class="text-rose-500">*</span></label>
+                    <input type="number" name="price" id="proposalPriceInput" min="600" step="50" value="600" required class="w-full px-3 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-[#20165c]">
+                    <span class="text-[10px] text-slate-400">Min ৳600</span>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Time (Days) <span class="text-rose-400">*</span></label>
-                    <input type="number" name="duration_days" id="proposalDaysInput" min="1" max="90" value="3" required class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Days <span class="text-rose-500">*</span></label>
+                    <input type="number" name="delivery_days" id="proposalDaysInput" min="1" max="90" value="3" required class="w-full px-3 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-[#20165c]">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Revisions <span class="text-rose-500">*</span></label>
+                    <input type="number" name="revisions_allowed" id="proposalRevisionsInput" min="0" max="10" value="2" required class="w-full px-3 py-2 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-mono focus:outline-none focus:border-[#20165c]">
                 </div>
             </div>
 
-            {{-- Description / Scope --}}
+            {{-- Scope / Requirements --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Scope of Work & Deliverables <span class="text-rose-400">*</span></label>
-                <textarea name="description" id="proposalDescInput" rows="3" required placeholder="Outline deliverables, file formats (.FIG, .PSD, .AI), and revision milestones..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Scope of Work & Deliverables <span class="text-rose-500">*</span></label>
+                <textarea name="description" id="proposalDescInput" rows="3" required placeholder="Outline project milestones, formats (.AI, .FIG, .PSD), and deliverables..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
             </div>
 
             <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
-                <button type="button" id="cancelProposalBtn" onclick="handleModalClose()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
+                <button type="button" onclick="handleModalClose()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
                     Cancel
                 </button>
                 <button type="submit" id="submitProposalBtn" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
-                    🚀 Dispatch Proposal
+                    🚀 Dispatch Custom Offer
                 </button>
             </div>
         </form>
@@ -835,44 +890,60 @@
 @endif
 
 {{-- ======================================================== --}}
-{{-- 3B. DELIVER WORK MODAL (SELLER ONLY)                    --}}
+{{-- 3B. DELIVER WORK MULTI-FILE MODAL (SELLER ONLY)          --}}
 {{-- ======================================================== --}}
-@if(isset($activeOrder) && $activeOrder && !empty($isSeller) && $activeOrder->status === 'funded_in_progress')
+@if(isset($activeOrder) && $activeOrder && !empty($isSeller) && $activeOrder->isInProgress())
 <div id="deliveryModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeDeliveryModal()">
     <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
         <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-xs">
                     📦
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-[#121826] mb-0">Deliver Final Work</h3>
-                    <p class="text-[11px] text-slate-400 mb-0">Upload source ZIP package (AI, PSD, Figma, EPS, etc.)</p>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Deliver Project Work</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Upload previews (watermarked) and source file</p>
                 </div>
             </div>
-            <button type="button" onclick="closeDeliveryModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm">&times;</button>
+            <button type="button" onclick="closeDeliveryModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
         </div>
 
         <form action="{{ route('inbox.orders.deliver', $activeOrder->id) }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
+            
+            {{-- Preview Images --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Deliverable Package (.ZIP only, Max 200MB) <span class="text-rose-400">*</span></label>
-                <input type="file" name="delivery_file" accept=".zip,application/zip,application/x-zip-compressed" required class="w-full text-xs text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#20165c] file:text-white hover:file:bg-[#181045] bg-white border border-slate-300 text-slate-700 rounded-xl p-2 cursor-pointer">
-                <p class="text-[10px] text-slate-500 mt-1">Package all project source files, fonts, and documentation into a single .ZIP archive.</p>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Preview Images (1 to 5 images: JPG, PNG, WebP) <span class="text-rose-500">*</span></label>
+                <input type="file" name="preview_images[]" multiple accept="image/jpeg,image/png,image/webp" required class="w-full text-xs text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#20165c] file:text-white hover:file:bg-[#181045] bg-white border border-slate-300 rounded-xl p-2 cursor-pointer">
+                <p class="text-[10px] text-slate-400 mt-1">These will be displayed to client with non-removable Noksha Preview watermark.</p>
             </div>
 
+            {{-- Source File --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Final Source Deliverable (ZIP, PSD, AI, FIG, etc., Max 200MB) <span class="text-rose-500">*</span></label>
+                <input type="file" name="source_file" required class="w-full text-xs text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#20165c] file:text-white hover:file:bg-[#181045] bg-white border border-slate-300 rounded-xl p-2 cursor-pointer">
+                <p class="text-[10px] text-slate-400 mt-1">Remains locked until client approves delivery and releases escrow.</p>
+            </div>
+
+            {{-- Optional Instruction PDF --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Instruction / Handover PDF (Optional)</label>
+                <input type="file" name="instruction_pdf" accept="application/pdf" class="w-full text-xs text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-700 hover:file:bg-slate-300 bg-white border border-slate-300 rounded-xl p-2 cursor-pointer">
+            </div>
+
+            {{-- Notes --}}
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Notes / Handover Instructions</label>
-                <textarea name="delivery_notes" rows="4" placeholder="Add instructions on how to use the files, software versions, or handover notes..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <textarea name="delivery_notes" rows="3" placeholder="Provide instructions on fonts, layers, or software versions..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
             </div>
 
             <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
                 <button type="button" onclick="closeDeliveryModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
                     Cancel
                 </button>
-                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 transition-all cursor-pointer">
-                    🚀 Submit Delivery to Client
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
+                    🚀 Submit Delivery for Review
                 </button>
             </div>
         </form>
@@ -883,28 +954,28 @@
 {{-- ======================================================== --}}
 {{-- 3C. REQUEST REVISION MODAL (BUYER ONLY)                 --}}
 {{-- ======================================================== --}}
-@if(isset($activeOrder) && $activeOrder && !empty($isBuyer) && $activeOrder->status === 'delivered')
+@if(isset($activeOrder) && $activeOrder && !empty($isBuyer))
 <div id="revisionModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeRevisionModal()">
     <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
         
         <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">
+                <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center font-bold text-xs">
                     🔄
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-[#121826] mb-0">Request Revision</h3>
-                    <p class="text-[11px] text-slate-400 mb-0">Specify changes or adjustments required for this project</p>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Request Project Revision</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Revisions Used: {{ $activeOrder->revisions_used }} of {{ $activeOrder->revisions_allowed }}</p>
                 </div>
             </div>
-            <button type="button" onclick="closeRevisionModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm">&times;</button>
+            <button type="button" onclick="closeRevisionModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
         </div>
 
         <form action="{{ route('inbox.orders.revision', $activeOrder->id) }}" method="POST" class="p-6 space-y-4">
             @csrf
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Revision Instructions <span class="text-rose-400">*</span></label>
-                <textarea name="revision_notes" rows="4" required placeholder="Clearly describe what changes are needed, referencing specific sections or assets..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Detailed Revision Instructions <span class="text-rose-500">*</span></label>
+                <textarea name="revision_notes" rows="4" required placeholder="Clearly explain what changes or corrections are needed..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
             </div>
 
             <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
@@ -912,13 +983,321 @@
                     Cancel
                 </button>
                 <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#f47402] hover:bg-[#d96602] text-white shadow-sm transition-all cursor-pointer">
-                    🔄 Submit Revision Request
+                    🔄 Dispatch Revision Request
                 </button>
             </div>
         </form>
     </div>
 </div>
 @endif
+
+{{-- ======================================================== --}}
+{{-- 3D. 48-HOUR MINOR FIX MODAL (BUYER ONLY)                --}}
+{{-- ======================================================== --}}
+@if(isset($activeOrder) && $activeOrder && !empty($isBuyer))
+<div id="minorFixModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeMinorFixModal()">
+    <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-xs">
+                    🔧
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Request 48-Hour Minor Fix</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">1 complimentary minor adjustment included within 48h of completion</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeMinorFixModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
+        </div>
+
+        <form action="{{ route('inbox.orders.minor-fix', $activeOrder->id) }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Minor Adjustment Details <span class="text-rose-500">*</span></label>
+                <textarea name="minor_fix_notes" rows="3" required placeholder="Specify slight color adjustments, typos, or file format exports..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeMinorFixModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
+                    🔧 Submit Minor Fix (1 Use)
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+{{-- ======================================================== --}}
+{{-- 3E. EXTEND DEADLINE MODAL (CREATOR ONLY)                 --}}
+{{-- ======================================================== --}}
+@if(isset($activeOrder) && $activeOrder && !empty($isSeller))
+<div id="extensionModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeExtensionModal()">
+    <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-purple-50 text-[#20165c] border border-purple-200 flex items-center justify-center font-bold text-xs">
+                    ⏳
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Request Deadline Extension</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Maximum 1 extension allowed per order</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeExtensionModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
+        </div>
+
+        <form action="{{ route('inbox.orders.request-extension', $activeOrder->id) }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Extension Duration <span class="text-rose-500">*</span></label>
+                <div class="grid grid-cols-3 gap-3">
+                    <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-300 hover:border-[#20165c] cursor-pointer text-center has-[:checked]:border-[#20165c] has-[:checked]:bg-purple-50">
+                        <input type="radio" name="extension_days" value="1" checked class="hidden">
+                        <span class="text-sm font-bold text-[#121826]">+1 Day</span>
+                        <span class="text-[10px] text-slate-500">24 Hours</span>
+                    </label>
+                    <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-300 hover:border-[#20165c] cursor-pointer text-center has-[:checked]:border-[#20165c] has-[:checked]:bg-purple-50">
+                        <input type="radio" name="extension_days" value="2" class="hidden">
+                        <span class="text-sm font-bold text-[#121826]">+2 Days</span>
+                        <span class="text-[10px] text-slate-500">48 Hours</span>
+                    </label>
+                    <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-300 hover:border-[#20165c] cursor-pointer text-center has-[:checked]:border-[#20165c] has-[:checked]:bg-purple-50">
+                        <input type="radio" name="extension_days" value="3" class="hidden">
+                        <span class="text-sm font-bold text-[#121826]">+3 Days</span>
+                        <span class="text-[10px] text-slate-500">72 Hours</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Reason for Extension <span class="text-rose-500">*</span></label>
+                <textarea name="extension_reason" rows="3" required placeholder="Explain why extra time is required for this delivery..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeExtensionModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
+                    ⏳ Send Extension Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+{{-- ======================================================== --}}
+{{-- 3F. REPORT EMPTY / FAKE FILE DISPUTE MODAL (BUYER ONLY)   --}}
+{{-- ======================================================== --}}
+@if(isset($activeOrder) && $activeOrder && !empty($isBuyer))
+<div id="fakeReportModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeFakeReportModal()">
+    <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-rose-50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs">
+                    🚨
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-rose-950 mb-0">Report Empty / Fake Delivery</h3>
+                    <p class="text-[11px] text-rose-700 mb-0">Dispute halts auto-release and alerts Noksha support</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeFakeReportModal()" class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 hover:text-rose-950 flex items-center justify-center text-sm cursor-pointer">&times;</button>
+        </div>
+
+        <form action="{{ route('inbox.orders.report-fake', $activeOrder->id) }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Explain the Delivery Issue <span class="text-rose-500">*</span></label>
+                <textarea name="report_reason" rows="4" required placeholder="Describe why this delivery is empty, corrupt, or fake..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500 resize-none"></textarea>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+                ⚠️ Opening a dispute will instantly stop escrow release, penalize the creator with 25 demerits, and assign an administrator to review the delivered files.
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeFakeReportModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm transition-all cursor-pointer">
+                    🚨 Submit Formal Dispute
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+{{-- ======================================================== --}}
+{{-- 3G. ORDER REVIEW MODAL (5-STAR RATING & FEEDBACK)        --}}
+{{-- ======================================================== --}}
+<div id="orderReviewModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeReviewModal()">
+    <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center font-bold text-xs">
+                    ⭐
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-[#121826] mb-0">Leave Verified Creator Review</h3>
+                    <p class="text-[11px] text-slate-400 mb-0">Your review will be publicly visible on creator's profile</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeReviewModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
+        </div>
+
+        <form id="orderReviewForm" action="" method="POST" class="p-6 space-y-4">
+            @csrf
+            {{-- Star Rating --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2">Overall Rating <span class="text-rose-500">*</span></label>
+                <div class="flex items-center gap-2 text-2xl" id="starRatingContainer">
+                    <input type="hidden" name="rating" id="selectedRatingInput" value="5">
+                    @for($i = 1; $i <= 5; $i++)
+                        <button type="button" onclick="setStarRating({{ $i }})" class="star-rating-btn text-amber-400 hover:scale-110 transition cursor-pointer" data-star="{{ $i }}">
+                            ★
+                        </button>
+                    @endfor
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Feedback & Experience <span class="text-rose-500">*</span></label>
+                <textarea name="comment" rows="3" required placeholder="Share details about communication, quality, and delivery speed..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeReviewModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
+                    ⭐ Publish Verified Review
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- ======================================================== --}}
+{{-- 3H. INSUFFICIENT WALLET BALANCE SHORTFALL MODAL          --}}
+{{-- ======================================================== --}}
+<div id="insufficientFundsModal" style="display: none;" class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-opacity duration-200" onclick="if(event.target === this) closeInsufficientFundsModal()">
+    <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">
+                    💳
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-amber-950 mb-0">Insufficient Wallet Balance</h3>
+                    <p class="text-[11px] text-amber-700 mb-0">Deposit funds to proceed with escrow protection</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeInsufficientFundsModal()" class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 hover:text-amber-950 flex items-center justify-center text-sm cursor-pointer">&times;</button>
+        </div>
+
+        <div class="p-6 space-y-4">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+                <span class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Shortfall Needed</span>
+                <span class="text-2xl font-black text-[#f47402] font-mono" id="shortfallAmountDisplay">৳0.00</span>
+                <span class="block text-[11px] text-slate-400 mt-1">Total required exceeds your current wallet balance</span>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed mb-0">
+                You need to deposit funds into your Noksha Wallet to safely fund this custom creative order. Once deposited, you can return to accept & pay immediately.
+            </p>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">
+                <button type="button" onclick="closeInsufficientFundsModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors cursor-pointer">
+                    Dismiss
+                </button>
+                <a href="{{ route('wallet.index', ['tab' => 'deposit']) }}" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all cursor-pointer">
+                    💳 Deposit Funds Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ======================================================== --}}
+{{-- 3I. WORK HISTORY SLIDE-OVER DRAWER                       --}}
+{{-- ======================================================== --}}
+<div id="workHistoryDrawer" style="display: none;" class="fixed inset-0 z-50 overflow-hidden hidden" onclick="if(event.target === this) closeWorkHistoryDrawer()">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity duration-300"></div>
+
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        <div class="w-screen max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col" onclick="event.stopPropagation()">
+            
+            {{-- Drawer Header --}}
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20 flex items-center justify-center font-bold text-sm">
+                        📋
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-[#121826] mb-0">Work History</h3>
+                        <p class="text-[11px] text-slate-400 mb-0">Orders with {{ $counterpart->name ?? 'Creator' }} ({{ $workHistoryCount ?? 0 }})</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeWorkHistoryDrawer()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
+            </div>
+
+            {{-- Orders List --}}
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin">
+                @forelse($workHistoryOrders as $hOrd)
+                    @php
+                        $hReview = $hOrd->reviews->first();
+                    @endphp
+                    <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 transition-all space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs font-bold text-[#20165c]">#{{ $hOrd->order_code ?? $hOrd->order_number }}</span>
+                            <span class="text-[10px] text-slate-400 font-mono">{{ $hOrd->created_at->format('M d, Y') }}</span>
+                        </div>
+                        <h5 class="text-xs font-bold text-[#121826] mb-0">{{ $hOrd->custom_title ?? $hOrd->service?->title ?? 'Custom Creative Project' }}</h5>
+                        <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-200/60">
+                            <span class="font-mono font-bold text-[#121826]">৳{{ number_format($hOrd->amount ?? $hOrd->total_amount, 2) }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $hOrd->status === 'completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-200 text-slate-700' }} capitalize">
+                                {{ str_replace('_', ' ', $hOrd->status) }}
+                            </span>
+                        </div>
+                        @if($hReview)
+                            <div class="p-2 rounded-xl bg-amber-50/80 border border-amber-200 text-xs">
+                                <div class="flex items-center gap-1 text-amber-500 font-bold mb-0.5">
+                                    @for($s = 1; $s <= ($hReview->rating ?? 5); $s++)
+                                        ★
+                                    @endfor
+                                </div>
+                                <p class="text-[11px] text-slate-700 italic mb-0">"{{ $hReview->comment }}"</p>
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <div class="text-center py-12 text-slate-400">
+                        <span class="text-2xl block mb-2">📋</span>
+                        <p class="text-xs mb-0">No past service orders between you yet.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="p-4 border-t border-slate-200 bg-slate-50">
+                <button type="button" onclick="closeWorkHistoryDrawer()" class="w-full py-2.5 rounded-xl text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-800 transition cursor-pointer">
+                    Close History
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 {{-- ======================================================== --}}
 {{-- 4. INLINE JAVASCRIPT LOGIC & ANTI-BYPASS GUARD           --}}
@@ -957,14 +1336,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const now = new Date().getTime();
             const distance = deadline - now;
             if (distance < 0) {
-                countdownEl.innerHTML = '<span class="text-slate-500 font-medium">Delivery due</span>';
+                countdownEl.innerHTML = '<span class="text-rose-600 font-bold">⚠️ Overdue</span>';
                 return;
             }
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const secs = Math.floor((distance % (1000 * 60)) / 1000);
-            countdownEl.innerHTML = `⏱️ ${days}d ${hours}h ${mins}m ${secs}s`;
+            countdownEl.innerHTML = `⏱️ ${days}d ${hours}h ${mins}m ${secs}s left`;
         }
         updateCountdown();
         setInterval(updateCountdown, 1000);
@@ -974,7 +1353,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const messageForm = document.getElementById('chatMessageForm');
     if (messageForm) {
         messageForm.addEventListener('submit', function (e) {
-            const bodyInput = document.getElementById('messageInput') || document.getElementById('chatInputTextarea');
+            const bodyInput = document.getElementById('messageInput');
             const text = (bodyInput ? bodyInput.value : '').trim();
             const isFunded = document.getElementById('isFundedFlag')?.value === '1';
 
@@ -984,7 +1363,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
                 const linkRegex = /(https?:\/\/|www\.|wa\.me|wa\.link|facebook\.com|fb\.com|t\.me|telegram|whatsapp|instagram\.com|discord\.gg|linkedin\.com)/i;
 
-                // Strip punctuation and spacing to detect spaced phone numbers (e.g. 0 1 7 ...)
                 const stripped = text.replace(/[\s\-\.\(\)]/g, '');
                 const hasPhone = phoneRegex.test(text) || /(?:\+?88|01)\d{8,11}/.test(stripped);
                 const hasEmail = emailRegex.test(text);
@@ -998,20 +1376,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         alert('⚠️ Security Policy Alert: Sharing personal phone numbers, email addresses, or external links outside Noksha is strictly prohibited.');
                     }
                     return false;
-                }
-            }
-        });
-    }
-
-    // Attachment input tooltip / visual feedback
-    const chatFileInput = document.getElementById('chat_file');
-    if (chatFileInput) {
-        chatFileInput.addEventListener('change', function () {
-            if (this.files && this.files[0]) {
-                const label = this.closest('label');
-                if (label) {
-                    label.classList.add('bg-indigo-600/30', 'text-indigo-400', 'border', 'border-indigo-500/40');
-                    label.title = 'Selected: ' + this.files[0].name;
                 }
             }
         });
@@ -1064,32 +1428,25 @@ document.addEventListener('DOMContentLoaded', function () {
     // 6. Global Escape key listener to dismiss open modals
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' || e.key === 'Esc') {
-            const proposalModal = document.getElementById('serviceProposalModal') || document.getElementById('proposalModal') || document.querySelector('[data-service-modal]');
-            if (proposalModal && (!proposalModal.classList.contains('hidden') || proposalModal.style.display === 'flex')) {
-                handleModalClose();
-            }
-            const deliveryModal = document.getElementById('deliveryModal');
-            if (deliveryModal && (!deliveryModal.classList.contains('hidden') || deliveryModal.style.display === 'flex')) {
-                closeDeliveryModal();
-            }
-            const revisionModal = document.getElementById('revisionModal');
-            if (revisionModal && (!revisionModal.classList.contains('hidden') || revisionModal.style.display === 'flex')) {
-                closeRevisionModal();
-            }
+            handleModalClose();
+            closeDeliveryModal();
+            closeRevisionModal();
+            closeMinorFixModal();
+            closeExtensionModal();
+            closeFakeReportModal();
+            closeReviewModal();
+            closeInsufficientFundsModal();
+            closeWorkHistoryDrawer();
         }
     });
 
-    // 7. Service Proposal Form Submission Feedback
-    const proposalForm = document.getElementById('serviceProposalForm');
-    if (proposalForm) {
-        proposalForm.addEventListener('submit', function () {
-            const submitBtn = document.getElementById('submitProposalBtn');
-            if (submitBtn) {
-                submitBtn.innerHTML = '🚀 Dispatching Proposal...';
-                setTimeout(() => { submitBtn.disabled = true; }, 10);
-            }
-        });
-    }
+    // 7. Check session prompts
+    @if(session('insufficient_funds'))
+        openInsufficientFundsModal({{ session('shortfall') ?? 0 }});
+    @endif
+    @if(session('prompt_review_order_id'))
+        openReviewModal({{ session('prompt_review_order_id') }});
+    @endif
 });
 
 function escapeHtml(str) {
@@ -1110,18 +1467,18 @@ function appendPolledMessage(msg, container) {
     }
 
     if (msg.message_type === 'order_status') {
-        div.className = 'flex justify-center my-3';
+        div.className = 'flex justify-center my-2';
         div.innerHTML = `
-            <div class="px-4 py-2 rounded-2xl text-xs font-semibold bg-purple-50 border border-[#20165c]/20 text-[#20165c] flex items-center gap-2 shadow-sm max-w-lg text-center">
+            <div class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 border border-[#20165c]/20 text-[#20165c] flex items-center gap-2 shadow-xs max-w-lg text-center">
                 <span>${escapeHtml(msg.body)}</span>
-                <span class="text-[9px] text-slate-500 font-mono shrink-0">${msg.created_at_human || ''}</span>
+                <span class="text-[9px] text-slate-400 font-mono shrink-0">${msg.created_at_human || ''}</span>
             </div>
         `;
     } else {
         div.className = `flex ${msg.is_me ? 'justify-end' : 'justify-start'} items-end gap-2.5`;
         let attachmentsHtml = '';
         if (msg.attachments && msg.attachments.length > 0) {
-            attachmentsHtml = `<div class="mt-2 pt-2 border-t ${msg.is_me ? 'border-indigo-500/40' : 'border-slate-700/60'} space-y-1.5">` +
+            attachmentsHtml = `<div class="mt-2 pt-2 border-t ${msg.is_me ? 'border-indigo-500/40' : 'border-slate-300'} space-y-1.5">` +
                 msg.attachments.map(att => `
                     <a href="${att.url}" target="_blank" class="flex items-center gap-2 p-2 rounded-xl ${msg.is_me ? 'bg-white/15 hover:bg-white/25 text-white' : 'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200'} transition-colors text-xs">
                         <svg class="w-4 h-4 text-indigo-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
@@ -1139,7 +1496,7 @@ function appendPolledMessage(msg, container) {
 
         div.innerHTML = `
             ${avatarHtml}
-            <div class="max-w-[75%] sm:max-w-md ${msg.is_me ? 'bg-[#20165c] text-white rounded-2xl rounded-tr-sm shadow-sm' : 'bg-slate-100 text-slate-900 border border-slate-200 rounded-2xl rounded-tl-sm'} p-3.5 shadow-lg">
+            <div class="max-w-[75%] sm:max-w-md ${msg.is_me ? 'bg-[#20165c] text-white rounded-2xl rounded-tr-sm shadow-sm' : 'bg-slate-100 text-slate-900 border border-slate-200 rounded-2xl rounded-tl-sm'} p-3.5 shadow-sm">
                 ${!msg.is_me ? `<div class="text-[10px] font-bold text-slate-500 mb-1">${escapeHtml(msg.sender_name || 'User')}</div>` : ''}
                 <p class="text-xs leading-relaxed whitespace-pre-wrap break-words mb-1">${escapeHtml(msg.body)}</p>
                 ${attachmentsHtml}
@@ -1153,50 +1510,9 @@ function appendPolledMessage(msg, container) {
     container.appendChild(div);
 }
 
-// Auto-expand textarea as user types
-function autoResizeTextarea(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = (textarea.scrollHeight) + 'px';
-}
-
-// Enter to submit, Shift+Enter for newline
-function handleChatKeydown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        const form = document.getElementById('chatMessageForm');
-        if (form) form.requestSubmit();
-    }
-}
-
-// Notice for locked attachments
-function showLockedAttachmentNotice() {
-    showNokshaToast('🔒 Attachment Lock: File sharing is locked until a service order has been funded in progress.', 'error');
-}
-
-// File attachment selection preview
-function handleAttachmentSelected(input) {
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        document.getElementById('attachmentFileName').textContent = file.name;
-        document.getElementById('attachmentPill').classList.remove('hidden');
-        document.getElementById('attachmentPill').classList.add('flex');
-    }
-}
-
-function clearAttachment() {
-    const input = document.getElementById('attachmentInput');
-    if (input) input.value = '';
-    const pill = document.getElementById('attachmentPill');
-    if (pill) {
-        pill.classList.add('hidden');
-        pill.classList.remove('flex');
-    }
-}
-
-// Modal open/close
+// Modal open/close helpers
 function openProposalModal() {
-    window._modalOpenedInChat = true;
-    const modal = document.getElementById('serviceProposalModal') || document.getElementById('proposalModal') || document.querySelector('[data-service-modal]') || document.querySelector('[data-modal="service-proposal"]');
+    const modal = document.getElementById('serviceProposalModal');
     if (modal) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -1204,37 +1520,43 @@ function openProposalModal() {
     }
 }
 
-function prefillCustomProposal(title, budget, days) {
-    openProposalModal();
-    const titleInput = document.getElementById('proposalTitle') || document.querySelector('input[name="title"]') || document.querySelector('input[name="custom_title"]');
-    const amountInput = document.getElementById('proposalAmount') || document.querySelector('input[name="total_amount"]') || document.querySelector('input[name="amount"]') || document.querySelector('input[name="price"]');
-    const daysInput = document.getElementById('proposalDays') || document.querySelector('input[name="duration_days"]') || document.querySelector('input[name="delivery_days"]');
-    if (titleInput && title) titleInput.value = title;
-    if (amountInput && budget) amountInput.value = budget;
-    if (daysInput && days) daysInput.value = days;
-}
-
 function handleModalClose() {
-    const modal = document.getElementById('serviceProposalModal') || document.querySelector('[data-service-modal]') || document.getElementById('proposalModal');
+    const modal = document.getElementById('serviceProposalModal');
     if (modal) {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
         modal.style.display = 'none';
     }
-    // Fallback ONLY if modal overlay was a standalone page with no chat stream:
-    const chatContainer = document.getElementById('messageHistoryContainer');
-    if (!chatContainer) {
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            window.location.href = "{{ url()->previous() }}";
-        }
-    }
-    window._modalOpenedInChat = false;
 }
 
-function closeProposalModal() {
-    handleModalClose();
+function prefillCustomProposal(title, price, days, serviceId = '', desc = '', revisions = 2) {
+    openProposalModal();
+    const titleInput = document.getElementById('proposalTitleInput');
+    const priceInput = document.getElementById('proposalPriceInput');
+    const daysInput = document.getElementById('proposalDaysInput');
+    const descInput = document.getElementById('proposalDescInput');
+    const serviceSelect = document.getElementById('serviceSelect');
+    const revisionsInput = document.getElementById('proposalRevisionsInput');
+
+    if (titleInput && title) titleInput.value = title;
+    if (priceInput && price) priceInput.value = price;
+    if (daysInput && days) daysInput.value = days;
+    if (descInput && desc) descInput.value = desc;
+    if (revisionsInput && revisions) revisionsInput.value = revisions;
+    if (serviceSelect && serviceId) serviceSelect.value = serviceId;
+}
+
+function handleServiceSelect(select) {
+    const opt = select.options[select.selectedIndex];
+    if (opt && opt.value) {
+        document.getElementById('proposalTitleInput').value = opt.dataset.title || '';
+        document.getElementById('proposalPriceInput').value = opt.dataset.price || '600';
+        document.getElementById('proposalDaysInput').value = opt.dataset.days || '3';
+        document.getElementById('proposalDescInput').value = opt.dataset.desc || '';
+        if (document.getElementById('proposalRevisionsInput')) {
+            document.getElementById('proposalRevisionsInput').value = opt.dataset.revisions || '2';
+        }
+    }
 }
 
 function openDeliveryModal() {
@@ -1273,18 +1595,132 @@ function closeRevisionModal() {
     }
 }
 
-// Pre-fill modal fields when an existing service is picked
-function handleServiceSelect(select) {
-    const opt = select.options[select.selectedIndex];
-    if (opt && opt.value) {
-        document.getElementById('proposalTitleInput').value = opt.dataset.title || '';
-        document.getElementById('proposalPriceInput').value = opt.dataset.price || '600';
-        document.getElementById('proposalDaysInput').value = opt.dataset.days || '3';
-        document.getElementById('proposalDescInput').value = opt.dataset.desc || '';
+function openMinorFixModal() {
+    const modal = document.getElementById('minorFixModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
     }
 }
 
-// Dynamic client-side toast renderer
+function closeMinorFixModal() {
+    const modal = document.getElementById('minorFixModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
+}
+
+function openExtensionModal() {
+    const modal = document.getElementById('extensionModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    }
+}
+
+function closeExtensionModal() {
+    const modal = document.getElementById('extensionModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
+}
+
+function openFakeReportModal() {
+    const modal = document.getElementById('fakeReportModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    }
+}
+
+function closeFakeReportModal() {
+    const modal = document.getElementById('fakeReportModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
+}
+
+function openReviewModal(orderId) {
+    const modal = document.getElementById('orderReviewModal');
+    const form = document.getElementById('orderReviewForm');
+    if (modal && form && orderId) {
+        form.action = `/inbox/orders/${orderId}/review`;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    }
+}
+
+function closeReviewModal() {
+    const modal = document.getElementById('orderReviewModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
+}
+
+function setStarRating(rating) {
+    document.getElementById('selectedRatingInput').value = rating;
+    const buttons = document.querySelectorAll('.star-rating-btn');
+    buttons.forEach((btn, index) => {
+        if (index < rating) {
+            btn.classList.add('text-amber-400');
+            btn.classList.remove('text-slate-300');
+        } else {
+            btn.classList.remove('text-amber-400');
+            btn.classList.add('text-slate-300');
+        }
+    });
+}
+
+function openInsufficientFundsModal(shortfall) {
+    const modal = document.getElementById('insufficientFundsModal');
+    const display = document.getElementById('shortfallAmountDisplay');
+    if (display) {
+        display.textContent = '৳' + Number(shortfall).toFixed(2);
+    }
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+    }
+}
+
+function closeInsufficientFundsModal() {
+    const modal = document.getElementById('insufficientFundsModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+    }
+}
+
+function openWorkHistoryDrawer() {
+    const drawer = document.getElementById('workHistoryDrawer');
+    if (drawer) {
+        drawer.classList.remove('hidden');
+        drawer.style.display = 'block';
+    }
+}
+
+function closeWorkHistoryDrawer() {
+    const drawer = document.getElementById('workHistoryDrawer');
+    if (drawer) {
+        drawer.classList.add('hidden');
+        drawer.style.display = 'none';
+    }
+}
+
 function showNokshaToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -1308,13 +1744,7 @@ function showNokshaToast(message, type = 'info') {
     `;
 
     container.appendChild(toast);
-    
-    // Animate in
-    setTimeout(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-    }, 10);
-
-    // Auto dismiss after 6 seconds
+    setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
     setTimeout(() => {
         toast.classList.add('opacity-0', '-translate-y-2');
         setTimeout(() => toast.remove(), 300);

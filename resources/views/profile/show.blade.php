@@ -322,6 +322,12 @@
                                     </span>
                                 @endif
 
+                                @if($user->hasReliabilityWarning())
+                                    <span class="badge bg-amber-500/15 text-amber-700 border border-amber-300 rounded-pill px-2.5 py-1 extra-small fw-bold" title="Reliability Warning: Accrued demerits or late deliveries">
+                                        <i class="bi bi-exclamation-triangle-fill me-1 text-amber-600"></i> Reliability Warning
+                                    </span>
+                                @endif
+
                                 @if($totalWinsCount > 0)
                                     <span class="winner-gold-ribbon">
                                         <i class="bi bi-trophy-fill"></i> {{ $totalWinsCount }} Contest {{ Str::plural('Win', $totalWinsCount) }}

@@ -356,6 +356,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/inbox/orders/{order}/download-delivery', [InboxController::class, 'downloadDelivery'])->name('inbox.orders.download-delivery');
     Route::post('/inbox/orders/{order}/release', [InboxController::class, 'releaseEscrow'])->name('inbox.orders.release');
     Route::post('/inbox/orders/{order}/revision', [InboxController::class, 'requestRevision'])->name('inbox.orders.revision');
+    Route::post('/inbox/orders/{order}/minor-fix', [InboxController::class, 'requestMinorFix'])->name('inbox.orders.minor-fix');
+    Route::post('/inbox/orders/{order}/request-extension', [InboxController::class, 'requestExtension'])->name('inbox.orders.request-extension');
+    Route::post('/inbox/orders/{order}/respond-extension', [InboxController::class, 'respondExtension'])->name('inbox.orders.respond-extension');
+    Route::post('/inbox/orders/{order}/report-fake', [InboxController::class, 'reportFakeDelivery'])->name('inbox.orders.report-fake');
+    Route::post('/inbox/orders/{order}/review', [InboxController::class, 'submitOrderReview'])->name('inbox.orders.review');
     Route::post('/inbox/orders/{order}/cancel', [InboxController::class, 'cancelOrder'])->name('inbox.orders.cancel');
 
     // Follow / Unfollow User Route (Realtime AJAX)

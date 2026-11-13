@@ -166,6 +166,13 @@
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $ordersCount }}</span>
                 @endif
             </button>
+            <button type="button" onclick="switchDashboardTab('pane-hired-services', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-hired-services">
+                <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>My Hired Services</span>
+                @if(isset($hiredServicesCount) && $hiredServicesCount > 0)
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-[#20165c]/10 text-[#20165c] font-bold">{{ $hiredServicesCount }}</span>
+                @endif
+            </button>
             <button type="button" onclick="switchDashboardTab('pane-downloads', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-downloads">
                 <svg class="w-4 h-4 shrink-0 text-[#20165c]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                 <span>My Downloads</span>
@@ -556,6 +563,147 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         <p class="text-sm font-semibold text-slate-600">No orders recorded yet</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PANE 2B: MY HIRED SERVICES (ESCROW)       -->
+        <!-- ========================================== -->
+        <div id="pane-hired-services" class="dash-content-pane d-none space-y-8">
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-4 flex-wrap gap-3">
+                    <div>
+                        <h3 class="text-base font-bold text-[#121826] flex items-center gap-2 mb-0.5">
+                            <svg class="w-5 h-5 shrink-0 text-[#f47402]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <span>My Hired Services ({{ isset($hiredServices) ? $hiredServices->count() : 0 }})</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-0">Custom creative orders secured by Noksha 100% money-back escrow.</p>
+                    </div>
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-sm transition-all">
+                        <span>Browse Creator Services</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+
+                @if(isset($hiredServices) && $hiredServices->count() > 0)
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-700">
+                            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-600 border-b border-slate-200">
+                                <tr>
+                                    <th scope="col" class="py-3 px-4">Service & Order Code</th>
+                                    <th scope="col" class="py-3 px-4">Creator</th>
+                                    <th scope="col" class="py-3 px-4">Amount</th>
+                                    <th scope="col" class="py-3 px-4">Deadline / Date</th>
+                                    <th scope="col" class="py-3 px-4">Status</th>
+                                    <th scope="col" class="py-3 px-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @foreach($hiredServices as $srvOrder)
+                                    @php
+                                        $sellerUser = $srvOrder->seller;
+                                        $srvTitle = $srvOrder->custom_title ?? $srvOrder->service?->title ?? 'Custom Creative Project';
+                                        $hasReviewed = $srvOrder->reviews->isNotEmpty();
+                                    @endphp
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="py-3.5 px-4">
+                                            <div class="font-bold text-[#121826] text-xs leading-snug">
+                                                {{ $srvTitle }}
+                                            </div>
+                                            <div class="font-mono text-[11px] text-slate-400 mt-0.5">
+                                                #{{ $srvOrder->order_code ?? $srvOrder->order_number }}
+                                            </div>
+                                        </td>
+                                        <td class="py-3.5 px-4">
+                                            @if($sellerUser)
+                                                <div class="flex items-center gap-2">
+                                                    <img src="{{ $sellerUser->avatar ? (str_starts_with($sellerUser->avatar, 'http') ? $sellerUser->avatar : asset('storage/' . $sellerUser->avatar)) : 'https://ui-avatars.com/api/?name=' . urlencode($sellerUser->name) . '&background=20165c&color=ffffff' }}" 
+                                                         alt="{{ $sellerUser->name }}" class="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0">
+                                                    <div class="min-w-0">
+                                                        <div class="text-xs font-semibold text-slate-800 truncate">{{ $sellerUser->name }}</div>
+                                                        <div class="text-[10px] text-slate-400">&#64;{{ $sellerUser->username }}</div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <span class="text-xs text-slate-400">Creator</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3.5 px-4 font-mono font-bold text-[#20165c] text-sm">
+                                            ৳{{ number_format($srvOrder->amount ?? $srvOrder->total_amount, 2) }}
+                                        </td>
+                                        <td class="py-3.5 px-4 text-xs font-mono text-slate-500">
+                                            @if($srvOrder->status === 'completed' && $srvOrder->completed_at)
+                                                <span class="text-emerald-700">Done {{ $srvOrder->completed_at->format('M d, Y') }}</span>
+                                            @elseif($srvOrder->deadline_at)
+                                                <span>{{ $srvOrder->deadline_at->format('M d, Y') }}</span>
+                                            @else
+                                                <span>{{ $srvOrder->created_at->format('M d, Y') }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3.5 px-4">
+                                            @if($srvOrder->status === 'in_progress' || $srvOrder->status === 'funded_in_progress')
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> In Progress
+                                                </span>
+                                            @elseif($srvOrder->status === 'delivered_preview' || $srvOrder->status === 'delivered')
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                    📦 Delivered (Preview)
+                                                </span>
+                                            @elseif($srvOrder->status === 'completed')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-[#20165c] border border-purple-200">
+                                                    ✅ Completed
+                                                </span>
+                                            @elseif($srvOrder->status === 'awaiting_payment')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                                    💳 Awaiting Payment
+                                                </span>
+                                            @elseif($srvOrder->status === 'disputed')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    🚨 In Dispute
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 capitalize">
+                                                    {{ str_replace('_', ' ', $srvOrder->status) }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3.5 px-4 text-right">
+                                            <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                                                <a href="{{ route('inbox.show', $srvOrder->conversation_id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-50 hover:bg-slate-100 text-[#20165c] border border-slate-200 transition">
+                                                    💬 Chat
+                                                </a>
+                                                @if($srvOrder->isCompleted())
+                                                    <a href="{{ route('inbox.orders.download-delivery', $srvOrder->id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white shadow-xs transition">
+                                                        📥 Download ZIP
+                                                    </a>
+                                                    @if(!$hasReviewed)
+                                                        <a href="{{ route('inbox.show', $srvOrder->conversation_id) }}#review" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 transition">
+                                                            ⭐ Review
+                                                        </a>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="text-center py-12">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-purple-50 text-[#20165c] flex items-center justify-center text-2xl">
+                            💼
+                        </div>
+                        <h4 class="text-sm font-bold text-[#121826] mb-1">No Hired Services Yet</h4>
+                        <p class="text-xs text-slate-500 max-w-sm mx-auto mb-4 leading-relaxed">
+                            Hire verified Bangladeshi creators for custom logos, UI kits, social kits, and illustrations with complete escrow safety.
+                        </p>
+                        <a href="{{ route('services.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#20165c] hover:bg-[#181045] text-white transition shadow-sm">
+                            <span>Explore Creator Services</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
                     </div>
                 @endif
             </div>
@@ -1042,6 +1190,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var tabParam = urlParams.get('tab') || "{{ $tabParam ?? '' }}";
     var hash = window.location.hash.replace('#', '');
     var activeTab = tabParam || hash;
+    if (activeTab === 'hired') {
+        activeTab = 'hired-services';
+    }
     if (activeTab) {
         var paneId = 'pane-' + activeTab;
         if (document.getElementById(paneId)) {

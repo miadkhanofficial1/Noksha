@@ -177,6 +177,14 @@ class Service extends Model
     }
 
     /**
+     * Compute remaining available weekly/active slots.
+     */
+    public function getAvailableSlotsAttribute(): int
+    {
+        return max(0, (int) ($this->max_slots ?? 3) - (int) ($this->active_orders_count ?? 0));
+    }
+
+    /**
      * Primary preview image URL.
      */
     public function getPrimaryPreviewUrlAttribute(): ?string

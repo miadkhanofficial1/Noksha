@@ -695,6 +695,29 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Check if user has received a reliability or late delivery warning.
+     */
+    public function hasReliabilityWarning(): bool
+    {
+        return (bool) $this->reliability_warning || ($this->demerit_points ?? 0) >= 20 || ($this->late_deliveries_count ?? 0) >= 2;
+    }
+
+    /**
+     * Increment demerit points and flag reliability warnings if threshold reached.
+     */
+    public function recordDemerit(int $points = 10, bool $isLateDelivery = false): void
+    {
+        $this->increment('demerit_points', $points);
+        if ($isLateDelivery) {
+            $this->increment('late_deliveries_count');
+        }
+
+        if ($this->demerit_points >= 20 || $this->late_deliveries_count >= 2) {
+            $this->update(['reliability_warning' => true]);
+        }
+    }
+
+    /**
      * Platform reviews received by this creator.
      */
     public function creatorReviews(): HasMany

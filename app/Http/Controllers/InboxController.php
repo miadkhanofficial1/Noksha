@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Notification;
+use App\Models\PlatformReview;
 use App\Models\Service;
 use App\Models\ServiceOrder;
 use App\Models\User;
 use App\Policies\ConversationPolicy;
+use App\Services\NokshaFilePackagerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,6 +67,9 @@ class InboxController extends Controller
             'activeConversation' => null,
             'counterpart' => null,
             'services' => collect(),
+            'sellerServices' => collect(),
+            'workHistoryOrders' => collect(),
+            'workHistoryCount' => 0,
             'messages' => collect(),
             'search' => $request->input('search'),
         ]);
@@ -165,21 +171,41 @@ class InboxController extends Controller
         // Auto-complete delivered order if 3 days have elapsed without dispute
         $this->checkAndAutoComplete($conversation->activeOrder);
 
+        // Check deadlines and apply overdue alerts or demerits
+        $this->checkDeadlinesAndDemerits($conversation->activeOrder);
+
         $counterpart = $conversation->getOtherParticipant($user);
 
         // 6. Fetch all conversations for sidebar
         $conversations = $this->getUserConversations($user, $request->input('search'));
 
-        // 7. Load available services offered by the seller for the custom proposal widget
+        // 7. Load available services offered by the seller for the top strip & proposal builder (max 5)
         $services = Service::where('user_id', $conversation->seller_id)
-            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->where('status', 'active')->orWhere('is_active', true);
+            })
+            ->take(5)
             ->get();
+
+        // 8. Work History between this buyer and seller
+        $workHistoryOrders = ServiceOrder::where(function ($q) use ($conversation) {
+            $q->where('buyer_id', $conversation->buyer_id)->where('seller_id', $conversation->seller_id);
+        })->orWhere(function ($q) use ($conversation) {
+            $q->where('buyer_id', $conversation->seller_id)->where('seller_id', $conversation->buyer_id);
+        })
+        ->with(['service', 'reviews'])
+        ->latest()
+        ->get();
+        $workHistoryCount = $workHistoryOrders->count();
 
         return view('inbox.index', [
             'conversations' => $conversations,
             'activeConversation' => $conversation,
             'counterpart' => $counterpart,
             'services' => $services,
+            'sellerServices' => $services,
+            'workHistoryOrders' => $workHistoryOrders,
+            'workHistoryCount' => $workHistoryCount,
             'messages' => $conversation->messages,
             'search' => $request->input('search'),
         ]);
@@ -273,9 +299,9 @@ class InboxController extends Controller
     }
 
     /**
-     * Propose a custom service or submit an order request from chat.
+     * Propose a custom service or submit a creator recommendation offer from chat.
      */
-    public function storeServiceProposal(Conversation $conversation, Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
+    public function storeServiceProposal(Conversation $conversation, Request $request): RedirectResponse|JsonResponse
     {
         $user = Auth::user();
 
@@ -285,50 +311,70 @@ class InboxController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string|max:2000',
-            'price' => 'required|numeric|min:600',
-            'duration_days' => 'required|integer|min:1|max:90',
+            'description' => 'nullable|string|max:3000',
+            'requirements_brief' => 'nullable|string|max:3000',
+            'price' => 'nullable|numeric|min:600',
+            'amount' => 'nullable|numeric|min:600',
+            'duration_days' => 'nullable|integer|min:1|max:90',
+            'delivery_days' => 'nullable|integer|min:1|max:90',
+            'revisions_allowed' => 'nullable|integer|min:0|max:10',
             'service_id' => 'nullable',
         ]);
 
         $serviceId = $request->filled('service_id') ? $request->input('service_id') : null;
+        $title = trim($request->input('title'));
+        $description = trim((string) ($request->input('description') ?? $request->input('requirements_brief') ?? ''));
+        $totalAmount = (float) ($request->input('price') ?? $request->input('amount') ?? 600.00);
+        $deliveryDays = (int) ($request->input('delivery_days') ?? $request->input('duration_days') ?? 3);
+        $revisionsAllowed = (int) ($request->input('revisions_allowed') ?? 2);
 
-        // If custom service without existing template, create a service entry for the seller
         if (!$serviceId) {
             $service = Service::create([
                 'user_id' => $conversation->seller_id,
-                'title' => $request->input('title'),
-                'slug' => Str::slug($request->input('title')) . '-' . Str::random(6),
-                'description' => $request->input('description'),
-                'price' => (float) $request->input('price'),
-                'duration_days' => (int) $request->input('duration_days', 3),
+                'title' => $title,
+                'slug' => Str::slug($title) . '-' . Str::random(6),
+                'description' => !empty($description) ? $description : 'Custom creative service package negotiated via Noksha escrow.',
+                'category' => 'Creative',
+                'price' => $totalAmount,
+                'starting_price' => $totalAmount,
+                'duration_days' => $deliveryDays,
+                'delivery_days' => $deliveryDays,
+                'revisions_count' => $revisionsAllowed,
                 'is_active' => true,
+                'status' => 'active',
             ]);
             $serviceId = $service->id;
         } else {
             $service = Service::find($serviceId);
         }
-        $serviceTitle = $service?->title ?? $request->input('title');
 
-        $totalAmount = (float) $request->input('price');
+        $serviceTitle = $service?->title ?? $title;
         $financials = ServiceOrder::calculateFinancials($totalAmount, 15.00);
+        $orderCode = ServiceOrder::generateOrderCode();
 
-        // Initial status: if seller sends proposal, buyer can pay immediately;
-        // if buyer requests, seller approves first.
+        // If creator makes the offer directly, it is awaiting payment from the buyer
         $initialStatus = ($user->id === $conversation->seller_id) ? 'awaiting_payment' : 'pending_approval';
 
         $order = ServiceOrder::create([
-            'order_number' => ServiceOrder::generateOrderNumber(),
+            'order_code' => $orderCode,
+            'order_number' => $orderCode,
             'conversation_id' => $conversation->id,
             'service_id' => $serviceId,
             'buyer_id' => $conversation->buyer_id,
             'seller_id' => $conversation->seller_id,
+            'custom_title' => $serviceTitle,
+            'requirements_brief' => $description,
+            'amount' => $totalAmount,
             'total_amount' => $totalAmount,
             'platform_commission_rate' => 15.00,
             'platform_fee' => $financials['platform_fee'],
+            'seller_payout' => $financials['seller_payout'],
             'seller_payout_amount' => $financials['seller_payout_amount'],
+            'delivery_days' => $deliveryDays,
+            'revisions_allowed' => $revisionsAllowed,
+            'revisions_used' => 0,
             'status' => $initialStatus,
-            'deadline_at' => now()->addDays((int) $request->input('duration_days', 3)),
+            'deadline_at' => now()->addDays($deliveryDays),
         ]);
 
         $conversation->update([
@@ -336,20 +382,24 @@ class InboxController extends Controller
             'last_message_at' => now(),
         ]);
 
-        // Post in-chat proposal card message
+        // Post in-chat proposal card message with order_code and metadata
         Message::create([
             'conversation_id' => $conversation->id,
             'sender_id' => $user->id,
-            'body' => "Service Proposal: {$serviceTitle} (৳" . number_format($order->total_amount, 2) . ")",
+            'body' => "Service Offer: {$serviceTitle} (#{$orderCode}) — ৳" . number_format($order->total_amount, 2),
             'message_type' => 'service_proposal',
             'is_read' => false,
             'metadata' => [
+                'type' => 'custom_offer',
                 'order_id' => $order->id,
+                'order_code' => $order->order_code,
                 'order_number' => $order->order_number,
                 'title' => $serviceTitle,
-                'description' => $request->input('description'),
+                'description' => $description,
                 'price' => $order->total_amount,
-                'duration_days' => $request->input('duration_days'),
+                'amount' => $order->total_amount,
+                'delivery_days' => $order->delivery_days,
+                'revisions_allowed' => $order->revisions_allowed,
                 'status' => $order->status,
             ],
         ]);
@@ -357,14 +407,14 @@ class InboxController extends Controller
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Custom service proposal submitted successfully.',
+                'message' => 'Custom service offer dispatched successfully.',
                 'order' => $order,
                 'redirect_url' => route('inbox.show', $conversation->id),
             ]);
         }
 
         return redirect()->route('inbox.show', $conversation->id)
-            ->with('success', 'Custom service proposal submitted successfully.');
+            ->with('success', 'Custom service offer created successfully.');
     }
 
     /**
@@ -414,7 +464,7 @@ class InboxController extends Controller
     }
 
     /**
-     * Fund order escrow simulation & activation.
+     * Fund order escrow simulation & activation with Wallet balance check.
      */
     public function fundOrder(ServiceOrder $order, Request $request): RedirectResponse|JsonResponse
     {
@@ -425,24 +475,46 @@ class InboxController extends Controller
         }
 
         $buyer = $order->buyer;
-        $totalAmount = (float) $order->total_amount;
+        $totalAmount = (float) ($order->amount ?? $order->total_amount);
 
-        // Ensure wallet funds exist, or deposit required amount to simulate instant escrow payment
-        if ($buyer->wallet->hasBalance($totalAmount)) {
-            $buyer->wallet->deduct($totalAmount, "Escrow funding for service order #{$order->order_number}", 'service_order');
-        } else {
-            $buyer->wallet->deposit($totalAmount, "Simulated instant deposit for escrow order #{$order->order_number}");
-            $buyer->wallet->deduct($totalAmount, "Escrow funding for service order #{$order->order_number}", 'service_order');
+        // Check wallet balance
+        if (!$buyer->wallet->hasBalance($totalAmount)) {
+            $shortfall = round($totalAmount - (float) $buyer->wallet->balance, 2);
+            $depositUrl = route('wallet.index', ['tab' => 'deposit']);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'status' => 'insufficient_funds',
+                    'message' => "Insufficient wallet balance (৳" . number_format($buyer->wallet->balance, 2) . "). You need ৳" . number_format($shortfall, 2) . " more.",
+                    'shortfall' => $shortfall,
+                    'balance' => (float) $buyer->wallet->balance,
+                    'required' => $totalAmount,
+                    'deposit_url' => $depositUrl,
+                ], 422);
+            }
+
+            return redirect()->route('inbox.show', $order->conversation_id)
+                ->with('error', "Insufficient wallet balance (৳" . number_format($buyer->wallet->balance, 2) . "). You need ৳" . number_format($shortfall, 2) . " more. Please deposit funds.")
+                ->with('insufficient_funds', true)
+                ->with('shortfall', $shortfall);
         }
 
-        // Calculate delivery deadline based on service duration (default 3 days)
-        $durationDays = $order->service->duration_days ?? 3;
+        // Deduct from buyer wallet balance
+        $buyer->wallet->deduct($totalAmount, "Escrow funding for service order #{$order->order_code}", 'service_order', $order->id);
+
+        // Calculate delivery deadline based on delivery days
+        $durationDays = $order->delivery_days ?? ($order->service->duration_days ?? 3);
         $deadline = now()->addDays($durationDays);
 
         $order->update([
-            'status' => 'funded_in_progress',
+            'status' => 'in_progress',
             'deadline_at' => $deadline,
         ]);
+
+        // Increment creator's active_orders_count (which reduces their available slots)
+        if ($order->service) {
+            $order->service->increment('active_orders_count');
+        }
 
         // Link active order to conversation
         $order->conversation->update([
@@ -450,17 +522,27 @@ class InboxController extends Controller
             'last_message_at' => now(),
         ]);
 
+        // Send Bell Notification to creator
+        Notification::create([
+            'user_id' => $order->seller_id,
+            'title' => 'New Order Funded!',
+            'message' => "Order #{$order->order_code} has been funded (৳" . number_format($totalAmount, 2) . "). Delivery timer started ({$durationDays} days).",
+            'type' => 'wallet',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
         // Post system event bubble in chat
         Message::create([
             'conversation_id' => $order->conversation_id,
             'sender_id' => $buyer->id,
-            'body' => "🔒 Escrow Funded: ৳" . number_format($order->total_amount, 2) . " held safely by Noksha. Delivery timer started. File attachments are now unlocked!",
+            'body' => "🔒 Escrow Funded: ৳" . number_format($totalAmount, 2) . " held safely in Noksha Escrow. Delivery timer started. File attachments are now unlocked!",
             'message_type' => 'order_status',
             'is_read' => false,
             'metadata' => [
                 'order_id' => $order->id,
-                'status' => 'funded_in_progress',
-                'amount' => $order->total_amount,
+                'order_code' => $order->order_code,
+                'status' => 'in_progress',
+                'amount' => $totalAmount,
                 'deadline_at' => $deadline->toIso8601String(),
             ],
         ]);
@@ -478,7 +560,7 @@ class InboxController extends Controller
     }
 
     /**
-     * Seller delivers completed source package (.ZIP only).
+     * Seller delivers work via structured multi-file packager.
      */
     public function deliverWork(ServiceOrder $order, Request $request): RedirectResponse
     {
@@ -489,52 +571,72 @@ class InboxController extends Controller
         }
 
         $request->validate([
-            'delivery_file' => 'required|file|mimes:zip|max:204800', // Max 200MB .ZIP
+            'preview_images' => 'required|array|min:1|max:5',
+            'preview_images.*' => 'file|mimes:jpeg,jpg,png,webp|max:15360', // Max 15MB each
+            'source_file' => 'required|file|max:204800', // Max 200MB source file / ZIP
+            'instruction_pdf' => 'nullable|file|mimes:pdf|max:20480', // Max 20MB
             'delivery_notes' => 'nullable|string|max:2000',
         ]);
 
-        $file = $request->file('delivery_file');
-        $disk = config('filesystems.default', 'local');
+        $baseTitle = $order->custom_title ?? $order->service?->title ?? 'Escrow Delivery';
 
-        // Graceful S3 / Local fallback
-        try {
-            $path = $file->store('service_deliveries/' . $order->id, $disk);
-        } catch (\Throwable $e) {
-            // Fallback to local public disk if S3 adapter class fails
-            $path = $file->store('service_deliveries/' . $order->id, 'public');
-        }
+        $packaged = NokshaFilePackagerService::storeStructuredFiles(
+            $baseTitle,
+            $request->file('preview_images', []),
+            $request->file('source_file'),
+            $request->file('instruction_pdf'),
+            'service_deliveries/' . $order->id
+        );
+
         $notes = trim((string) $request->input('delivery_notes', ''));
+        $sourcePath = $packaged['source_file_path'] ?? ($packaged['source_file']['path'] ?? null);
+        $instructionPath = $packaged['instruction_pdf_path'] ?? ($packaged['instruction_pdf']['path'] ?? null);
+        $previewPaths = $packaged['preview_image_paths'] ?? array_map(fn($p) => is_array($p) ? $p['path'] : $p, $packaged['preview_images']);
 
         $order->update([
-            'status' => 'delivered',
+            'status' => 'delivered_preview',
             'delivered_at' => now(),
-            'delivery_archive_path' => $path,
+            'delivery_preview_images' => $previewPaths,
+            'delivery_source_file' => $sourcePath,
+            'delivery_instruction_pdf' => $instructionPath,
+            'delivery_manifest' => $packaged['manifest'],
+            'delivery_archive_path' => $sourcePath,
         ]);
 
         $order->conversation->update(['last_message_at' => now()]);
 
-        // Post delivery card in chat for buyer
+        // Send Bell Notification to buyer
+        Notification::create([
+            'user_id' => $order->buyer_id,
+            'title' => 'Work Delivered for Review',
+            'message' => "Creator submitted delivery for order #{$order->order_code}. Please review preview images.",
+            'type' => 'upload',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
+        // Post delivery preview message in chat
         Message::create([
             'conversation_id' => $order->conversation_id,
             'sender_id' => $user->id,
-            'body' => "📦 Final Work Delivered! Source package (" . $file->getClientOriginalName() . ") uploaded. " . ($notes ? "Notes: {$notes}" : ""),
+            'body' => "📦 Delivery Preview Submitted! Previews and file manifest are now available for client review. " . ($notes ? "Notes: {$notes}" : ""),
             'message_type' => 'order_status',
             'is_read' => false,
             'metadata' => [
                 'order_id' => $order->id,
-                'status' => 'delivered',
-                'file_name' => $file->getClientOriginalName(),
+                'status' => 'delivered_preview',
                 'delivery_notes' => $notes,
                 'delivered_at' => now()->toIso8601String(),
+                'manifest_count' => count($packaged['manifest']),
             ],
         ]);
 
         return redirect()->route('inbox.show', $order->conversation_id)
-            ->with('success', 'Work delivered successfully! Client has been notified.');
+            ->with('success', 'Work delivered successfully for client review! Source files remain locked until approval.');
     }
 
     /**
      * Download secure delivery source package.
+     * Enforces strict file lock during preview. Unlocks full ZIP upon completion.
      */
     public function downloadDelivery(ServiceOrder $order)
     {
@@ -544,7 +646,12 @@ class InboxController extends Controller
             abort(403, 'Unauthorized to download this delivery archive.');
         }
 
-        // Build list of all available component files in exact order: Previews -> Source -> PDF
+        // Strict Anti-Theft Lock: Buyer cannot download source during delivered_preview
+        if ($order->status === 'delivered_preview' && $order->buyer_id === $user->id && !$user->isAdmin()) {
+            abort(403, '🔒 Source files remain strictly locked until delivery is approved and escrow released.');
+        }
+
+        // Build list of all available component files
         $filesToBundle = [];
         if (is_array($order->delivery_preview_images)) {
             foreach ($order->delivery_preview_images as $prev) {
@@ -566,13 +673,13 @@ class InboxController extends Controller
 
         if (!empty($filesToBundle)) {
             try {
-                return \App\Services\NokshaFilePackagerService::streamZipDownload(
+                return NokshaFilePackagerService::streamZipDownload(
                     $baseTitle,
                     $sellerUsername,
                     $filesToBundle
                 );
             } catch (\Throwable $e) {
-                // Fallback to legacy path below
+                // Fallback below
             }
         }
 
@@ -581,18 +688,14 @@ class InboxController extends Controller
         }
 
         $disk = config('filesystems.default', 'local');
-        $filename = 'Noksha-Delivery-' . ($order->order_code ?? $order->order_number) . '.zip';
-
-        if (Storage::disk($disk)->exists($order->delivery_archive_path)) {
-            return Storage::disk($disk)->download($order->delivery_archive_path, $filename);
-        }
+        $filename = 'Noksha-' . NokshaFilePackagerService::sanitizeTitle($baseTitle) . '-' . ($order->order_code ?? $order->order_number) . '.zip';
 
         if (Storage::disk('public')->exists($order->delivery_archive_path)) {
             return Storage::disk('public')->download($order->delivery_archive_path, $filename);
         }
 
-        if (Storage::disk('local')->exists($order->delivery_archive_path)) {
-            return Storage::disk('local')->download($order->delivery_archive_path, $filename);
+        if (Storage::disk($disk)->exists($order->delivery_archive_path)) {
+            return Storage::disk($disk)->download($order->delivery_archive_path, $filename);
         }
 
         return redirect(Storage::disk('public')->url($order->delivery_archive_path));
@@ -613,43 +716,67 @@ class InboxController extends Controller
             return back()->with('info', 'Escrow funds for this order have already been released.');
         }
 
+        $totalAmount = (float) ($order->amount ?? $order->total_amount);
         $commissionRate = (float) ($order->platform_commission_rate ?: 15.00);
-        $platformFee = round((float) $order->total_amount * ($commissionRate / 100), 2);
-        $sellerPayout = round((float) $order->total_amount - $platformFee, 2);
+        $platformFee = round($totalAmount * ($commissionRate / 100), 2);
+        $sellerPayout = round($totalAmount - $platformFee, 2);
 
         $order->update([
             'status' => 'completed',
+            'completed_at' => now(),
             'platform_fee' => $platformFee,
+            'seller_payout' => $sellerPayout,
             'seller_payout_amount' => $sellerPayout,
         ]);
 
         $order->conversation->update(['last_message_at' => now()]);
 
+        // Decrement creator's active_orders_count (re-opening their available slot)
+        if ($order->service && $order->service->active_orders_count > 0) {
+            $order->service->decrement('active_orders_count');
+        }
+
         // Credit seller wallet earnings
         $order->seller->wallet->creditEarnings(
             $sellerPayout,
-            "Payout for completed order #{$order->order_number} (after {$commissionRate}% Noksha commission)",
+            "Payout for completed order #{$order->order_code} (after {$commissionRate}% Noksha platform commission)",
             'service_order',
             $order->id
         );
 
-        // Post completion system bubble in chat
+        // Send Bell Notification to creator
+        Notification::create([
+            'user_id' => $order->seller_id,
+            'title' => '🎉 Order Completed & Escrow Released!',
+            'message' => "৳" . number_format($sellerPayout, 2) . " credited to your earnings for order #{$order->order_code}.",
+            'type' => 'wallet',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
+        $serviceTitle = $order->custom_title ?? $order->service?->title ?? 'Creative Service';
+
+        // Post completion divider banner in chat with "Order Again" button
         Message::create([
             'conversation_id' => $order->conversation_id,
             'sender_id' => $user->id,
-            'body' => "🎉 Order Completed! Funds released to seller after {$commissionRate}% Noksha platform commission deduction (৳" . number_format($sellerPayout, 2) . " credited to seller earnings).",
+            'body' => "✅ {$serviceTitle} (#{$order->order_code}) — Completed",
             'message_type' => 'order_status',
             'is_read' => false,
             'metadata' => [
+                'type' => 'order_completed_banner',
                 'order_id' => $order->id,
-                'status' => 'completed',
+                'order_code' => $order->order_code,
+                'service_title' => $serviceTitle,
+                'service_id' => $order->service_id,
                 'seller_payout' => $sellerPayout,
                 'platform_fee' => $platformFee,
+                'completed_at' => now()->toIso8601String(),
             ],
         ]);
 
         return redirect()->route('inbox.show', $order->conversation_id)
-            ->with('success', 'Order marked as completed and funds successfully released to the creator.');
+            ->with('success', 'Order completed and escrow released! Full source files are now unlocked.')
+            ->with('prompt_review_order_id', $order->id);
     }
 
     /**
@@ -663,30 +790,373 @@ class InboxController extends Controller
             abort(403, 'Only the client buyer can request revisions.');
         }
 
+        if ($order->revisions_allowed > 0 && $order->revisions_used >= $order->revisions_allowed) {
+            return back()->with('error', "All {$order->revisions_allowed} revision requests for this order have been used.");
+        }
+
         $request->validate([
             'revision_notes' => 'required|string|max:2000',
         ]);
 
-        $notes = $request->input('revision_notes');
+        $notes = trim($request->input('revision_notes'));
 
-        $order->update(['status' => 'funded_in_progress']);
+        $order->increment('revisions_used');
+        $order->update(['status' => 'in_progress']);
         $order->conversation->update(['last_message_at' => now()]);
+
+        // Send Bell Notification to creator
+        Notification::create([
+            'user_id' => $order->seller_id,
+            'title' => 'Revision Requested',
+            'message' => "Client requested revision on order #{$order->order_code} (Revision {$order->revisions_used}/{$order->revisions_allowed}).",
+            'type' => 'upload',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
 
         Message::create([
             'conversation_id' => $order->conversation_id,
             'sender_id' => $user->id,
-            'body' => "🔄 Revision Requested by Client: {$notes}",
+            'body' => "🔄 Revision Requested ({$order->revisions_used}/{$order->revisions_allowed}): {$notes}",
             'message_type' => 'order_status',
             'is_read' => false,
             'metadata' => [
                 'order_id' => $order->id,
                 'status' => 'revision_requested',
+                'revisions_used' => $order->revisions_used,
+                'revisions_allowed' => $order->revisions_allowed,
                 'notes' => $notes,
             ],
         ]);
 
         return redirect()->route('inbox.show', $order->conversation_id)
-            ->with('info', 'Revision request dispatched to creator.');
+            ->with('info', "Revision request ({$order->revisions_used}/{$order->revisions_allowed}) dispatched to creator.");
+    }
+
+    /**
+     * Buyer requests 1 minor adjustment within 48h of order completion.
+     */
+    public function requestMinorFix(ServiceOrder $order, Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+
+        if ($order->buyer_id !== $user->id && !$user->isAdmin()) {
+            abort(403, 'Only the client buyer can request a minor fix.');
+        }
+
+        if ($order->status !== 'completed' || !$order->completed_at || $order->completed_at->addHours(48)->isPast()) {
+            return back()->with('error', 'The 48-hour minor fix window has expired.');
+        }
+
+        if ($order->minor_fix_used) {
+            return back()->with('error', 'The 1 included minor fix has already been used for this order.');
+        }
+
+        $request->validate([
+            'minor_fix_notes' => 'required|string|max:1000',
+        ]);
+
+        $notes = trim($request->input('minor_fix_notes'));
+
+        $order->update(['minor_fix_used' => true]);
+        $order->conversation->update(['last_message_at' => now()]);
+
+        // Send Bell Notification to creator
+        Notification::create([
+            'user_id' => $order->seller_id,
+            'title' => '🔧 Minor Fix Request (48h Window)',
+            'message' => "Client requested a minor adjustment on completed order #{$order->order_code}.",
+            'type' => 'upload',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
+        Message::create([
+            'conversation_id' => $order->conversation_id,
+            'sender_id' => $user->id,
+            'body' => "🔧 48-Hour Minor Fix Requested: {$notes}",
+            'message_type' => 'order_status',
+            'is_read' => false,
+            'metadata' => [
+                'type' => 'minor_fix',
+                'order_id' => $order->id,
+                'notes' => $notes,
+            ],
+        ]);
+
+        return redirect()->route('inbox.show', $order->conversation_id)
+            ->with('success', 'Minor fix request dispatched to creator.');
+    }
+
+    /**
+     * Creator requests deadline extension (Strict Max 1 per order, +1 to +3 days).
+     */
+    public function requestExtension(ServiceOrder $order, Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+
+        if ($order->seller_id !== $user->id && !$user->isAdmin()) {
+            abort(403, 'Only the designated creator can request a deadline extension.');
+        }
+
+        if ($order->extension_used) {
+            return back()->with('error', 'A deadline extension has already been requested for this order (Maximum 1 allowed).');
+        }
+
+        if (!$order->isInProgress()) {
+            return back()->with('error', 'Extensions can only be requested while the order is in progress.');
+        }
+
+        $request->validate([
+            'extension_days' => 'required|integer|in:1,2,3',
+            'extension_reason' => 'required|string|max:500',
+        ]);
+
+        $days = (int) $request->input('extension_days');
+        $reason = trim($request->input('extension_reason'));
+
+        // Send Bell Notification to buyer
+        Notification::create([
+            'user_id' => $order->buyer_id,
+            'title' => 'Deadline Extension Requested',
+            'message' => "Creator requested +{$days} days extension on order #{$order->order_code}. Please review in chat.",
+            'type' => 'upload',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
+        Message::create([
+            'conversation_id' => $order->conversation_id,
+            'sender_id' => $user->id,
+            'body' => "⏳ Creator Requested +{$days} Days Deadline Extension. Reason: {$reason}",
+            'message_type' => 'order_status',
+            'is_read' => false,
+            'metadata' => [
+                'type' => 'extension_request',
+                'order_id' => $order->id,
+                'extension_days' => $days,
+                'extension_reason' => $reason,
+                'status' => 'pending',
+            ],
+        ]);
+
+        $order->conversation->update(['last_message_at' => now()]);
+
+        return redirect()->route('inbox.show', $order->conversation_id)
+            ->with('success', "Extension request (+{$days} days) dispatched to client for confirmation.");
+    }
+
+    /**
+     * Buyer approves or declines deadline extension.
+     */
+    public function respondExtension(ServiceOrder $order, Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+
+        if ($order->buyer_id !== $user->id && !$user->isAdmin()) {
+            abort(403, 'Only the client buyer can respond to extension requests.');
+        }
+
+        $action = $request->input('action', 'accept');
+        $days = (int) $request->input('days', 1);
+
+        if ($action === 'accept' || $action === 'approve') {
+            $newDeadline = $order->deadline_at ? $order->deadline_at->addDays($days) : now()->addDays($days);
+
+            $order->update([
+                'extension_used' => true,
+                'deadline_at' => $newDeadline,
+                'deadline_notified_12h' => false,
+                'deadline_notified_overdue' => false,
+            ]);
+
+            Notification::create([
+                'user_id' => $order->seller_id,
+                'title' => '✅ Extension Approved',
+                'message' => "Client approved your +{$days} days extension for order #{$order->order_code}.",
+                'type' => 'upload',
+                'action_url' => route('inbox.show', $order->conversation_id),
+            ]);
+
+            Message::create([
+                'conversation_id' => $order->conversation_id,
+                'sender_id' => $user->id,
+                'body' => "✅ Extension Approved: Deadline extended by {$days} days. New deadline: " . $newDeadline->format('M d, Y H:i'),
+                'message_type' => 'order_status',
+                'is_read' => false,
+            ]);
+
+            return redirect()->route('inbox.show', $order->conversation_id)
+                ->with('success', "Extension approved. Deadline extended by {$days} days.");
+        }
+
+        $order->update(['extension_used' => true]);
+
+        Notification::create([
+            'user_id' => $order->seller_id,
+            'title' => '❌ Extension Declined',
+            'message' => "Client declined your extension request for order #{$order->order_code}.",
+            'type' => 'upload',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
+        Message::create([
+            'conversation_id' => $order->conversation_id,
+            'sender_id' => $user->id,
+            'body' => "❌ Extension Declined: Deadline remains unchanged.",
+            'message_type' => 'order_status',
+            'is_read' => false,
+        ]);
+
+        return redirect()->route('inbox.show', $order->conversation_id)
+            ->with('info', 'Extension request declined.');
+    }
+
+    /**
+     * Buyer reports empty or fake file during preview delivery (halts auto-release, applies 25 demerits).
+     */
+    public function reportFakeDelivery(ServiceOrder $order, Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+
+        if ($order->buyer_id !== $user->id && !$user->isAdmin()) {
+            abort(403, 'Only the client buyer can report delivery issues.');
+        }
+
+        $request->validate([
+            'report_reason' => 'required|string|max:1000',
+        ]);
+
+        $reason = trim($request->input('report_reason'));
+
+        $order->update(['status' => 'disputed']);
+        $order->conversation->update(['last_message_at' => now()]);
+
+        // Penalize creator with 25 demerits
+        $order->seller?->recordDemerit(25, false);
+
+        // Notify creator
+        Notification::create([
+            'user_id' => $order->seller_id,
+            'title' => '🚨 Order Disputed: Fake/Empty File Reported',
+            'message' => "Client reported empty/fake delivery on order #{$order->order_code}. +25 demerit points recorded.",
+            'type' => 'system',
+            'action_url' => route('inbox.show', $order->conversation_id),
+        ]);
+
+        // Post dispute bubble in chat
+        Message::create([
+            'conversation_id' => $order->conversation_id,
+            'sender_id' => $user->id,
+            'body' => "🚨 Empty / Fake Delivery Reported: Order placed in arbitration dispute. Auto-release halted and 25 demerit penalty applied. Reason: {$reason}",
+            'message_type' => 'order_status',
+            'is_read' => false,
+            'metadata' => [
+                'type' => 'dispute_reported',
+                'order_id' => $order->id,
+                'reason' => $reason,
+            ],
+        ]);
+
+        return redirect()->route('inbox.show', $order->conversation_id)
+            ->with('error', 'Dispute filed. Auto-release halted and administrative review initiated.');
+    }
+
+    /**
+     * Submit verified order review (1 to 5 stars + feedback).
+     */
+    public function submitOrderReview(ServiceOrder $order, Request $request): RedirectResponse|JsonResponse
+    {
+        $user = Auth::user();
+
+        if ($order->buyer_id !== $user->id && !$user->isAdmin()) {
+            abort(403, 'Only the client buyer can review this order.');
+        }
+
+        if (!$order->isCompleted()) {
+            return back()->with('error', 'Reviews can only be submitted after order completion.');
+        }
+
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        $existing = PlatformReview::where('service_order_id', $order->id)
+            ->where('reviewer_id', $user->id)
+            ->first();
+
+        if ($existing) {
+            return back()->with('info', 'You have already submitted a review for this order.');
+        }
+
+        $review = PlatformReview::create([
+            'reviewer_id' => $user->id,
+            'creator_id' => $order->seller_id,
+            'service_id' => $order->service_id,
+            'service_order_id' => $order->id,
+            'rating' => (int) $request->input('rating'),
+            'comment' => trim($request->input('comment')),
+            'is_complaint' => false,
+        ]);
+
+        Message::create([
+            'conversation_id' => $order->conversation_id,
+            'sender_id' => $user->id,
+            'body' => "⭐ Client left a {$review->rating}-star review: \"{$review->comment}\"",
+            'message_type' => 'order_status',
+            'is_read' => false,
+            'metadata' => [
+                'type' => 'order_review',
+                'order_id' => $order->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+            ],
+        ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Thank you! Your verified review has been published.',
+                'review' => $review,
+            ]);
+        }
+
+        return redirect()->route('inbox.show', $order->conversation_id)
+            ->with('success', 'Thank you! Your verified review has been published.');
+    }
+
+    /**
+     * Check deadline alerts and record demerits for overdue orders.
+     */
+    protected function checkDeadlinesAndDemerits(?ServiceOrder $order): void
+    {
+        if (!$order || !$order->isInProgress() || !$order->deadline_at) {
+            return;
+        }
+
+        // Overdue check
+        if ($order->deadline_at->isPast() && !$order->deadline_notified_overdue) {
+            $order->update(['deadline_notified_overdue' => true]);
+            $order->seller?->recordDemerit(10, true);
+
+            Notification::create([
+                'user_id' => $order->seller_id,
+                'title' => '⚠️ Order Overdue: Delivery Past Deadline',
+                'message' => "Order #{$order->order_code} is past its delivery deadline. Late delivery penalty (+10 demerits) recorded.",
+                'type' => 'system',
+                'action_url' => route('inbox.show', $order->conversation_id),
+            ]);
+        }
+        // 12 hours remaining notice
+        elseif (!$order->deadline_notified_12h && $order->deadline_at->isFuture() && $order->deadline_at->diffInHours(now(), false) <= 12) {
+            $order->update(['deadline_notified_12h' => true]);
+
+            Notification::create([
+                'user_id' => $order->seller_id,
+                'title' => '⏳ 12 Hours Remaining for Delivery',
+                'message' => "Order #{$order->order_code} has less than 12 hours remaining before its deadline. Please prepare final delivery.",
+                'type' => 'upload',
+                'action_url' => route('inbox.show', $order->conversation_id),
+            ]);
+        }
     }
 
     /**
@@ -701,8 +1171,13 @@ class InboxController extends Controller
         }
 
         $isFunded = $order->isFunded();
-        if ($isFunded) {
-            $order->buyer->wallet->deposit((float) $order->total_amount, "Refund for cancelled service order #{$order->order_number}");
+        $totalAmount = (float) ($order->amount ?? $order->total_amount);
+
+        if ($isFunded && in_array($order->status, ['in_progress', 'funded_in_progress', 'awaiting_payment'])) {
+            $order->buyer->wallet->deposit($totalAmount, "Refund for cancelled service order #{$order->order_code}");
+            if ($order->service && $order->service->active_orders_count > 0) {
+                $order->service->decrement('active_orders_count');
+            }
         }
 
         $order->update(['status' => 'cancelled']);
@@ -713,7 +1188,7 @@ class InboxController extends Controller
         }
 
         $noticeBody = $isFunded
-            ? "⚠️ Order Cancelled & Escrow Refunded: ৳" . number_format($order->total_amount, 2) . " returned to client wallet."
+            ? "⚠️ Order Cancelled & Escrow Refunded: ৳" . number_format($totalAmount, 2) . " returned to client wallet."
             : "❌ Proposal Withdrawn / Cancelled.";
 
         Message::create([
@@ -741,6 +1216,9 @@ class InboxController extends Controller
 
         // Auto-complete check: if order delivered for >= 3 days without dispute
         $this->checkAndAutoComplete($conversation->activeOrder);
+
+        // Check deadlines & demerits
+        $this->checkDeadlinesAndDemerits($conversation->activeOrder);
 
         $afterId = (int) $request->input('after_id', 0);
 
@@ -784,6 +1262,7 @@ class InboxController extends Controller
             }),
             'active_order' => $activeOrder ? [
                 'id' => $activeOrder->id,
+                'order_code' => $activeOrder->order_code ?? $activeOrder->order_number,
                 'order_number' => $activeOrder->order_number,
                 'status' => $activeOrder->status,
                 'deadline_at' => $activeOrder->deadline_at?->toIso8601String(),
@@ -804,19 +1283,27 @@ class InboxController extends Controller
 
         // Check if 3 days have passed since delivery
         if ($order->delivered_at->addDays(3)->isPast()) {
+            $totalAmount = (float) ($order->amount ?? $order->total_amount);
             $commissionRate = (float) ($order->platform_commission_rate ?: 15.00);
-            $platformFee = round((float) $order->total_amount * ($commissionRate / 100), 2);
-            $sellerPayout = round((float) $order->total_amount - $platformFee, 2);
+            $platformFee = round($totalAmount * ($commissionRate / 100), 2);
+            $sellerPayout = round($totalAmount - $platformFee, 2);
 
             $order->update([
                 'status' => 'completed',
+                'completed_at' => now(),
                 'platform_fee' => $platformFee,
+                'seller_payout' => $sellerPayout,
                 'seller_payout_amount' => $sellerPayout,
             ]);
 
+            // Decrement active orders count on service
+            if ($order->service && $order->service->active_orders_count > 0) {
+                $order->service->decrement('active_orders_count');
+            }
+
             $order->seller->wallet->creditEarnings(
                 $sellerPayout,
-                "Auto-completed payout for order #{$order->order_number} (after 3 days delivery)",
+                "Auto-completed payout for order #{$order->order_code} (after 3 days delivery)",
                 'service_order',
                 $order->id
             );
