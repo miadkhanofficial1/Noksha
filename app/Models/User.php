@@ -68,6 +68,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'earnings_balance',
         'kyc_rejected_at',
         'kyc_rejection_reason',
+        'demerit_points',
+        'late_deliveries_count',
+        'reliability_warning',
     ];
 
     /**
@@ -101,6 +104,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'kyc_rejected_at' => 'datetime',
             'trust_score' => 'float',
             'password' => 'hashed',
+            'demerit_points' => 'integer',
+            'late_deliveries_count' => 'integer',
+            'reliability_warning' => 'boolean',
         ];
     }
 
@@ -665,11 +671,43 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Alias for buyerServiceOrders.
+     */
+    public function serviceOrdersAsBuyer(): HasMany
+    {
+        return $this->buyerServiceOrders();
+    }
+
+    /**
      * Service orders where user is the delivering seller.
      */
     public function sellerServiceOrders(): HasMany
     {
         return $this->hasMany(ServiceOrder::class, 'seller_id');
+    }
+
+    /**
+     * Alias for sellerServiceOrders.
+     */
+    public function serviceOrdersAsSeller(): HasMany
+    {
+        return $this->sellerServiceOrders();
+    }
+
+    /**
+     * Platform reviews received by this creator.
+     */
+    public function creatorReviews(): HasMany
+    {
+        return $this->hasMany(PlatformReview::class, 'creator_id');
+    }
+
+    /**
+     * Platform reviews authored by this user.
+     */
+    public function authoredReviews(): HasMany
+    {
+        return $this->hasMany(PlatformReview::class, 'reviewer_id');
     }
 
     /**

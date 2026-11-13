@@ -106,7 +106,7 @@ class ResourceController extends Controller
         $data = [
             'appName' => 'Noksha Digital Marketplace',
             'title' => 'Noksha Creator Upload Guidelines & Submission Standards',
-            'version' => '2026.1',
+            'version' => 'Official Guidelines',
             'date' => now()->format('F d, Y'),
         ];
 

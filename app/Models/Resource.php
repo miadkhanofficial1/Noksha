@@ -26,8 +26,11 @@ class Resource extends Model
         'slug',
         'description',
         'preview_image',
+        'preview_images',
         'thumbnail_path',
         'file_path',
+        'source_file_path',
+        'instruction_pdf_path',
         'file_type',
         'tags',
         'is_paid',
@@ -60,6 +63,7 @@ class Resource extends Model
     {
         return [
             'tags' => 'array',
+            'preview_images' => 'array',
             'is_paid' => 'boolean',
             'price' => 'float',
             'downloads' => 'integer',
@@ -206,6 +210,14 @@ class Resource extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'resource_id');
+    }
+
+    /**
+     * Verified platform reviews for this resource.
+     */
+    public function platformReviews(): HasMany
+    {
+        return $this->hasMany(PlatformReview::class, 'asset_id');
     }
 
     /**

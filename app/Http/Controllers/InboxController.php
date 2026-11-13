@@ -544,12 +544,44 @@ class InboxController extends Controller
             abort(403, 'Unauthorized to download this delivery archive.');
         }
 
+        // Build list of all available component files in exact order: Previews -> Source -> PDF
+        $filesToBundle = [];
+        if (is_array($order->delivery_preview_images)) {
+            foreach ($order->delivery_preview_images as $prev) {
+                $filesToBundle[] = $prev;
+            }
+        }
+        if ($order->delivery_source_file) {
+            $filesToBundle[] = $order->delivery_source_file;
+        }
+        if ($order->delivery_instruction_pdf) {
+            $filesToBundle[] = $order->delivery_instruction_pdf;
+        }
+        if ($order->delivery_archive_path && !in_array($order->delivery_archive_path, $filesToBundle)) {
+            $filesToBundle[] = $order->delivery_archive_path;
+        }
+
+        $baseTitle = $order->custom_title ?? $order->service?->title ?? 'Escrow Delivery';
+        $sellerUsername = $order->seller?->username ?? 'creator';
+
+        if (!empty($filesToBundle)) {
+            try {
+                return \App\Services\NokshaFilePackagerService::streamZipDownload(
+                    $baseTitle,
+                    $sellerUsername,
+                    $filesToBundle
+                );
+            } catch (\Throwable $e) {
+                // Fallback to legacy path below
+            }
+        }
+
         if (empty($order->delivery_archive_path)) {
             abort(404, 'Delivery archive not found for this order.');
         }
 
         $disk = config('filesystems.default', 'local');
-        $filename = 'Noksha-Delivery-' . $order->order_number . '.zip';
+        $filename = 'Noksha-Delivery-' . ($order->order_code ?? $order->order_number) . '.zip';
 
         if (Storage::disk($disk)->exists($order->delivery_archive_path)) {
             return Storage::disk($disk)->download($order->delivery_archive_path, $filename);

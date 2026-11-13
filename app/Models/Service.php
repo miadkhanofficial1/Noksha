@@ -34,10 +34,21 @@ class Service extends Model
         'user_id',
         'title',
         'slug',
+        'category',
         'description',
+        'starting_price',
         'price',
+        'delivery_days',
         'duration_days',
+        'concepts_count',
+        'revisions_count',
+        'max_slots',
+        'active_orders_count',
+        'preview_images',
+        'status',
         'is_active',
+        'rating_avg',
+        'reviews_count',
     ];
 
     /**
@@ -48,8 +59,17 @@ class Service extends Model
     protected function casts(): array
     {
         return [
+            'starting_price' => 'decimal:2',
             'price' => 'decimal:2',
+            'delivery_days' => 'integer',
             'duration_days' => 'integer',
+            'concepts_count' => 'integer',
+            'revisions_count' => 'integer',
+            'max_slots' => 'integer',
+            'active_orders_count' => 'integer',
+            'preview_images' => 'array',
+            'rating_avg' => 'decimal:2',
+            'reviews_count' => 'integer',
             'is_active' => 'boolean',
         ];
     }
@@ -60,10 +80,35 @@ class Service extends Model
     protected static function booted(): void
     {
         static::saving(function (Service $service) {
+            // Synchronize price & starting_price
+            if ($service->starting_price !== null && $service->price === null) {
+                $service->price = $service->starting_price;
+            } elseif ($service->price !== null && $service->starting_price === null) {
+                $service->starting_price = $service->price;
+            }
+
+            // Synchronize delivery_days & duration_days
+            if ($service->delivery_days !== null && $service->duration_days === null) {
+                $service->duration_days = $service->delivery_days;
+            } elseif ($service->duration_days !== null && $service->delivery_days === null) {
+                $service->delivery_days = $service->duration_days;
+            }
+
+            // Synchronize status & is_active
+            if ($service->status === 'active') {
+                $service->is_active = true;
+            } elseif (in_array($service->status, ['paused', 'suspended'])) {
+                $service->is_active = false;
+            } elseif ($service->is_active !== null) {
+                $service->status = $service->is_active ? 'active' : 'paused';
+            }
+
+            $effectivePrice = $service->starting_price ?? $service->price;
+
             // Enforce minimum price policy of 600.00 BDT
-            if ($service->price !== null && (float) $service->price < self::MINIMUM_PRICE) {
+            if ($effectivePrice !== null && (float) $effectivePrice < self::MINIMUM_PRICE) {
                 throw new InvalidArgumentException(
-                    sprintf('Service price must be at least %.2f BDT. Given: %.2f BDT.', self::MINIMUM_PRICE, (float) $service->price)
+                    sprintf('Service price must be at least %.2f BDT. Given: %.2f BDT.', self::MINIMUM_PRICE, (float) $effectivePrice)
                 );
             }
 
@@ -92,6 +137,14 @@ class Service extends Model
     }
 
     /**
+     * Creator alias for user relationship.
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Orders placed for this service.
      */
     public function orders(): HasMany
@@ -108,10 +161,41 @@ class Service extends Model
     }
 
     /**
+     * Reviews received for this service.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(PlatformReview::class, 'service_id');
+    }
+
+    /**
+     * Check if service can take more concurrent client orders.
+     */
+    public function hasAvailableSlot(): bool
+    {
+        return ($this->active_orders_count ?? 0) < ($this->max_slots ?? 3);
+    }
+
+    /**
+     * Primary preview image URL.
+     */
+    public function getPrimaryPreviewUrlAttribute(): ?string
+    {
+        if (is_array($this->preview_images) && count($this->preview_images) > 0) {
+            $first = $this->preview_images[0];
+            return str_starts_with($first, 'http') ? $first : asset('storage/' . $first);
+        }
+
+        return null;
+    }
+
+    /**
      * Scope query to only active services.
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where(function ($q) {
+            $q->where('status', 'active')->orWhere('is_active', true);
+        });
     }
 }

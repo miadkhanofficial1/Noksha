@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -18,7 +19,7 @@ class ServiceOrder extends Model
     public const MINIMUM_ORDER_AMOUNT = 600.00;
 
     /**
-     * Default Noksha platform commission percentage.
+     * Default Noksha platform commission percentage (15%).
      */
     public const DEFAULT_COMMISSION_RATE = 15.00;
 
@@ -35,18 +36,35 @@ class ServiceOrder extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'order_code',
         'order_number',
-        'conversation_id',
         'service_id',
+        'conversation_id',
         'buyer_id',
         'seller_id',
+        'custom_title',
+        'requirements_brief',
+        'amount',
         'total_amount',
         'platform_commission_rate',
         'platform_fee',
+        'seller_payout',
         'seller_payout_amount',
-        'status',
+        'delivery_days',
+        'revisions_allowed',
+        'revisions_used',
         'deadline_at',
+        'extension_used',
+        'deadline_notified_12h',
+        'deadline_notified_overdue',
+        'status',
+        'delivery_preview_images',
+        'delivery_source_file',
+        'delivery_instruction_pdf',
+        'delivery_manifest',
         'delivered_at',
+        'completed_at',
+        'minor_fix_used',
         'delivery_archive_path',
     ];
 
@@ -58,12 +76,24 @@ class ServiceOrder extends Model
     protected function casts(): array
     {
         return [
+            'amount' => 'decimal:2',
             'total_amount' => 'decimal:2',
             'platform_commission_rate' => 'decimal:2',
             'platform_fee' => 'decimal:2',
+            'seller_payout' => 'decimal:2',
             'seller_payout_amount' => 'decimal:2',
+            'delivery_days' => 'integer',
+            'revisions_allowed' => 'integer',
+            'revisions_used' => 'integer',
+            'extension_used' => 'boolean',
+            'deadline_notified_12h' => 'boolean',
+            'deadline_notified_overdue' => 'boolean',
+            'minor_fix_used' => 'boolean',
+            'delivery_preview_images' => 'array',
+            'delivery_manifest' => 'array',
             'deadline_at' => 'datetime',
             'delivered_at' => 'datetime',
+            'completed_at' => 'datetime',
         ];
     }
 
@@ -73,16 +103,28 @@ class ServiceOrder extends Model
     protected static function booted(): void
     {
         static::saving(function (ServiceOrder $order) {
+            // Synchronize amount and total_amount
+            if ($order->amount !== null && $order->total_amount === null) {
+                $order->total_amount = $order->amount;
+            } elseif ($order->total_amount !== null && $order->amount === null) {
+                $order->amount = $order->total_amount;
+            }
+
+            $effectiveAmount = $order->amount ?? $order->total_amount;
+
             // Enforce minimum price policy of 600.00 BDT
-            if ($order->total_amount !== null && (float) $order->total_amount < self::MINIMUM_ORDER_AMOUNT) {
+            if ($effectiveAmount !== null && (float) $effectiveAmount < self::MINIMUM_ORDER_AMOUNT) {
                 throw new InvalidArgumentException(
-                    sprintf('Service order amount must be at least %.2f BDT. Given: %.2f BDT.', self::MINIMUM_ORDER_AMOUNT, (float) $order->total_amount)
+                    sprintf('Service order amount must be at least %.2f BDT. Given: %.2f BDT.', self::MINIMUM_ORDER_AMOUNT, (float) $effectiveAmount)
                 );
             }
 
-            // Auto-generate unique order number
+            // Auto-generate unique order code
+            if (empty($order->order_code)) {
+                $order->order_code = static::generateOrderCode();
+            }
             if (empty($order->order_number)) {
-                $order->order_number = static::generateOrderNumber();
+                $order->order_number = $order->order_code;
             }
 
             // Default commission rate
@@ -91,34 +133,43 @@ class ServiceOrder extends Model
             }
 
             // Calculate fees and seller payout
-            if ($order->total_amount !== null) {
-                $financials = static::calculateFinancials((float) $order->total_amount, (float) $order->platform_commission_rate);
+            if ($effectiveAmount !== null) {
+                $financials = static::calculateFinancials((float) $effectiveAmount, (float) $order->platform_commission_rate);
                 if ($order->platform_fee === null || (float) $order->platform_fee == 0.00) {
                     $order->platform_fee = $financials['platform_fee'];
                 }
-                if ($order->seller_payout_amount === null || (float) $order->seller_payout_amount == 0.00) {
-                    $order->seller_payout_amount = $financials['seller_payout_amount'];
+                if ($order->seller_payout === null || (float) $order->seller_payout == 0.00) {
+                    $order->seller_payout = $financials['seller_payout'];
+                    $order->seller_payout_amount = $financials['seller_payout'];
                 }
             }
         });
     }
 
     /**
-     * Generate a unique order identifier (e.g., NOK-SRV-ABC123XY).
+     * Generate a unique order identifier (e.g., NOK-SRV-8X92LA1B).
      */
-    public static function generateOrderNumber(): string
+    public static function generateOrderCode(): string
     {
         do {
-            $number = 'NOK-SRV-' . strtoupper(Str::random(8));
-        } while (static::where('order_number', $number)->exists());
+            $code = 'NOK-SRV-' . strtoupper(Str::random(8));
+        } while (static::where('order_code', $code)->orWhere('order_number', $code)->exists());
 
-        return $number;
+        return $code;
     }
 
     /**
-     * Compute platform commission and net creator payout.
+     * Backwards-compatible alias for generateOrderCode.
+     */
+    public static function generateOrderNumber(): string
+    {
+        return static::generateOrderCode();
+    }
+
+    /**
+     * Compute platform commission (15%) and net creator payout (85%).
      *
-     * @return array{platform_fee: float, seller_payout_amount: float}
+     * @return array{platform_fee: float, seller_payout: float, seller_payout_amount: float}
      */
     public static function calculateFinancials(float $totalAmount, float $commissionRate = self::DEFAULT_COMMISSION_RATE): array
     {
@@ -127,6 +178,7 @@ class ServiceOrder extends Model
 
         return [
             'platform_fee' => $platformFee,
+            'seller_payout' => $sellerPayout,
             'seller_payout_amount' => $sellerPayout,
         ];
     }
@@ -164,12 +216,22 @@ class ServiceOrder extends Model
     }
 
     /**
+     * Platform reviews tied to this order.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(PlatformReview::class, 'service_order_id');
+    }
+
+    /**
      * Determine if order escrow has been funded and work is active or being reviewed.
      */
     public function isFunded(): bool
     {
         return in_array($this->status, [
+            'in_progress',
             'funded_in_progress',
+            'delivered_preview',
             'delivered',
             'completed',
             'disputed',
@@ -179,17 +241,25 @@ class ServiceOrder extends Model
     /**
      * Determine if order is pending creator acceptance.
      */
-    public function isPending(): bool
+    public function isPendingAcceptance(): bool
     {
-        return $this->status === 'pending_approval';
+        return in_array($this->status, ['pending_acceptance', 'pending_approval']);
     }
 
     /**
-     * Determine if order has been delivered by seller.
+     * Determine if order is in progress.
      */
-    public function isDelivered(): bool
+    public function isInProgress(): bool
     {
-        return $this->status === 'delivered';
+        return in_array($this->status, ['in_progress', 'funded_in_progress']);
+    }
+
+    /**
+     * Determine if preview delivery has been submitted.
+     */
+    public function isDeliveredPreview(): bool
+    {
+        return in_array($this->status, ['delivered_preview', 'delivered']);
     }
 
     /**
@@ -206,5 +276,40 @@ class ServiceOrder extends Model
     public function isDisputed(): bool
     {
         return $this->status === 'disputed';
+    }
+
+    /**
+     * Determine if order has been cancelled.
+     */
+    public function isCancelled(): bool
+    {
+        return in_array($this->status, ['cancelled', 'refunded', 'declined']);
+    }
+
+    /**
+     * Check if client can request a revision.
+     */
+    public function canRequestRevision(): bool
+    {
+        return $this->isDeliveredPreview() && ($this->revisions_used < $this->revisions_allowed);
+    }
+
+    /**
+     * Check if creator can request a deadline extension (+24h or +48h, max 1 time).
+     */
+    public function canRequestExtension(): bool
+    {
+        return $this->isInProgress() && !$this->extension_used;
+    }
+
+    /**
+     * Check if buyer can request 1 minor tweak within 24h of completion.
+     */
+    public function canRequestMinorFix(): bool
+    {
+        return $this->isCompleted()
+            && !$this->minor_fix_used
+            && $this->completed_at !== null
+            && $this->completed_at->copy()->addHours(24)->isFuture();
     }
 }

@@ -304,6 +304,24 @@
                     </div>
                 </div>
 
+                <!-- Multi-image Preview Gallery Thumbnails (if available) -->
+                @if(isset($resource) && !empty($resource->preview_images) && count((array)$resource->preview_images) > 1)
+                    <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-2">
+                        @foreach((array)$resource->preview_images as $idx => $pImg)
+                            @php
+                                $pUrl = str_starts_with($pImg, 'http') ? $pImg : asset('storage/' . ltrim(str_replace('storage/', '', $pImg), '/'));
+                            @endphp
+                            <button type="button" 
+                                    onclick="document.getElementById('resourceMainCoverImg').src = '{{ $pUrl }}';" 
+                                    class="btn p-0 border border-slate-300 rounded-3 overflow-hidden shadow-xs hover-border-purple transition flex-shrink-0" 
+                                    style="width: 76px; height: 52px;"
+                                    title="View Slide {{ $idx + 1 }}">
+                                <img src="{{ $pUrl }}" class="w-100 h-100 object-fit-cover" alt="Slide {{ $idx + 1 }}">
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
                 <!-- Asset Tags -->
                 <div class="mb-5 p-4 rounded-4 bg-light border">
                     <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
