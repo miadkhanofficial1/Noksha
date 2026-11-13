@@ -1060,7 +1060,7 @@ class InboxController extends Controller
     }
 
     /**
-     * Submit verified order review (1 to 5 stars + feedback).
+     * Submit verified order review (1 to 5 stars + feedback + optional evidence images + complaint flag).
      */
     public function submitOrderReview(ServiceOrder $order, Request $request): RedirectResponse|JsonResponse
     {
@@ -1076,7 +1076,10 @@ class InboxController extends Controller
 
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:1000',
+            'comment' => 'required|string|min:5|max:1000',
+            'is_complaint' => 'nullable|boolean',
+            'evidence_images' => 'nullable|array|max:3',
+            'evidence_images.*' => 'nullable|file|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         $existing = PlatformReview::where('service_order_id', $order->id)
@@ -1087,6 +1090,21 @@ class InboxController extends Controller
             return back()->with('info', 'You have already submitted a review for this order.');
         }
 
+        $evidencePaths = [];
+        if ($request->hasFile('evidence_images')) {
+            $files = $request->file('evidence_images');
+            if (!is_array($files)) {
+                $files = [$files];
+            }
+            foreach (array_slice($files, 0, 3) as $file) {
+                if ($file && $file->isValid()) {
+                    $evidencePaths[] = $file->store('review_evidence', 'public');
+                }
+            }
+        }
+
+        $isComplaint = $request->boolean('is_complaint');
+
         $review = PlatformReview::create([
             'reviewer_id' => $user->id,
             'creator_id' => $order->seller_id,
@@ -1094,13 +1112,18 @@ class InboxController extends Controller
             'service_order_id' => $order->id,
             'rating' => (int) $request->input('rating'),
             'comment' => trim($request->input('comment')),
-            'is_complaint' => false,
+            'is_complaint' => $isComplaint,
+            'evidence_images' => $evidencePaths,
+            'admin_resolved' => false,
         ]);
 
+        // Post confirmation notice in chat
+        $icon = $isComplaint ? '⚠️' : '⭐';
+        $label = $isComplaint ? 'Client filed feedback issue / complaint' : 'Client left a verified review';
         Message::create([
             'conversation_id' => $order->conversation_id,
             'sender_id' => $user->id,
-            'body' => "⭐ Client left a {$review->rating}-star review: \"{$review->comment}\"",
+            'body' => "{$icon} {$label} ({$review->rating}/5 stars): \"{$review->comment}\"",
             'message_type' => 'order_status',
             'is_read' => false,
             'metadata' => [
@@ -1108,8 +1131,20 @@ class InboxController extends Controller
                 'order_id' => $order->id,
                 'rating' => $review->rating,
                 'comment' => $review->comment,
+                'is_complaint' => $isComplaint,
+                'evidence_count' => count($evidencePaths),
             ],
         ]);
+
+        if ($isComplaint) {
+            Notification::create([
+                'user_id' => $order->seller_id,
+                'title' => '⚠️ Review Complaint Logged',
+                'message' => "Client flagged an issue with order #{$order->order_code}. Admin arbitration hub notified.",
+                'type' => 'system',
+                'action_url' => route('inbox.show', $order->conversation_id),
+            ]);
+        }
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([

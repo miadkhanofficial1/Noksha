@@ -778,34 +778,81 @@
                 @if($reviews->count() > 0)
                     <div class="d-flex flex-column gap-3">
                         @foreach($reviews as $rev)
-                            <div class="card border border-slate-200 rounded-4 p-4 bg-white">
+                            @php
+                                $reviewerUser = $rev->reviewer ?? $rev->user;
+                                $reviewerName = $reviewerUser->name ?? 'Verified Client';
+                                $reviewerInitial = strtoupper(substr($reviewerName, 0, 1));
+                                $reviewerAvatar = $reviewerUser && $reviewerUser->avatar ? (str_starts_with($reviewerUser->avatar, 'http') ? $reviewerUser->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $reviewerUser->avatar), '/'))) : null;
+                                $reviewText = $rev->comment ?? $rev->review ?? '';
+                                $evidenceUrls = method_exists($rev, 'getEvidenceImageUrlsAttribute') ? $rev->evidence_image_urls : [];
+                            @endphp
+                            <div class="card border border-slate-200 rounded-4 p-4 bg-white shadow-xs">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-2">
                                     <div class="d-flex align-items-center gap-2.5">
-                                        <div class="avatar-placeholder rounded-circle bg-indigo-600/20 text-indigo-400 fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                            {{ strtoupper(substr($rev->user->name ?? 'Buyer', 0, 1)) }}
-                                        </div>
+                                        @if($reviewerAvatar)
+                                            <img src="{{ $reviewerAvatar }}" alt="{{ $reviewerName }}" class="rounded-circle object-cover border border-slate-200" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($reviewerName) }}&background=20165c&color=fff';">
+                                        @else
+                                            <div class="avatar-placeholder rounded-circle bg-[#20165c]/10 text-[#20165c] fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                {{ $reviewerInitial }}
+                                            </div>
+                                        @endif
                                         <div>
-                                            <div class="fw-bold text-[#121826] small mb-0">{{ $rev->user->name ?? 'Verified Buyer' }}</div>
-                                            <div class="extra-small text-slate-500">{{ $rev->created_at->format('M d, Y') }}</div>
+                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                <span class="fw-bold text-[#121826] small mb-0">{{ $reviewerName }}</span>
+                                                <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2 py-0.5 extra-small fw-semibold">
+                                                    <i class="bi bi-patch-check-fill me-1 text-emerald-600"></i> Verified Buyer
+                                                </span>
+                                                @if(isset($rev->is_complaint) && $rev->is_complaint)
+                                                    <span class="badge bg-rose-50 text-rose-700 border border-rose-200 rounded-pill px-2 py-0.5 extra-small fw-semibold">
+                                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Issue Reported
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="extra-small text-slate-500 font-mono mt-0.5">{{ $rev->created_at->format('M d, Y') }}</div>
                                         </div>
                                     </div>
 
-                                    <div class="text-warning small">
+                                    <div class="text-amber-500 small">
                                         @for($i = 1; $i <= 5; $i++)
                                             <i class="bi {{ $i <= ($rev->rating ?? 5) ? 'bi-star-fill' : 'bi-star' }}"></i>
                                         @endfor
+                                        <span class="fw-bold ms-1 text-slate-700 extra-small">{{ number_format($rev->rating ?? 5, 1) }}</span>
                                     </div>
                                 </div>
 
-                                <p class="text-slate-700 small mb-2">
-                                    "{{ $rev->review }}"
+                                <p class="text-slate-700 small mb-2 lh-relaxed">
+                                    "{{ $reviewText }}"
                                 </p>
 
-                                @if($rev->resource)
-                                    <div class="extra-small text-slate-500 font-monospace border-t border-slate-200 pt-2">
-                                        <i class="bi bi-box-seam me-1 text-indigo-400"></i>
-                                        <a href="{{ route('resource.show', $rev->resource->slug) }}" class="text-decoration-none text-slate-500 hover-primary">
-                                            {{ $rev->resource->title }}
+                                {{-- Evidence Images Thumbnail Strip --}}
+                                @if(!empty($evidenceUrls) && count($evidenceUrls) > 0)
+                                    <div class="mt-2.5 mb-2">
+                                        <div class="extra-small font-semibold text-slate-500 mb-1.5 flex items-center gap-1">
+                                            <i class="bi bi-images text-[#20165c]"></i> Evidence / Work Artifacts ({{ count($evidenceUrls) }}):
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach($evidenceUrls as $imgIdx => $imgUrl)
+                                                <button type="button" onclick="openServicePreviewModal('{{ $imgUrl }}', 'Evidence Artifact {{ $imgIdx + 1 }}')" class="p-0 border border-slate-200 rounded-xl overflow-hidden shadow-xs hover:scale-105 transition-transform cursor-pointer" style="width: 72px; height: 72px;">
+                                                    <img src="{{ $imgUrl }}" alt="Evidence {{ $imgIdx + 1 }}" class="w-100 h-100 object-cover">
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($rev->service)
+                                    <div class="extra-small text-slate-500 font-monospace border-t border-slate-100 pt-2 mt-1 d-flex align-items-center gap-1.5">
+                                        <i class="bi bi-briefcase text-[#f47402]"></i>
+                                        <span>Service:</span>
+                                        <strong class="text-slate-800">{{ $rev->service->title }}</strong>
+                                    </div>
+                                @elseif($rev->asset || $rev->resource)
+                                    @php $revAsset = $rev->asset ?? $rev->resource; @endphp
+                                    <div class="extra-small text-slate-500 font-monospace border-t border-slate-100 pt-2 mt-1 d-flex align-items-center gap-1.5">
+                                        <i class="bi bi-box-seam text-[#20165c]"></i>
+                                        <span>Template:</span>
+                                        <a href="{{ route('resource.show', $revAsset->slug ?? $revAsset->id) }}" class="text-decoration-none text-[#20165c] fw-bold hover-primary">
+                                            {{ $revAsset->title }}
                                         </a>
                                     </div>
                                 @endif

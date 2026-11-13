@@ -93,6 +93,7 @@
         $pendingContestsCount = \App\Models\Contest::where('status', 'pending_approval')->count();
         $unreadMessagesCount = \App\Models\ContactMessage::where('status', 'unread')->count();
         $pendingPayoutsCount = \App\Models\Withdrawal::where('status', 'pending')->count();
+        $disputedOrdersCount = \App\Models\ServiceOrder::where('status', 'disputed')->count();
         $currentRoute = request()->route() ? request()->route()->getName() : '';
     @endphp
 
@@ -213,6 +214,20 @@
                     @if($pendingPayoutsCount > 0)
                         <span class="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
                             {{ $pendingPayoutsCount }}
+                        </span>
+                    @endif
+                </a>
+
+                <!-- Services & Escrow Hub -->
+                <a href="{{ route('admin.services-hub.index') }}"
+                   class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm transition-all duration-200 text-slate-700 hover:text-[#20165c] hover:bg-purple-50/70 {{ str_starts_with($currentRoute, 'admin.services-hub') ? 'active' : '' }}">
+                    <div class="flex items-center gap-3">
+                        <i class="bi bi-briefcase-fill text-[#f47402] text-base"></i>
+                        <span>Services & Escrow</span>
+                    </div>
+                    @if($disputedOrdersCount > 0)
+                        <span class="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">
+                            {{ $disputedOrdersCount }}
                         </span>
                     @endif
                 </a>

@@ -66,15 +66,23 @@ class PublicProfileController extends Controller
             ->latest()
             ->paginate(12, ['*'], 'entries_page');
 
-        // 4. Client Reviews & Feedback
-        $reviews = $user->receivedReviews()
-            ->with(['user', 'resource'])
-            ->latest()
-            ->paginate(8, ['*'], 'reviews_page');
+        // 4. Verified Client Reviews & Feedback (Across Services & Digital Assets)
+        $hasPlatformReviews = \App\Models\PlatformReview::where('creator_id', $user->id)->exists();
 
-        $totalReviewsCount = $user->receivedReviews()->count();
-        $rawAvgRating = $user->receivedReviews()->avg('rating');
-        $averageRating = $rawAvgRating ? round($rawAvgRating, 1) : 5.0;
+        if ($hasPlatformReviews) {
+            $reviews = \App\Models\PlatformReview::where('creator_id', $user->id)
+                ->with(['reviewer', 'service', 'asset', 'serviceOrder'])
+                ->latest()
+                ->paginate(8, ['*'], 'reviews_page');
+        } else {
+            $reviews = $user->receivedReviews()
+                ->with(['user', 'resource'])
+                ->latest()
+                ->paginate(8, ['*'], 'reviews_page');
+        }
+
+        $averageRating = $user->average_rating;
+        $totalReviewsCount = $user->total_reviews_count;
 
         // 5. Contests Organized (for buyers or hybrid creators)
         $organizedContests = $user->organizedContests()

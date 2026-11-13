@@ -1155,7 +1155,7 @@
             <button type="button" onclick="closeReviewModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm cursor-pointer">&times;</button>
         </div>
 
-        <form id="orderReviewForm" action="" method="POST" class="p-6 space-y-4">
+        <form id="orderReviewForm" action="" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             {{-- Star Rating --}}
             <div>
@@ -1173,6 +1173,26 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Feedback & Experience <span class="text-rose-500">*</span></label>
                 <textarea name="comment" rows="3" required placeholder="Share details about communication, quality, and delivery speed..." class="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#20165c] resize-none"></textarea>
+            </div>
+
+            {{-- Evidence Images (Up to 3) --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                    Evidence / Artifact Screenshots <span class="text-slate-400 font-normal">(Optional, max 3 images)</span>
+                </label>
+                <input type="file" name="evidence_images[]" multiple accept="image/png,image/jpeg,image/webp" class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-[#20165c] hover:file:bg-purple-100 border border-slate-300 rounded-xl p-1 bg-white cursor-pointer">
+                <p class="text-[10px] text-slate-400 mt-1 mb-0">Upload deliverable previews or proof screenshots (PNG, JPG, WEBP, max 5MB each)</p>
+            </div>
+
+            {{-- Optional Complaint / Issue Flag --}}
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                <label class="flex items-start gap-2.5 cursor-pointer mb-0">
+                    <input type="checkbox" name="is_complaint" value="1" class="mt-0.5 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer">
+                    <div>
+                        <span class="text-xs font-bold text-slate-800">Report an Issue / Complaint</span>
+                        <p class="text-[11px] text-slate-500 mb-0">Flag this review for inspection in the Noksha Admin Dispute & Arbitration Hub.</p>
+                    </div>
+                </label>
             </div>
 
             <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-200">

@@ -742,10 +742,15 @@
                                 </div>
                                 <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                                     <span class="text-xs text-slate-500 font-mono">{{ strtoupper($dl->file_type ?? 'ZIP') }}</span>
-                                    <a href="{{ route('resource.show', $dl->slug ?? $dl->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all shrink-0">
-                                        <svg class="w-3.5 h-3.5 shrink-0" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                        <span>Download</span>
-                                    </a>
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('resource.show', $dl->slug ?? $dl->id) }}#review" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all shrink-0">
+                                            ⭐ Review
+                                        </a>
+                                        <a href="{{ route('resource.show', $dl->slug ?? $dl->id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all shrink-0">
+                                            <svg class="w-3.5 h-3.5 shrink-0" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                            <span>Download</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

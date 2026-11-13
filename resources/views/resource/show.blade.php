@@ -504,7 +504,7 @@
                                     <h5 class="fw-extrabold text-dark mb-2"><i class="bi bi-pencil-square text-primary me-2"></i>Write a Verified Buyer Review</h5>
                                     <p class="text-secondary extra-small mb-3">You own a verified license for this asset. Share your experience with the creator and community.</p>
                                     
-                                    <form action="{{ route('resource.review.store', $resource->id ?? 1) }}" method="POST">
+                                    <form action="{{ route('resource.review.store', $resource->id ?? 1) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         
                                         <!-- Interactive Star Selector -->
@@ -527,8 +527,25 @@
                                             <textarea name="review" rows="3" class="form-control rounded-3" placeholder="Describe component organization, design quality, or support..." required></textarea>
                                         </div>
 
+                                        <!-- Evidence Images (Up to 3) -->
+                                        <div class="mb-3">
+                                            <label class="form-label extra-small fw-bold text-uppercase text-muted">Evidence Screenshots <span class="fw-normal text-muted">(Optional, max 3 images)</span></label>
+                                            <input type="file" name="evidence_images[]" multiple accept="image/png,image/jpeg,image/webp" class="form-control form-control-sm rounded-3">
+                                            <div class="extra-small text-muted mt-1">Upload screenshots of design output or render proof (max 5MB each)</div>
+                                        </div>
+
+                                        <!-- Complaint Toggle -->
+                                        <div class="p-2.5 rounded-3 bg-light border mb-3">
+                                            <div class="form-check mb-0">
+                                                <input class="form-check-input" type="checkbox" name="is_complaint" value="1" id="assetReviewComplaintCheck">
+                                                <label class="form-check-label extra-small text-muted" for="assetReviewComplaintCheck">
+                                                    <strong class="text-dark">Report an issue or complaint</strong> with this digital asset (notifies moderation).
+                                                </label>
+                                            </div>
+                                        </div>
+
                                         <button type="submit" class="btn btn-purple-cta rounded-pill px-4 py-2.5 btn-sm fw-bold">
-                                            <i class="bi bi-send-fill me-1"></i> Submit Review
+                                            <i class="bi bi-send-fill me-1"></i> Submit Verified Review
                                         </button>
                                     </form>
                                 </div>
@@ -551,31 +568,54 @@
                         @if(isset($reviews) && $reviews->count() > 0)
                             <div class="d-flex flex-column gap-3">
                                 @foreach($reviews as $rev)
+                                    @php
+                                        $revUser = $rev->reviewer ?? $rev->user;
+                                        $revName = $revUser->name ?? 'Customer';
+                                        $revInitial = strtoupper(substr($revName, 0, 1));
+                                        $revText = $rev->comment ?? $rev->review ?? '';
+                                        $evidenceUrls = method_exists($rev, 'getEvidenceImageUrlsAttribute') ? $rev->evidence_image_urls : [];
+                                    @endphp
                                     <div class="card p-3.5 rounded-4 border-0 shadow-sm bg-white">
                                         <div class="d-flex align-items-center justify-content-between mb-2">
                                             <div class="d-flex align-items-center gap-2.5">
                                                 <div class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                                    {{ strtoupper(substr($rev->user ? $rev->user->name : 'C', 0, 1)) }}
+                                                    {{ $revInitial }}
                                                 </div>
                                                 <div>
-                                                    <div class="fw-bold text-dark small mb-0">{{ $rev->user ? $rev->user->name : 'Customer' }}</div>
-                                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-0.5 extra-small">
-                                                        <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
-                                                    </span>
+                                                    <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                                                        <span class="fw-bold text-dark small mb-0">{{ $revName }}</span>
+                                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-0.5 extra-small">
+                                                            <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                                                        </span>
+                                                        @if(isset($rev->is_complaint) && $rev->is_complaint)
+                                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-0.5 extra-small">
+                                                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Issue Reported
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div>
-                                                <div class="text-warning small mb-0">
+                                                <div class="text-warning small mb-0 text-end">
                                                     @for($i = 1; $i <= 5; $i++)
-                                                        <i class="bi bi-star-fill{{ $i <= $rev->rating ? '' : ' text-muted opacity-25' }}"></i>
+                                                        <i class="bi bi-star-fill{{ $i <= ($rev->rating ?? 5) ? '' : ' text-muted opacity-25' }}"></i>
                                                     @endfor
                                                 </div>
                                                 <div class="extra-small text-muted text-end font-monospace">{{ $rev->created_at->diffForHumans() }}</div>
                                             </div>
                                         </div>
-                                        <p class="text-secondary small mb-0 lh-base">
-                                            "{{ $rev->review }}"
+                                        <p class="text-secondary small mb-2 lh-base">
+                                            "{{ $revText }}"
                                         </p>
+                                        @if(!empty($evidenceUrls) && count($evidenceUrls) > 0)
+                                            <div class="d-flex flex-wrap gap-2 mt-2 pt-2 border-top">
+                                                @foreach($evidenceUrls as $idx => $url)
+                                                    <a href="{{ $url }}" target="_blank" class="border rounded-2 overflow-hidden d-inline-block" style="width: 60px; height: 60px;">
+                                                        <img src="{{ $url }}" alt="Evidence {{ $idx + 1 }}" class="w-100 h-100 object-fit-cover">
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

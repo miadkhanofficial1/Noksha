@@ -518,6 +518,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('messages.reply');
         Route::post('/support-messages/{id}/reply', [AdminMessageController::class, 'reply'])->name('support-messages.reply');
         Route::delete('/messages/{id}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
+
+        // 9. Creator Services, Smart Escrow & Disputes Hub
+        Route::get('/services-hub', [\App\Http\Controllers\AdminServiceEscrowController::class, 'index'])->name('services-hub.index');
+        Route::post('/services-hub/orders/{order}/resolve-dispute', [\App\Http\Controllers\AdminServiceEscrowController::class, 'resolveDispute'])->name('services-hub.resolve-dispute');
+        Route::post('/services-hub/creators/{creator}/adjust-demerits', [\App\Http\Controllers\AdminServiceEscrowController::class, 'adjustDemerits'])->name('services-hub.adjust-demerits');
+        Route::post('/services-hub/services/{service}/toggle-status', [\App\Http\Controllers\AdminServiceEscrowController::class, 'toggleServiceStatus'])->name('services-hub.toggle-service');
+        Route::post('/services-hub/reviews/{review}/resolve', [\App\Http\Controllers\AdminServiceEscrowController::class, 'resolveComplaintReview'])->name('services-hub.resolve-review');
     });
 
     // Scanner Trap / Honeypot: Automated scanners targeting legacy /admin path get instantly deflected to root

@@ -58,6 +58,27 @@ class PlatformReview extends Model
     }
 
     /**
+     * Get array of absolute/public URLs for evidence images.
+     *
+     * @return array<int, string>
+     */
+    public function getEvidenceImageUrlsAttribute(): array
+    {
+        if (empty($this->evidence_images) || !is_array($this->evidence_images)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(function ($path) {
+            if (empty($path)) return null;
+            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                return $path;
+            }
+            $clean = ltrim(str_replace('storage/', '', $path), '/');
+            return asset('storage/' . $clean);
+        }, $this->evidence_images)));
+    }
+
+    /**
      * User who authored the review.
      */
     public function reviewer(): BelongsTo

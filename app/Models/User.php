@@ -726,6 +726,50 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Admin adjustment of creator demerits and reliability warning.
+     */
+    public function setDemerits(int $points, ?bool $warning = null): void
+    {
+        $data = ['demerit_points' => max(0, $points)];
+        if ($warning !== null) {
+            $data['reliability_warning'] = $warning;
+        } else {
+            $data['reliability_warning'] = $points >= 20 || ($this->late_deliveries_count ?? 0) >= 2;
+        }
+        $this->update($data);
+    }
+
+    /**
+     * Overall average rating calculated across verified platform reviews & marketplace ratings.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        $platformAvg = $this->creatorReviews()->where('is_complaint', false)->avg('rating');
+        $legacyAvg = $this->receivedReviews()->avg('rating');
+
+        if ($platformAvg !== null && $legacyAvg !== null) {
+            return round(((float) $platformAvg + (float) $legacyAvg) / 2, 1);
+        }
+        if ($platformAvg !== null) {
+            return round((float) $platformAvg, 1);
+        }
+        if ($legacyAvg !== null) {
+            return round((float) $legacyAvg, 1);
+        }
+        return 5.0;
+    }
+
+    /**
+     * Total verified reviews count across services and marketplace items.
+     */
+    public function getTotalReviewsCountAttribute(): int
+    {
+        $platformCount = (int) $this->creatorReviews()->where('is_complaint', false)->count();
+        $legacyCount = (int) $this->receivedReviews()->count();
+        return $platformCount + $legacyCount;
+    }
+
+    /**
      * Platform reviews authored by this user.
      */
     public function authoredReviews(): HasMany
