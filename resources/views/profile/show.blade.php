@@ -320,9 +320,9 @@
 
     <!-- HERO IDENTITY BANNER -->
     @php
-        $coverUrl = $user && $user->cover_url ? $user->cover_url : ($user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null);
-        $avatarUrl = $user && $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
-        $userInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
+        $coverUrl = $user ? $user->cover_url : null;
+        $avatarUrl = $user ? $user->avatar_url : null;
+        $userInitials = $user ? $user->initials : 'NO';
     @endphp
     <section class="profile-cover-banner relative w-full h-[260px] md:h-[320px] overflow-hidden {{ $coverUrl ? '' : 'profile-cover-mesh' }}" style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : "" }}">
         @if($coverUrl)
@@ -365,19 +365,21 @@
                         
                         <!-- Avatar with Availability Indicator -->
                         <div class="relative -mt-16 md:-mt-20 inline-block shrink-0">
-                            @if($avatarUrl)
-                                <img src="{{ $avatarUrl }}" 
-                                     alt="{{ $user->name }}" 
-                                     class="w-28 h-28 md:w-32 md:h-32 rounded-full ring-4 ring-white shadow-xl object-cover bg-white"
-                                     onerror="this.style.display='none'; document.getElementById('avatar-fallback-initial')?.classList.remove('hidden');">
-                                <div id="avatar-fallback-initial" class="w-28 h-28 md:w-32 md:h-32 rounded-full ring-4 ring-white shadow-xl bg-gradient-to-br from-[#20165c] to-[#4338ca] text-white font-extrabold text-3xl flex items-center justify-center hidden">
-                                    {{ $userInitials }}
-                                </div>
-                            @else
-                                <div class="w-28 h-28 md:w-32 md:h-32 rounded-full ring-4 ring-white shadow-xl bg-gradient-to-br from-[#20165c] to-[#4338ca] text-white font-extrabold text-3xl flex items-center justify-center">
-                                    {{ $userInitials }}
-                                </div>
-                            @endif
+                            <div class="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold ring-4 ring-white shadow-xl">
+                                @if($avatarUrl)
+                                    <img src="{{ $avatarUrl }}" 
+                                         alt="{{ $user->name }}" 
+                                         class="w-full h-full object-cover object-center block"
+                                         onerror="this.style.display='none'; document.getElementById('avatar-fallback-initial')?.classList.remove('hidden');">
+                                    <div id="avatar-fallback-initial" class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-extrabold text-3xl hidden">
+                                        {{ $userInitials }}
+                                    </div>
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-extrabold text-3xl">
+                                        {{ $userInitials }}
+                                    </div>
+                                @endif
+                            </div>
 
                             <!-- Availability Dot Indicator -->
                             <span class="absolute bottom-1 right-1 w-5 h-5 rounded-full ring-4 ring-white {{ $user->is_available ? 'bg-emerald-500' : 'bg-slate-400' }}" title="{{ $user->is_available ? 'Available for Hire' : 'Busy / Not Taking Work' }}"></span>
@@ -893,21 +895,26 @@
                             @php
                                 $reviewerUser = $rev->reviewer ?? $rev->user;
                                 $reviewerName = $reviewerUser->name ?? 'Verified Client';
-                                $reviewerInitial = strtoupper(substr($reviewerName, 0, 1));
-                                $reviewerAvatar = $reviewerUser && $reviewerUser->avatar ? (str_starts_with($reviewerUser->avatar, 'http') ? $reviewerUser->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $reviewerUser->avatar), '/'))) : null;
+                                $reviewerInitial = $reviewerUser ? $reviewerUser->initials : strtoupper(substr($reviewerName, 0, 2));
+                                $reviewerAvatar = $reviewerUser ? $reviewerUser->avatar_url : null;
                                 $reviewText = $rev->comment ?? $rev->review ?? '';
                                 $evidenceUrls = method_exists($rev, 'getEvidenceImageUrlsAttribute') ? $rev->evidence_image_urls : [];
                             @endphp
                             <div class="card border border-slate-200 rounded-4 p-4 bg-white shadow-xs">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-2">
                                     <div class="d-flex align-items-center gap-2.5">
-                                        @if($reviewerAvatar)
-                                            <img src="{{ $reviewerAvatar }}" alt="{{ $reviewerName }}" class="rounded-circle object-cover border border-slate-200" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($reviewerName) }}&background=20165c&color=fff';">
-                                        @else
-                                            <div class="avatar-placeholder rounded-circle bg-[#20165c]/10 text-[#20165c] fw-bold extra-small d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                {{ $reviewerInitial }}
-                                            </div>
-                                        @endif
+                                        <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-xs ring-1 ring-slate-200 shrink-0">
+                                            @if($reviewerAvatar)
+                                                <img src="{{ $reviewerAvatar }}" alt="{{ $reviewerName }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-xs" style="display: none;">
+                                                    {{ $reviewerInitial }}
+                                                </div>
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-xs">
+                                                    {{ $reviewerInitial }}
+                                                </div>
+                                            @endif
+                                        </div>
                                         <div>
                                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                                 <span class="fw-bold text-[#121826] small mb-0">{{ $reviewerName }}</span>
@@ -1218,11 +1225,17 @@
             
             <div class="modal-body px-4 pt-3 pb-4">
                 <div class="d-flex align-items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-3 mb-3">
-                    <div class="profile-avatar-wrapper m-0">
-                        @php
-                            $modalAvatarSrc = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : $user->avatar_url;
-                        @endphp
-                        <img src="{{ $modalAvatarSrc }}" alt="{{ $user->name }}" class="rounded-circle ring-2 ring-indigo-500/50" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=6366f1&color=fff';">
+                    <div class="relative w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-sm ring-2 ring-indigo-500/50 shrink-0">
+                        @if($user->avatar_url)
+                            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-sm" style="display: none;">
+                                {{ $userInitials }}
+                            </span>
+                        @else
+                            <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-sm">
+                                {{ $userInitials }}
+                            </span>
+                        @endif
                     </div>
                     <div>
                         <div class="fw-bold text-[#121826]">{{ $user->name }}</div>

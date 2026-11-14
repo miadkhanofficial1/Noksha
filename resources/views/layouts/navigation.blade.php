@@ -365,23 +365,24 @@
                     <div class="dropdown">
                         <button class="user-avatar-btn dropdown-toggle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ $user->name }}">
                             @php
-                                $navAvatarUrl = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
-                                $userInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
+                                $navAvatarUrl = $user->avatar_url;
+                                $userInitials = $user->initials ?? strtoupper(substr($user->name ?? 'NO', 0, 2));
                             @endphp
-                            @if($navAvatarUrl)
-                                <img src="{{ $navAvatarUrl }}" 
-                                     alt="{{ $user->name }}" 
-                                     class="rounded-circle" 
-                                     style="width: 28px; height: 28px; object-fit: cover;"
-                                     onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('d-none');">
-                                <span class="user-avatar-initial d-none" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: #20165c; color: #fff; border-radius: 50%;">
-                                    {{ $userInitials }}
-                                </span>
-                            @else
-                                <span class="user-avatar-initial" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: #20165c; color: #fff; border-radius: 50%;">
-                                    {{ $userInitials }}
-                                </span>
-                            @endif
+                            <div class="relative rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold ring-2 ring-slate-200 shrink-0" style="width: 28px; height: 28px;">
+                                @if($navAvatarUrl)
+                                    <img src="{{ $navAvatarUrl }}" 
+                                         alt="{{ $user->name }}" 
+                                         class="w-full h-full object-cover object-center block"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <span class="w-full h-full text-[11px] font-bold text-white flex items-center justify-center bg-[#20165c]" style="display: none;">
+                                        {{ $userInitials }}
+                                    </span>
+                                @else
+                                    <span class="w-full h-full text-[11px] font-bold text-white flex items-center justify-center bg-[#20165c]">
+                                        {{ $userInitials }}
+                                    </span>
+                                @endif
+                            </div>
                             <span class="fw-semibold small text-dark d-none d-md-inline" style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 {{ $user->name }}
                             </span>

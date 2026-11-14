@@ -780,13 +780,18 @@
                     <div class="card seller-card-figma p-4">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <a href="{{ isset($resource) && $resource->owner ? route('user.profile', $resource->owner->username ?? $resource->owner->id) : route('seller.demo') }}" class="text-decoration-none">
-                                @if(isset($resource) && $resource->owner && $resource->owner->avatar)
-                                    <img src="{{ asset('storage/' . $resource->owner->avatar) }}" alt="{{ $resource->owner->name }}" class="rounded-circle border" style="width: 52px; height: 52px; object-fit: cover;">
-                                @else
-                                    <div class="avatar-placeholder bg-purple-50 text-[#20165c] border border-purple-200 rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5" style="width: 52px; height: 52px;">
-                                        {{ strtoupper(substr(isset($resource) && $resource->owner ? $resource->owner->name : 'N', 0, 1)) }}
-                                    </div>
-                                @endif
+                                <div class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center bg-[#20165c] text-white fw-bold shadow-sm" style="width: 52px; height: 52px;">
+                                    @if(isset($resource) && $resource->owner && $resource->owner->avatar_url)
+                                        <img src="{{ $resource->owner->avatar_url }}" alt="{{ $resource->owner->name }}" class="w-100 h-100 object-fit-cover block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-[#20165c] text-white fw-bold fs-5" style="display: none;">
+                                            {{ $resource->owner->initials }}
+                                        </div>
+                                    @else
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-[#20165c] text-white fw-bold fs-5">
+                                            {{ isset($resource) && $resource->owner ? $resource->owner->initials : 'NO' }}
+                                        </div>
+                                    @endif
+                                </div>
                             </a>
                             <div>
                                 <div class="d-flex align-items-center gap-1.5 flex-wrap">

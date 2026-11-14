@@ -105,11 +105,16 @@
                                         <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         </div>
-                                    @elseif($convOther && $convOther->avatar)
-                                        <img src="{{ asset('storage/' . $convOther->avatar) }}" alt="{{ $convOther->name }}" class="w-11 h-11 rounded-2xl object-cover border border-slate-200 shadow-sm">
+                                    @elseif($convOther && $convOther->avatar_url)
+                                        <div class="relative w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-sm shadow-sm ring-1 ring-slate-200">
+                                            <img src="{{ $convOther->avatar_url }}" alt="{{ $convOther->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-sm" style="display: none;">
+                                                {{ $convOther->initials }}
+                                            </div>
+                                        </div>
                                     @else
-                                        <div class="w-11 h-11 rounded-2xl bg-[#20165c]/10 border border-[#20165c]/20 flex items-center justify-center text-[#20165c] font-bold text-sm shadow-sm">
-                                            {{ strtoupper(substr($convOther->name ?? 'U', 0, 1)) }}
+                                        <div class="w-11 h-11 rounded-2xl bg-[#20165c] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                                            {{ $convOther ? $convOther->initials : 'NO' }}
                                         </div>
                                     @endif
                                     
@@ -206,11 +211,16 @@
                                     <div class="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
-                                @elseif($counterpart && $counterpart->avatar)
-                                    <img src="{{ asset('storage/' . $counterpart->avatar) }}" alt="{{ $counterpart->name }}" class="w-10 h-10 rounded-2xl object-cover border border-slate-200">
+                                @elseif($counterpart && $counterpart->avatar_url)
+                                    <div class="relative w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-sm ring-1 ring-slate-200">
+                                        <img src="{{ $counterpart->avatar_url }}" alt="{{ $counterpart->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-sm" style="display: none;">
+                                            {{ $counterpart->initials }}
+                                        </div>
+                                    </div>
                                 @else
-                                    <div class="w-10 h-10 rounded-2xl bg-[#20165c]/10 border border-[#20165c]/20 flex items-center justify-center text-[#20165c] font-bold text-sm">
-                                        {{ strtoupper(substr($counterpart->name ?? 'C', 0, 1)) }}
+                                    <div class="w-10 h-10 rounded-2xl bg-[#20165c] flex items-center justify-center text-white font-bold text-sm">
+                                        {{ $counterpart ? $counterpart->initials : 'NO' }}
                                     </div>
                                 @endif
                                 @if(!$isSupportThread)

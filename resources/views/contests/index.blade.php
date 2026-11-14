@@ -391,13 +391,18 @@
                                     </td>
                                     <td class="py-4 px-4">
                                         <a href="{{ route('user.profile', $creator->username ?? $creator->id) }}" class="inline-flex items-center gap-3 text-decoration-none group" title="View {{ $creator->name }}'s Profile">
-                                            @if($creator->avatar)
-                                                <img src="{{ $creator->avatar_url }}" alt="{{ $creator->name }}" class="rounded-full w-10 h-10 object-cover ring-2 ring-indigo-500/30 group-hover:ring-indigo-400 transition">
-                                            @else
-                                                <div class="rounded-full w-10 h-10 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold text-xs flex items-center justify-center group-hover:border-indigo-400 transition">
-                                                    {{ strtoupper(substr($creator->name, 0, 1)) }}
-                                                </div>
-                                            @endif
+                                            <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-xs ring-2 ring-indigo-500/30 group-hover:ring-indigo-400 transition shrink-0">
+                                                @if($creator->avatar_url)
+                                                    <img src="{{ $creator->avatar_url }}" alt="{{ $creator->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-xs" style="display: none;">
+                                                        {{ $creator->initials }}
+                                                    </span>
+                                                @else
+                                                    <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-xs">
+                                                        {{ $creator->initials }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <div>
                                                 <div class="font-bold text-[#121826] group-hover:text-[#20165c] transition-colors">{{ $creator->name }}</div>
                                                 <div class="text-xs text-slate-500 font-mono">&#64;{{ $creator->username ?? Str::slug($creator->name) }}</div>

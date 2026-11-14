@@ -149,19 +149,21 @@
             <div class="flex items-center gap-4">
                 <div class="relative shrink-0">
                     @php
-                        $dashAvatar = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
-                        $dashInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
+                        $dashAvatar = $user->avatar_url;
+                        $dashInitials = $user->initials ?? strtoupper(substr($user->name ?? 'NO', 0, 2));
                     @endphp
-                    @if($dashAvatar)
-                        <img src="{{ $dashAvatar }}" class="w-12 h-12 rounded-full object-cover border-2 border-[#20165c] shadow-sm" alt="{{ $user->name }}" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('d-none');">
-                        <div class="w-12 h-12 rounded-full bg-[#20165c] text-white font-bold flex items-center justify-center text-sm shadow-sm d-none">
-                            {{ $dashInitials }}
-                        </div>
-                    @else
-                        <div class="w-12 h-12 rounded-full bg-[#20165c] text-white font-bold flex items-center justify-center text-sm shadow-sm">
-                            {{ $dashInitials }}
-                        </div>
-                    @endif
+                    <div class="relative w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-sm ring-2 ring-[#20165c] shadow-sm">
+                        @if($dashAvatar)
+                            <img src="{{ $dashAvatar }}" class="w-full h-full object-cover object-center block" alt="{{ $user->name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-sm" style="display: none;">
+                                {{ $dashInitials }}
+                            </div>
+                        @else
+                            <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-sm">
+                                {{ $dashInitials }}
+                            </div>
+                        @endif
+                    </div>
                     @if($isUserAdmin)
                         <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-[#20165c] rounded-full border-2 border-white flex items-center justify-center" title="Admin">
                             <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
@@ -698,8 +700,18 @@
                                         <td class="py-3.5 px-4">
                                             @if($sellerUser)
                                                 <div class="flex items-center gap-2">
-                                                    <img src="{{ $sellerUser->avatar ? (str_starts_with($sellerUser->avatar, 'http') ? $sellerUser->avatar : asset('storage/' . $sellerUser->avatar)) : 'https://ui-avatars.com/api/?name=' . urlencode($sellerUser->name) . '&background=20165c&color=ffffff' }}" 
-                                                         alt="{{ $sellerUser->name }}" class="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0">
+                                                    <div class="relative w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px] ring-1 ring-slate-200 shrink-0">
+                                                        @if($sellerUser->avatar_url)
+                                                            <img src="{{ $sellerUser->avatar_url }}" alt="{{ $sellerUser->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                            <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px]" style="display: none;">
+                                                                {{ $sellerUser->initials }}
+                                                            </span>
+                                                        @else
+                                                            <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px]">
+                                                                {{ $sellerUser->initials }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                     <div class="min-w-0">
                                                         <div class="text-xs font-semibold text-slate-800 truncate">{{ $sellerUser->name }}</div>
                                                         <div class="text-[10px] text-slate-400">&#64;{{ $sellerUser->username }}</div>

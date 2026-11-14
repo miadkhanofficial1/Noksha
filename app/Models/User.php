@@ -613,12 +613,12 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Get avatar URL or default fallback.
+     * Get avatar URL only if the physical file actually exists, returning null otherwise.
      */
-    public function getAvatarUrlAttribute(): string
+    public function getAvatarUrlAttribute(): ?string
     {
         if (empty($this->avatar)) {
-            return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=20165c&color=fff';
+            return null;
         }
 
         if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
@@ -630,16 +630,34 @@ class User extends Authenticatable implements MustVerifyEmail
             return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->avatar);
         }
 
-        $cleanPath = ltrim(str_replace('storage/', '', (string) $this->avatar), '/');
+        $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', (string) $this->avatar), '/');
+
+        // Check resilient candidate locations
+        if (file_exists(public_path('uploads/' . $cleanPath))) {
+            return asset('uploads/' . $cleanPath);
+        }
+
         if (\Illuminate\Support\Facades\Storage::disk('public')->exists($cleanPath)) {
             return asset('storage/' . $cleanPath);
         }
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=20165c&color=fff';
+        if (file_exists(storage_path('app/public/' . $cleanPath))) {
+            return asset('storage/' . $cleanPath);
+        }
+
+        if (file_exists(public_path('storage/' . $cleanPath))) {
+            return asset('storage/' . $cleanPath);
+        }
+
+        if (file_exists(public_path($cleanPath))) {
+            return asset($cleanPath);
+        }
+
+        return null;
     }
 
     /**
-     * Get cover image URL or default fallback.
+     * Get cover image URL only if the physical file actually exists, returning null otherwise.
      */
     public function getCoverUrlAttribute(): ?string
     {
@@ -656,12 +674,47 @@ class User extends Authenticatable implements MustVerifyEmail
             return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->cover_image);
         }
 
-        $cleanPath = ltrim(str_replace('storage/', '', (string) $this->cover_image), '/');
+        $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', (string) $this->cover_image), '/');
+
+        if (file_exists(public_path('uploads/' . $cleanPath))) {
+            return asset('uploads/' . $cleanPath);
+        }
+
         if (\Illuminate\Support\Facades\Storage::disk('public')->exists($cleanPath)) {
             return asset('storage/' . $cleanPath);
         }
 
+        if (file_exists(storage_path('app/public/' . $cleanPath))) {
+            return asset('storage/' . $cleanPath);
+        }
+
+        if (file_exists(public_path('storage/' . $cleanPath))) {
+            return asset('storage/' . $cleanPath);
+        }
+
+        if (file_exists(public_path($cleanPath))) {
+            return asset($cleanPath);
+        }
+
         return null;
+    }
+
+    /**
+     * Get crisp 2-letter uppercase initials for avatar fallback (e.g. 'NO', 'NA').
+     */
+    public function getInitialsAttribute(): string
+    {
+        $name = trim((string) $this->name);
+        if ($name === '') {
+            return 'NO';
+        }
+        $parts = preg_split('/\s+/', $name);
+        if (count($parts) >= 2) {
+            $first = mb_substr($parts[0], 0, 1);
+            $second = mb_substr(end($parts), 0, 1);
+            return mb_strtoupper($first . $second);
+        }
+        return mb_strtoupper(mb_substr($name, 0, 2));
     }
 
     /**

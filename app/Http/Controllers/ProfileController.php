@@ -50,13 +50,73 @@ class ProfileController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $path;
+            $avatarFile = $request->file('avatar');
+            $avatarExt = $avatarFile->getClientOriginalExtension() ?: 'jpg';
+            $avatarFilename = time() . '_' . \Illuminate\Support\Str::random(16) . '.' . $avatarExt;
+
+            // 1. Store to storage/app/public/avatars via public disk
+            $storedPath = $avatarFile->storeAs('avatars', $avatarFilename, 'public');
+            $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $storedPath), '/');
+            $user->avatar = $cleanPath;
+
+            // 2. Also ensure public/uploads/avatars has a copy for resilient zero-symlink hosting
+            try {
+                $uploadDir = public_path('uploads/avatars');
+                if (!file_exists($uploadDir)) {
+                    @mkdir($uploadDir, 0755, true);
+                }
+                @copy($avatarFile->getRealPath(), $uploadDir . '/' . $avatarFilename);
+            } catch (\Throwable $e) {
+                // Silently fallback if filesystem permissions disallow direct write
+            }
+
+            // 3. Mirror to public/storage/avatars if available
+            try {
+                $publicStorageDir = public_path('storage/avatars');
+                if (!file_exists($publicStorageDir)) {
+                    @mkdir($publicStorageDir, 0755, true);
+                }
+                if (!file_exists($publicStorageDir . '/' . $avatarFilename)) {
+                    @copy($avatarFile->getRealPath(), $publicStorageDir . '/' . $avatarFilename);
+                }
+            } catch (\Throwable $e) {
+                // Silently fallback
+            }
         }
 
         if ($request->hasFile('cover_image')) {
-            $coverPath = $request->file('cover_image')->store('covers', 'public');
-            $user->cover_image = $coverPath;
+            $coverFile = $request->file('cover_image');
+            $coverExt = $coverFile->getClientOriginalExtension() ?: 'jpg';
+            $coverFilename = time() . '_' . \Illuminate\Support\Str::random(16) . '.' . $coverExt;
+
+            // 1. Store to storage/app/public/covers via public disk
+            $storedCoverPath = $coverFile->storeAs('covers', $coverFilename, 'public');
+            $cleanCoverPath = ltrim(str_replace(['public/', 'storage/'], '', $storedCoverPath), '/');
+            $user->cover_image = $cleanCoverPath;
+
+            // 2. Mirror copy to public/uploads/covers
+            try {
+                $uploadCoverDir = public_path('uploads/covers');
+                if (!file_exists($uploadCoverDir)) {
+                    @mkdir($uploadCoverDir, 0755, true);
+                }
+                @copy($coverFile->getRealPath(), $uploadCoverDir . '/' . $coverFilename);
+            } catch (\Throwable $e) {
+                // Silently fallback
+            }
+
+            // 3. Mirror copy to public/storage/covers
+            try {
+                $publicStorageCoverDir = public_path('storage/covers');
+                if (!file_exists($publicStorageCoverDir)) {
+                    @mkdir($publicStorageCoverDir, 0755, true);
+                }
+                if (!file_exists($publicStorageCoverDir . '/' . $coverFilename)) {
+                    @copy($coverFile->getRealPath(), $publicStorageCoverDir . '/' . $coverFilename);
+                }
+            } catch (\Throwable $e) {
+                // Silently fallback
+            }
         }
 
         if ($request->filled('name')) {

@@ -583,13 +583,18 @@
                                             <div class="d-flex align-items-center gap-2 extra-small text-muted mb-2">
                                                 @if($entry->user)
                                                     <a href="{{ route('user.profile', $entry->user->username ?? $entry->user->id) }}" class="text-decoration-none text-dark d-inline-flex align-items-center gap-1.5 hover-primary" title="View {{ $entry->user->name }}'s Profile">
-                                                        @if($entry->user->avatar)
-                                                            <img src="{{ asset('storage/' . $entry->user->avatar) }}" alt="{{ $entry->user->name }}" class="rounded-circle" style="width: 20px; height: 20px; object-fit: cover;">
-                                                        @else
-                                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; font-size: 0.65rem;">
-                                                                {{ strtoupper(substr($entry->user->name, 0, 1)) }}
-                                                            </div>
-                                                        @endif
+                                                        <div class="relative rounded-circle overflow-hidden d-inline-flex align-items-center justify-content-center bg-[#20165c] text-white fw-bold shrink-0" style="width: 20px; height: 20px; font-size: 0.65rem;">
+                                                            @if($entry->user->avatar_url)
+                                                                <img src="{{ $entry->user->avatar_url }}" alt="{{ $entry->user->name }}" class="w-100 h-100 object-fit-cover block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                                <span class="w-100 h-100 d-flex align-items-center justify-content-center bg-[#20165c] text-white fw-bold" style="display: none; font-size: 0.65rem;">
+                                                                    {{ $entry->user->initials }}
+                                                                </span>
+                                                            @else
+                                                                <span class="w-100 h-100 d-flex align-items-center justify-content-center bg-[#20165c] text-white fw-bold" style="font-size: 0.65rem;">
+                                                                    {{ $entry->user->initials }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
                                                         <span>by <strong class="text-dark">{{ $entry->user->name }}</strong></span>
                                                     </a>
                                                 @else

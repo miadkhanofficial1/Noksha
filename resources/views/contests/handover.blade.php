@@ -207,7 +207,18 @@
 
                     <!-- Designer Pill -->
                     <div class="flex items-center gap-2">
-                        <img src="{{ $winner->avatar_url }}" alt="{{ $winner->name }}" class="w-7 h-7 rounded-full object-cover border border-indigo-500/40">
+                        <div class="relative w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px] ring-1 ring-indigo-500/40 shrink-0">
+                            @if($winner->avatar_url)
+                                <img src="{{ $winner->avatar_url }}" alt="{{ $winner->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px]" style="display: none;">
+                                    {{ $winner->initials }}
+                                </span>
+                            @else
+                                <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px]">
+                                    {{ $winner->initials }}
+                                </span>
+                            @endif
+                        </div>
                         <span class="text-xs font-semibold text-slate-700 truncate max-w-[120px]">{{ $winner->name }}</span>
                     </div>
                 </div>
@@ -368,7 +379,18 @@
 
                     <!-- Client Pill -->
                     <div class="flex items-center gap-2">
-                        <img src="{{ $buyer->avatar_url }}" alt="{{ $buyer->name }}" class="w-7 h-7 rounded-full object-cover border border-emerald-500/40">
+                        <div class="relative w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px] ring-1 ring-emerald-500/40 shrink-0">
+                            @if($buyer->avatar_url)
+                                <img src="{{ $buyer->avatar_url }}" alt="{{ $buyer->name }}" class="w-full h-full object-cover object-center block" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px]" style="display: none;">
+                                    {{ $buyer->initials }}
+                                </span>
+                            @else
+                                <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[10px]">
+                                    {{ $buyer->initials }}
+                                </span>
+                            @endif
+                        </div>
                         <span class="text-xs font-semibold text-slate-700 truncate max-w-[120px]">{{ $buyer->name }}</span>
                     </div>
                 </div>

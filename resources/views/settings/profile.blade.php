@@ -223,11 +223,9 @@
             <!-- SECTION 1: COVER & AVATAR PREVIEWS -->
             <div class="bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden">
                 @php
-                    $coverClean = $user->cover_image ? ltrim(str_replace('storage/', '', $user->cover_image), '/') : null;
-                    $coverUrl = $coverClean ? (str_starts_with($coverClean, 'http') ? $coverClean : asset('storage/' . $coverClean)) : null;
-
-                    $avatarClean = $user->avatar ? ltrim(str_replace('storage/', '', $user->avatar), '/') : null;
-                    $avatarUrl = $avatarClean ? (str_starts_with($avatarClean, 'http') ? $avatarClean : asset('storage/' . $avatarClean)) : null;
+                    $coverUrl = $user->cover_url;
+                    $avatarUrl = $user->avatar_url;
+                    $userInitials = $user->initials ?? strtoupper(substr($user->name ?? 'NO', 0, 2));
                 @endphp
 
                 <!-- Cover Image Banner Box -->
@@ -235,9 +233,9 @@
                      style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : '' }}">
                     
                     @if($coverUrl)
-                        <img id="cover_preview" src="{{ $coverUrl }}" alt="Cover Preview" class="w-full h-full object-cover" onerror="this.classList.add('hidden');">
+                        <img id="cover_preview" src="{{ $coverUrl }}" alt="Cover Preview" class="w-full h-full object-cover object-center block" onerror="this.classList.add('hidden');">
                     @else
-                        <img id="cover_preview" src="" alt="Cover Preview" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden');">
+                        <img id="cover_preview" src="" alt="Cover Preview" class="w-full h-full object-cover object-center block hidden" onerror="this.classList.add('hidden');">
                     @endif
 
                     <!-- Hidden file input -->
@@ -255,18 +253,18 @@
                     <div class="flex items-end justify-between flex-wrap gap-4">
                         <div class="flex items-end gap-4 flex-wrap">
                             <!-- Avatar Circle (Clickable Trigger with crisp white ring) -->
-                            <div class="relative -mt-14 w-28 h-28">
+                            <div class="relative -mt-14 w-28 h-28 shrink-0">
                                 <div onclick="document.getElementById('avatar_upload').click();"
-                                     class="w-28 h-28 rounded-full overflow-hidden ring-4 ring-white shadow-lg bg-white cursor-pointer group relative flex items-center justify-center">
+                                     class="relative w-28 h-28 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold ring-4 ring-white shadow-lg cursor-pointer group">
                                     <img id="avatar_preview" 
                                          src="{{ $avatarUrl ?? '' }}" 
                                          alt="{{ $user->name }}" 
-                                         class="w-full h-full object-cover rounded-full {{ $avatarUrl ? '' : 'hidden' }}"
+                                         class="w-full h-full object-cover object-center block rounded-full {{ $avatarUrl ? '' : 'hidden' }}"
                                          onerror="this.classList.add('hidden'); document.getElementById('avatar_initials').classList.remove('hidden');">
 
                                     <div id="avatar_initials" 
-                                         class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#20165c] to-[#3b2a8c] text-white text-2xl font-bold {{ $avatarUrl ? 'hidden' : '' }}">
-                                        {{ strtoupper(substr($user->name ?? 'MD', 0, 2)) }}
+                                         class="w-full h-full flex items-center justify-center bg-[#20165c] text-white text-2xl font-bold {{ $avatarUrl ? 'hidden' : '' }}">
+                                        {{ $userInitials }}
                                     </div>
 
                                     <!-- Hover Camera Overlay -->
@@ -716,6 +714,7 @@
                     if (preview) {
                         preview.src = evt.target.result;
                         preview.classList.remove('hidden');
+                        preview.style.display = 'block';
                     }
                     if (initials) initials.classList.add('hidden');
                 };

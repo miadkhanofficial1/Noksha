@@ -105,10 +105,22 @@
         <!-- Creator Header Row -->
         <div class="flex items-center justify-between gap-3 mb-2.5">
             @if($creator)
-                <a href="{{ route('creator.profile', $creator->username ?? $creator->id) }}" class="flex items-center gap-2 min-w-0 group/creator">
-                    <img src="{{ $creator->avatar ? (str_starts_with($creator->avatar, 'http') ? $creator->avatar : asset('storage/' . $creator->avatar)) : 'https://ui-avatars.com/api/?name=' . urlencode($creator->name) . '&background=20165c&color=ffffff' }}" 
-                         alt="{{ $creator->name }}" 
-                         class="w-6 h-6 rounded-full object-cover border border-slate-200 shrink-0">
+                <a href="{{ route('creator.profile', $creator->username ?? $creator->id) }}" class="flex items-center gap-2 min-w-0 group/creator text-decoration-none">
+                    <div class="relative w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-[9px] ring-1 ring-slate-200 shrink-0">
+                        @if($creator->avatar_url)
+                            <img src="{{ $creator->avatar_url }}" 
+                                 alt="{{ $creator->name }}" 
+                                 class="w-full h-full object-cover object-center block"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[9px]" style="display: none;">
+                                {{ $creator->initials }}
+                            </span>
+                        @else
+                            <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-[9px]">
+                                {{ $creator->initials }}
+                            </span>
+                        @endif
+                    </div>
                     <span class="text-xs font-semibold text-slate-700 group-hover/creator:text-[#20165c] truncate">
                         {{ $creator->name }}
                     </span>

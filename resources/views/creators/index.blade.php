@@ -65,10 +65,22 @@
                             <!-- Card Header: Avatar, Name, Verified Badge, Headline -->
                             <div class="flex items-start gap-3.5">
                                 <div class="relative shrink-0">
-                                    <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}">
-                                        <img src="{{ $creator->avatar_url }}" 
-                                             alt="{{ $creator->name }}" 
-                                             class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm transition-opacity">
+                                    <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}" class="block text-decoration-none">
+                                        <div class="relative w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-base ring-2 ring-white shadow-sm">
+                                            @if($creator->avatar_url)
+                                                <img src="{{ $creator->avatar_url }}" 
+                                                     alt="{{ $creator->name }}" 
+                                                     class="w-full h-full object-cover object-center block"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-base" style="display: none;">
+                                                    {{ $creator->initials }}
+                                                </span>
+                                            @else
+                                                <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-base">
+                                                    {{ $creator->initials }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </a>
                                     <!-- Online Green Indicator Dot -->
                                     <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" title="Active on Noksha"></span>

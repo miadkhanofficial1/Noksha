@@ -155,8 +155,9 @@
 
     <!-- HERO COVER BANNER -->
     @php
-        $coverUrl = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null;
-        $avatarUrl = $user && $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
+        $coverUrl = $user ? $user->cover_url : null;
+        $avatarUrl = $user ? $user->avatar_url : null;
+        $userInitials = $user ? $user->initials : 'NO';
     @endphp
     <section class="seller-cover-banner" style="background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; background-color: #111a33;">
         @if($coverUrl)
@@ -181,17 +182,22 @@
                     <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-end gap-4 text-center text-sm-start">
                         
                         <!-- Circular Avatar -->
-                        <div class="seller-avatar-wrapper">
-                            @if($avatarUrl)
-                                <img src="{{ $avatarUrl }}" 
-                                     alt="{{ $user->name ?? 'Creator' }}" 
-                                     class="seller-avatar-img ring-4 ring-[#0b1329] rounded-circle object-fit-cover"
-                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-[#121826] fw-bold fs-2\' style=\'background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);\'>{{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}</div>';">
-                            @else
-                                <div class="seller-avatar-img ring-4 ring-[#0b1329] d-flex align-items-center justify-content-center text-[#121826] fw-bold fs-2" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
-                                    {{ strtoupper(substr($user->name ?? 'C', 0, 2)) }}
-                                </div>
-                            @endif
+                        <div class="relative -mt-14 w-28 h-28 shrink-0">
+                            <div class="relative w-28 h-28 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold ring-4 ring-white shadow-xl">
+                                @if($avatarUrl)
+                                    <img src="{{ $avatarUrl }}" 
+                                         alt="{{ $user->name ?? 'Creator' }}" 
+                                         class="w-full h-full object-cover object-center block"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-extrabold text-3xl" style="display: none;">
+                                        {{ $userInitials }}
+                                    </div>
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-extrabold text-3xl">
+                                        {{ $userInitials }}
+                                    </div>
+                                @endif
+                            </div>
                             <div class="seller-online-badge" title="Online now"></div>
                         </div>
 

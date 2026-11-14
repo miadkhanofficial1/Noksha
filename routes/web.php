@@ -178,14 +178,7 @@ Route::get('/creator/{username?}', [PublicProfileController::class, 'show'])->na
 Route::get('/author/{username?}', [PublicProfileController::class, 'show'])->name('author.show');
 Route::get('/seller/{username}', [PublicProfileController::class, 'show'])->name('seller.profile.show');
 
-// Public Storage File Delivery Fallback (prevents 404 if symlink is absent)
-Route::get('/storage/{path}', function ($path) {
-    $filePath = storage_path('app/public/' . $path);
-    if (file_exists($filePath)) {
-        return response()->file($filePath);
-    }
-    abort(404);
-})->where('path', '.*');
+
 
 // Marketplace Templates / Catalog Routes
 Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');
@@ -546,3 +539,33 @@ Route::get('/setup-demo-assets', function () {
         'message' => 'Demo asset seeding disabled to maintain a clean authoritative state.',
     ]);
 });
+
+// ==========================================
+// RESILIENT PUBLIC STORAGE FILE SERVING FALLBACK
+// Directly serves files from storage_path('app/public/{path}') or public_path('uploads/{path}')
+// when webserver symlinks are missing or unsupported (e.g. Render.com)
+// ==========================================
+Route::get('/storage/{path}', function ($path) {
+    if (str_contains($path, '..')) {
+        abort(404);
+    }
+
+    $candidates = [
+        storage_path('app/public/' . $path),
+        public_path('uploads/' . $path),
+        public_path('storage/' . $path),
+    ];
+
+    foreach ($candidates as $filePath) {
+        if (file_exists($filePath) && !is_dir($filePath)) {
+            $mimeType = @mime_content_type($filePath) ?: 'application/octet-stream';
+            return response()->file($filePath, [
+                'Content-Type' => $mimeType,
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+    }
+
+    abort(404);
+})->where('path', '.*')->name('storage.fallback');
+
