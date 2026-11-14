@@ -66,6 +66,153 @@
             display: none !important;
         }
 
+        /* ========================================================= */
+        /* GLOBAL BUTTON & TAB CONTRAST & HOVER / FOCUS / ACTIVE FIX */
+        /* ========================================================= */
+        
+        /* Primary Buttons: Always keep crisp text-white on hover, active, focus */
+        .btn-noksha,
+        .btn-primary,
+        button.bg-\[\#20165c\],
+        a.bg-\[\#20165c\],
+        button[class*="bg-[#20165c]"],
+        a[class*="bg-[#20165c]"],
+        button[class*="bg-brand"],
+        a[class*="bg-brand"] {
+            color: #ffffff !important;
+        }
+
+        .btn-noksha:hover,
+        .btn-primary:hover,
+        button.bg-\[\#20165c\]:hover,
+        a.bg-\[\#20165c\]:hover,
+        button[class*="bg-[#20165c]"]:hover,
+        a[class*="bg-[#20165c]"]:hover,
+        button[class*="bg-brand"]:hover,
+        a[class*="bg-brand"]:hover {
+            background-color: #170f45 !important;
+            color: #ffffff !important;
+        }
+
+        .btn-noksha:focus,
+        .btn-noksha:focus-visible,
+        .btn-primary:focus,
+        .btn-primary:focus-visible,
+        button.bg-\[\#20165c\]:focus,
+        button.bg-\[\#20165c\]:focus-visible,
+        a.bg-\[\#20165c\]:focus,
+        a.bg-\[\#20165c\]:focus-visible,
+        button[class*="bg-[#20165c]"]:focus,
+        button[class*="bg-[#20165c]"]:focus-visible,
+        a[class*="bg-[#20165c]"]:focus,
+        a[class*="bg-[#20165c]"]:focus-visible,
+        button[class*="bg-brand"]:focus,
+        button[class*="bg-brand"]:focus-visible,
+        a[class*="bg-brand"]:focus,
+        a[class*="bg-brand"]:focus-visible {
+            background-color: #20165c !important;
+            color: #ffffff !important;
+            outline: none !important;
+        }
+
+        .btn-noksha:active,
+        .btn-noksha.active,
+        .btn-primary:active,
+        .btn-primary.active,
+        button.bg-\[\#20165c\]:active,
+        button.bg-\[\#20165c\].active,
+        a.bg-\[\#20165c\]:active,
+        a.bg-\[\#20165c\].active,
+        button[class*="bg-[#20165c]"]:active,
+        button[class*="bg-[#20165c]"].active,
+        a[class*="bg-[#20165c]"]:active,
+        a[class*="bg-[#20165c]"].active,
+        button[class*="bg-brand"]:active,
+        button[class*="bg-brand"].active,
+        a[class*="bg-brand"]:active,
+        a[class*="bg-brand"].active {
+            background-color: #170f45 !important;
+            color: #ffffff !important;
+        }
+
+        .btn-noksha svg,
+        .btn-noksha i,
+        .btn-primary svg,
+        .btn-primary i,
+        button[class*="bg-[#20165c]"] svg,
+        button[class*="bg-[#20165c]"] i,
+        a[class*="bg-[#20165c]"] svg,
+        a[class*="bg-[#20165c]"] i {
+            color: #ffffff !important;
+        }
+
+        /* Dashboard Tab Pills Hover & Active System */
+        .dash-tab-btn {
+            color: #475569 !important;
+            background-color: transparent !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none !important;
+        }
+        .dash-tab-btn svg,
+        .dash-tab-btn i {
+            color: inherit !important;
+            stroke: currentColor !important;
+            transition: color 0.2s ease;
+        }
+        .dash-tab-btn:hover:not(.active) {
+            background-color: #f1f5f9 !important;
+            color: #20165c !important;
+        }
+        .dash-tab-btn:hover:not(.active) svg,
+        .dash-tab-btn:hover:not(.active) i {
+            color: #20165c !important;
+        }
+        .dash-tab-btn:focus:not(.active),
+        .dash-tab-btn:focus-visible:not(.active) {
+            outline: none !important;
+            background-color: #f1f5f9 !important;
+            color: #20165c !important;
+        }
+        .dash-tab-btn.active {
+            background-color: #20165c !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
+        }
+        .dash-tab-btn.active svg,
+        .dash-tab-btn.active i {
+            color: #ffffff !important;
+            stroke: currentColor !important;
+        }
+        .dash-tab-btn.active .dash-tab-badge,
+        .dash-tab-btn.active span[class*="rounded-full"] {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+        }
+        .dash-tab-btn.active:hover {
+            background-color: #170f45 !important;
+            color: #ffffff !important;
+        }
+        .dash-tab-btn.active:hover svg,
+        .dash-tab-btn.active:hover i {
+            color: #ffffff !important;
+        }
+        .dash-tab-btn.active:focus,
+        .dash-tab-btn.active:focus-visible,
+        .dash-tab-btn.active:active {
+            background-color: #20165c !important;
+            color: #ffffff !important;
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.25) !important;
+        }
+        .dash-tab-btn.active:focus svg,
+        .dash-tab-btn.active:focus i,
+        .dash-tab-btn.active:active svg,
+        .dash-tab-btn.active:active i {
+            color: #ffffff !important;
+        }
+
         .lang-switcher-pill {
             background: rgba(108, 76, 241, 0.08);
             border: 1px solid rgba(108, 76, 241, 0.18);
@@ -513,6 +660,31 @@
             });
         });
     }());
+
+    /**
+     * Universal Password Visibility Toggle
+     */
+    window.togglePasswordVisibility = function(fieldId, btnOrIconId) {
+        var input = document.getElementById(fieldId);
+        if (!input) return;
+        var icon = null;
+        if (typeof btnOrIconId === 'string') {
+            icon = document.getElementById(btnOrIconId);
+        } else if (btnOrIconId) {
+            icon = btnOrIconId.querySelector ? btnOrIconId.querySelector('i') : btnOrIconId;
+        }
+        if (!icon) return;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    };
     </script>
 </body>
 </html>

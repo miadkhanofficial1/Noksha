@@ -612,15 +612,15 @@
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="current_password">
                             Current Password <span class="text-rose-400">*</span>
                         </label>
-                        <div class="flex items-center">
+                        <div class="relative">
                             <input type="password" 
                                    name="current_password" 
                                    id="current_password" 
-                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl pl-4 pr-11 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                    required 
                                    placeholder="Enter current password">
-                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-200 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('current_password', this)">
-                                <i class="bi bi-eye"></i>
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer" onclick="togglePasswordVisibility('current_password', this)" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye text-base"></i>
                             </button>
                         </div>
                         @error('current_password')
@@ -633,15 +633,15 @@
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="password">
                             New Password <span class="text-rose-400">*</span>
                         </label>
-                        <div class="flex items-center">
+                        <div class="relative">
                             <input type="password" 
                                    name="password" 
                                    id="password" 
-                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl pl-4 pr-11 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                    required 
                                    placeholder="At least 8 characters">
-                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-200 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('password', this)">
-                                <i class="bi bi-eye"></i>
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer" onclick="togglePasswordVisibility('password', this)" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye text-base"></i>
                             </button>
                         </div>
                         @error('password')
@@ -654,15 +654,15 @@
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2" for="password_confirmation">
                             Confirm New Password <span class="text-rose-400">*</span>
                         </label>
-                        <div class="flex items-center">
+                        <div class="relative">
                             <input type="password" 
                                    name="password_confirmation" 
                                    id="password_confirmation" 
-                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-l-xl px-4 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
+                                   class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 rounded-xl pl-4 pr-11 py-3 focus:outline-none focus:border-[#20165c] focus:ring-1 focus:ring-[#20165c] text-sm transition-all" 
                                    required 
                                    placeholder="Re-type new password">
-                            <button type="button" class="px-3.5 py-3 bg-slate-50 border border-l-0 border-slate-200 text-slate-500 hover:text-[#121826] rounded-r-xl transition" onclick="togglePasswordVisibility('password_confirmation', this)">
-                                <i class="bi bi-eye"></i>
+                            <button type="button" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer" onclick="togglePasswordVisibility('password_confirmation', this)" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye text-base"></i>
                             </button>
                         </div>
                     </div>

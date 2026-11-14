@@ -6,26 +6,79 @@
 <style>
     /* Profile Cover Banner */
     .profile-cover-banner {
-        height: 280px;
-        background: linear-gradient(135deg, #1e1b4b 0%, #20165c 50%, #2c1e7a 100%);
+        height: 300px;
         position: relative;
         overflow: hidden;
     }
 
-    .profile-cover-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .profile-cover-mesh {
+        background: linear-gradient(135deg, #20165c 0%, #2d1f7a 50%, #150d40 100%);
     }
 
-    .profile-cover-banner::before {
+    .profile-cover-mesh::before {
         content: '';
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
         background-size: 24px 24px;
         opacity: 0.35;
         pointer-events: none;
+    }
+
+    /* Ambient Glowing Orbs */
+    .ambient-orb-emerald {
+        position: absolute;
+        top: -60px;
+        left: -60px;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0) 70%);
+        filter: blur(40px);
+        pointer-events: none;
+    }
+
+    .ambient-orb-tangerine {
+        position: absolute;
+        bottom: -60px;
+        right: -60px;
+        width: 340px;
+        height: 340px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(244, 116, 2, 0.22) 0%, rgba(244, 116, 2, 0) 70%);
+        filter: blur(40px);
+        pointer-events: none;
+    }
+
+    .ambient-orb-indigo {
+        position: absolute;
+        top: 20%;
+        left: 30%;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0) 70%);
+        filter: blur(35px);
+        pointer-events: none;
+    }
+
+    /* Stat micro-cards */
+    .stat-chip-card {
+        background: rgba(248, 250, 252, 0.95);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 0.75rem;
+        padding: 0.45rem 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    }
+    .stat-chip-card:hover {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px -2px rgba(18, 24, 38, 0.08);
+        transform: translateY(-1px);
     }
 
     /* Avatar & Online Availability */
@@ -128,16 +181,22 @@
     }
 
     .showcase-tab-counter {
-        background: rgba(255, 255, 255, 0.08);
-        color: #cbd5e1;
+        background: #f1f5f9;
+        color: #64748b;
         border-radius: 999px;
         padding: 0.15rem 0.6rem;
         font-size: 0.75rem;
-        font-weight: 800;
+        font-weight: 700;
+        transition: all 0.2s ease;
+    }
+
+    .showcase-tab-btn:hover .showcase-tab-counter {
+        background: #e2e8f0;
+        color: #334155;
     }
 
     .showcase-tab-btn.active .showcase-tab-counter {
-        background: rgba(99, 102, 241, 0.2);
+        background: rgba(32, 22, 92, 0.1);
         color: #20165c;
     }
 
@@ -265,15 +324,32 @@
         $avatarUrl = $user && $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
         $userInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
     @endphp
-    <section class="profile-cover-banner" style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : "background: linear-gradient(135deg, #1e1b4b 0%, #20165c 50%, #2c1e7a 100%);" }}">
+    <section class="profile-cover-banner relative w-full h-[260px] md:h-[320px] overflow-hidden {{ $coverUrl ? '' : 'profile-cover-mesh' }}" style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : "" }}">
         @if($coverUrl)
-            <img src="{{ $coverUrl }}" alt="{{ $user->name }} cover" class="w-100 h-100 object-fit-cover position-absolute top-0 start-0" onerror="this.remove(); this.parentElement.style.backgroundImage='none';">
+            <img src="{{ $coverUrl }}" alt="{{ $user->name }} cover" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove(); this.parentElement.classList.add('profile-cover-mesh');">
+            <!-- Subtle bottom vignette overlay for high contrast readability -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
+        @else
+            <!-- Ambient Glowing Orbs on top of mesh -->
+            <div class="ambient-orb-emerald"></div>
+            <div class="ambient-orb-indigo"></div>
+            <div class="ambient-orb-tangerine"></div>
         @endif
-        <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
+
+        <!-- Banner Top-Right Overlays (Availability & Quick Actions) -->
+        <div class="absolute top-4 right-4 md:top-6 md:right-6 z-10 flex items-center gap-2.5">
             @if($user->is_available)
-                <span class="badge bg-emerald-500/15 text-emerald-400 backdrop-blur border border-emerald-500/30 rounded-pill px-3 py-1.5 extra-small fw-bold">
-                    <i class="bi bi-lightning-charge-fill text-emerald-400 me-1"></i> Open for Custom Work
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-black/40 backdrop-blur-md text-emerald-400 border border-emerald-500/30 shadow-lg">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Open for Custom Work</span>
                 </span>
+            @endif
+
+            @if($isOwnProfile)
+                <a href="{{ route('settings.profile') }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium bg-black/40 hover:bg-black/60 text-white backdrop-blur-md border border-white/20 shadow-lg transition-all duration-200 text-decoration-none">
+                    <i class="bi bi-camera-fill"></i>
+                    <span>Change Cover</span>
+                </a>
             @endif
         </div>
     </section>
@@ -288,89 +364,117 @@
                     <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-end gap-4 text-center text-sm-start">
                         
                         <!-- Avatar with Availability Indicator -->
-                        <div class="profile-avatar-wrapper">
+                        <div class="relative -mt-16 md:-mt-20 inline-block shrink-0">
                             @if($avatarUrl)
                                 <img src="{{ $avatarUrl }}" 
                                      alt="{{ $user->name }}" 
-                                     class="profile-avatar-img ring-4 ring-[#0b1329] rounded-full object-cover"
-                                     onerror="this.style.display='none'; document.getElementById('avatar-fallback-initial')?.classList.remove('d-none');">
-                                <div id="avatar-fallback-initial" class="profile-avatar-initial ring-4 ring-[#0b1329] d-none">
+                                     class="w-28 h-28 md:w-32 md:h-32 rounded-full ring-4 ring-white shadow-xl object-cover bg-white"
+                                     onerror="this.style.display='none'; document.getElementById('avatar-fallback-initial')?.classList.remove('hidden');">
+                                <div id="avatar-fallback-initial" class="w-28 h-28 md:w-32 md:h-32 rounded-full ring-4 ring-white shadow-xl bg-gradient-to-br from-[#20165c] to-[#4338ca] text-white font-extrabold text-3xl flex items-center justify-center hidden">
                                     {{ $userInitials }}
                                 </div>
                             @else
-                                <div class="profile-avatar-initial ring-4 ring-[#0b1329]">
+                                <div class="w-28 h-28 md:w-32 md:h-32 rounded-full ring-4 ring-white shadow-xl bg-gradient-to-br from-[#20165c] to-[#4338ca] text-white font-extrabold text-3xl flex items-center justify-center">
                                     {{ $userInitials }}
                                 </div>
                             @endif
 
-                            <div class="profile-status-badge {{ $user->is_available ? 'status-available' : 'status-busy' }}" title="{{ $user->is_available ? 'Available for Hire' : 'Busy / Not Taking Work' }}"></div>
+                            <!-- Availability Dot Indicator -->
+                            <span class="absolute bottom-1 right-1 w-5 h-5 rounded-full ring-4 ring-white {{ $user->is_available ? 'bg-emerald-500' : 'bg-slate-400' }}" title="{{ $user->is_available ? 'Available for Hire' : 'Busy / Not Taking Work' }}"></span>
                         </div>
 
                         <!-- Name, Handle & Headline -->
-                        <div class="pb-1">
-                            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1">
-                                <h2 class="fw-extrabold text-[#121826] mb-0">{{ $user->name }}</h2>
+                        <div class="pb-1 flex-1">
+                            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mb-1.5">
+                                <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-0">{{ $user->name }}</h1>
                                 
                                 @if($user->isContributor())
-                                    <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                        <i class="bi bi-patch-check-fill me-1 text-emerald-600"></i> Verified Creator
+                                    <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-xs">
+                                        <i class="bi bi-patch-check-fill text-emerald-600"></i>
+                                        <span>Verified Creator</span>
                                     </span>
                                 @elseif($user->isAdmin())
-                                    <span class="badge bg-purple-950/40 text-purple-300 border border-purple-500/30 rounded-pill px-2.5 py-1 extra-small fw-bold">
-                                        <i class="bi bi-shield-lock-fill me-1 text-purple-400"></i> Admin
+                                    <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-xs">
+                                        <i class="bi bi-shield-lock-fill text-purple-600"></i>
+                                        <span>Admin</span>
                                     </span>
                                 @else
-                                    <span class="badge bg-gray-800 text-slate-700 border border-gray-700 rounded-pill px-2.5 py-1 extra-small fw-bold">
+                                    <span class="inline-flex items-center bg-slate-100 text-slate-600 border border-slate-200 rounded-full px-2.5 py-0.5 text-xs font-semibold">
                                         Member
                                     </span>
                                 @endif
 
                                 @if($user->hasReliabilityWarning())
-                                    <span class="badge bg-amber-500/15 text-amber-700 border border-amber-300 rounded-pill px-2.5 py-1 extra-small fw-bold" title="Reliability Warning: Accrued demerits or late deliveries">
-                                        <i class="bi bi-exclamation-triangle-fill me-1 text-amber-600"></i> Reliability Warning
+                                    <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-300 rounded-full px-2.5 py-0.5 text-xs font-semibold" title="Reliability Warning: Accrued demerits or late deliveries">
+                                        <i class="bi bi-exclamation-triangle-fill text-amber-600"></i>
+                                        <span>Reliability Warning</span>
                                     </span>
                                 @endif
 
                                 @if($totalWinsCount > 0)
-                                    <span class="winner-gold-ribbon">
-                                        <i class="bi bi-trophy-fill"></i> {{ $totalWinsCount }} Contest {{ Str::plural('Win', $totalWinsCount) }}
+                                    <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 border border-amber-300 rounded-full px-2.5 py-0.5 text-xs font-bold shadow-xs">
+                                        <i class="bi bi-trophy-fill text-amber-600"></i>
+                                        <span>{{ $totalWinsCount }} {{ Str::plural('Win', $totalWinsCount) }}</span>
                                     </span>
                                 @endif
                             </div>
 
-                            <!-- Username Handle & Headline -->
-                            <div class="text-slate-500 small mb-2">
-                                <span class="font-monospace text-indigo-400 fw-bold">&#64;{{ $user->username }}</span>
+                            <!-- Username Handle, Headline & Website -->
+                            <div class="flex flex-wrap items-center justify-center justify-sm-start gap-x-2 gap-y-1 text-sm text-slate-500 mb-3">
+                                <span class="font-mono text-indigo-600 font-semibold">&#64;{{ $user->username }}</span>
                                 @if($user->headline)
-                                    <span class="mx-1.5">•</span>
-                                    <span class="fw-semibold text-slate-800">{{ $user->headline }}</span>
+                                    <span class="text-slate-300">•</span>
+                                    <span class="text-slate-700 font-medium">{{ $user->headline }}</span>
+                                @endif
+                                @if($user->website)
+                                    <span class="text-slate-300">•</span>
+                                    <a href="{{ $user->website }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 text-decoration-none">
+                                        <i class="bi bi-link-45deg"></i>
+                                        <span>Portfolio</span>
+                                    </a>
                                 @endif
                             </div>
 
-                            <!-- Trust Metrics Strip -->
+                            <!-- Trust Metrics Chips (Micro-Cards) -->
                             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2">
-                                <div class="metric-chip">
-                                    <i class="bi bi-trophy-fill text-warning"></i>
-                                    <span class="fw-bold text-[#121826]">{{ $totalWinsCount }}</span>
-                                    <span class="text-slate-500 extra-small">Wins</span>
+                                <div class="stat-chip-card">
+                                    <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                                        <i class="bi bi-trophy-fill text-xs"></i>
+                                    </span>
+                                    <div class="flex flex-col text-left leading-tight">
+                                        <span class="text-xs font-semibold text-slate-900">{{ $totalWinsCount }}</span>
+                                        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Wins</span>
+                                    </div>
                                 </div>
 
-                                <div class="metric-chip">
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    <span class="fw-bold text-[#121826]">{{ number_format($averageRating, 1) }}</span>
-                                    <span class="text-slate-500 extra-small">({{ $totalReviewsCount }} reviews)</span>
+                                <div class="stat-chip-card">
+                                    <span class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                                        <i class="bi bi-star-fill text-xs"></i>
+                                    </span>
+                                    <div class="flex flex-col text-left leading-tight">
+                                        <span class="text-xs font-semibold text-slate-900">{{ number_format($averageRating, 1) }}</span>
+                                        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-medium">({{ $totalReviewsCount }})</span>
+                                    </div>
                                 </div>
 
-                                <div class="metric-chip">
-                                    <i class="bi bi-collection-fill text-indigo-400"></i>
-                                    <span class="fw-bold text-[#121826]">{{ $totalAssetsCount }}</span>
-                                    <span class="text-slate-500 extra-small">Assets</span>
+                                <div class="stat-chip-card">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-500/10 text-[#20165c] flex items-center justify-center shrink-0">
+                                        <i class="bi bi-collection-fill text-xs"></i>
+                                    </span>
+                                    <div class="flex flex-col text-left leading-tight">
+                                        <span class="text-xs font-semibold text-slate-900">{{ $totalAssetsCount }}</span>
+                                        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Assets</span>
+                                    </div>
                                 </div>
 
-                                <div class="metric-chip">
-                                    <i class="bi bi-people-fill text-sky-400"></i>
-                                    <span class="fw-bold text-[#121826]" id="followersCountVal">{{ $followersCount }}</span>
-                                    <span class="text-slate-500 extra-small">Followers</span>
+                                <div class="stat-chip-card">
+                                    <span class="w-7 h-7 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0">
+                                        <i class="bi bi-people-fill text-xs"></i>
+                                    </span>
+                                    <div class="flex flex-col text-left leading-tight">
+                                        <span class="text-xs font-semibold text-slate-900" id="followersCountVal">{{ $followersCount }}</span>
+                                        <span class="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Followers</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -380,7 +484,7 @@
 
                 <!-- Right: Action Buttons -->
                 <div class="col-12 col-lg-5 text-center text-lg-end">
-                    <div class="d-inline-flex flex-wrap align-items-center justify-content-center justify-content-lg-end gap-2 pb-1">
+                    <div class="d-inline-flex flex-wrap align-items-center justify-content-center justify-content-lg-end gap-2.5 pb-1">
                         @if($isOwnProfile)
                             <a href="{{ route('settings.profile') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
                                 <i class="bi bi-gear-fill"></i>
@@ -391,23 +495,28 @@
                                 <span>My Dashboard</span>
                             </a>
                         @else
+                            <!-- Hire / Inquire CTA -->
+                            <a href="{{ route('inbox.show', $user->id) }}?inquiry=1" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
+                                <i class="bi bi-briefcase-fill text-amber-300"></i>
+                                <span>Hire / Inquire</span>
+                            </a>
+
                             <!-- Follow Toggle Button -->
                             @auth
-                                <button type="button" class="btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 shadow-sm border-0 cursor-pointer {{ $isFollowing ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-[#20165c] hover:bg-[#170f45] text-white' }}" id="followBtn" onclick="toggleFollow('{{ $user->username }}')">
+                                <button type="button" class="btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 shadow-sm border cursor-pointer {{ $isFollowing ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600' : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200' }}" id="followBtn" onclick="toggleFollow('{{ $user->username }}')">
                                     <i class="bi {{ $isFollowing ? 'bi-check2' : 'bi-plus-lg' }}" id="followBtnIcon"></i>
                                     <span id="followBtnText">{{ $isFollowing ? 'Following' : 'Follow' }}</span>
                                 </button>
                             @else
-                                <a href="{{ route('login') }}" class="btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
+                                <a href="{{ route('login') }}" class="btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
                                     <i class="bi bi-plus-lg"></i>
                                     <span>Follow</span>
                                 </a>
                             @endauth
 
                             <!-- Send Message Button -->
-                            <a href="{{ route('inbox.show', $user->id) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-sm transition-all duration-200 text-decoration-none shadow-sm">
+                            <a href="{{ route('inbox.show', $user->id) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-all duration-200 text-decoration-none shadow-sm" title="Send Message">
                                 <i class="bi bi-chat-dots-fill text-[#20165c]"></i>
-                                <span>Send Message</span>
                             </a>
                         @endif
                     </div>
@@ -1181,11 +1290,11 @@
             btn.disabled = false;
             if (data && data.success) {
                 if (data.is_following) {
-                    btn.className = 'btn btn-follow-toggle btn-success text-[#121826] px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2';
+                    btn.className = 'btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 shadow-sm border cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600';
                     icon.className = 'bi bi-check2';
                     text.textContent = 'Following';
                 } else {
-                    btn.className = 'btn btn-follow-toggle btn-purple-cta px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2';
+                    btn.className = 'btn-follow-toggle inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 shadow-sm border cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border-slate-200';
                     icon.className = 'bi bi-plus-lg';
                     text.textContent = 'Follow';
                 }

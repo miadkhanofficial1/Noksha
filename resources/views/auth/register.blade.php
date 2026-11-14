@@ -119,23 +119,33 @@
 
                     <!-- Password -->
                     <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold text-dark">
+                        <label for="password" class="form-label fw-semibold text-dark mb-1">
                             {{ __('auth.password') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="password" class="form-control rounded-3 @error('password') is-invalid @enderror" id="password" name="password" placeholder="At least 8 characters" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control rounded-3 pe-5 @error('password') is-invalid @enderror" id="password" name="password" placeholder="At least 8 characters" required>
+                            <button type="button" onclick="togglePasswordVisibility('password', this)" class="btn position-absolute top-50 end-0 translate-middle-y text-slate-400 hover:text-slate-600 border-0 bg-transparent p-0 me-3 d-flex items-center cursor-pointer shadow-none" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye text-base"></i>
+                            </button>
+                        </div>
                         @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <!-- Confirm Password -->
                     <div class="mb-4">
-                        <label for="password_confirmation" class="form-label fw-semibold text-dark">
+                        <label for="password_confirmation" class="form-label fw-semibold text-dark mb-1">
                             {{ __('auth.confirm_password') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="password" class="form-control rounded-3 @error('password_confirmation') is-invalid @enderror" id="password_confirmation" name="password_confirmation" placeholder="Re-enter password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control rounded-3 pe-5 @error('password_confirmation') is-invalid @enderror" id="password_confirmation" name="password_confirmation" placeholder="Re-enter password" required>
+                            <button type="button" onclick="togglePasswordVisibility('password_confirmation', this)" class="btn position-absolute top-50 end-0 translate-middle-y text-slate-400 hover:text-slate-600 border-0 bg-transparent p-0 me-3 d-flex items-center cursor-pointer shadow-none" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye text-base"></i>
+                            </button>
+                        </div>
                         @error('password_confirmation')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
 

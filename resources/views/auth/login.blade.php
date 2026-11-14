@@ -78,7 +78,7 @@
 
                     <!-- Password -->
                     <div class="mb-3">
-                        <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
                             <label for="password" class="form-label fw-semibold text-dark mb-0">
                                 {{ __('auth.password') }} <span class="text-danger">*</span>
                             </label>
@@ -86,7 +86,15 @@
                                 {{ __('auth.forgot_password') }}
                             </a>
                         </div>
-                        <input type="password" class="form-control rounded-3 mt-1 @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control rounded-3 pe-5 @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter password" required>
+                            <button type="button" onclick="togglePasswordVisibility('password', this)" class="btn position-absolute top-50 end-0 translate-middle-y text-slate-400 hover:text-slate-600 border-0 bg-transparent p-0 me-3 d-flex items-center cursor-pointer shadow-none" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye text-base"></i>
+                            </button>
+                        </div>
+                        @error('password')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Remember Me -->

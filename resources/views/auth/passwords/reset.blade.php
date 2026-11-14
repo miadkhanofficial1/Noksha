@@ -65,7 +65,7 @@
                         New Password <span class="text-rose-400">*</span>
                     </label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                             <i class="bi bi-lock"></i>
                         </div>
                         <input type="password" 
@@ -74,21 +74,22 @@
                                required 
                                autofocus
                                placeholder="Minimum 8 characters"
-                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[#121826] placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all @error('password') border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20 @enderror">
+                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-[#20165c] focus:ring-2 focus:ring-[#20165c]/20 transition-all @error('password') border-rose-500 focus:border-rose-500 focus:ring-rose-500/20 @enderror">
                         <button type="button" 
-                                onclick="togglePasswordVisibility('password', 'toggleIcon1')"
-                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-[#121826] transition-colors"
-                                tabindex="-1">
-                            <i class="bi bi-eye" id="toggleIcon1"></i>
+                                onclick="togglePasswordVisibility('password', this)"
+                                class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility">
+                            <i class="bi bi-eye text-base"></i>
                         </button>
                     </div>
 
                     <!-- Password Strength Meter -->
                     <div class="mt-2.5 space-y-1.5">
-                        <div class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden flex gap-1">
-                            <div id="strBar1" class="h-full w-1/3 bg-slate-700 rounded-full transition-all"></div>
-                            <div id="strBar2" class="h-full w-1/3 bg-slate-700 rounded-full transition-all"></div>
-                            <div id="strBar3" class="h-full w-1/3 bg-slate-700 rounded-full transition-all"></div>
+                        <div class="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden flex gap-1">
+                            <div id="strBar1" class="h-full w-1/3 bg-slate-300 rounded-full transition-all"></div>
+                            <div id="strBar2" class="h-full w-1/3 bg-slate-300 rounded-full transition-all"></div>
+                            <div id="strBar3" class="h-full w-1/3 bg-slate-300 rounded-full transition-all"></div>
                         </div>
                         <div class="flex items-center justify-between text-[11px] text-slate-500 px-0.5">
                             <span>Strength: <span id="strengthLabel" class="text-slate-500 font-semibold">Enter password</span></span>
@@ -103,7 +104,7 @@
                         Confirm New Password <span class="text-rose-400">*</span>
                     </label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                             <i class="bi bi-shield-lock"></i>
                         </div>
                         <input type="password" 
@@ -111,19 +112,20 @@
                                id="password_confirmation" 
                                required 
                                placeholder="Re-enter your new password"
-                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[#121826] placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all">
+                               class="w-full pl-10 pr-11 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-[#20165c] focus:ring-2 focus:ring-[#20165c]/20 transition-all">
                         <button type="button" 
-                                onclick="togglePasswordVisibility('password_confirmation', 'toggleIcon2')"
-                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-[#121826] transition-colors"
-                                tabindex="-1">
-                            <i class="bi bi-eye" id="toggleIcon2"></i>
+                                onclick="togglePasswordVisibility('password_confirmation', this)"
+                                class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility">
+                            <i class="bi bi-eye text-base"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <button type="submit" 
-                        class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-[#121826] font-semibold text-sm shadow-lg shadow-indigo-600/25 hover:shadow-cyan-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                        class="w-full py-3 px-4 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
                     <i class="bi bi-check-lg text-base"></i>
                     <span>Update Password & Secure Account</span>
                 </button>
@@ -149,10 +151,16 @@
 </div>
 
 <script>
-function togglePasswordVisibility(inputId, iconId) {
+function togglePasswordVisibility(inputId, btnOrIconId) {
     const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-    if (!input || !icon) return;
+    if (!input) return;
+    let icon = null;
+    if (typeof btnOrIconId === 'string') {
+        icon = document.getElementById(btnOrIconId);
+    } else if (btnOrIconId) {
+        icon = btnOrIconId.querySelector ? btnOrIconId.querySelector('i') : btnOrIconId;
+    }
+    if (!icon) return;
 
     if (input.type === 'password') {
         input.type = 'text';

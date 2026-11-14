@@ -42,6 +42,73 @@
         flex-wrap: nowrap !important;
         align-items: center !important;
     }
+
+    /* Dashboard Tab Pills Hover & Active System */
+    .dash-tab-btn {
+        color: #475569 !important;
+        background-color: transparent !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none !important;
+    }
+    .dash-tab-btn svg,
+    .dash-tab-btn i {
+        color: inherit !important;
+        stroke: currentColor !important;
+        transition: color 0.2s ease;
+    }
+    .dash-tab-btn:hover:not(.active) {
+        background-color: #f1f5f9 !important;
+        color: #20165c !important;
+    }
+    .dash-tab-btn:hover:not(.active) svg,
+    .dash-tab-btn:hover:not(.active) i {
+        color: #20165c !important;
+    }
+    .dash-tab-btn:focus:not(.active),
+    .dash-tab-btn:focus-visible:not(.active) {
+        outline: none !important;
+        background-color: #f1f5f9 !important;
+        color: #20165c !important;
+    }
+    .dash-tab-btn.active {
+        background-color: #20165c !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
+    }
+    .dash-tab-btn.active svg,
+    .dash-tab-btn.active i {
+        color: #ffffff !important;
+        stroke: currentColor !important;
+    }
+    .dash-tab-btn.active .dash-tab-badge,
+    .dash-tab-btn.active span[class*="rounded-full"] {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+    }
+    .dash-tab-btn.active:hover {
+        background-color: #170f45 !important;
+        color: #ffffff !important;
+    }
+    .dash-tab-btn.active:hover svg,
+    .dash-tab-btn.active:hover i {
+        color: #ffffff !important;
+    }
+    .dash-tab-btn.active:focus,
+    .dash-tab-btn.active:focus-visible,
+    .dash-tab-btn.active:active {
+        background-color: #20165c !important;
+        color: #ffffff !important;
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.25) !important;
+    }
+    .dash-tab-btn.active:focus svg,
+    .dash-tab-btn.active:focus i,
+    .dash-tab-btn.active:active svg,
+    .dash-tab-btn.active:active i {
+        color: #ffffff !important;
+    }
 </style>
 
 <div class="min-h-screen bg-white text-[#121826] py-8 px-4 sm:px-6 lg:px-8">
@@ -172,60 +239,60 @@
                 <span>Overview</span>
             </button>
             <button type="button" onclick="switchDashboardTab('pane-orders', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-orders">
-                <svg class="w-4 h-4 shrink-0 text-[#20165c]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span>My Orders / Invoices</span>
                 @if(isset($ordersCount) && $ordersCount > 0)
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $ordersCount }}</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $ordersCount }}</span>
                 @endif
             </button>
             <button type="button" onclick="switchDashboardTab('pane-hired-services', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-hired-services">
-                <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 <span>My Hired Services</span>
                 @if(isset($hiredServicesCount) && $hiredServicesCount > 0)
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-[#20165c]/10 text-[#20165c] font-bold">{{ $hiredServicesCount }}</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700 font-bold">{{ $hiredServicesCount }}</span>
                 @endif
             </button>
             <button type="button" onclick="switchDashboardTab('pane-downloads', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-downloads">
-                <svg class="w-4 h-4 shrink-0 text-[#20165c]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                 <span>My Downloads</span>
                 @if(isset($downloadsCount) && $downloadsCount > 0)
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $downloadsCount }}</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $downloadsCount }}</span>
                 @endif
             </button>
             <button type="button" onclick="switchDashboardTab('pane-wishlist', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-wishlist">
-                <svg class="w-4 h-4 shrink-0 text-rose-500" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                 <span>Wishlist</span>
                 @if(isset($wishlistCount) && $wishlistCount > 0)
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $wishlistCount }}</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">{{ $wishlistCount }}</span>
                 @endif
             </button>
 
             @if($user->isApprovedContributor() && $user->isSellerMode())
                 <button type="button" onclick="switchDashboardTab('pane-services', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-services">
-                    <svg class="w-4 h-4 shrink-0 text-[#20165c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     <span>My Services</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#20165c]">{{ $creatorServicesCount ?? 0 }}/5</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#20165c]">{{ $creatorServicesCount ?? 0 }}/5</span>
                 </button>
 
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
-                    <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     <span>Upload Asset</span>
                 </button>
             @elseif(!$user->isApprovedContributor() && $user->contributor_status === 'pending')
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
-                    <svg class="w-4 h-4 shrink-0 text-[#f47402]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>KYC Pending</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">Review</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">Review</span>
                 </button>
             @elseif(!$user->isApprovedContributor() && $user->contributor_status === 'rejected')
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
-                    <svg class="w-4 h-4 shrink-0 text-rose-500" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     <span>Contributor KYC</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">Action Needed</span>
+                    <span class="dash-tab-badge inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">Action Needed</span>
                 </button>
             @elseif(!$user->isApprovedContributor())
                 <button type="button" onclick="switchDashboardTab('pane-upload', this)" class="dash-tab-btn text-slate-600 hover:text-[#20165c] hover:bg-slate-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0" data-tab="pane-upload">
-                    <svg class="w-4 h-4 shrink-0 text-[#20165c]" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <svg class="w-4 h-4 shrink-0" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     <span>Become a Contributor</span>
                 </button>
             @endif

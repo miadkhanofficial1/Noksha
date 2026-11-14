@@ -76,10 +76,24 @@ main {
     box-shadow: 0 4px 12px rgba(32, 22, 92, 0.2);
 
     &:hover {
-        background: #181045 !important;
+        background: #170f45 !important;
         color: #ffffff !important;
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(32, 22, 92, 0.3);
+    }
+
+    &:focus,
+    &:focus-visible,
+    &:active,
+    &.active {
+        background: #20165c !important;
+        color: #ffffff !important;
+        border-color: #181045 !important;
+        box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.25) !important;
+    }
+
+    svg, i {
+        color: #ffffff !important;
     }
 }
 
@@ -99,6 +113,20 @@ main {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(244, 116, 2, 0.35);
     }
+
+    &:focus,
+    &:focus-visible,
+    &:active,
+    &.active {
+        background: #f47402 !important;
+        color: #ffffff !important;
+        border-color: #d96602 !important;
+        box-shadow: 0 0 0 3px rgba(244, 116, 2, 0.25) !important;
+    }
+
+    svg, i {
+        color: #ffffff !important;
+    }
 }
 
 .btn-noksha-outline {
@@ -111,10 +139,119 @@ main {
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-        background: rgba(32, 22, 92, 0.06);
-        color: #181045 !important;
-        border-color: #181045;
+        background: #f1f5f9;
+        color: #170f45 !important;
+        border-color: #170f45;
         transform: translateY(-2px);
+    }
+
+    &:focus,
+    &:focus-visible,
+    &:active,
+    &.active {
+        background: #f1f5f9;
+        color: #20165c !important;
+        border-color: #20165c;
+        box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.15) !important;
+    }
+}
+
+// Global Button & Tab Contrast Protection
+button[class*="bg-[#20165c]"],
+a[class*="bg-[#20165c]"] {
+    color: #ffffff !important;
+
+    &:hover {
+        background-color: #170f45 !important;
+        color: #ffffff !important;
+    }
+
+    &:focus,
+    &:focus-visible {
+        background-color: #20165c !important;
+        color: #ffffff !important;
+        outline: none !important;
+    }
+
+    &:active,
+    &.active {
+        background-color: #170f45 !important;
+        color: #ffffff !important;
+    }
+
+    svg, i {
+        color: #ffffff !important;
+    }
+}
+
+// Dashboard Tab Pills
+.dash-tab-btn {
+    color: #475569 !important;
+    background-color: transparent !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none !important;
+
+    svg, i {
+        color: inherit !important;
+        stroke: currentColor !important;
+        transition: color 0.2s ease;
+    }
+
+    &:hover:not(.active) {
+        background-color: #f1f5f9 !important;
+        color: #20165c !important;
+
+        svg, i {
+            color: #20165c !important;
+        }
+    }
+
+    &:focus:not(.active),
+    &:focus-visible:not(.active) {
+        outline: none !important;
+        background-color: #f1f5f9 !important;
+        color: #20165c !important;
+    }
+
+    &.active {
+        background-color: #20165c !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
+
+        svg, i {
+            color: #ffffff !important;
+            stroke: currentColor !important;
+        }
+
+        .dash-tab-badge,
+        span[class*="rounded-full"] {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+        }
+
+        &:hover {
+            background-color: #170f45 !important;
+            color: #ffffff !important;
+
+            svg, i {
+                color: #ffffff !important;
+            }
+        }
+
+        &:focus,
+        &:focus-visible,
+        &:active {
+            background-color: #20165c !important;
+            color: #ffffff !important;
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(32, 22, 92, 0.25) !important;
+
+            svg, i {
+                color: #ffffff !important;
+            }
+        }
     }
 }
 
