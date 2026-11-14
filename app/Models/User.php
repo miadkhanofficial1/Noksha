@@ -385,11 +385,43 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * User's uploaded design assets (alias for resources).
+     */
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Resource::class, 'user_id');
+    }
+
+    /**
      * User's uploaded design templates (alias for resources).
      */
     public function templates(): HasMany
     {
         return $this->hasMany(Template::class, 'user_id');
+    }
+
+    /**
+     * Services offered by this user / creator.
+     */
+    public function services(): HasMany
+    {
+        return $this->hasMany(\App\Models\Service::class, 'user_id');
+    }
+
+    /**
+     * Service orders where this user is the seller / creator.
+     */
+    public function sellerOrders(): HasMany
+    {
+        return $this->hasMany(\App\Models\ServiceOrder::class, 'seller_id');
+    }
+
+    /**
+     * Service orders where this user is the buyer / client.
+     */
+    public function buyerOrders(): HasMany
+    {
+        return $this->hasMany(\App\Models\ServiceOrder::class, 'buyer_id');
     }
 
     /**
@@ -409,9 +441,41 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Customer reviews received on this user's marketplace resources.
+     * Verified platform reviews received by this creator.
      */
-    public function receivedReviews(): HasManyThrough
+    public function receivedReviews(): HasMany
+    {
+        return $this->hasMany(\App\Models\PlatformReview::class, 'creator_id');
+    }
+
+    /**
+     * Verified platform reviews received by this creator (backward compatibility alias).
+     */
+    public function creatorReviews(): HasMany
+    {
+        return $this->hasMany(\App\Models\PlatformReview::class, 'creator_id');
+    }
+
+    /**
+     * Platform reviews given / authored by this user.
+     */
+    public function givenReviews(): HasMany
+    {
+        return $this->hasMany(\App\Models\PlatformReview::class, 'reviewer_id');
+    }
+
+    /**
+     * Platform reviews authored by this user (backward compatibility alias).
+     */
+    public function authoredReviews(): HasMany
+    {
+        return $this->hasMany(\App\Models\PlatformReview::class, 'reviewer_id');
+    }
+
+    /**
+     * Customer reviews received on this user's marketplace resources (legacy).
+     */
+    public function legacyReceivedReviews(): HasManyThrough
     {
         return $this->hasManyThrough(Review::class, Resource::class, 'user_id', 'resource_id');
     }
@@ -647,14 +711,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Creative services listed by this creator.
-     */
-    public function services(): HasMany
-    {
-        return $this->hasMany(Service::class, 'user_id');
-    }
-
-    /**
      * Messages sent by this user.
      */
     public function sentMessages(): HasMany
@@ -663,11 +719,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Service orders where user is the client buyer.
+     * Service orders where user is the client buyer (alias for buyerOrders).
      */
     public function buyerServiceOrders(): HasMany
     {
-        return $this->hasMany(ServiceOrder::class, 'buyer_id');
+        return $this->buyerOrders();
     }
 
     /**
@@ -675,15 +731,15 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function serviceOrdersAsBuyer(): HasMany
     {
-        return $this->buyerServiceOrders();
+        return $this->buyerOrders();
     }
 
     /**
-     * Service orders where user is the delivering seller.
+     * Service orders where user is the delivering seller (alias for sellerOrders).
      */
     public function sellerServiceOrders(): HasMany
     {
-        return $this->hasMany(ServiceOrder::class, 'seller_id');
+        return $this->sellerOrders();
     }
 
     /**
@@ -691,7 +747,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function serviceOrdersAsSeller(): HasMany
     {
-        return $this->sellerServiceOrders();
+        return $this->sellerOrders();
     }
 
     /**
@@ -718,14 +774,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Platform reviews received by this creator.
-     */
-    public function creatorReviews(): HasMany
-    {
-        return $this->hasMany(PlatformReview::class, 'creator_id');
-    }
-
-    /**
      * Admin adjustment of creator demerits and reliability warning.
      */
     public function setDemerits(int $points, ?bool $warning = null): void
@@ -744,8 +792,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getAverageRatingAttribute(): float
     {
-        $platformAvg = $this->creatorReviews()->where('is_complaint', false)->avg('rating');
-        $legacyAvg = $this->receivedReviews()->avg('rating');
+        $platformAvg = $this->receivedReviews()->where('is_complaint', false)->avg('rating');
+        $legacyAvg = $this->legacyReceivedReviews()->avg('rating');
 
         if ($platformAvg !== null && $legacyAvg !== null) {
             return round(((float) $platformAvg + (float) $legacyAvg) / 2, 1);
@@ -764,17 +812,9 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getTotalReviewsCountAttribute(): int
     {
-        $platformCount = (int) $this->creatorReviews()->where('is_complaint', false)->count();
-        $legacyCount = (int) $this->receivedReviews()->count();
+        $platformCount = (int) $this->receivedReviews()->where('is_complaint', false)->count();
+        $legacyCount = (int) $this->legacyReceivedReviews()->count();
         return $platformCount + $legacyCount;
-    }
-
-    /**
-     * Platform reviews authored by this user.
-     */
-    public function authoredReviews(): HasMany
-    {
-        return $this->hasMany(PlatformReview::class, 'reviewer_id');
     }
 
     /**

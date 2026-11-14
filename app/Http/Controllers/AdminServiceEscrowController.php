@@ -75,7 +75,7 @@ class AdminServiceEscrowController extends Controller
         ->with([
             'services' => fn($q) => $q->latest(),
             'sellerOrders' => fn($q) => $q->with('buyer')->latest()->take(10),
-            'creatorReviews' => fn($q) => $q->with('reviewer')->latest()->take(5),
+            'receivedReviews' => fn($q) => $q->with('reviewer')->latest()->take(5),
             'resources' => fn($q) => $q->select('id', 'user_id', 'title', 'downloads', 'views', 'price', 'is_paid'),
         ]);
 
