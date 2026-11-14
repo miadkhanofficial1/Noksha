@@ -54,9 +54,15 @@
                 </a>
             </div>
 
-            <!-- Upload count stats -->
-            <div class="text-xs text-slate-500">
-                Displaying <span class="font-bold text-[#121826]">{{ $resources->total() }}</span> records
+            <!-- Upload count stats & Guidelines Button -->
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="openUploadGuidelinesModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#20165c]/10 text-[#20165c] border border-[#20165c]/20 hover:bg-[#20165c]/20 transition-all cursor-pointer shadow-sm">
+                    <i class="bi bi-journal-text text-sm"></i>
+                    <span>📖 Creator Guidelines</span>
+                </button>
+                <div class="text-xs text-slate-500">
+                    Displaying <span class="font-bold text-[#121826]">{{ $resources->total() }}</span> records
+                </div>
             </div>
         </div>
 

@@ -60,6 +60,10 @@
     </script>
 
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         /* Custom scrollbars */
         ::-webkit-scrollbar {
             width: 6px;
@@ -330,6 +334,12 @@
                         <span class="font-mono text-[11px] text-slate-500">PHP {{ PHP_VERSION }}</span>
                     </div>
 
+                    <!-- Creator Guidelines Quick Button -->
+                    <button type="button" onclick="openUploadGuidelinesModal()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-[#20165c] hover:bg-purple-50 hover:border-purple-200 text-xs font-semibold shadow-sm transition-all cursor-pointer" title="Inspect Noksha Creator Upload Guidelines">
+                        <i class="bi bi-journal-text text-sm text-[#20165c]"></i>
+                        <span>📖 Guidelines</span>
+                    </button>
+
                     <!-- Admin Profile Quick Dropdown -->
                     <div class="relative" id="profile-dropdown-container">
                         <button id="profile-menu-btn" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
@@ -360,6 +370,9 @@
                             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">
                                 <i class="bi bi-speedometer2 me-1.5 text-emerald-600"></i> Command Center
                             </a>
+                            <button type="button" onclick="openUploadGuidelinesModal()" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-purple-50 hover:text-[#20165c] transition-colors flex items-center gap-1.5 cursor-pointer">
+                                <i class="bi bi-journal-text me-1.5 text-[#20165c]"></i> Creator Guidelines
+                            </button>
                             <div class="border-t border-slate-100 my-1"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -479,6 +492,7 @@
             }
         });
     </script>
+    @include('partials.creator-guidelines-modal')
     @stack('scripts')
 </body>
 </html>

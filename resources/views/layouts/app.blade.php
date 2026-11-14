@@ -62,6 +62,10 @@
     @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
 
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         .lang-switcher-pill {
             background: rgba(108, 76, 241, 0.08);
             border: 1px solid rgba(108, 76, 241, 0.18);

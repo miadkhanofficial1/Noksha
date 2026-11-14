@@ -305,4 +305,20 @@ class DashboardController extends Controller
         $modeLabel = ($targetMode === 'seller') ? 'Contributor Mode' : 'Buyer Mode';
         return redirect()->back()->with('success', "Switched to {$modeLabel} successfully.");
     }
+
+    /**
+     * Mark the creator upload guidelines as seen for the authenticated user.
+     */
+    public function markGuidelinesSeen(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = auth()->user();
+        if ($user) {
+            $user->update(['has_seen_creator_guidelines' => true]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Creator guidelines marked as seen.',
+        ]);
+    }
 }

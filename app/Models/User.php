@@ -71,6 +71,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'demerit_points',
         'late_deliveries_count',
         'reliability_warning',
+        'has_seen_creator_guidelines',
     ];
 
     /**
@@ -107,6 +108,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'demerit_points' => 'integer',
             'late_deliveries_count' => 'integer',
             'reliability_warning' => 'boolean',
+            'has_seen_creator_guidelines' => 'boolean',
         ];
     }
 
