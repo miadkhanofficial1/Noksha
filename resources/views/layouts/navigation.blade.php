@@ -364,11 +364,22 @@
                     <!-- User Profile Sleek Dropdown (Consolidates Dashboard, Verify Email, Settings, Logout) -->
                     <div class="dropdown">
                         <button class="user-avatar-btn dropdown-toggle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ $user->name }}">
-                            @if($user->avatar)
-                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover;">
+                            @php
+                                $navAvatarUrl = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
+                                $userInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
+                            @endphp
+                            @if($navAvatarUrl)
+                                <img src="{{ $navAvatarUrl }}" 
+                                     alt="{{ $user->name }}" 
+                                     class="rounded-circle" 
+                                     style="width: 28px; height: 28px; object-fit: cover;"
+                                     onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('d-none');">
+                                <span class="user-avatar-initial d-none" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: #20165c; color: #fff; border-radius: 50%;">
+                                    {{ $userInitials }}
+                                </span>
                             @else
-                                <span class="user-avatar-initial">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                <span class="user-avatar-initial" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: #20165c; color: #fff; border-radius: 50%;">
+                                    {{ $userInitials }}
                                 </span>
                             @endif
                             <span class="fw-semibold small text-dark d-none d-md-inline" style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -409,16 +420,58 @@
                                 <!-- ========================================================= -->
                                 <!-- ADMIN ROLE EXCLUSIVE NAVIGATION ITEMS                     -->
                                 <!-- ========================================================= -->
-                                
-                                <!-- 1. Admin HQ Command Center -->
+
+                                <!-- 1. Personal Creator Dashboard -->
                                 <li>
-                                    <a class="dropdown-item small py-2 fw-bold text-primary d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}">
-                                        <i class="bi bi-shield-lock-fill text-primary fs-6"></i>
-                                        <span>Admin HQ Command Center</span>
+                                    <a class="dropdown-item small py-2 fw-bold text-dark d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+                                        <i class="bi bi-speedometer2 text-[#20165c] fs-6"></i>
+                                        <span>My Creator Dashboard</span>
                                     </a>
                                 </li>
 
-                                <!-- 2. Resource Moderation Queue -->
+                                <!-- 2. Public Profile -->
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold text-slate-700 d-flex align-items-center gap-2" href="{{ route('user.profile', $user->username ?? $user->id) }}">
+                                        <i class="bi bi-person-circle text-[#f47402] fs-6"></i>
+                                        <span>My Public Profile</span>
+                                    </a>
+                                </li>
+
+                                <!-- 3. Quick Upload Asset -->
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold text-slate-700 d-flex align-items-center gap-2" href="{{ route('dashboard', ['tab' => 'upload']) }}">
+                                        <i class="bi bi-cloud-arrow-up-fill text-amber-500 fs-6"></i>
+                                        <span>Upload Asset</span>
+                                    </a>
+                                </li>
+
+                                <!-- 4. My Services -->
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold text-slate-700 d-flex align-items-center gap-2" href="{{ route('user.profile', $user->username ?? $user->id) }}#tab-services">
+                                        <i class="bi bi-briefcase-fill text-[#20165c] fs-6"></i>
+                                        <span>My Services</span>
+                                    </a>
+                                </li>
+
+                                <li><hr class="dropdown-divider my-1 border-slate-200 dark:border-slate-700"></li>
+
+                                <!-- 5. Admin HQ Command Center -->
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-bold text-primary d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}">
+                                        <i class="bi bi-shield-lock-fill text-primary fs-6"></i>
+                                        <span>Admin Command Center</span>
+                                    </a>
+                                </li>
+
+                                <!-- 6. Services & Escrow Hub -->
+                                <li>
+                                    <a class="dropdown-item small py-2 fw-semibold text-slate-700 d-flex align-items-center gap-2" href="{{ route('admin.services-hub.index') }}">
+                                        <i class="bi bi-safe-fill text-emerald-600 fs-6"></i>
+                                        <span>Services & Escrow Hub</span>
+                                    </a>
+                                </li>
+
+                                <!-- 7. Resource Moderation Queue -->
                                 @php
                                     $pendingResourceCount = \App\Models\Resource::where('status', 'pending')->count();
                                 @endphp
@@ -436,7 +489,7 @@
 
                                 <li><hr class="dropdown-divider my-1 border-slate-200 dark:border-slate-700"></li>
 
-                                <!-- 3. Profile Settings -->
+                                <!-- 8. Profile Settings -->
                                 <li>
                                     <a class="dropdown-item small py-2 fw-semibold d-flex align-items-center gap-2" href="{{ route('profile.edit') }}">
                                         <i class="bi bi-gear-fill text-secondary fs-6"></i>
@@ -446,7 +499,7 @@
 
                                 <li><hr class="dropdown-divider my-1 border-slate-200 dark:border-slate-700"></li>
 
-                                <!-- 4. Log Out -->
+                                <!-- 9. Log Out -->
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST" class="m-0">
                                         @csrf
@@ -709,8 +762,24 @@
                 <!-- Mobile User Quick Actions -->
                 <div class="border-top pt-2 d-flex flex-column gap-1">
                     @if(in_array($user->role, ['admin', 'super_admin']) || (method_exists($user, 'isAdmin') && $user->isAdmin()))
+                        <a class="nav-link-custom text-dark fw-bold" href="{{ route('dashboard') }}">
+                            <i class="bi bi-speedometer2 me-2 text-[#20165c]"></i> My Creator Dashboard
+                        </a>
+                        <a class="nav-link-custom text-slate-700" href="{{ route('user.profile', $user->username ?? $user->id) }}">
+                            <i class="bi bi-person-circle me-2 text-[#f47402]"></i> My Public Profile
+                        </a>
+                        <a class="nav-link-custom text-slate-700" href="{{ route('dashboard', ['tab' => 'upload']) }}">
+                            <i class="bi bi-cloud-arrow-up-fill me-2 text-amber-500"></i> Upload Asset
+                        </a>
+                        <a class="nav-link-custom text-slate-700" href="{{ route('user.profile', $user->username ?? $user->id) }}#tab-services">
+                            <i class="bi bi-briefcase-fill me-2 text-[#20165c]"></i> My Services
+                        </a>
+                        <hr class="my-1 border-slate-200">
                         <a class="nav-link-custom text-primary fw-bold" href="{{ route('admin.dashboard') }}">
                             <i class="bi bi-shield-lock-fill me-2"></i> Admin HQ Command Center
+                        </a>
+                        <a class="nav-link-custom text-primary" href="{{ route('admin.services-hub.index') }}">
+                            <i class="bi bi-safe-fill me-2 text-emerald-600"></i> Services & Escrow Hub
                         </a>
                         @php
                             $pendingResourceCountMobile = \App\Models\Resource::where('status', 'pending')->count();

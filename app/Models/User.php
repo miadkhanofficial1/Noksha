@@ -616,7 +616,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAvatarUrlAttribute(): string
     {
         if (empty($this->avatar)) {
-            return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=6366f1&color=fff';
+            return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=20165c&color=fff';
         }
 
         if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
@@ -629,7 +629,11 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         $cleanPath = ltrim(str_replace('storage/', '', (string) $this->avatar), '/');
-        return asset('storage/' . $cleanPath);
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($cleanPath)) {
+            return asset('storage/' . $cleanPath);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=20165c&color=fff';
     }
 
     /**
@@ -651,7 +655,11 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         $cleanPath = ltrim(str_replace('storage/', '', (string) $this->cover_image), '/');
-        return asset('storage/' . $cleanPath);
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($cleanPath)) {
+            return asset('storage/' . $cleanPath);
+        }
+
+        return null;
     }
 
     /**

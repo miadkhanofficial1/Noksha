@@ -7,7 +7,7 @@
     /* Profile Cover Banner */
     .profile-cover-banner {
         height: 280px;
-        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+        background: linear-gradient(135deg, #1e1b4b 0%, #20165c 50%, #2c1e7a 100%);
         position: relative;
         overflow: hidden;
     }
@@ -52,7 +52,7 @@
         border-radius: 50%;
         border: 4px solid #ffffff;
         box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        background: linear-gradient(135deg, #20165c 0%, #312285 100%);
         color: #ffffff;
         font-size: 3rem;
         font-weight: 800;
@@ -261,12 +261,13 @@
 
     <!-- HERO IDENTITY BANNER -->
     @php
-        $coverUrl = $user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null;
+        $coverUrl = $user && $user->cover_url ? $user->cover_url : ($user && $user->cover_image ? (str_starts_with($user->cover_image, 'http') ? $user->cover_image : asset('storage/' . ltrim(str_replace('storage/', '', $user->cover_image), '/'))) : null);
         $avatarUrl = $user && $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
+        $userInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
     @endphp
-    <section class="profile-cover-banner" style="background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; background-color: #111a33;">
+    <section class="profile-cover-banner" style="{{ $coverUrl ? "background-image: url('{$coverUrl}'); background-size: cover; background-position: center;" : "background: linear-gradient(135deg, #1e1b4b 0%, #20165c 50%, #2c1e7a 100%);" }}">
         @if($coverUrl)
-            <img src="{{ $coverUrl }}" alt="{{ $user->name }} cover" class="w-100 h-100 object-fit-cover">
+            <img src="{{ $coverUrl }}" alt="{{ $user->name }} cover" class="w-100 h-100 object-fit-cover position-absolute top-0 start-0" onerror="this.remove(); this.parentElement.style.backgroundImage='none';">
         @endif
         <div class="container h-100 position-relative d-flex align-items-end justify-content-end pb-3">
             @if($user->is_available)
@@ -292,10 +293,13 @@
                                 <img src="{{ $avatarUrl }}" 
                                      alt="{{ $user->name }}" 
                                      class="profile-avatar-img ring-4 ring-[#0b1329] rounded-full object-cover"
-                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'profile-avatar-initial ring-4 ring-[#0b1329]\'>{{ strtoupper(substr($user->name, 0, 2)) }}</div>';">
+                                     onerror="this.style.display='none'; document.getElementById('avatar-fallback-initial')?.classList.remove('d-none');">
+                                <div id="avatar-fallback-initial" class="profile-avatar-initial ring-4 ring-[#0b1329] d-none">
+                                    {{ $userInitials }}
+                                </div>
                             @else
                                 <div class="profile-avatar-initial ring-4 ring-[#0b1329]">
-                                    {{ strtoupper(substr($user->name, 0, 2)) }}
+                                    {{ $userInitials }}
                                 </div>
                             @endif
 
@@ -593,7 +597,7 @@
                             @endif
                         </p>
                         @if($isOwnProfile)
-                            <button type="button" onclick="openCreateServiceModal()" class="btn btn-sm btn-purple-cta rounded-pill px-4 py-2 fw-bold">
+                            <button type="button" onclick="openCreateServiceModal()" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#20165c] hover:bg-[#170f45] text-white font-medium text-xs shadow-sm transition-all duration-200 border-0 cursor-pointer">
                                 + Add Your First Service
                             </button>
                         @endif

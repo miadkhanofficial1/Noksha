@@ -254,6 +254,15 @@
 
             <!-- Sidebar Footer: Quick Site Link & Profile -->
             <div class="p-3 border-t border-slate-200 bg-slate-50">
+                <a href="{{ route('dashboard') }}"
+                   class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-white bg-[#20165c] hover:bg-[#170f45] shadow-xs transition-all mb-2">
+                    <span class="flex items-center gap-2">
+                        <i class="bi bi-palette-fill text-[#f47402]"></i>
+                        <span>My Creator Studio</span>
+                    </span>
+                    <i class="bi bi-arrow-right text-[10px]"></i>
+                </a>
+
                 <a href="{{ route('home') }}" target="_blank"
                    class="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-600 hover:text-[#20165c] hover:bg-purple-50 transition-colors mb-2">
                     <span class="flex items-center gap-2">
@@ -266,7 +275,7 @@
                 <div class="flex items-center justify-between pt-2 border-t border-slate-200 px-1">
                     <div class="flex items-center gap-2.5 overflow-hidden">
                         <div class="w-8 h-8 rounded-full bg-[#20165c] flex items-center justify-center text-white font-bold text-xs flex-shrink-0 shadow-sm">
-                            {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                            {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 2)) }}
                         </div>
                         <div class="truncate">
                             <div class="text-xs font-semibold text-[#121826] truncate">{{ auth()->user()->name ?? 'Super Admin' }}</div>
@@ -325,7 +334,7 @@
                     <div class="relative" id="profile-dropdown-container">
                         <button id="profile-menu-btn" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
                             <div class="w-8 h-8 rounded-full bg-[#20165c] flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                                {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                                {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 2)) }}
                             </div>
                             <span class="hidden md:block text-xs font-medium text-slate-800">
                                 {{ auth()->user()->name }}
@@ -333,11 +342,18 @@
                             <i class="bi bi-chevron-down text-[10px] text-slate-400"></i>
                         </button>
 
-                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-50 text-sm">
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-200 py-1 z-50 text-sm">
                             <div class="px-4 py-2 border-b border-slate-100">
                                 <p class="text-xs text-slate-500">Signed in as</p>
                                 <p class="font-semibold text-[#121826] truncate">{{ auth()->user()->email }}</p>
                             </div>
+                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-xs text-slate-700 hover:bg-purple-50 hover:text-[#20165c] transition-colors">
+                                <i class="bi bi-palette-fill me-1.5 text-[#20165c]"></i> My Creator Dashboard
+                            </a>
+                            <a href="{{ route('user.profile', auth()->user()->username ?? auth()->user()->id) }}" class="block px-4 py-2 text-xs text-slate-700 hover:bg-purple-50 hover:text-[#20165c] transition-colors">
+                                <i class="bi bi-person-circle me-1.5 text-[#f47402]"></i> My Public Profile
+                            </a>
+                            <div class="border-t border-slate-100 my-1"></div>
                             <a href="{{ route('home') }}" class="block px-4 py-2 text-xs text-slate-700 hover:bg-slate-50">
                                 <i class="bi bi-shop me-1.5 text-[#20165c]"></i> Marketplace Store
                             </a>

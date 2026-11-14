@@ -81,11 +81,18 @@
         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center gap-4">
                 <div class="relative shrink-0">
-                    @if($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" class="w-12 h-12 rounded-full object-cover border-2 border-[#20165c] shadow-sm" alt="{{ $user->name }}">
+                    @php
+                        $dashAvatar = $user->avatar ? (str_starts_with($user->avatar, 'http') ? $user->avatar : asset('storage/' . ltrim(str_replace('storage/', '', $user->avatar), '/'))) : null;
+                        $dashInitials = strtoupper(substr($user->name ?? 'NO', 0, 2));
+                    @endphp
+                    @if($dashAvatar)
+                        <img src="{{ $dashAvatar }}" class="w-12 h-12 rounded-full object-cover border-2 border-[#20165c] shadow-sm" alt="{{ $user->name }}" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('d-none');">
+                        <div class="w-12 h-12 rounded-full bg-[#20165c] text-white font-bold flex items-center justify-center text-sm shadow-sm d-none">
+                            {{ $dashInitials }}
+                        </div>
                     @else
-                        <div class="w-12 h-12 rounded-full bg-[#20165c]/10 border-2 border-[#20165c]/30 text-[#20165c] font-bold flex items-center justify-center text-lg shadow-inner">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        <div class="w-12 h-12 rounded-full bg-[#20165c] text-white font-bold flex items-center justify-center text-sm shadow-sm">
+                            {{ $dashInitials }}
                         </div>
                     @endif
                     @if($isUserAdmin)
