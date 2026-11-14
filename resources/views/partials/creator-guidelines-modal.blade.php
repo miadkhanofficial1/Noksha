@@ -1,27 +1,34 @@
 @php
+    $isUserAdmin = auth()->check() && (
+        (bool) auth()->user()->is_admin 
+        || (method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin())
+        || in_array(auth()->user()->role ?? '', ['admin', 'super_admin'])
+    );
+
     $canAutoOpenGuidelines = auth()->check()
-        && (auth()->user()->is_contributor || auth()->user()->contributor_status === 'approved')
-        && !auth()->user()->is_admin
-        && !auth()->user()->has_seen_creator_guidelines;
+        && !$isUserAdmin
+        && ((auth()->user()->is_contributor ?? false) || (auth()->user()->contributor_status ?? '') === 'approved')
+        && !(bool) (auth()->user()->has_seen_creator_guidelines ?? false);
 @endphp
 
 <!-- ======================================================== -->
 <!-- NOKSHA CREATOR UPLOAD GUIDELINES MODAL                   -->
 <!-- ======================================================== -->
 <div id="nokshaGuidelinesModal"
+     x-data="{ showGuidelines: {{ $canAutoOpenGuidelines ? 'true' : 'false' }} }"
      x-cloak
      data-auto-open="{{ $canAutoOpenGuidelines ? 'true' : 'false' }}"
      data-seen-route="{{ route('creator.guidelines.seen') }}"
      data-csrf="{{ csrf_token() }}"
      style="display: none;"
-     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden transition-opacity duration-300"
-     onclick="if(event.target === this) { closeUploadGuidelinesModal(); }">
+     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden transition-opacity duration-300"
+     onclick="if(event.target === this) { closeGuidelinesModal(); }">
 
-    <div class="relative w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col"
+    <div class="relative w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col z-50"
          onclick="event.stopPropagation()">
 
         <!-- Modal Header -->
-        <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between bg-slate-50 relative z-50">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-[#20165c]/10 border border-[#20165c]/20 text-[#20165c] flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5 shrink-0 text-[#20165c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,11 +40,12 @@
                     <p class="text-xs text-slate-500 mb-0">Follow our quality and packaging rules to ensure rapid asset approval</p>
                 </div>
             </div>
+            <!-- X Close Button -->
             <button type="button"
-                    onclick="closeUploadGuidelinesModal()"
-                    class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 hover:bg-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                    onclick="closeGuidelinesModal();"
+                    class="relative z-50 w-9 h-9 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 flex items-center justify-center transition-all cursor-pointer pointer-events-auto shadow-xs"
                     aria-label="Close modal">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
@@ -107,7 +115,7 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between flex-wrap gap-3">
+        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between flex-wrap gap-3 relative z-50">
             <span class="text-xs text-slate-500 font-medium">Noksha Creator Submission Standards</span>
             <div class="flex items-center gap-3">
                 <a href="{{ route('guidelines.download-pdf') }}"
@@ -118,9 +126,10 @@
                     </svg>
                     <span>Download PDF Guidelines</span>
                 </a>
+                <!-- Got it, Close Button -->
                 <button type="button"
-                        onclick="closeUploadGuidelinesModal()"
-                        class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-xs transition-colors cursor-pointer">
+                        onclick="closeGuidelinesModal();"
+                        class="relative z-50 px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-xs transition-colors cursor-pointer pointer-events-auto shadow-sm">
                     Got it, Close
                 </button>
             </div>
@@ -134,60 +143,84 @@
         return document.getElementById('nokshaGuidelinesModal');
     };
 
-    window.openUploadGuidelinesModal = function() {
+    window.openGuidelinesModal = function() {
         var modal = window.getGuidelinesModal();
         if (modal) {
             modal.removeAttribute('x-cloak');
             modal.classList.remove('hidden');
             modal.style.display = 'flex';
+            modal.style.removeProperty('display');
+            modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+
+            try {
+                if (window.Alpine && modal._x_dataStack && modal._x_dataStack[0]) {
+                    modal._x_dataStack[0].showGuidelines = true;
+                }
+            } catch (alpineErr) {}
         } else {
             window.open('{{ route("guidelines.download-pdf") }}', '_blank');
         }
     };
+    window.openUploadGuidelinesModal = window.openGuidelinesModal;
 
-    window.closeUploadGuidelinesModal = function(e) {
-        if (e && e.target && e.currentTarget && e.target !== e.currentTarget) {
-            return;
-        }
+    window.closeGuidelinesModal = function() {
+        // 1. Unconditionally and immediately hide the modal in the DOM first
         var modal = window.getGuidelinesModal();
         if (modal) {
             modal.classList.add('hidden');
             modal.style.display = 'none';
-            document.body.style.overflow = '';
+            modal.style.setProperty('display', 'none', 'important');
+        }
+        document.body.style.overflow = '';
 
-            var shouldAutoOpen = modal.getAttribute('data-auto-open') === 'true';
-            if (shouldAutoOpen) {
-                modal.setAttribute('data-auto-open', 'false');
-                try {
-                    localStorage.setItem('noksha_guidelines_seen', 'true');
-                } catch (err) {}
+        // If Alpine is active on this element, sync the state
+        try {
+            if (window.Alpine && modal && modal._x_dataStack && modal._x_dataStack[0]) {
+                modal._x_dataStack[0].showGuidelines = false;
+            }
+        } catch (alpineErr) {}
 
-                var seenRoute = modal.getAttribute('data-seen-route');
-                var csrf = modal.getAttribute('data-csrf');
-                if (seenRoute) {
-                    fetch(seenRoute, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrf,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    }).catch(function(err) {
-                        console.warn('Guidelines seen record failed', err);
-                    });
+        // 2. Wrap background POST request in a non-blocking try/catch block
+        try {
+            if (modal) {
+                var shouldAutoOpen = modal.getAttribute('data-auto-open') === 'true';
+                if (shouldAutoOpen) {
+                    modal.setAttribute('data-auto-open', 'false');
+                    try {
+                        localStorage.setItem('noksha_guidelines_seen', 'true');
+                    } catch (storageErr) {}
+
+                    var seenRoute = modal.getAttribute('data-seen-route') || '/dashboard/guidelines/seen';
+                    var csrf = modal.getAttribute('data-csrf') || (document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '');
+
+                    if (seenRoute) {
+                        fetch(seenRoute, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({})
+                        }).catch(function(fetchErr) {
+                            console.warn('Guidelines seen request failed silently:', fetchErr);
+                        });
+                    }
                 }
             }
+        } catch (err) {
+            console.warn('Guidelines dismissal background task warning:', err);
         }
     };
+    window.closeUploadGuidelinesModal = window.closeGuidelinesModal;
 
     // Keyboard 'Escape' Dismissal
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
             var modal = window.getGuidelinesModal();
-            if (modal && modal.style.display !== 'none' && !modal.classList.contains('hidden')) {
-                window.closeUploadGuidelinesModal();
+            if (modal && (modal.style.display === 'flex' || !modal.classList.contains('hidden'))) {
+                window.closeGuidelinesModal();
             }
         }
     });
@@ -206,7 +239,7 @@
             } catch (err) {}
 
             setTimeout(function() {
-                window.openUploadGuidelinesModal();
+                window.openGuidelinesModal();
             }, 350);
         }
     });

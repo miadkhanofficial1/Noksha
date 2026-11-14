@@ -314,6 +314,7 @@ Route::middleware('auth')->group(function () {
     // Unified User & Contributor Dashboard Route (/dashboard)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/guidelines/seen', [DashboardController::class, 'markGuidelinesSeen'])->name('creator.guidelines.seen');
+    Route::post('/creator/guidelines/seen', [DashboardController::class, 'markGuidelinesSeen'])->name('creator.guidelines.seen.alias');
     Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
 
     // User Profile Settings Hub Routes

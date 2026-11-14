@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust all upstream reverse proxies (Render, Cloudflare, AWS ELB)
         $middleware->trustProxies(at: '*');
 
+        $middleware->validateCsrfTokens(except: [
+            'creator/guidelines/seen',
+            'dashboard/guidelines/seen',
+        ]);
+
         $middleware->redirectTo(
             guests: '/login',
             users: \App\Providers\RouteServiceProvider::HOME,
