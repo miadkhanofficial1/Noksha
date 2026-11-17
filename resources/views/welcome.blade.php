@@ -620,12 +620,18 @@
                 </span>
 
                 <!-- Bilingual Headline -->
-                <h1 class="display-3 fw-extrabold text-[#121826] mb-3 tracking-tight lh-sm">
-                    <span class="bg-gradient-to-r from-[#20165c] via-[#2c1e7a] to-[#f47402] bg-clip-text text-transparent">{{ __('marketplace.hero_title') }}</span>
+                <h1 class="display-3 fw-extrabold mb-3 tracking-tight lh-sm text-[#20165c]" style="color: #20165c;">
+                    @if(app()->getLocale() === 'bn')
+                        <span class="text-[#20165c] font-extrabold" style="color: #20165c;">{{ __('marketplace.hero_title_prefix') }}</span>
+                        <span class="text-[#f47402] font-extrabold" style="color: #f47402;">{{ __('marketplace.hero_title_highlight') }}</span>
+                    @else
+                        <span class="text-[#20165c] font-extrabold" style="color: #20165c;">Curated Digital Graphics Templates by</span>
+                        <span class="text-[#f47402] font-extrabold" style="color: #f47402;">Top Creators</span>
+                    @endif
                 </h1>
 
                 <!-- Subtitle -->
-                <p class="fs-5 text-slate-600 mb-0 me-lg-4 lh-base" style="max-width: 620px;">
+                <p class="fs-5 text-slate-600 mb-0 me-lg-4 lh-base" style="max-width: 620px; color: #475569;">
                     {{ __('marketplace.hero_subtitle') }}
                 </p>
 

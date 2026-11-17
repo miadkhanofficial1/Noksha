@@ -3,6 +3,8 @@
 return [
     'explore_templates' => 'Explore Premium Templates',
     'hero_title' => 'Curated Digital Graphics Templates by Top Creators',
+    'hero_title_prefix' => 'Curated Digital Graphics Templates by',
+    'hero_title_highlight' => 'Top Creators',
     'hero_subtitle' => 'Download Figma UI Kits, Vectors, Social Media Posters, and 3D Assets.',
     'search_placeholder' => 'Search templates, Figma kits, social banners...',
     'become_seller' => 'Become a Seller',
