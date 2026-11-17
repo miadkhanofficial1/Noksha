@@ -53,52 +53,36 @@
         transform: translateY(0);
     }
 
-    /* Hero Editorial Equal-Width Typography */
+    /* Hero Editorial Typography */
     .hero-editorial-h1 {
         display: inline-flex !important;
         flex-direction: column !important;
-        align-items: stretch !important;
+        align-items: flex-start !important;
         width: fit-content !important;
         max-width: 100%;
         margin-bottom: 1.25rem;
-        line-height: 1.08;
     }
 
     .hero-editorial-line-1 {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         color: #20165c !important;
         letter-spacing: -0.025em;
-        font-size: clamp(1.85rem, 3.8vw, 3.2rem);
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
+        font-size: clamp(1.85rem, 3.8vw, 3.15rem);
         white-space: nowrap;
         line-height: 1.15;
     }
 
-    .hero-editorial-line-1 .hero-ampersand {
-        font-family: 'Playfair Display', Georgia, serif !important;
-        font-style: italic !important;
-        font-weight: 500 !important;
-        font-size: 1.15em;
-        -webkit-text-stroke: 1.5px #20165c;
-        color: transparent !important;
-        display: inline-block;
-        margin-left: 0.35rem;
-        line-height: 1;
-    }
-
     .hero-editorial-line-2 {
-        font-family: 'Playfair Display', Georgia, serif !important;
-        font-style: italic !important;
-        font-weight: 500 !important;
+        font-family: 'Courgette', 'Satisfy', cursive !important;
+        font-weight: 400 !important;
         color: #f47402 !important;
-        font-size: clamp(2.52rem, 5.25vw, 4.38rem);
-        letter-spacing: 0.035em;
+        font-size: clamp(2.25rem, 4.4vw, 3.5rem);
+        letter-spacing: 0.01em;
         white-space: nowrap;
-        line-height: 1.06;
+        line-height: 1.2;
         display: block;
+        margin-top: 0.2rem;
     }
 
     /* Hero Gradient & Animated Background Orbs */
@@ -662,15 +646,14 @@
             <!-- Left Column: Bilingual Headline & Category Pills -->
             <div class="col-lg-7 text-center text-lg-start">
 
-                <!-- Hero Editorial Equal-Width Two-Line Headline -->
-                <h1 class="hero-editorial-h1 d-inline-flex flex-column align-items-stretch w-fit mb-3">
-                    <div class="hero-editorial-line-1 text-[#20165c] font-medium tracking-tight">
-                        <span>Discover Premium Assets</span>
-                        <span class="hero-ampersand ms-2" style="-webkit-text-stroke: 1.5px #20165c; color: transparent;">&amp;</span>
-                    </div>
-                    <div class="hero-editorial-line-2 italic font-medium text-[#f47402]">
+                <!-- Hero Editorial Headline -->
+                <h1 class="hero-editorial-h1 d-inline-flex flex-column align-items-start mb-3">
+                    <span class="hero-editorial-line-1 text-[#20165c] font-semibold tracking-tight">
+                        Discover Premium Assets &amp;
+                    </span>
+                    <span class="hero-editorial-line-2 text-[#f47402]">
                         Hire Top Creators
-                    </div>
+                    </span>
                 </h1>
 
                 <!-- Subtitle -->
@@ -1258,157 +1241,98 @@
         <div class="row align-items-center g-5">
             <!-- Left Column: Value Proposition & Perks -->
             <div class="col-lg-6">
-                <!-- Crisp Badge -->
-                <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-3 d-inline-flex align-items-center gap-1.5" 
-                      style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.18);">
-                    <i class="bi bi-stars text-[#f47402]"></i> For Bangladeshi Creators
-                </span>
+                <!-- Small Label -->
+                <div class="text-xs font-bold tracking-widest uppercase text-[#20165c] font-mono mb-2">
+                    FOR CREATORS
+                </div>
 
-                <!-- Strong Heading -->
+                <!-- Crisp Heading -->
                 <h2 class="display-6 fw-extrabold text-[#121826] mb-3 tracking-tight lh-sm">
-                    Earn From Your Design Assets &amp; Custom Services
+                    Earn From Your Design Assets &amp; Services
                 </h2>
 
-                <!-- Concise Subtext -->
-                <p class="text-slate-600 mb-4 lh-base fs-6" style="max-width: 540px;">
-                    Publish design templates or offer custom creative services with 85% creator payout, Escrow protection, and fast local withdrawals.
+                <!-- 1-line Subtitle -->
+                <p class="text-slate-600 mb-4 lh-base fs-6" style="max-width: 520px;">
+                    Publish templates or offer custom design services with 85% payout and escrow protection.
                 </p>
 
-                <!-- 3 Concise Creator-Focused Perks -->
-                <div class="d-flex flex-column gap-3 pt-2">
-                    <!-- Perk 1 -->
-                    <div class="d-flex align-items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-xs transition hover:border-[#20165c]/30">
-                        <div class="p-2.5 rounded-xl d-flex align-items-center justify-content-center shrink-0" 
-                             style="background: rgba(32, 22, 92, 0.08); color: #20165c; width: 44px; height: 44px;">
-                            <i class="bi bi-cash-stack fs-4"></i>
+                <!-- 3 Clean Icon-Text Rows (without heavy borders/cards around each row) -->
+                <div class="d-flex flex-column gap-3 pt-1">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shrink-0" 
+                             style="background: rgba(32, 22, 92, 0.08); color: #20165c; width: 40px; height: 40px;">
+                            <i class="bi bi-cash-stack fs-5"></i>
                         </div>
-                        <div>
-                            <h6 class="fw-bold text-[#121826] mb-1">85% Instant Creator Payouts</h6>
-                            <p class="small text-slate-500 mb-0 lh-sm">
-                                Keep 85% of every asset download and service invoice with fast local withdrawals straight to your personal wallet.
-                            </p>
-                        </div>
+                        <span class="fw-semibold text-[#121826] fs-6">85% Instant Creator Payouts</span>
                     </div>
 
-                    <!-- Perk 2 -->
-                    <div class="d-flex align-items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-xs transition hover:border-[#f47402]/30">
-                        <div class="p-2.5 rounded-xl d-flex align-items-center justify-content-center shrink-0" 
-                             style="background: rgba(244, 116, 2, 0.1); color: #f47402; width: 44px; height: 44px;">
-                            <i class="bi bi-grid-1x2-fill fs-4"></i>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shrink-0" 
+                             style="background: rgba(244, 116, 2, 0.1); color: #f47402; width: 40px; height: 40px;">
+                            <i class="bi bi-grid-1x2-fill fs-5"></i>
                         </div>
-                        <div>
-                            <h6 class="fw-bold text-[#121826] mb-1">Sell Templates &amp; Custom Services</h6>
-                            <p class="small text-slate-500 mb-0 lh-sm">
-                                Monetize Figma kits, vectors, and PSD templates or set up packaged design offerings with customized turnaround times.
-                            </p>
-                        </div>
+                        <span class="fw-semibold text-[#121826] fs-6">Sell Templates &amp; Custom Services</span>
                     </div>
 
-                    <!-- Perk 3 -->
-                    <div class="d-flex align-items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-xs transition hover:border-emerald-500/30">
-                        <div class="p-2.5 rounded-xl d-flex align-items-center justify-content-center shrink-0" 
-                             style="background: rgba(16, 185, 129, 0.1); color: #059669; width: 44px; height: 44px;">
-                            <i class="bi bi-shield-check fs-4"></i>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shrink-0" 
+                             style="background: rgba(16, 185, 129, 0.1); color: #059669; width: 40px; height: 40px;">
+                            <i class="bi bi-shield-check fs-5"></i>
                         </div>
-                        <div>
-                            <h6 class="fw-bold text-[#121826] mb-1">Escrow-Protected Client Orders</h6>
-                            <p class="small text-slate-500 mb-0 lh-sm">
-                                Never chase client invoices again. Buyers fund orders upfront in 100% smart escrow before work commences.
-                            </p>
-                        </div>
+                        <span class="fw-semibold text-[#121826] fs-6">100% Escrow-Protected Orders</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Creator Earnings & Perks Preview Card -->
+            <!-- Right Column (Single Clean Card) -->
             <div class="col-lg-6">
-                <div class="p-4 p-md-5 bg-white border border-slate-200 rounded-3xl shadow-xl position-relative overflow-hidden">
-                    <!-- Subtle top ambient accent bar -->
-                    <div class="position-absolute top-0 start-0 w-100" style="height: 4px; background: linear-gradient(90deg, #20165c 0%, #f47402 100%);"></div>
+                <div class="p-4 p-md-5 bg-white border border-slate-200 rounded-3xl shadow-lg">
+                    <h3 class="fw-bold text-[#121826] fs-4 mb-4">Creator Benefits</h3>
 
-                    <!-- Card Header -->
-                    <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom border-slate-100">
-                        <div>
-                            <span class="badge rounded-pill px-3 py-1.5 small fw-semibold d-inline-flex align-items-center gap-1.5" 
-                                  style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2);">
-                                <i class="bi bi-check-circle-fill"></i> Transparent Economics
-                            </span>
-                            <h4 class="fw-bold text-[#121826] mt-2 mb-0">Creator Earnings &amp; Perks</h4>
-                        </div>
-                        <div class="p-2.5 rounded-circle bg-purple-50 text-[#20165c] border border-purple-100 d-none d-sm-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                            <i class="bi bi-graph-up-arrow fs-5 text-[#20165c]"></i>
-                        </div>
-                    </div>
-
-                    <!-- 3 Core Stats/Perks Grid -->
-                    <div class="row g-3 mb-4">
+                    <!-- Clean 3-Stat Row -->
+                    <div class="row g-3 mb-4 text-center">
                         <div class="col-4">
-                            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center h-100 d-flex flex-column justify-content-center">
-                                <div class="fs-4 fw-extrabold text-[#20165c] mb-0">0%</div>
-                                <div class="fw-bold text-slate-700 extra-small">Listing Fee</div>
-                                <div class="text-slate-400 font-mono text-[10px] mt-0.5">Free Forever</div>
+                            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 h-100 d-flex flex-column justify-content-center">
+                                <div class="fs-3 fw-extrabold text-[#20165c]">0%</div>
+                                <div class="small fw-semibold text-slate-700 mt-1">Listing Fee</div>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="p-3 rounded-2xl bg-amber-50/60 border border-amber-200/80 text-center h-100 d-flex flex-column justify-content-center">
-                                <div class="fs-4 fw-extrabold text-[#f47402] mb-0">85%</div>
-                                <div class="fw-bold text-slate-700 extra-small">Revenue Share</div>
-                                <div class="text-slate-400 font-mono text-[10px] mt-0.5">Direct Payout</div>
+                            <div class="p-3 rounded-2xl bg-amber-50/60 border border-amber-100 h-100 d-flex flex-column justify-content-center">
+                                <div class="fs-3 fw-extrabold text-[#f47402]">85%</div>
+                                <div class="small fw-semibold text-slate-700 mt-1">Revenue Share</div>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 text-center h-100 d-flex flex-column justify-content-center">
-                                <div class="fs-4 fw-extrabold text-emerald-600 mb-0">Local</div>
-                                <div class="fw-bold text-slate-700 extra-small">Fast Payouts</div>
-                                <div class="text-slate-400 font-mono text-[10px] mt-0.5">bKash / Nagad / Bank</div>
+                            <div class="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-100 h-100 d-flex flex-column justify-content-center">
+                                <div class="fs-4 fw-extrabold text-emerald-600 text-truncate" title="bKash / Nagad">bKash / Nagad</div>
+                                <div class="small fw-semibold text-slate-700 mt-1">Payouts</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Payout Channels Strip -->
-                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 mb-4">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="small fw-bold text-slate-700">Supported Withdrawal Channels</span>
-                            <span class="badge bg-emerald-600 text-white rounded-pill px-2 py-0.5 text-[10px]">Instant Process</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
-                                <span class="rounded-circle bg-[#E2136E]" style="width: 8px; height: 8px;"></span> bKash
-                            </span>
-                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
-                                <span class="rounded-circle bg-[#F7941D]" style="width: 8px; height: 8px;"></span> Nagad
-                            </span>
-                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
-                                <span class="rounded-circle bg-[#8C3494]" style="width: 8px; height: 8px;"></span> Rocket
-                            </span>
-                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
-                                <span class="rounded-circle bg-[#20165c]" style="width: 8px; height: 8px;"></span> Local Bank Wire
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Prominent Join as a Creator CTA Button -->
+                    <!-- Prominent Full-Width CTA Button -->
                     @guest
-                        <a href="{{ route('register') }}" class="btn btn-cta-primary btn-lg rounded-xl w-100 fw-bold py-3 text-white shadow-sm transition-all d-flex align-items-center justify-content-center gap-2">
+                        <a href="{{ route('register') }}" class="btn bg-[#20165c] hover:bg-[#181045] text-white btn-lg rounded-xl w-100 fw-bold py-3 shadow-sm transition-all d-flex align-items-center justify-content-center gap-2" style="background-color: #20165c; color: #ffffff;">
                             <span>Join as a Creator</span>
                             <i class="bi bi-arrow-right"></i>
                         </a>
                     @else
                         @if(auth()->user()->isContributor())
-                            <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-cta-primary btn-lg rounded-xl w-100 fw-bold py-3 text-white shadow-sm transition-all d-flex align-items-center justify-content-center gap-2">
-                                <span>Open Creator Studio</span>
+                            <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn bg-[#20165c] hover:bg-[#181045] text-white btn-lg rounded-xl w-100 fw-bold py-3 shadow-sm transition-all d-flex align-items-center justify-content-center gap-2" style="background-color: #20165c; color: #ffffff;">
+                                <span>Go to Creator Studio</span>
                                 <i class="bi bi-arrow-right"></i>
                             </a>
                         @else
-                            <a href="{{ route('contributor.apply') }}" class="btn btn-cta-primary btn-lg rounded-xl w-100 fw-bold py-3 text-white shadow-sm transition-all d-flex align-items-center justify-content-center gap-2">
+                            <a href="{{ route('contributor.apply') }}" class="btn bg-[#20165c] hover:bg-[#181045] text-white btn-lg rounded-xl w-100 fw-bold py-3 shadow-sm transition-all d-flex align-items-center justify-content-center gap-2" style="background-color: #20165c; color: #ffffff;">
                                 <span>Join as a Creator</span>
                                 <i class="bi bi-arrow-right"></i>
                             </a>
                         @endif
                     @endguest
 
-                    <div class="text-center text-slate-500 extra-small mt-2.5">
-                        <i class="bi bi-shield-check text-emerald-600 me-1"></i> Quick 2-minute registration • Verified local payouts
+                    <div class="text-center text-slate-500 text-xs mt-3">
+                        Free registration • Instant local withdrawals
                     </div>
                 </div>
             </div>
