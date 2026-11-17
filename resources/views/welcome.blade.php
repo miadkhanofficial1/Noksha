@@ -620,13 +620,13 @@
                 </span>
 
                 <!-- Bilingual Headline -->
-                <h1 class="display-3 fw-extrabold mb-3 tracking-tight lh-sm text-[#20165c]" style="color: #20165c;">
+                <h1 class="display-3 font-light fw-light mb-3 tracking-tight lh-sm text-[#20165c]" style="color: #20165c; font-weight: 300;">
                     @if(app()->getLocale() === 'bn')
-                        <span class="text-[#20165c] font-extrabold" style="color: #20165c;">{{ __('marketplace.hero_title_prefix') }}</span>
-                        <span class="text-[#f47402] font-extrabold" style="color: #f47402;">{{ __('marketplace.hero_title_highlight') }}</span>
+                        <span class="text-[#20165c] font-light" style="color: #20165c; font-weight: 300;">{{ __('marketplace.hero_title_prefix') }}</span>
+                        <span class="text-[#f47402] font-normal" style="color: #f47402; font-weight: 400;">{{ __('marketplace.hero_title_highlight') }}</span>
                     @else
-                        <span class="text-[#20165c] font-extrabold" style="color: #20165c;">Curated Digital Graphics Templates by</span>
-                        <span class="text-[#f47402] font-extrabold" style="color: #f47402;">Top Creators</span>
+                        <span class="text-[#20165c] font-light" style="color: #20165c; font-weight: 300;">Curated Digital Graphics Templates by</span>
+                        <span class="text-[#f47402] font-normal" style="color: #f47402; font-weight: 400;">Top Creators</span>
                     @endif
                 </h1>
 
