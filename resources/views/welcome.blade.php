@@ -74,15 +74,16 @@
     }
 
     .hero-editorial-line-2 {
-        font-family: 'Courgette', 'Satisfy', cursive !important;
-        font-weight: 400 !important;
+        font-family: 'Bodoni Moda', 'Cormorant Garamond', serif !important;
+        font-style: normal !important;
+        font-weight: 600 !important;
         color: #f47402 !important;
-        font-size: clamp(2.25rem, 4.4vw, 3.5rem);
-        letter-spacing: 0.01em;
+        font-size: clamp(2.5rem, 5.2vw, 4rem) !important;
+        letter-spacing: -0.02em;
         white-space: nowrap;
-        line-height: 1.2;
+        line-height: 1.05 !important;
         display: block;
-        margin-top: 0.2rem;
+        margin-top: 0.25rem;
     }
 
     /* Hero Gradient & Animated Background Orbs */
@@ -651,7 +652,7 @@
                     <span class="hero-editorial-line-1 text-[#20165c] font-semibold tracking-tight">
                         Discover Premium Assets &amp;
                     </span>
-                    <span class="hero-editorial-line-2 text-[#f47402]">
+                    <span class="hero-editorial-line-2 text-5xl sm:text-6xl lg:text-[64px] leading-[1.05] tracking-tight font-semibold text-[#f47402] not-italic">
                         Hire Top Creators
                     </span>
                 </h1>

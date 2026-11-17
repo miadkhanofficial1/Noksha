@@ -24,9 +24,9 @@
         }
     </style>
     <div class="max-w-7xl mx-auto px-6 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            <!-- Column 1 (md:col-span-5): Brand Info -->
-            <div class="md:col-span-5">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 items-start">
+            <!-- Column 1 (md:col-span-5 lg:col-span-4): Brand Info -->
+            <div class="md:col-span-5 lg:col-span-4">
                 <div class="flex items-center gap-2 mb-3">
                     <img src="{{ asset('images/logo.png') }}" 
                          alt="Noksha" 
@@ -37,7 +37,7 @@
                         Noksha
                     </span>
                 </div>
-                <p class="text-slate-600 text-sm leading-relaxed max-w-xs">
+                <p class="text-slate-600 text-sm leading-relaxed max-w-sm">
                     Bangladesh's premier creative marketplace to discover design assets, hire verified creators, and run design contests.
                 </p>
                 <div class="flex items-center gap-3 mt-5">
@@ -56,8 +56,8 @@
                 </div>
             </div>
 
-            <!-- Column 2 (md:col-span-2): Marketplace -->
-            <div class="md:col-span-2">
+            <!-- Column 2 (md:col-span-2 lg:col-span-3): Marketplace -->
+            <div class="md:col-span-2 lg:col-span-3">
                 <h6 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4 font-mono">Marketplace</h6>
                 <ul class="list-none p-0 m-0 text-slate-600 text-sm space-y-2.5">
                     <li><a href="{{ route('templates.index') }}" class="text-slate-600 hover:text-[#20165c] transition-colors no-underline">All Templates</a></li>
@@ -68,8 +68,8 @@
                 </ul>
             </div>
 
-            <!-- Column 3 (md:col-span-3): Legal & Trust -->
-            <div class="md:col-span-3">
+            <!-- Column 3 (md:col-span-3 lg:col-span-3): Legal & Trust -->
+            <div class="md:col-span-3 lg:col-span-3">
                 <h6 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4 font-mono">Legal &amp; Trust</h6>
                 <ul class="list-none p-0 m-0 text-slate-600 text-sm space-y-2.5">
                     <li>
@@ -99,8 +99,8 @@
                 </ul>
             </div>
 
-            <!-- Column 4 (md:col-span-2): Help & Support -->
-            <div class="md:col-span-2">
+            <!-- Column 4 (md:col-span-2 lg:col-span-2): Help & Support -->
+            <div class="md:col-span-2 lg:col-span-2">
                 <h6 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4 font-mono">Help &amp; Support</h6>
                 <ul class="list-none p-0 m-0 text-slate-600 text-sm space-y-2.5">
                     <li>
@@ -125,7 +125,7 @@
                 &copy; {{ date('Y') }} <strong>Noksha</strong>. All rights reserved.
             </div>
             <div>
-                Empowering Creative Professionals
+                Think Creatively &amp; Do Simply
             </div>
         </div>
     </div>
