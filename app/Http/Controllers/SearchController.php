@@ -4,102 +4,100 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Resource;
+use App\Models\Service;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SearchController extends Controller
 {
     /**
-     * Display the smart marketplace search page with filters, tags, and category chips.
+     * Unified multi-section discovery search across Creators, Services, and Templates (/search).
      */
     public function index(Request $request): View
     {
-        $queryStr = trim($request->input('q', ''));
-        $categoryId = $request->input('category');
-        $selectedTag = $request->input('tag');
-        $priceType = $request->input('price');
-        $sort = $request->input('sort', 'latest');
+        $q = trim((string) $request->input('q', ''));
+        $tab = $request->input('tab', 'all');
+        if (!in_array($tab, ['all', 'templates', 'services', 'creators'])) {
+            $tab = 'all';
+        }
 
-        $resourcesQuery = Resource::where('status', 'approved')
-            ->with(['owner', 'category']);
-
-        // 1. Text Search matching title, description, category, seller, or tags
-        if (!empty($queryStr)) {
-            // Track in session
+        if ($q !== '') {
+            // Track search keyword in session
             $recent = session('recent_searches', []);
-            if (!in_array($queryStr, $recent)) {
-                array_unshift($recent, $queryStr);
+            if (!in_array($q, $recent)) {
+                array_unshift($recent, $q);
                 session(['recent_searches' => array_slice($recent, 0, 5)]);
             }
 
-            $resourcesQuery->where(function ($q) use ($queryStr) {
-                $q->where('title', 'like', "%{$queryStr}%")
-                  ->orWhere('description', 'like', "%{$queryStr}%")
-                  ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%{$queryStr}%"))
-                  ->orWhereHas('owner', fn($u) => $u->where('name', 'like', "%{$queryStr}%"))
-                  ->orWhere('tags', 'like', "%{$queryStr}%");
-            });
-        }
+            // 1. Matching Creators (Active contributors/sellers)
+            $creators = User::query()
+                ->where('is_admin', false)
+                ->where('role', '!=', 'admin')
+                ->where('role', '!=', 'superadmin')
+                ->where('role', '!=', 'super_admin')
+                ->where(function ($query) {
+                    $query->where('contributor_status', 'approved')
+                          ->orWhere('is_contributor', true)
+                          ->orWhereIn('role', ['contributor', 'seller']);
+                })
+                ->where(function ($query) use ($q) {
+                    $query->where('name', 'like', "%{$q}%")
+                          ->orWhere('username', 'like', "%{$q}%")
+                          ->orWhere('bio', 'like', "%{$q}%")
+                          ->orWhere('contributor_bio', 'like', "%{$q}%")
+                          ->orWhere('headline', 'like', "%{$q}%")
+                          ->orWhere('skills', 'like', "%{$q}%");
+                })
+                ->withCount(['templates' => fn($t) => $t->where('status', 'approved')])
+                ->with(['templates' => fn($t) => $t->where('status', 'approved')->latest('id')->limit(3)])
+                ->latest('id')
+                ->get();
 
-        // 2. Category Filter
-        if ($categoryId) {
-            $resourcesQuery->where('category_id', $categoryId);
-        }
+            // 2. Matching Creative Services
+            $services = Service::query()
+                ->where(function ($query) {
+                    $query->where('status', 'active')
+                          ->orWhere('is_active', true);
+                })
+                ->where(function ($query) use ($q) {
+                    $query->where('title', 'like', "%{$q}%")
+                          ->orWhere('description', 'like', "%{$q}%")
+                          ->orWhere('category', 'like', "%{$q}%")
+                          ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$q}%")->orWhere('username', 'like', "%{$q}%"));
+                })
+                ->with(['user.receivedReviews', 'reviews'])
+                ->latest()
+                ->get();
 
-        // 3. Tag Filter
-        if ($selectedTag) {
-            $resourcesQuery->where('tags', 'like', "%{$selectedTag}%");
-        }
-
-        // 4. Price Filter
-        if ($priceType === 'free') {
-            $resourcesQuery->where('is_paid', false);
-        } elseif ($priceType === 'paid') {
-            $resourcesQuery->where('is_paid', true);
-        }
-
-        // 5. Sorting
-        if ($sort === 'popular') {
-            $resourcesQuery->orderByDesc('downloads');
-        } elseif ($sort === 'price_low') {
-            $resourcesQuery->orderBy('price', 'asc');
-        } elseif ($sort === 'price_high') {
-            $resourcesQuery->orderBy('price', 'desc');
+            // 3. Matching Templates / Assets
+            $templates = Resource::query()
+                ->where('status', 'approved')
+                ->where(function ($query) use ($q) {
+                    $query->where('title', 'like', "%{$q}%")
+                          ->orWhere('description', 'like', "%{$q}%")
+                          ->orWhere('tags', 'like', "%{$q}%")
+                          ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%{$q}%"))
+                          ->orWhereHas('owner', fn($u) => $u->where('name', 'like', "%{$q}%")->orWhere('username', 'like', "%{$q}%"));
+                })
+                ->with(['owner', 'category'])
+                ->latest()
+                ->get();
         } else {
-            $resourcesQuery->latest();
+            $creators = collect();
+            $services = collect();
+            $templates = collect();
         }
 
-        $resources = $resourcesQuery->paginate(12)->withQueryString();
-
-        $categories = Category::all();
-        $recentSearches = session('recent_searches', ['Mobile UI', 'Figma', 'Fintech', 'Logo', 'Vector']);
-
-        // Popular Tags Cloud (Normalized & Deduplicated)
-        $allTags = Resource::where('status', 'approved')->pluck('tags')->flatten()->filter()->toArray();
-        $normalizedTagMap = [];
-        foreach ($allTags as $rawTag) {
-            $cleaned = trim((string)$rawTag);
-            if (empty($cleaned)) continue;
-            $canonical = strtolower(trim(str_replace(['#', '_', ' '], ['', '-', '-'], $cleaned), '-'));
-            if (empty($canonical)) continue;
-            $normalizedTagMap[$canonical] = ($normalizedTagMap[$canonical] ?? 0) + 1;
-        }
-        arsort($normalizedTagMap);
-        $popularTags = array_slice(array_keys($normalizedTagMap), 0, 10);
-        if (empty($popularTags)) {
-            $popularTags = ['ui-kit', 'fintech', 'mobile', 'dashboard', 'figma', 'interface', 'web', 'logo', 'social', 'vector'];
-        }
+        $totalCount = $creators->count() + $services->count() + $templates->count();
 
         return view('search.index', compact(
-            'queryStr',
-            'resources',
-            'categories',
-            'categoryId',
-            'selectedTag',
-            'priceType',
-            'sort',
-            'recentSearches',
-            'popularTags'
+            'q',
+            'tab',
+            'creators',
+            'services',
+            'templates',
+            'totalCount'
         ));
     }
 }

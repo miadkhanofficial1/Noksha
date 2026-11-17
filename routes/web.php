@@ -155,7 +155,8 @@ Route::get('/locale/{locale}', [LanguageController::class, 'switch'])->name('loc
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 // Smart Marketplace Search Route
-Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::redirect('/search-legacy', '/search')->name('search.index');
 
 // Resource Details Routes
 Route::get('/resource/demo', [ResourceController::class, 'showDemo'])->name('resource.demo');

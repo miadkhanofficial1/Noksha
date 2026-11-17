@@ -69,7 +69,7 @@
 
                 <!-- Central Discovery Search Bar -->
                 <div class="flex-1 max-w-md min-w-[220px] lg:min-w-[280px]">
-                    <form action="{{ route('resources.index') }}" method="GET" class="m-0 w-full position-relative">
+                    <form action="{{ route('search') }}" method="GET" class="m-0 w-full position-relative">
                         <div class="d-flex align-items-center bg-slate-50 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#20165c] rounded-full px-3.5 py-1.5 transition-all shadow-xs w-full">
                             <i class="bi bi-search text-slate-400 me-2.5 small flex-shrink-0"></i>
                             <input type="text" 
@@ -688,7 +688,7 @@
         <!-- ========================================================= -->
         <div class="collapse d-lg-none border-top mt-2 pt-3 pb-2" id="nokshaNavbarCollapse">
             <!-- Mobile Search Bar -->
-            <form action="{{ route('resources.index') }}" method="GET" class="d-md-none mb-3" role="search">
+            <form action="{{ route('search') }}" method="GET" class="d-md-none mb-3" role="search">
                 <div class="input-group bg-light rounded-xl px-3 py-1.5 border border-slate-200">
                     <span class="input-group-text bg-transparent border-0 text-slate-400 ps-0 pe-2">
                         <i class="bi bi-search"></i>

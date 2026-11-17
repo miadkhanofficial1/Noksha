@@ -1,325 +1,335 @@
 @extends('layouts.app')
 
-@section('title', 'Smart Marketplace Search - Noksha')
+@section('title', !empty($q) ? 'Search Results for "' . $q . '" - Noksha' : 'Smart Discovery Search - Noksha')
 
 @section('content')
+<div class="min-h-screen bg-[#f8fafc] text-slate-800 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-10">
 
-<!-- CUSTOM SEARCH PAGE STYLES -->
-<style>
-    .search-bg {
-        background: linear-gradient(180deg, #F8F5FF 0%, #FFFFFF 100%);
-        min-height: 100vh;
-    }
+        <!-- ========================================================= -->
+        <!-- 1. TOP HEADER DISCOVERY CARD (MATCHES NOKSHA LIGHT THEME) -->
+        <!-- ========================================================= -->
+        <div class="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <!-- Eyebrow Pill -->
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#20165c] bg-[#20165c]/10 border border-[#20165c]/20 mb-3 font-mono">
+                🔍 UNIFIED DISCOVERY
+            </span>
 
-    .search-hero-box {
-        background: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.16) 0%, rgba(15, 23, 42, 0.95) 60%), #020617;
-        border: 1px solid rgba(148, 163, 184, 0.15);
-        border-radius: 1.75rem;
-        color: #ffffff;
-        box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.5);
-        position: relative;
-        overflow: hidden;
-    }
+            <!-- Dynamic Heading -->
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-[#121826] tracking-tight">
+                @if(!empty($q))
+                    Search Results for <span class="text-[#20165c]">"{{ $q }}"</span>
+                @else
+                    Search Marketplace
+                @endif
+            </h1>
 
-    .recent-search-chip {
-        background: rgba(15, 23, 42, 0.65);
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        color: #94A3B8;
-        font-size: 0.75rem;
-        transition: all 0.2s ease;
-    }
+            <!-- Subtitle -->
+            <p class="text-sm sm:text-base text-slate-600 mt-2 max-w-2xl leading-relaxed">
+                Found {{ number_format($totalCount) }} matching results across templates, services, and verified creators.
+            </p>
 
-    .recent-search-chip:hover {
-        background: rgba(30, 41, 59, 0.9) !important;
-        border-color: rgba(99, 102, 241, 0.4) !important;
-        color: #FFFFFF !important;
-        transform: translateY(-1px);
-    }
-
-    .popular-tag-chip {
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        color: #E2E8F0;
-        border-radius: 50rem;
-        padding: 0.3rem 0.85rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        transition: all 0.2s ease;
-    }
-
-    .popular-tag-chip:hover {
-        background: rgba(99, 102, 241, 0.25);
-        border-color: rgba(99, 102, 241, 0.5);
-        color: #FFFFFF;
-        transform: translateY(-1px);
-    }
-
-    .search-input-group {
-        background: #ffffff;
-        border-radius: 50rem;
-        padding: 0.35rem 0.5rem 0.35rem 1.25rem;
-        box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25);
-    }
-
-    .template-card-figma {
-        border-radius: 1.25rem !important;
-        border: 1px solid rgba(108, 76, 241, 0.12) !important;
-        box-shadow: 0 10px 25px -5px rgba(108, 76, 241, 0.08) !important;
-        transition: transform 0.35s ease, box-shadow 0.35s ease;
-        overflow: hidden;
-        background: #ffffff;
-    }
-
-    .template-card-figma:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 45px -10px rgba(108, 76, 241, 0.22) !important;
-        border-color: rgba(108, 76, 241, 0.35) !important;
-    }
-
-    .ai-tag-chip {
-        background: rgba(108, 76, 241, 0.08);
-        color: #6C4CF1;
-        border-radius: 50rem;
-        padding: 0.25rem 0.75rem;
-        font-size: 0.72rem;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.25s ease;
-        display: inline-block;
-    }
-
-    .ai-tag-chip:hover {
-        background: #6C4CF1;
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-
-    .btn-purple-cta {
-        background: linear-gradient(135deg, #6C4CF1 0%, #5A3DE0 100%);
-        color: #ffffff !important;
-        border: none;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 6px 16px -4px rgba(108, 76, 241, 0.35);
-    }
-
-    .btn-purple-cta:hover {
-        background: linear-gradient(135deg, #5A3DE0 0%, #4327C6 100%);
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 12px 25px -4px rgba(108, 76, 241, 0.45);
-        color: #ffffff !important;
-    }
-
-    .card-grad-1 { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
-</style>
-
-<div class="search-bg py-4 py-lg-5">
-    <div class="container py-2">
-        
-        <!-- BREADCRUMB NAVIGATION -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb small fw-semibold text-muted mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none text-primary"><i class="bi bi-house-door me-1"></i>Home</a></li>
-                <li class="breadcrumb-item active text-dark" aria-current="page">Smart Search</li>
-            </ol>
-        </nav>
-
-        <!-- LARGE SEARCH HERO BOX -->
-        <div class="search-hero-box p-4 p-md-5 mb-5 shadow-lg position-relative overflow-hidden">
-            <!-- Gentle Indigo Glow -->
-            <div style="position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 680px; height: 260px; background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(16, 185, 129, 0.05) 50%, transparent 70%); pointer-events: none; z-index: 0;"></div>
-
-            <div class="position-relative z-1">
-                <div class="text-center mb-4" style="max-width: 680px; margin: 0 auto;">
-                    <span class="badge rounded-pill px-3 py-1.5 fw-bold extra-small text-uppercase mb-2.5 d-inline-flex align-items-center gap-1.5"
-                          style="background: rgba(99, 102, 241, 0.12); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.25);">
-                        <i class="bi bi-magic text-indigo-400"></i>
-                        <span class="text-indigo-300">Curated Keyword & Tag Directory</span>
-                    </span>
-                    <h2 class="display-6 fw-extrabold text-white mb-2">Search Marketplace Assets</h2>
-                    <p class="text-white text-opacity-80 small mb-0">Discover UI kits, Figma design systems, vectors, and templates indexed with smart local keywords.</p>
-                </div>
-
-                <!-- SEARCH BAR FORM -->
-                <form action="{{ route('search.index') }}" method="GET" class="mb-4" style="max-width: 680px; margin: 0 auto;">
-                    <div class="search-input-group d-flex align-items-center">
-                        <i class="bi bi-search text-muted fs-5 me-2"></i>
-                        <input type="text" name="q" value="{{ $queryStr }}" class="form-control border-0 bg-transparent text-dark shadow-none ps-0" placeholder="Search by title, tag (e.g. #fintech, #ui-kit), category, or seller..." aria-label="Search">
-                        <button type="submit" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                            Search Assets
-                        </button>
+            <!-- Search Form Bar -->
+            <form action="{{ route('search') }}" method="GET" class="mt-6 max-w-2xl">
+                <input type="hidden" name="tab" value="{{ $tab }}">
+                <div class="relative flex items-center">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ $q }}" 
+                           placeholder="Search templates, services, creators..." 
+                           class="w-full pl-12 pr-28 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-[#121826] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#20165c] focus:border-transparent transition shadow-xs">
+                    <div class="absolute left-4 text-slate-400 pointer-events-none">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
-                </form>
-
-                <!-- CATEGORY CHIPS & POPULAR TAGS -->
-                @php
-                    $dedupedPopularTags = collect($popularTags)->map(function($t) {
-                        return strtolower(trim(str_replace(['#', '_', ' '], ['', '-', '-'], (string)$t), '-'));
-                    })->unique()->filter()->values();
-                @endphp
-                <div class="d-flex flex-wrap align-items-center justify-content-center gap-2" style="max-width: 820px; margin: 0 auto;">
-                    <span class="extra-small fw-bold text-slate-400 text-uppercase d-inline-flex align-items-center me-1">
-                        <i class="bi bi-tags-fill me-1.5 text-warning"></i>Popular Tags:
-                    </span>
-                    @foreach($dedupedPopularTags as $pt)
-                        <a href="{{ route('search.index', ['tag' => $pt]) }}" class="popular-tag-chip text-decoration-none extra-small fw-semibold">
-                            #{{ $pt }}
-                        </a>
-                    @endforeach
+                    <button type="submit" class="absolute right-2 px-5 py-2 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] transition-all shadow-sm">
+                        Search
+                    </button>
                 </div>
+            </form>
 
-                <!-- RECENT SEARCHES SESSION PILLS -->
-                @if(isset($recentSearches) && count($recentSearches) > 0)
-                    <div class="mt-3.5 d-flex flex-wrap align-items-center justify-content-center gap-2">
-                        <span class="extra-small text-slate-400 d-inline-flex align-items-center me-1">
-                            <i class="bi bi-clock-history me-1.5 text-slate-500"></i>Recent Searches:
-                        </span>
-                        @foreach($recentSearches as $rs)
-                            <a href="{{ route('search.index', ['q' => $rs]) }}" 
-                               class="recent-search-chip text-decoration-none px-2.5 py-1 rounded-md text-xs d-inline-flex align-items-center gap-1 font-monospace">
-                                <span>{{ $rs }}</span>
+            <!-- Filter Pills Row -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 mt-6 border-t border-slate-100 pt-5">
+                <a href="{{ route('search', ['q' => $q, 'tab' => 'all']) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border {{ $tab === 'all' ? 'bg-[#20165c] text-white border-[#20165c] shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#20165c] hover:text-[#20165c]' }}">
+                    All Results ({{ number_format($totalCount) }})
+                </a>
+                <a href="{{ route('search', ['q' => $q, 'tab' => 'templates']) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border {{ $tab === 'templates' ? 'bg-[#20165c] text-white border-[#20165c] shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#20165c] hover:text-[#20165c]' }}">
+                    Templates ({{ number_format($templates->count()) }})
+                </a>
+                <a href="{{ route('search', ['q' => $q, 'tab' => 'services']) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border {{ $tab === 'services' ? 'bg-[#20165c] text-white border-[#20165c] shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#20165c] hover:text-[#20165c]' }}">
+                    Services ({{ number_format($services->count()) }})
+                </a>
+                <a href="{{ route('search', ['q' => $q, 'tab' => 'creators']) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition border {{ $tab === 'creators' ? 'bg-[#20165c] text-white border-[#20165c] shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#20165c] hover:text-[#20165c]' }}">
+                    Creators ({{ number_format($creators->count()) }})
+                </a>
+            </div>
+
+            <!-- Showing Results & Clear Search -->
+            @if(!empty($q))
+                <div class="mt-3 flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-50">
+                    <span>Showing results for <strong class="text-[#121826]">"{{ $q }}"</strong></span>
+                    <a href="{{ route('search') }}" class="text-rose-600 hover:text-rose-700 font-semibold inline-flex items-center gap-1 transition no-underline">
+                        <span>✕ Clear search</span>
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 2. SMART SECTIONED RESULTS BODY                           -->
+        <!-- ========================================================= -->
+        @if($totalCount > 0)
+
+            <!-- 2.1 MATCHING CREATORS SECTION -->
+            @if(($tab === 'all' || $tab === 'creators') && $creators->count() > 0)
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-[#20165c]/10 text-[#20165c] flex items-center justify-center font-bold">
+                                <i class="bi bi-people-fill text-sm"></i>
+                            </div>
+                            <h2 class="text-lg font-bold text-[#121826] tracking-tight">Matching Creators</h2>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200/70 text-slate-700 font-mono">
+                                {{ $creators->count() }}
+                            </span>
+                        </div>
+                        @if($tab === 'all' && $creators->count() > 4)
+                            <a href="{{ route('search', ['q' => $q, 'tab' => 'creators']) }}" class="text-xs font-semibold text-[#20165c] hover:text-[#181045] inline-flex items-center gap-1 no-underline">
+                                <span>View all {{ $creators->count() }} creators</span>
+                                <i class="bi bi-arrow-right"></i>
                             </a>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        @foreach(($tab === 'all' ? $creators->take(4) : $creators) as $creator)
+                            <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group">
+                                <div>
+                                    <!-- Card Header: Avatar, Name, Verified Badge, Headline -->
+                                    <div class="flex items-start gap-3.5">
+                                        <div class="relative shrink-0">
+                                            <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}" class="block text-decoration-none">
+                                                <div class="relative w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-[#20165c] text-white font-bold text-base ring-2 ring-white shadow-sm">
+                                                    @if($creator->avatar_url)
+                                                        <img src="{{ $creator->avatar_url }}" 
+                                                             alt="{{ $creator->name }}" 
+                                                             class="w-full h-full object-cover object-center block"
+                                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-base" style="display: none;">
+                                                            {{ $creator->initials }}
+                                                        </span>
+                                                    @else
+                                                        <span class="w-full h-full flex items-center justify-center bg-[#20165c] text-white font-bold text-base">
+                                                            {{ $creator->initials }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </a>
+                                            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" title="Active on Noksha"></span>
+                                        </div>
+
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center gap-1.5">
+                                                <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}" class="font-bold text-[#121826] text-base group-hover:text-[#20165c] transition truncate block no-underline">
+                                                    {{ $creator->name }}
+                                                </a>
+                                                <i class="bi bi-patch-check-fill text-emerald-500 text-sm shrink-0" title="Verified Noksha Contributor"></i>
+                                            </div>
+                                            
+                                            <p class="text-xs text-slate-500 font-medium truncate mb-1">
+                                                {{ $creator->headline ?: ($creator->skills ? (is_array($creator->skills) ? implode(', ', array_slice($creator->skills, 0, 2)) : $creator->skills) : 'Visual & Brand Designer') }}
+                                            </p>
+
+                                            <!-- Rating / Assets Count -->
+                                            <div class="flex items-center gap-1 text-xs text-amber-500 font-semibold">
+                                                <i class="bi bi-star-fill text-[11px]"></i>
+                                                <span>5.0</span>
+                                                <span class="text-slate-400 font-normal">({{ number_format($creator->templates_count ?? 0) }} assets)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bio Snippet -->
+                                    <p class="text-xs text-slate-600 leading-relaxed mt-3 line-clamp-2 min-h-[32px]">
+                                        {{ $creator->bio ?: ($creator->contributor_bio ?: 'Visual creator publishing authentic design templates and branding assets.') }}
+                                    </p>
+                                </div>
+
+                                <!-- Card Footer: Username & View Profile -->
+                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-4">
+                                    <span class="text-slate-400 font-mono text-[11px]">
+                                        {{ $creator->username ? '@' . $creator->username : 'Creator' }}
+                                    </span>
+                                    <a href="{{ route('user.profile', $creator->username ?: $creator->id) }}" 
+                                       class="px-3.5 py-1.5 rounded-xl bg-[#20165c] hover:bg-[#181045] text-white text-xs font-semibold transition-all duration-200 shadow-sm inline-flex items-center gap-1.5 no-underline">
+                                        <span>View Profile</span>
+                                        <i class="bi bi-arrow-right text-[11px]"></i>
+                                    </a>
+                                </div>
+                            </div>
                         @endforeach
                     </div>
-                @endif
-            </div>
-        </div>
+                </div>
+            @endif
 
-        <!-- FILTER & SORT CONTROLS BAR -->
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 pb-3 border-bottom gap-3">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="small fw-bold text-muted me-2">Filters:</span>
-                
-                <a href="{{ route('search.index', array_merge(request()->query(), ['price' => null])) }}" class="btn btn-sm rounded-pill px-3 fw-bold {{ empty($priceType) ? 'btn-primary' : 'btn-outline-secondary' }}">
-                    All Prices
-                </a>
-                <a href="{{ route('search.index', array_merge(request()->query(), ['price' => 'free'])) }}" class="btn btn-sm rounded-pill px-3 fw-bold {{ $priceType === 'free' ? 'btn-success' : 'btn-outline-secondary' }}">
-                    Free Only
-                </a>
-                <a href="{{ route('search.index', array_merge(request()->query(), ['price' => 'paid'])) }}" class="btn btn-sm rounded-pill px-3 fw-bold {{ $priceType === 'paid' ? 'btn-primary' : 'btn-outline-secondary' }}">
-                    Paid Only
-                </a>
-            </div>
-
-            <div class="d-flex align-items-center gap-3">
-                <span class="small fw-bold text-muted font-monospace">{{ $resources->total() }} Assets Found</span>
-                
-                <form action="{{ route('search.index') }}" method="GET" class="d-inline-block">
-                    @if($queryStr)<input type="hidden" name="q" value="{{ $queryStr }}">@endif
-                    @if($categoryId)<input type="hidden" name="category" value="{{ $categoryId }}">@endif
-                    @if($selectedTag)<input type="hidden" name="tag" value="{{ $selectedTag }}">@endif
-                    @if($priceType)<input type="hidden" name="price" value="{{ $priceType }}">@endif
-
-                    <select name="sort" class="form-select form-select-sm rounded-pill font-monospace" onchange="this.form.submit()">
-                        <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>Latest Published</option>
-                        <option value="popular" {{ $sort === 'popular' ? 'selected' : '' }}>Most Downloads</option>
-                        <option value="price_low" {{ $sort === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
-                        <option value="price_high" {{ $sort === 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
-                    </select>
-                </form>
-            </div>
-        </div>
-
-        <!-- SEARCH RESULTS GRID -->
-        @if($resources->count() > 0)
-            <div class="row g-4 mb-5">
-                @foreach($resources as $resource)
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="card h-100 template-card-figma">
-                            <!-- Preview Image Box -->
-                            <div class="position-relative overflow-hidden" style="height: 190px; background: #1E1B4B;">
-                                @if($resource->preview_image)
-                                    <img src="{{ asset('storage/' . $resource->preview_image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $resource->title }}">
-                                @else
-                                    <div class="w-100 h-100 card-grad-1 p-4 d-flex align-items-center justify-content-center text-white text-center">
-                                        <i class="bi bi-layers fs-1 opacity-75"></i>
-                                    </div>
-                                @endif
-
-                                <!-- Category Badge -->
-                                <span class="position-absolute top-0 start-0 m-2.5 badge bg-white text-dark rounded-pill shadow-sm px-2.5 py-1 extra-small fw-bold">
-                                    {{ $resource->category ? $resource->category->name : 'General' }}
-                                </span>
+            <!-- 2.2 MATCHING SERVICES SECTION -->
+            @if(($tab === 'all' || $tab === 'services') && $services->count() > 0)
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-[#f47402]/10 text-[#f47402] flex items-center justify-center font-bold">
+                                <i class="bi bi-briefcase-fill text-sm"></i>
                             </div>
+                            <h2 class="text-lg font-bold text-[#121826] tracking-tight">Matching Creative Services</h2>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200/70 text-slate-700 font-mono">
+                                {{ $services->count() }}
+                            </span>
+                        </div>
+                        @if($tab === 'all' && $services->count() > 3)
+                            <a href="{{ route('search', ['q' => $q, 'tab' => 'services']) }}" class="text-xs font-semibold text-[#20165c] hover:text-[#181045] inline-flex items-center gap-1 no-underline">
+                                <span>View all {{ $services->count() }} services</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        @endif
+                    </div>
 
-                            <!-- Card Body -->
-                            <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach(($tab === 'all' ? $services->take(6) : $services) as $service)
+                            <x-service-card :service="$service" />
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- 2.3 MATCHING TEMPLATES SECTION -->
+            @if(($tab === 'all' || $tab === 'templates') && $templates->count() > 0)
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                                <i class="bi bi-grid-fill text-sm"></i>
+                            </div>
+                            <h2 class="text-lg font-bold text-[#121826] tracking-tight">Matching Templates &amp; Assets</h2>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-200/70 text-slate-700 font-mono">
+                                {{ $templates->count() }}
+                            </span>
+                        </div>
+                        @if($tab === 'all' && $templates->count() > 8)
+                            <a href="{{ route('search', ['q' => $q, 'tab' => 'templates']) }}" class="text-xs font-semibold text-[#20165c] hover:text-[#181045] inline-flex items-center gap-1 no-underline">
+                                <span>View all {{ $templates->count() }} templates</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        @foreach(($tab === 'all' ? $templates->take(12) : $templates) as $template)
+                            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-[#20165c]/30 transition duration-200 flex flex-col justify-between group">
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-1 text-truncate" title="{{ $resource->title }}">{{ $resource->title }}</h6>
-                                    <div class="extra-small text-muted mb-2 d-flex align-items-center gap-1">
-                                        @if($resource->owner)
-                                            <a href="{{ route('user.profile', $resource->owner->username ?? $resource->owner->id) }}" class="text-decoration-none text-muted d-inline-flex align-items-center gap-1 hover-primary" title="View {{ $resource->owner->name }}'s Profile">
-                                                <span>by <strong class="text-dark">{{ $resource->owner->name }}</strong></span>
-                                                @if($resource->owner->isVerifiedCreator())
-                                                    <span class="text-emerald-500" title="Verified Creator">
-                                                        <i class="bi bi-patch-check-fill"></i>
-                                                    </span>
-                                                @endif
-                                            </a>
-                                        @else
-                                            <span>by <strong class="text-dark">Noksha Creator</strong></span>
-                                        @endif
+                                    <!-- Thumbnail Box -->
+                                    <div class="relative aspect-video overflow-hidden bg-slate-100">
+                                        <img src="{{ $template->thumbnail_url }}" alt="{{ $template->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='{{ asset('images/logo.png') }}'">
+                                        
+                                        <!-- Category Badge -->
+                                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white/95 text-slate-700 border border-slate-200 shadow-xs backdrop-blur-md">
+                                            {{ $template->category?->name ?? 'Design' }}
+                                        </span>
                                     </div>
-                                    
-                                    <!-- Auto-generated Tag Chips -->
-                                    <div class="d-flex flex-wrap gap-1 mb-3">
-                                        @if(!empty($resource->tags))
-                                            @foreach(array_slice((array)$resource->tags, 0, 3) as $tg)
-                                                <a href="{{ route('search.index', ['tag' => $tg]) }}" class="ai-tag-chip">#{{ $tg }}</a>
-                                            @endforeach
-                                        @endif
+
+                                    <!-- Card Body -->
+                                    <div class="p-4">
+                                        <h3 class="text-sm font-bold text-[#121826] truncate block group-hover:text-[#20165c] transition-colors" title="{{ $template->title }}">
+                                            {{ $template->title }}
+                                        </h3>
+
+                                        <div class="flex items-center gap-2 mt-2 text-xs text-slate-500">
+                                            @if($template->owner)
+                                                <span>by <strong class="text-slate-700">{{ $template->owner->name }}</strong></span>
+                                            @else
+                                                <span>by <strong class="text-slate-700">Noksha Creator</strong></span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Card Footer -->
-                                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                                    <span class="fw-extrabold text-dark fs-6">
-                                        {{ $resource->is_paid && $resource->price > 0 ? '৳' . number_format($resource->price, 2) : 'Free' }}
+                                <div class="p-4 pt-3 border-t border-slate-200 flex items-center justify-between mt-auto">
+                                    <span class="text-base font-extrabold text-[#f47402] font-mono">
+                                        {{ $template->price == 0 ? 'Free' : '৳' . number_format($template->price, 2) }}
                                     </span>
 
-                                    <div class="d-flex align-items-center gap-1.5">
-                                        <form action="{{ route('wishlist.store', $resource->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-light border btn-sm rounded-circle p-1.5" title="Save to Wishlist">
-                                                <i class="bi bi-heart-fill text-danger"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('cart.store', $resource->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-circle p-1.5" title="Add to Cart">
-                                                <i class="bi bi-cart-plus-fill"></i>
-                                            </button>
-                                        </form>
-                                        <a href="{{ route('resource.show', $resource->slug ?? $resource->id) }}" class="btn btn-purple-cta rounded-pill px-3 py-1.5 btn-sm">
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('templates.show', $template->id) }}" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all no-underline">
                                             View
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
-                @endforeach
-            </div>
-
-            <!-- PAGINATION LINKS -->
-            <div class="d-flex justify-content-center mt-4">
-                {{ $resources->links() }}
-            </div>
-        @else
-            <!-- EMPTY STATE WHEN ZERO RESULTS -->
-            <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
-                <div class="p-4 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 90px; height: 90px;">
-                    <i class="bi bi-search-heart fs-1"></i>
                 </div>
-                <h4 class="fw-extrabold text-dark mb-2">No Matching Assets Found</h4>
-                <p class="text-secondary small mb-4" style="max-width: 480px; margin: 0 auto;">
-                    We couldn't find any design templates matching <strong>"{{ $queryStr ?: $selectedTag }}"</strong>. Try searching for different keywords, explore popular tags, or clear filters.
+            @endif
+
+            <!-- Tab has 0 results but other tabs have results -->
+            @if($tab === 'creators' && $creators->count() === 0)
+                <div class="bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-xs">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-[#20165c] mx-auto flex items-center justify-center mb-3">
+                        <i class="bi bi-people text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-[#121826]">No creators matched "{{ $q }}"</h3>
+                    <p class="text-xs text-slate-500 mt-1">Try switching to <a href="{{ route('search', ['q' => $q, 'tab' => 'all']) }}" class="text-[#20165c] font-semibold underline">All Results</a> to check templates or services.</p>
+                </div>
+            @elseif($tab === 'services' && $services->count() === 0)
+                <div class="bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-xs">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-[#f47402] mx-auto flex items-center justify-center mb-3">
+                        <i class="bi bi-briefcase text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-[#121826]">No services matched "{{ $q }}"</h3>
+                    <p class="text-xs text-slate-500 mt-1">Try switching to <a href="{{ route('search', ['q' => $q, 'tab' => 'all']) }}" class="text-[#20165c] font-semibold underline">All Results</a> to check templates or creators.</p>
+                </div>
+            @elseif($tab === 'templates' && $templates->count() === 0)
+                <div class="bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-xs">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center mb-3">
+                        <i class="bi bi-grid text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-[#121826]">No templates matched "{{ $q }}"</h3>
+                    <p class="text-xs text-slate-500 mt-1">Try switching to <a href="{{ route('search', ['q' => $q, 'tab' => 'all']) }}" class="text-[#20165c] font-semibold underline">All Results</a> to check services or creators.</p>
+                </div>
+            @endif
+
+        @else
+            <!-- ========================================================= -->
+            <!-- 3. CLEAN EMPTY STATE (WHEN TOTAL RESULTS === 0)            -->
+            <!-- ========================================================= -->
+            <div class="bg-white border border-slate-200/90 rounded-3xl p-12 text-center shadow-sm">
+                <div class="w-16 h-16 rounded-2xl bg-[#20165c]/10 text-[#20165c] mx-auto flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <h3 class="text-lg font-bold text-[#121826]">
+                    @if(!empty($q))
+                        No matching templates, services, or creators found for "{{ $q }}"
+                    @else
+                        Discover templates, services, and top creators
+                    @endif
+                </h3>
+                <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">
+                    Try searching with different keywords, check for typos, or browse through our categories.
                 </p>
-                <div>
-                    <a href="{{ route('search.index') }}" class="btn btn-purple-cta rounded-pill px-5 py-3 fw-bold">
-                        <i class="bi bi-arrow-counterclockwise me-2"></i> Clear All Search Filters
+                <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <a href="{{ route('templates.index') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#20165c] hover:bg-[#181045] shadow-sm transition-all inline-flex items-center gap-2 no-underline">
+                        <i class="bi bi-grid"></i>
+                        <span>Browse All Templates</span>
+                    </a>
+                    <a href="{{ route('services.index') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#f47402] hover:bg-[#d86300] shadow-sm transition-all inline-flex items-center gap-2 no-underline">
+                        <i class="bi bi-briefcase"></i>
+                        <span>Explore Services</span>
+                    </a>
+                    <a href="{{ route('creators.index') }}" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-[#20165c] bg-white border border-slate-200 hover:bg-slate-50 shadow-xs transition-all inline-flex items-center gap-2 no-underline">
+                        <i class="bi bi-people"></i>
+                        <span>View Top Creators</span>
                     </a>
                 </div>
             </div>
@@ -327,4 +337,8 @@
 
     </div>
 </div>
+
+<!-- INQUIRY & SERVICE MODALS -->
+@include('services.partials.inquiry-modal')
+@include('services.partials.image-preview-modal')
 @endsection
