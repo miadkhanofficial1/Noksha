@@ -53,6 +53,54 @@
         transform: translateY(0);
     }
 
+    /* Hero Editorial Equal-Width Typography */
+    .hero-editorial-h1 {
+        display: inline-flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: fit-content !important;
+        max-width: 100%;
+        margin-bottom: 1.25rem;
+        line-height: 1.08;
+    }
+
+    .hero-editorial-line-1 {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 500 !important;
+        color: #20165c !important;
+        letter-spacing: -0.025em;
+        font-size: clamp(1.85rem, 3.8vw, 3.2rem);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        white-space: nowrap;
+        line-height: 1.15;
+    }
+
+    .hero-editorial-line-1 .hero-ampersand {
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-style: italic !important;
+        font-weight: 500 !important;
+        font-size: 1.15em;
+        -webkit-text-stroke: 1.5px #20165c;
+        color: transparent !important;
+        display: inline-block;
+        margin-left: 0.35rem;
+        line-height: 1;
+    }
+
+    .hero-editorial-line-2 {
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-style: italic !important;
+        font-weight: 500 !important;
+        color: #f47402 !important;
+        font-size: clamp(2.52rem, 5.25vw, 4.38rem);
+        letter-spacing: 0.035em;
+        white-space: nowrap;
+        line-height: 1.06;
+        display: block;
+    }
+
     /* Hero Gradient & Animated Background Orbs */
     .hero-bg-gradient {
         background: linear-gradient(180deg, #ffffff 0%, #f8fafc 60%, #f1f5f9 100%);
@@ -614,20 +662,15 @@
             <!-- Left Column: Bilingual Headline & Category Pills -->
             <div class="col-lg-7 text-center text-lg-start">
 
-                <!-- Badge -->
-                <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-3 d-inline-flex align-items-center gap-1.5" style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.18);">
-                    <i class="bi bi-stars text-[#f47402]"></i> Curated Digital Graphics Templates
-                </span>
-
-                <!-- Bilingual Headline -->
-                <h1 class="display-3 font-light fw-light mb-3 tracking-tight lh-sm text-[#20165c]" style="color: #20165c; font-weight: 300;">
-                    @if(app()->getLocale() === 'bn')
-                        <span class="text-[#20165c] font-light" style="color: #20165c; font-weight: 300;">{{ __('marketplace.hero_title_prefix') }}</span>
-                        <span class="text-[#f47402] font-normal" style="color: #f47402; font-weight: 400;">{{ __('marketplace.hero_title_highlight') }}</span>
-                    @else
-                        <span class="text-[#20165c] font-light" style="color: #20165c; font-weight: 300;">Curated Digital Graphics Templates by</span>
-                        <span class="text-[#f47402] font-normal" style="color: #f47402; font-weight: 400;">Top Creators</span>
-                    @endif
+                <!-- Hero Editorial Equal-Width Two-Line Headline -->
+                <h1 class="hero-editorial-h1 d-inline-flex flex-column align-items-stretch w-fit mb-3">
+                    <div class="hero-editorial-line-1 text-[#20165c] font-medium tracking-tight">
+                        <span>Discover Premium Assets</span>
+                        <span class="hero-ampersand ms-2" style="-webkit-text-stroke: 1.5px #20165c; color: transparent;">&amp;</span>
+                    </div>
+                    <div class="hero-editorial-line-2 italic font-medium text-[#f47402]">
+                        Hire Top Creators
+                    </div>
                 </h1>
 
                 <!-- Subtitle -->
@@ -1167,22 +1210,6 @@
             @endif
         </div>
 
-        <!-- Bottom Featured Recommendation Strip -->
-        <div class="p-4 ai-strip-box d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 reveal-on-scroll">
-            <div class="d-flex align-items-center gap-3 text-center text-md-start">
-                <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-                    <i class="bi bi-palette-fill fs-3 text-primary"></i>
-                </div>
-                <div>
-                    <h5 class="fw-bold text-dark mb-1">Looking for custom project specifications?</h5>
-                    <p class="text-secondary small mb-0">Discover creator-crafted design systems, vector kits, and branding packages curated for professional design teams.</p>
-                </div>
-            </div>
-            <a href="#trending" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold shadow-sm text-nowrap">
-                <i class="bi bi-stars me-1 text-warning"></i> Explore Featured Picks
-            </a>
-        </div>
-
     </div>
 </section>
 
@@ -1225,146 +1252,165 @@
     </div>
 </section>
 
-<!-- CREATOR CAPABILITIES SPOTLIGHT -->
-<section id="creator-features" class="py-5 bg-light reveal-on-scroll">
+<!-- CREATOR CAPABILITIES SPOTLIGHT & HIGH-CONVERTING ONBOARDING SHOWCASE -->
+<section id="creator-features" class="py-5 py-lg-6 bg-slate-50 reveal-on-scroll border-top border-bottom border-slate-200">
     <div class="container py-4">
         <div class="row align-items-center g-5">
+            <!-- Left Column: Value Proposition & Perks -->
             <div class="col-lg-6">
-                <span class="noksha-badge mb-2">Creator Marketplace</span>
-                <h2 class="display-6 fw-bold text-dark mb-3">Designed for Creators & Creative Professionals</h2>
-                <p class="text-secondary mb-4">
-                    Noksha empowers top designers, illustrators, and digital artists across Bangladesh to publish bespoke design assets, templates, and creative toolkits with automated verification and instant payouts.
+                <!-- Crisp Badge -->
+                <span class="badge px-3.5 py-1.5 rounded-pill text-uppercase tracking-wider fw-bold mb-3 d-inline-flex align-items-center gap-1.5" 
+                      style="background: rgba(32, 22, 92, 0.08); color: #20165c; border: 1px solid rgba(32, 22, 92, 0.18);">
+                    <i class="bi bi-stars text-[#f47402]"></i> For Bangladeshi Creators
+                </span>
+
+                <!-- Strong Heading -->
+                <h2 class="display-6 fw-extrabold text-[#121826] mb-3 tracking-tight lh-sm">
+                    Earn From Your Design Assets &amp; Custom Services
+                </h2>
+
+                <!-- Concise Subtext -->
+                <p class="text-slate-600 mb-4 lh-base fs-6" style="max-width: 540px;">
+                    Publish design templates or offer custom creative services with 85% creator payout, Escrow protection, and fast local withdrawals.
                 </p>
 
-                <div class="d-flex flex-column gap-3">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
-                            <i class="bi bi-tags-fill fs-4"></i>
+                <!-- 3 Concise Creator-Focused Perks -->
+                <div class="d-flex flex-column gap-3 pt-2">
+                    <!-- Perk 1 -->
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-xs transition hover:border-[#20165c]/30">
+                        <div class="p-2.5 rounded-xl d-flex align-items-center justify-content-center shrink-0" 
+                             style="background: rgba(32, 22, 92, 0.08); color: #20165c; width: 44px; height: 44px;">
+                            <i class="bi bi-cash-stack fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1">Smart Asset Organization</h5>
-                            <p class="small text-muted mb-0">Every template is automatically organized by category, software compatibility (.FIG, .PSD, .AI), and licensing terms.</p>
+                            <h6 class="fw-bold text-[#121826] mb-1">85% Instant Creator Payouts</h6>
+                            <p class="small text-slate-500 mb-0 lh-sm">
+                                Keep 85% of every asset download and service invoice with fast local withdrawals straight to your personal wallet.
+                            </p>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-3">
-                            <i class="bi bi-search-heart fs-4"></i>
+                    <!-- Perk 2 -->
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-xs transition hover:border-[#f47402]/30">
+                        <div class="p-2.5 rounded-xl d-flex align-items-center justify-content-center shrink-0" 
+                             style="background: rgba(244, 116, 2, 0.1); color: #f47402; width: 44px; height: 44px;">
+                            <i class="bi bi-grid-1x2-fill fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1">Semantic Category Search</h5>
-                            <p class="small text-muted mb-0">Quickly discover templates, vector packs, and design systems using curated keywords and precise filters.</p>
+                            <h6 class="fw-bold text-[#121826] mb-1">Sell Templates &amp; Custom Services</h6>
+                            <p class="small text-slate-500 mb-0 lh-sm">
+                                Monetize Figma kits, vectors, and PSD templates or set up packaged design offerings with customized turnaround times.
+                            </p>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="p-3 bg-info bg-opacity-10 text-info rounded-3">
-                            <i class="bi bi-sliders fs-4"></i>
+                    <!-- Perk 3 -->
+                    <div class="d-flex align-items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200 shadow-xs transition hover:border-emerald-500/30">
+                        <div class="p-2.5 rounded-xl d-flex align-items-center justify-content-center shrink-0" 
+                             style="background: rgba(16, 185, 129, 0.1); color: #059669; width: 44px; height: 44px;">
+                            <i class="bi bi-shield-check fs-4"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1">Verified Source Deliverables</h5>
-                            <p class="small text-muted mb-0">Inspect layered previews, editable source components, and file formats before securing your commercial license.</p>
+                            <h6 class="fw-bold text-[#121826] mb-1">Escrow-Protected Client Orders</h6>
+                            <p class="small text-slate-500 mb-0 lh-sm">
+                                Never chase client invoices again. Buyers fund orders upfront in 100% smart escrow before work commences.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Dynamic Creator Feature Showcase Card -->
+            <!-- Right Column: Creator Earnings & Perks Preview Card -->
             <div class="col-lg-6">
-                @if(isset($aiShowcase) && $aiShowcase)
-                    <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm">
-                        <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-primary rounded-pill px-3 py-2">Creator Spotlight</span>
-                                <span class="fw-semibold text-dark">Verified Asset Showcase</span>
-                            </div>
-                            <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
-                        </div>
+                <div class="p-4 p-md-5 bg-white border border-slate-200 rounded-3xl shadow-xl position-relative overflow-hidden">
+                    <!-- Subtle top ambient accent bar -->
+                    <div class="position-absolute top-0 start-0 w-100" style="height: 4px; background: linear-gradient(90deg, #20165c 0%, #f47402 100%);"></div>
 
-                        <div class="bg-light p-3 rounded-3 mb-3 border">
-                            <div class="d-flex align-items-center gap-3">
-                                @php
-                                    $spotlightCover = null;
-                                    if (!empty($aiShowcase->preview_image)) {
-                                        if (str_starts_with($aiShowcase->preview_image, 'http://') || str_starts_with($aiShowcase->preview_image, 'https://')) {
-                                            $spotlightCover = $aiShowcase->preview_image;
-                                        } else {
-                                            $spotlightCover = asset('storage/' . ltrim(str_replace('storage/', '', $aiShowcase->preview_image), '/'));
-                                        }
-                                    } elseif (!empty($aiShowcase->thumbnail_url)) {
-                                        $spotlightCover = $aiShowcase->thumbnail_url;
-                                    }
-                                @endphp
-                                @if($spotlightCover)
-                                    <img src="{{ $spotlightCover }}" alt="{{ $aiShowcase->title }}" class="rounded-2xl shadow-sm object-fit-cover border border-slate-200" style="width: 64px; height: 64px;" onerror="this.onerror=null; this.classList.add('d-none'); document.getElementById('spotlightFallbackBox').classList.remove('d-none');">
-                                @endif
-                                <div id="spotlightFallbackBox" class="{{ $spotlightCover ? 'd-none' : '' }} bg-purple-50 text-[#20165c] border border-purple-200 rounded-2xl p-3 text-center d-flex align-items-center justify-content-center shrink-0" style="width: 64px; height: 64px;">
-                                    <i class="bi bi-file-earmark-code fs-3 text-[#20165c]"></i>
-                                </div>
-                                <div class="overflow-hidden flex-grow-1">
-                                    <h6 class="fw-bold mb-1 text-dark text-truncate">{{ $aiShowcase->title }}</h6>
-                                    <div class="d-flex flex-wrap gap-1">
-                                        <span class="badge bg-secondary text-light">{{ strtoupper($aiShowcase->file_type ?? 'Vector') }}</span>
-                                        <span class="badge bg-dark text-light">{{ $aiShowcase->category?->name ?? 'Design' }}</span>
-                                        @if($aiShowcase->is_paid && $aiShowcase->price > 0)
-                                            <span class="badge bg-primary text-light">৳{{ number_format($aiShowcase->price, 2) }}</span>
-                                        @else
-                                            <span class="badge bg-success text-light">Free</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Card Header -->
+                    <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom border-slate-100">
+                        <div>
+                            <span class="badge rounded-pill px-3 py-1.5 small fw-semibold d-inline-flex align-items-center gap-1.5" 
+                                  style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <i class="bi bi-check-circle-fill"></i> Transparent Economics
+                            </span>
+                            <h4 class="fw-bold text-[#121826] mt-2 mb-0">Creator Earnings &amp; Perks</h4>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Asset Tags & Specifications:</label>
-                            <div class="d-flex flex-wrap gap-1">
-                                @if(!empty($aiShowcase->tags) && is_array($aiShowcase->tags))
-                                    @foreach(array_slice($aiShowcase->tags, 0, 6) as $tag)
-                                        <span class="badge bg-light text-dark border">#{{ ltrim($tag, '#') }}</span>
-                                    @endforeach
-                                @else
-                                    <span class="badge bg-light text-dark border">#{{ strtolower($aiShowcase->category?->name ?? 'design') }}</span>
-                                    <span class="badge bg-light text-dark border">#{{ strtolower($aiShowcase->file_type ?? 'vector') }}</span>
-                                    <span class="badge bg-light text-dark border">#marketplace</span>
-                                    <span class="badge bg-light text-dark border">#bangladesh</span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="pt-3 border-top d-flex align-items-center justify-content-between">
-                            <span class="small text-muted">Uploaded by <strong class="text-dark">{{ $aiShowcase->owner?->name ?? 'Noksha Creator' }}</strong></span>
-                            <a href="{{ route('resource.show', $aiShowcase->slug ?? $aiShowcase->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                Inspect Asset <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
+                        <div class="p-2.5 rounded-circle bg-purple-50 text-[#20165c] border border-purple-100 d-none d-sm-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-graph-up-arrow fs-5 text-[#20165c]"></i>
                         </div>
                     </div>
-                @else
-                    <div class="p-4 p-md-5 bg-white border rounded-4 shadow-sm text-center py-5">
-                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <i class="bi bi-brush fs-2"></i>
+
+                    <!-- 3 Core Stats/Perks Grid -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-4">
+                            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center h-100 d-flex flex-column justify-content-center">
+                                <div class="fs-4 fw-extrabold text-[#20165c] mb-0">0%</div>
+                                <div class="fw-bold text-slate-700 extra-small">Listing Fee</div>
+                                <div class="text-slate-400 font-mono text-[10px] mt-0.5">Free Forever</div>
+                            </div>
                         </div>
-                        <h5 class="fw-bold text-dark mb-2">Bespoke Creator Showcase</h5>
-                        <p class="small text-muted mb-4" style="max-width: 420px; margin: 0 auto;">
-                            No items published yet. Be the first to upload Photoshop, Figma, or Illustrator assets to showcase your creative work to buyers worldwide!
-                        </p>
-                        @auth
-                            @if(auth()->user()->isContributor())
-                                <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload Asset to Test
-                                </a>
-                            @else
-                                <a href="{{ route('contributor.apply') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                                    <i class="bi bi-patch-check-fill me-1"></i> Become a Contributor
-                                </a>
-                            @endif
+                        <div class="col-4">
+                            <div class="p-3 rounded-2xl bg-amber-50/60 border border-amber-200/80 text-center h-100 d-flex flex-column justify-content-center">
+                                <div class="fs-4 fw-extrabold text-[#f47402] mb-0">85%</div>
+                                <div class="fw-bold text-slate-700 extra-small">Revenue Share</div>
+                                <div class="text-slate-400 font-mono text-[10px] mt-0.5">Direct Payout</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 text-center h-100 d-flex flex-column justify-content-center">
+                                <div class="fs-4 fw-extrabold text-emerald-600 mb-0">Local</div>
+                                <div class="fw-bold text-slate-700 extra-small">Fast Payouts</div>
+                                <div class="text-slate-400 font-mono text-[10px] mt-0.5">bKash / Nagad / Bank</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payout Channels Strip -->
+                    <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 mb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="small fw-bold text-slate-700">Supported Withdrawal Channels</span>
+                            <span class="badge bg-emerald-600 text-white rounded-pill px-2 py-0.5 text-[10px]">Instant Process</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
+                                <span class="rounded-circle bg-[#E2136E]" style="width: 8px; height: 8px;"></span> bKash
+                            </span>
+                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
+                                <span class="rounded-circle bg-[#F7941D]" style="width: 8px; height: 8px;"></span> Nagad
+                            </span>
+                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
+                                <span class="rounded-circle bg-[#8C3494]" style="width: 8px; height: 8px;"></span> Rocket
+                            </span>
+                            <span class="badge bg-white text-slate-700 border border-slate-200 px-2.5 py-1.5 rounded-lg small font-medium d-inline-flex align-items-center gap-1.5 shadow-2xs">
+                                <span class="rounded-circle bg-[#20165c]" style="width: 8px; height: 8px;"></span> Local Bank Wire
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Prominent Join as a Creator CTA Button -->
+                    @guest
+                        <a href="{{ route('register') }}" class="btn btn-cta-primary btn-lg rounded-xl w-100 fw-bold py-3 text-white shadow-sm transition-all d-flex align-items-center justify-content-center gap-2">
+                            <span>Join as a Creator</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    @else
+                        @if(auth()->user()->isContributor())
+                            <a href="{{ route('dashboard', ['tab' => 'upload']) }}" class="btn btn-cta-primary btn-lg rounded-xl w-100 fw-bold py-3 text-white shadow-sm transition-all d-flex align-items-center justify-content-center gap-2">
+                                <span>Open Creator Studio</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
                         @else
-                            <a href="{{ route('register') }}" class="btn btn-purple-cta rounded-pill px-4 py-2.5 fw-bold">
-                                <i class="bi bi-person-plus-fill me-1"></i> Join as Creator
+                            <a href="{{ route('contributor.apply') }}" class="btn btn-cta-primary btn-lg rounded-xl w-100 fw-bold py-3 text-white shadow-sm transition-all d-flex align-items-center justify-content-center gap-2">
+                                <span>Join as a Creator</span>
+                                <i class="bi bi-arrow-right"></i>
                             </a>
-                        @endauth
+                        @endif
+                    @endguest
+
+                    <div class="text-center text-slate-500 extra-small mt-2.5">
+                        <i class="bi bi-shield-check text-emerald-600 me-1"></i> Quick 2-minute registration • Verified local payouts
                     </div>
-                @endif
+                </div>
             </div>
         </div>
     </div>
